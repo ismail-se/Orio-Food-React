@@ -1,10 +1,10 @@
 import React from 'react';
-
+import { RestaurantHome } from './imports/Pages'
 function App() {
   return (
-    <div>
-     
-    </div>
+    <>
+     <RestaurantHome />
+    </>
   );
 }
 

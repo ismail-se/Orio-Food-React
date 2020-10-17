@@ -1,0 +1,12 @@
+.fk-pos-nav {
+    
+    &__list {
+        margin-bottom: 10px;
+        &:last-child {
+            margin-bottom: 0;
+        }
+    }
+    a {
+        font-size: 13px;
+    }
+}

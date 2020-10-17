@@ -1,0 +1,7 @@
+.fk-addons-variation {
+    background: $white;
+    height: 160px;
+    @include xl-screen {
+        height: 250px;
+    }
+}
