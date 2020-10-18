@@ -1,11 +1,16 @@
-import React from "react";
+import React, { useContext } from "react";
 import { withRouter } from "react-router-dom";
 import { Helmet } from "react-helmet";
+
+//importing context consumer here
+import { UserContext } from "../../../contexts/User";
+
 const RestaurantHome = () => {
+  const { signUpInfo } = useContext(UserContext);
   return (
     <>
       <Helmet>
-        <title>Restaurant</title>
+        <title>{signUpInfo.name}</title>
       </Helmet>
       <main id="main" data-simplebar>
         <div className="container">
