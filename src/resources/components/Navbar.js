@@ -1,7 +1,7 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { NavLink, withRouter } from "react-router-dom";
-import { _t } from "../../functions/Functions";
+import { withRouter } from "react-router-dom";
+import { _t, navbarHrefLink } from "../../functions/Functions";
 const Navbar = () => {
   const { t } = useTranslation();
   return (
@@ -11,19 +11,7 @@ const Navbar = () => {
           <div className="row align-items-center">
             <div className="col-lg-2">
               <div className="fk-brand fk-brand--sr-lg">
-                {window.location.pathname === "/" ? (
-                  <NavLink
-                    to={{ pathname: "/refresh", state: "/" }}
-                    exact
-                    className="t-link w-100"
-                  >
-                    <span className="bg-primary fk-brand__img fk-brand__img--fk"></span>
-                  </NavLink>
-                ) : (
-                  <NavLink to="/" exact className="t-link w-100">
-                    <span className="bg-primary fk-brand__img fk-brand__img--fk"></span>
-                  </NavLink>
-                )}
+                {navbarHrefLink("/")}
               </div>
             </div>
             <div className="order-2 order-lg-1 col-10 col-lg-3 col-xl-4 col-xxl-5 t-mb-15 mb-lg-0 t-mt-15 mt-lg-0">
