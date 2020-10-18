@@ -1,3 +1,4 @@
-import RestaurantHome from '../resources/restaurant/RestaurantHome';
+import RestaurantHome from "../resources/restaurant/RestaurantHome";
+import Refresh from "../resources/common/Refresh";
 
-export {RestaurantHome};
+export { RestaurantHome, Refresh };

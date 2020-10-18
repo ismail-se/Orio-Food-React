@@ -1,5 +1,5 @@
 import React from "react";
-
+import { withRouter } from "react-router-dom";
 const Footer = () => {
   var weekday = [
     "Sunday",
@@ -73,4 +73,4 @@ const Footer = () => {
   );
 };
 
-export default Footer;
+export default withRouter(Footer);

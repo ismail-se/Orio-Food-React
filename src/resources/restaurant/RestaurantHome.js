@@ -1,10 +1,12 @@
 import React from "react";
-import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
+import { withRouter } from "react-router-dom";
+import { Helmet } from "react-helmet";
 const RestaurantHome = () => {
   return (
     <>
-      <Navbar />
+      <Helmet>
+        <title>Restaurant</title>
+      </Helmet>
       <main id="main" data-simplebar>
         <div className="container">
           <div className="row t-mt-70 t-mb-70">
@@ -236,9 +238,8 @@ const RestaurantHome = () => {
           </div>
         </div>
       </main>
-      <Footer />
     </>
   );
 };
 
-export default RestaurantHome;
+export default withRouter(RestaurantHome);
