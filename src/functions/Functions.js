@@ -11,7 +11,7 @@ const _t = (text) => {
   return text;
 };
 
-//console clear and dummy text
+//console clear and dummy text like facebook
 const consolee = () => {
   var cssStop = "color: Red;" + "font-size: 50px;" + "font-weight: bold;";
   var cssText = "color: Black;" + "font-size: 18px;" + "font-weight: bold;";
