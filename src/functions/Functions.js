@@ -51,6 +51,36 @@ const navbarHrefLink = (redirectTo) => {
     );
   }
 };
+//footer logo link
+const footerHrefLink = (redirectTo) => {
+  if (window.location.pathname === redirectTo) {
+    return (
+      <NavLink
+        to={{ pathname: "/refresh", state: redirectTo }}
+        exact
+        className="t-link w-100 t-h-80"
+      >
+        <span
+          className="bg-primary fk-brand--footer-img fk-brand__img--fk"
+          style={{
+            backgroundImage: `url("/assets/img/foodkhan.png")`,
+          }}
+        ></span>
+      </NavLink>
+    );
+  } else {
+    return (
+      <NavLink to={redirectTo} className="t-link w-100 t-h-80">
+        <span
+          className="bg-primary fk-brand--footer-img fk-brand__img--fk"
+          style={{
+            backgroundImage: `url("/assets/img/foodkhan.png")`,
+          }}
+        ></span>
+      </NavLink>
+    );
+  }
+};
 
 //restaurant menu links
 const restaurantMenuLink = (
@@ -84,4 +114,4 @@ const restaurantMenuLink = (
   );
 };
 
-export { _t, consolee, navbarHrefLink, restaurantMenuLink };
+export { _t, consolee, navbarHrefLink, footerHrefLink, restaurantMenuLink };

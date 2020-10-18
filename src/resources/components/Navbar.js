@@ -11,7 +11,7 @@ const Navbar = () => {
           <div className="row align-items-center">
             <div className="col-lg-2">
               <div className="fk-brand fk-brand--sr-lg">
-                {navbarHrefLink("/")}
+                {navbarHrefLink("/dashboard")}
               </div>
             </div>
             <div className="order-2 order-lg-1 col-10 col-lg-3 col-xl-4 col-xxl-5 t-mb-15 mb-lg-0 t-mt-15 mt-lg-0">
@@ -127,7 +127,7 @@ const Navbar = () => {
                     <div className="d-flex align-items-center ">
                       <div className="circle circle--sm rounded-circle avatar">
                         <img
-                          src="assets/img/user.jpg"
+                          src="/assets/img/user.jpg"
                           alt="foodkhan"
                           className="img-fluid avatar__img"
                         />

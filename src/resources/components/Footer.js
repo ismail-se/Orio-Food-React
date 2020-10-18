@@ -1,5 +1,8 @@
 import React from "react";
 import { withRouter } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+import { _t, footerHrefLink } from "../../functions/Functions";
+
 const Footer = () => {
   var weekday = [
     "Sunday",
@@ -32,9 +35,7 @@ const Footer = () => {
           <div className="row align-items-lg-center">
             <div className="col-lg-2 t-mb-30 mb-lg-0">
               <div className="fk-brand--footer fk-brand--footer-sqr mx-auto">
-                <a href="index.html" className="t-link w-100 t-h-80">
-                  <span className="bg-primary fk-brand--footer-img fk-brand__img--fk"></span>
-                </a>
+                {footerHrefLink("/dashboard")}
               </div>
             </div>
             <div className="col-lg-6 col-xl-7 t-mb-30 mb-lg-0">
