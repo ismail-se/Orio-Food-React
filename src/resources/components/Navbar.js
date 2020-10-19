@@ -11,6 +11,7 @@ const Navbar = () => {
           <div className="row align-items-center">
             <div className="col-lg-2">
               <div className="fk-brand fk-brand--sr-lg">
+                {/* todo:: if not authenticated link to landing page */}
                 {navbarHrefLink("/dashboard")}
               </div>
             </div>
@@ -164,6 +165,14 @@ const Navbar = () => {
                               href="#"
                             >
                               settings
+                            </a>
+                          </li>
+                          <li>
+                            <a
+                              className="dropdown-item sm-text text-capitalize"
+                              href="/"
+                            >
+                              Homepage
                             </a>
                           </li>
                         </ul>

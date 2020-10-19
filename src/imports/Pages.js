@@ -1,4 +1,8 @@
 import Refresh from "../resources/common/Refresh";
+//public page
+import RestaurantLanding from "../resources/restaurant/public/RestaurantLanding";
+
+//private page
 import RestaurantHome from "../resources/restaurant/auth/RestaurantHome";
 import WorkPeriod from "../resources/restaurant/auth/WorkPeriod";
 import Pos from "../resources/restaurant/auth/Pos";
@@ -20,4 +24,5 @@ export {
   Branch,
   Reports,
   Settings,
+  RestaurantLanding,
 };

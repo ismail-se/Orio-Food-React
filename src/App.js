@@ -11,6 +11,7 @@ import {
   Branch,
   Reports,
   Settings,
+  RestaurantLanding,
 } from "./imports/Pages";
 import { Navbar, Footer } from "./imports/Components";
 import { consolee } from "./functions/Functions";
@@ -25,6 +26,9 @@ function App() {
         <Switch>
           <Route path="/refresh" exact>
             <Refresh />
+          </Route>
+          <Route path="/" exact>
+            <RestaurantLanding />
           </Route>
           {/* restaurant dashboard pages */}
           <Route path="/dashboard" exact>
