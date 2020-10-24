@@ -10,8 +10,8 @@ import OrderHistories from "../resources/restaurant/auth/OrderHistories";
 import Customers from "../resources/restaurant/auth/Customers";
 import Kitchen from "../resources/restaurant/auth/Kitchen";
 import Branch from "../resources/restaurant/auth/Branch";
-import Settings from "../resources/restaurant/auth/Settings";
 import Reports from "../resources/restaurant/auth/Reports";
+import Lang from "../resources/restaurant/auth/manage/settings/Lang";
 
 export {
   RestaurantHome,
@@ -23,6 +23,6 @@ export {
   Kitchen,
   Branch,
   Reports,
-  Settings,
+  Lang,
   RestaurantLanding,
 };

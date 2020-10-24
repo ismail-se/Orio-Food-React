@@ -5,9 +5,9 @@
     padding-left: auto;
     box-sizing: border-box;
     &--scroll {
-        height: calc(100vh - 398px);
+        height: calc(100vh - 430px);
         @include xl-screen {
-            height: calc(100vh - 488px);
+            height: calc(100vh - 520px);
         }
     }
     &-card {

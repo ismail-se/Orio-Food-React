@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import {
+  RestaurantLanding,
   RestaurantHome,
   Refresh,
   WorkPeriod,
@@ -10,8 +11,7 @@ import {
   Kitchen,
   Branch,
   Reports,
-  Settings,
-  RestaurantLanding,
+  Lang,
 } from "./imports/Pages";
 import { Navbar, Footer } from "./imports/Components";
 import { consolee } from "./functions/Functions";
@@ -55,8 +55,8 @@ function App() {
           <Route path="/dashboard/reports" exact>
             <Reports />
           </Route>
-          <Route path="/dashboard/settings" exact>
-            <Settings />
+          <Route path="/dashboard/manage/settings/languages" exact>
+            <Lang />
           </Route>
         </Switch>
         <Footer />

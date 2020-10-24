@@ -1,9 +1,12 @@
 .fk-addons-table {
-    margin: 15px;
+    margin-top: 10px;
+    margin-bottom: 10px;
     background: $light-2;
     border: 1px solid darken($light-2, 10%);
     @include xl-screen {
         min-width: 350px;
+        margin-left: 10px;
+        margin-right: 10px;
     }
     &__head {
         padding-top: 3px;

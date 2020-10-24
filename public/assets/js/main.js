@@ -4,6 +4,21 @@
     $(document).ready(function () {
         
 
+        /*--------POS Nav with Submenu----------*/
+        var posHasSub = $(".fk-pos-nav__list-has-sub");
+        var posSub = $(".fk-pos-nav__sub");
+
+        $(".fk-pos-nav__list-has-sub > a").on("click", function(e){
+            e.preventDefault()
+        })
+        posHasSub.on("click", function() {
+            $(this).find(posSub).slideDown();
+            $(this).siblings().find(posSub).slideUp();
+            $(this).addClass("active").siblings().removeClass("active");
+        })
+
+        /*--------POS Nav with Submenu End----------*/
+
         /*--------Feather Icon----------*/
         feather.replace();
         /*--------Feather Icon End----------*/

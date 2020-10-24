@@ -1,0 +1,13 @@
+.fk-table {
+    
+    &__head {
+        background: $light-2;
+    }
+    &__body {
+        height: 250px;
+        background: $white;
+        @include xlii-screen {
+            height: 400px;
+        }
+    }
+}

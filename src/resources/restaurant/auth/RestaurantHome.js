@@ -110,12 +110,12 @@ const RestaurantHome = () => {
               {/* image, imgAltTxt, smallInfoIcon, infoTextColorName, infoText, title, redirectToUrl */}
               {restaurantMenuLink(
                 "/assets/img/product-img-8.png",
-                [_t(t("Settings"))],
+                [_t(t("Manage"))],
                 "fa fa-clock-o",
                 "t-text-zeta",
-                [_t(t("Settings"))],
-                [_t(t("Settings"))],
-                "/dashboard/settings"
+                [_t(t("Manage"))],
+                [_t(t("Manage"))],
+                "/dashboard/manage/settings/languages"
               )}
             </div>
             {/* <div className="col-md-6 col-lg-4 t-mb-30"> */}

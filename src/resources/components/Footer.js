@@ -34,7 +34,7 @@ const Footer = () => {
         <div className="container">
           <div className="row align-items-lg-center">
             <div className="col-lg-2 t-mb-30 mb-lg-0">
-              <div className="fk-brand--footer fk-brand--footer-sqr mx-auto">
+              <div className="fk-brand--footer fk-brand--footer-sqr mx-auto ml-lg-0 mr-lg-auto">
                 {footerHrefLink("/dashboard")}
               </div>
             </div>

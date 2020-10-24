@@ -13,14 +13,12 @@
         @include lg-screen {
             font-size: 13px;
             font-weight: 700;
-            color: $epsilon;
         }
     }
     //Selector Style
     .select2-container--default .select2-selection--single {
         padding: 5px 0px;
         background-color: $white;
-        border: 1px solid $epsilon;
         border-radius: 2px;
         font-size: 12px;
         font-weight: 500;
@@ -36,16 +34,7 @@
     .select2-container .select2-selection--single {
         height: auto; 
     }
-    .select2-container--default .select2-selection--single .select2-selection__rendered {
-        @include lg-screen {
-            color: $epsilon;
-        }
-    }
-    .select2-container--default .select2-selection--single .select2-selection__arrow b {
-        @include lg-screen {
-            border-color: $epsilon transparent transparent transparent;
-        }
-    }
+    
     .dropdown-menu {
         min-width: 100%;
         padding: 0.5rem .5rem;

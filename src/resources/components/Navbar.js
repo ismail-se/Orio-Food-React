@@ -16,18 +16,22 @@ const Navbar = () => {
               </div>
             </div>
             <div className="order-2 order-lg-1 col-10 col-lg-3 col-xl-4 col-xxl-5 t-mb-15 mb-lg-0 t-mt-15 mt-lg-0">
-              <div className="input-group">
-                <div className="form-file">
-                  <input
-                    type="text"
-                    className="form-control border-0 form-control--light-1 rounded-0"
-                    placeholder={_t(t("Search")) + ".."}
-                  />
+              {window.location.pathname.includes(
+                "/dashboard/manage/"
+              ) ? null : (
+                <div className="input-group">
+                  <div className="form-file">
+                    <input
+                      type="text"
+                      className="form-control border-0 form-control--light-1 rounded-0"
+                      placeholder={_t(t("Search")) + ".."}
+                    />
+                  </div>
+                  <button className="btn btn-primary" type="button">
+                    <i className="fa fa-search" aria-hidden="true"></i>
+                  </button>
                 </div>
-                <button className="btn btn-primary" type="button">
-                  <i className="fa fa-search" aria-hidden="true"></i>
-                </button>
-              </div>
+              )}
             </div>
             <div className="order-1 order-lg-2 col-2 col-lg-7 col-xl-6 col-xxl-5 t-mb-15 mb-lg-0 t-mt-15 mt-lg-0">
               <div className="fk-phn-nav text-right d-lg-none">

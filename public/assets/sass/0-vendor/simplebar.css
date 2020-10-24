@@ -69,8 +69,8 @@
 .horizontal.simplebar-track .simplebar-scrollbar {
     right: auto;
     top: 2px;
-    height: 7px;
+    height: 12px;
     min-height: 0;
-    min-width: 10px;
+    min-width: 12px;
     width: auto;
 }

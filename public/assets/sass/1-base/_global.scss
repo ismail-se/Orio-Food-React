@@ -173,3 +173,8 @@ hr {
     min-width: max-content;
     padding: 0.5rem 1rem;
 }
+.simplebar-track.horizontal {
+    @include xl-screen {
+		height: 15px;
+	}
+}
