@@ -85,7 +85,7 @@ const ManageSidebar = () => {
                     className="w-100 t-text-dark t-heading-font btn font-weight-bold text-uppercase rounded-0 text-left active"
                     href="#"
                   >
-                    <i className="fa fa-arrow-right"></i> Languages
+                    - Languages
                   </a>
                 </li>
                 <li className="fk-pos-nav__sub-list border-bottom">
@@ -93,7 +93,7 @@ const ManageSidebar = () => {
                     className="w-100 t-text-dark t-heading-font btn font-weight-bold text-uppercase rounded-0 text-left"
                     href="#"
                   >
-                    <i className="fa fa-arrow-right"></i> instruction
+                    - instruction
                   </a>
                 </li>
                 <li className="fk-pos-nav__sub-list border-bottom">
@@ -101,7 +101,7 @@ const ManageSidebar = () => {
                     className="w-100 t-text-dark t-heading-font btn font-weight-bold text-uppercase rounded-0 text-left"
                     href="#"
                   >
-                    <i className="fa fa-arrow-right"></i> manage order
+                    - manage order
                   </a>
                 </li>
               </ul>

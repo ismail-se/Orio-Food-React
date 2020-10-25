@@ -1,10 +1,13 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+
+//3rd party packages
 import { Helmet } from "react-helmet";
 import Switch from "react-switch";
 import { confirmAlert } from "react-confirm-alert";
 import "react-confirm-alert/src/react-confirm-alert.css";
+import ContentLoader from "react-content-loader";
 
-//components
+//sidebar of manage page
 import ManageSidebar from "../ManageSidebar";
 
 //axios and base url
@@ -12,6 +15,47 @@ import axios from "axios";
 import { BASE_URL } from "../../../../../BaseUrl";
 
 const Lang = () => {
+  // States hook here
+  const [newLang, setNewLang] = useState({
+    name: "",
+    code: "",
+    image: null,
+    uploading: false,
+  });
+
+  //useEffect == componentDidMount()
+  useEffect(() => {}, []);
+
+  //set hook state for name, code
+  const handleSetNewLang = (e) => {
+    setNewLang({ ...newLang, [e.target.name]: e.target.value });
+  };
+  //set hook state for flag
+  const handleLangFlag = (e) => {
+    setNewLang({
+      ...newLang,
+      [e.target.name]: e.target.files[0],
+    });
+  };
+
+  //Save New Language
+  const handleSaveNewLang = (e) => {
+    e.preventDefault();
+    setNewLang({
+      ...newLang,
+      uploading: true,
+    });
+    // const langUrl = BASE_URL + `/settings/new-lang`;
+    // let formData = new FormData();
+    // formData.append("name", newLang.name);
+    // formData.append("code", newLang.code);
+    // formData.append("image", newLang.image);
+    // // todo:: add Authorization here
+    // return axios.post(langUrl, formData).then((res) => {
+    //   console.log(res.data);
+    // });
+  };
+
   //delete language
   const handleDeleteConfirmation = () => {
     confirmAlert({
@@ -61,64 +105,115 @@ const Lang = () => {
               ></button>
             </div>
             <div className="modal-body">
-              <form action="#">
-                <div className="">
-                  <label htmlFor="name" className="form-label">
-                    Name
-                  </label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="name"
-                    placeholder="Language name"
-                  />
-                </div>
+              {newLang.uploading === false ? (
+                <>
+                  <form onSubmit={handleSaveNewLang}>
+                    <div>
+                      <label htmlFor="name" className="form-label">
+                        Name <small className="text-primary">*</small>
+                      </label>
+                      <input
+                        type="text"
+                        className="form-control"
+                        id="name"
+                        name="name"
+                        placeholder="e.g. English"
+                        required
+                        onChange={handleSetNewLang}
+                      />
+                    </div>
 
-                <div className="mt-2">
-                  <label htmlFor="name" className="form-label">
-                    code
-                  </label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="name"
-                    placeholder="e.g. EN for english"
-                  />
-                </div>
+                    <div className="mt-2">
+                      <label htmlFor="code" className="form-label">
+                        code <small className="text-primary">*</small>
+                      </label>
+                      <input
+                        type="text"
+                        className="form-control"
+                        id="code"
+                        name="code"
+                        onChange={handleSetNewLang}
+                        required
+                        placeholder="e.g. EN for english"
+                      />
+                    </div>
 
-                <div className="mt-2">
-                  <label htmlFor="name" className="form-label">
-                    Flag
-                  </label>
-                  <input
-                    type="file"
-                    className="form-control"
-                    id="name"
-                    placeholder="e.g. EN for english"
-                  />
-                </div>
-              </form>
-            </div>
-            <div className="modal-footer">
-              <div className="row">
-                <div className="col-6">
-                  <button
-                    type="button"
-                    className="btn btn-success w-100 xsm-text text-uppercase t-width-max"
+                    <div className="mt-2">
+                      <label htmlFor="image" className="form-label">
+                        Flag
+                      </label>
+                      <input
+                        type="file"
+                        className="form-control"
+                        id="image"
+                        name="image"
+                        onChange={handleLangFlag}
+                      />
+                    </div>
+                    <div className="mt-4">
+                      <div className="row">
+                        <div className="col-6">
+                          <button
+                            type="submit"
+                            className="btn btn-success w-100 xsm-text text-uppercase t-width-max"
+                          >
+                            save
+                          </button>
+                        </div>
+                        <div className="col-6">
+                          <button
+                            type="button"
+                            className="btn btn-primary w-100 xsm-text text-uppercase t-width-max"
+                            data-dismiss="modal"
+                          >
+                            Close
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </form>
+                </>
+              ) : (
+                <>
+                  <div className="text-center text-primary text-uppercase">
+                    Please wait
+                  </div>
+                  <ContentLoader
+                    viewBox="0 0 380 70"
+                    backgroundColor={"#ff7675"}
                   >
-                    save
-                  </button>
-                </div>
-                <div className="col-6">
-                  <button
-                    type="button"
-                    className="btn btn-primary w-100 xsm-text text-uppercase t-width-max"
-                    data-dismiss="modal"
-                  >
-                    cancel
-                  </button>
-                </div>
-              </div>
+                    {/* Only SVG shapes */}
+                    <rect x="0" y="5" rx="2" ry="2" width="100%" height="15" />
+                    <rect x="0" y="30" rx="2" ry="2" width="100%" height="15" />
+                    <rect x="0" y="55" rx="2" ry="2" width="100%" height="15" />
+                    <rect x="0" y="80" rx="2" ry="2" width="100%" height="15" />
+                  </ContentLoader>
+                  <div className="mt-4">
+                    <div className="row">
+                      <div className="col-6">
+                        <button
+                          type="button"
+                          className="btn btn-success w-100 xsm-text text-uppercase t-width-max"
+                          onClick={(e) => {
+                            e.preventDefault();
+                          }}
+                        >
+                          save
+                        </button>
+                      </div>
+                      <div className="col-6">
+                        <button
+                          type="button"
+                          className="btn btn-primary w-100 xsm-text text-uppercase t-width-max"
+                          data-dismiss="modal"
+                        >
+                          Close
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </>
+              )}
             </div>
           </div>
         </div>
@@ -238,7 +333,15 @@ const Lang = () => {
                             <td className="xsm-text text-capitalize align-middle text-center">
                               <div className="d-flex justify-content-center">
                                 {/* todo:: background image dynamic */}
-                                <div class="fk-language__flag"></div>
+                                <div
+                                  class="fk-language__flag"
+                                  // style={{
+                                  //   backgroundImage: `url(${
+                                  //     BASE_URL +
+                                  //     "/public/images/flags/default.png"
+                                  //   })`,
+                                  // }}
+                                ></div>
                               </div>
                             </td>
                             <td className="xsm-text text-capitalize align-middle text-center">

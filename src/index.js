@@ -7,11 +7,14 @@ import "./i18next";
 
 //importing context provider here
 import { UserProvider } from "./contexts/User";
+import { SettingsProvider } from "./contexts/Settings";
 
 ReactDOM.render(
   <React.StrictMode>
     <UserProvider>
-      <App />
+      <SettingsProvider>
+        <App />
+      </SettingsProvider>
     </UserProvider>
   </React.StrictMode>,
   document.getElementById("foodkhan")
