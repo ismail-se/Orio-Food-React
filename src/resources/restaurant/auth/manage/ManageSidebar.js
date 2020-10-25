@@ -1,10 +1,28 @@
-import React from "react";
+import React, { useEffect } from "react";
+import $ from "jquery";
 //functions
 import { _t } from "../../../../functions/Functions";
 import { useTranslation } from "react-i18next";
 
 const ManageSidebar = () => {
   const { t } = useTranslation();
+  useEffect(() => {
+    handleJquery();
+  }, []);
+
+  const handleJquery = () => {
+    var posHasSub = $(".fk-pos-nav__list-has-sub");
+    var posSub = $(".fk-pos-nav__sub");
+    $(".fk-pos-nav__list-has-sub > a").on("click", function (e) {
+      e.preventDefault();
+    });
+    posHasSub.on("click", function () {
+      $(this).find(posSub).slideDown();
+      $(this).siblings().find(posSub).slideUp();
+      $(this).addClass("active").siblings().removeClass("active");
+    });
+  };
+
   return (
     <>
       {/* Navigation for Small Screen  */}

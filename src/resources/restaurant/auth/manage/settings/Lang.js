@@ -1,9 +1,38 @@
 import React from "react";
 import { Helmet } from "react-helmet";
 import Switch from "react-switch";
+import { confirmAlert } from "react-confirm-alert";
+import "react-confirm-alert/src/react-confirm-alert.css";
+
+//components
 import ManageSidebar from "../ManageSidebar";
 
 const Lang = () => {
+  const handleDeleteConfirmation = () => {
+    confirmAlert({
+      customUI: ({ onClose }) => {
+        return (
+          <div className="card card-body">
+            <h1>Are you sure?</h1>
+            <p>You want to delete this file?</p>
+            <div className="d-flex justify-content-center">
+              <button
+                className="btn btn-primary"
+                onClick={() => {
+                  onClose();
+                }}
+              >
+                Yes, delete it!
+              </button>
+              <button className="btn btn-success ml-2 px-3" onClick={onClose}>
+                No
+              </button>
+            </div>
+          </div>
+        );
+      },
+    });
+  };
   return (
     <>
       <Helmet>
@@ -226,15 +255,15 @@ const Lang = () => {
                                         </span>
                                         Translate
                                       </a>
-                                      <a
+                                      <button
                                         className="dropdown-item sm-text text-capitalize"
-                                        href="#"
+                                        onClick={handleDeleteConfirmation}
                                       >
                                         <span className="t-mr-8">
                                           <i className="fa fa-trash"></i>
                                         </span>
                                         Delete
-                                      </a>
+                                      </button>
                                     </div>
                                   </div>
                                 </td>
