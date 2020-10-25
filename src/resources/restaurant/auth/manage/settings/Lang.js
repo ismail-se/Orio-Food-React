@@ -7,14 +7,19 @@ import "react-confirm-alert/src/react-confirm-alert.css";
 //components
 import ManageSidebar from "../ManageSidebar";
 
+//axios and base url
+import axios from "axios";
+import { BASE_URL } from "../../../../../BaseUrl";
+
 const Lang = () => {
+  //delete language
   const handleDeleteConfirmation = () => {
     confirmAlert({
       customUI: ({ onClose }) => {
         return (
           <div className="card card-body">
             <h1>Are you sure?</h1>
-            <p>You want to delete this file?</p>
+            <p className="text-center">You want to delete this?</p>
             <div className="d-flex justify-content-center">
               <button
                 className="btn btn-primary"
@@ -40,12 +45,12 @@ const Lang = () => {
       </Helmet>
       {/* Add Customer */}
       <div className="modal fade" id="addCustomer" aria-hidden="true">
-        <div className="modal-dialog modal-lg">
+        <div className="modal-dialog modal-md">
           <div className="modal-content">
             <div className="modal-header align-items-center">
               <div className="fk-sm-card__content">
                 <h5 className="text-capitalize fk-sm-card__title">
-                  additional information
+                  Add new language
                 </h5>
               </div>
               <button
@@ -57,17 +62,41 @@ const Lang = () => {
             </div>
             <div className="modal-body">
               <form action="#">
-                <label
-                  htmlFor="exampleInputEmail1"
-                  className="form-label text-capitalize"
-                >
-                  add customer
-                </label>
-                <input
-                  type="text"
-                  className="form-control"
-                  id="exampleInputEmail1"
-                />
+                <div className="">
+                  <label htmlFor="name" className="form-label">
+                    Name
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="name"
+                    placeholder="Language name"
+                  />
+                </div>
+
+                <div className="mt-2">
+                  <label htmlFor="name" className="form-label">
+                    code
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="name"
+                    placeholder="e.g. EN for english"
+                  />
+                </div>
+
+                <div className="mt-2">
+                  <label htmlFor="name" className="form-label">
+                    Flag
+                  </label>
+                  <input
+                    type="file"
+                    className="form-control"
+                    id="name"
+                    placeholder="e.g. EN for english"
+                  />
+                </div>
               </form>
             </div>
             <div className="modal-footer">
@@ -105,173 +134,166 @@ const Lang = () => {
             <div className="col-lg-9 col-xxl-10 t-mb-30 mb-lg-0">
               <div className="t-bg-white">
                 <div className="fk-scroll--pos-menu" data-simplebar>
-                  <div className="tab-content">
-                    <div className="tab-pane fade show active" id="nav-1">
-                      <div className="t-pl-15 t-pr-15">
-                        <div className="row gx-2 align-items-center t-pt-15 t-pb-15">
-                          <div className="col-md-4 col-lg-3 t-mb-15 mb-md-0">
-                            <ul className="t-list fk-breadcrumb">
-                              <li className="fk-breadcrumb__list">
-                                <span className="t-link fk-breadcrumb__link text-capitalize">
-                                  Language List
-                                </span>
-                              </li>
-                            </ul>
+                  <div className="t-pl-15 t-pr-15">
+                    <div className="row gx-2 align-items-center t-pt-15 t-pb-15">
+                      <div className="col-md-4 col-lg-3 t-mb-15 mb-md-0">
+                        <ul className="t-list fk-breadcrumb">
+                          <li className="fk-breadcrumb__list">
+                            <span className="t-link fk-breadcrumb__link text-capitalize">
+                              Language List
+                            </span>
+                          </li>
+                        </ul>
+                      </div>
+                      <div className="col-md-8 col-lg-9">
+                        <div className="row gx-0 align-items-center">
+                          <div className="col-md-9 col-xl-10 t-mb-15 mb-md-0">
+                            <div className="input-group">
+                              <div className="form-file">
+                                <input
+                                  type="text"
+                                  className="form-control border-0 form-control--light-1 rounded-0"
+                                  placeholder="Search.."
+                                />
+                              </div>
+                              <button className="btn btn-primary" type="button">
+                                <i
+                                  className="fa fa-search"
+                                  aria-hidden="true"
+                                ></i>
+                              </button>
+                            </div>
                           </div>
-                          <div className="col-md-8 col-lg-9">
-                            <div className="row gx-0 align-items-center">
-                              <div className="col-md-9 col-xl-10 t-mb-15 mb-md-0">
-                                <div className="input-group">
-                                  <div className="form-file">
-                                    <input
-                                      type="text"
-                                      className="form-control border-0 form-control--light-1 rounded-0"
-                                      placeholder="Search.."
-                                    />
-                                  </div>
-                                  <button
-                                    className="btn btn-primary"
-                                    type="button"
+                          <div className="col-md-3 col-xl-2 text-md-right">
+                            <button
+                              type="button"
+                              className="btn btn-primary xsm-text text-uppercase btn-lg"
+                              data-toggle="modal"
+                              data-target="#addCustomer"
+                            >
+                              add new
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="table-responsive">
+                      <table className="table table-bordered min-table-height">
+                        <thead className="align-middle">
+                          <tr>
+                            <th
+                              scope="col"
+                              className="sm-text text-capitalize align-middle text-center border-1 border"
+                            >
+                              S/L
+                            </th>
+
+                            <th
+                              scope="col"
+                              className="sm-text text-capitalize align-middle text-center border-1 border"
+                            >
+                              Code
+                            </th>
+                            <th
+                              scope="col"
+                              className="sm-text text-capitalize align-middle text-center border-1 border"
+                            >
+                              Name
+                            </th>
+                            <th
+                              scope="col"
+                              className="sm-text text-capitalize align-middle text-center border-1 border"
+                            >
+                              Flag
+                            </th>
+                            <th
+                              scope="col"
+                              className="sm-text text-capitalize align-middle text-center border-1 border"
+                            >
+                              Set default
+                            </th>
+                            <th
+                              scope="col"
+                              className="sm-text text-capitalize align-middle text-center border-1 border"
+                            >
+                              Action
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody className="align-middle">
+                          <tr className="align-middle">
+                            <th
+                              scope="row"
+                              className="xsm-text text-capitalize align-middle text-center"
+                            >
+                              1
+                            </th>
+
+                            <td className="xsm-text align-middle text-center">
+                              en
+                            </td>
+                            <td className="xsm-text text-capitalize align-middle text-center">
+                              English
+                            </td>
+                            <td className="xsm-text text-capitalize align-middle text-center">
+                              <div className="d-flex justify-content-center">
+                                {/* todo:: background image dynamic */}
+                                <div class="fk-language__flag"></div>
+                              </div>
+                            </td>
+                            <td className="xsm-text text-capitalize align-middle text-center">
+                              <Switch
+                                checked={true}
+                                onChange={() => {}}
+                                height={22}
+                                width={44}
+                                offColor="#ee5253"
+                                disabled
+                              />
+                            </td>
+                            <td className="xsm-text text-capitalize align-middle text-center">
+                              <div className="dropdown">
+                                <button
+                                  className="btn t-bg-clear t-text-dark--light-40"
+                                  type="button"
+                                  data-toggle="dropdown"
+                                >
+                                  <i className="fa fa-ellipsis-h"></i>
+                                </button>
+                                <div className="dropdown-menu">
+                                  <a
+                                    className="dropdown-item sm-text text-capitalize"
+                                    href="#"
                                   >
-                                    <i
-                                      className="fa fa-search"
-                                      aria-hidden="true"
-                                    ></i>
+                                    <span className="t-mr-8">
+                                      <i className="fa fa-pencil"></i>
+                                    </span>
+                                    Edit
+                                  </a>
+                                  <a
+                                    className="dropdown-item sm-text text-capitalize"
+                                    href="#"
+                                  >
+                                    <span className="t-mr-8">
+                                      <i className="fa fa-refresh"></i>
+                                    </span>
+                                    Translate
+                                  </a>
+                                  <button
+                                    className="dropdown-item sm-text text-capitalize"
+                                    onClick={handleDeleteConfirmation}
+                                  >
+                                    <span className="t-mr-8">
+                                      <i className="fa fa-trash"></i>
+                                    </span>
+                                    Delete
                                   </button>
                                 </div>
                               </div>
-                              <div className="col-md-3 col-xl-2 text-md-right">
-                                <button
-                                  type="button"
-                                  className="btn btn-primary xsm-text text-uppercase btn-lg"
-                                  data-toggle="modal"
-                                  data-target="#addCustomer"
-                                >
-                                  add new
-                                </button>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        <div className="table-responsive">
-                          <table className="table table-bordered min-table-height">
-                            <thead className="align-middle">
-                              <tr>
-                                <th
-                                  scope="col"
-                                  className="sm-text text-capitalize align-middle text-center border-1 border"
-                                >
-                                  S/L
-                                </th>
-
-                                <th
-                                  scope="col"
-                                  className="sm-text text-capitalize align-middle text-center border-1 border"
-                                >
-                                  Code
-                                </th>
-                                <th
-                                  scope="col"
-                                  className="sm-text text-capitalize align-middle text-center border-1 border"
-                                >
-                                  Name
-                                </th>
-                                <th
-                                  scope="col"
-                                  className="sm-text text-capitalize align-middle text-center border-1 border"
-                                >
-                                  Flag
-                                </th>
-                                <th
-                                  scope="col"
-                                  className="sm-text text-capitalize align-middle text-center border-1 border"
-                                >
-                                  Set default
-                                </th>
-                                <th
-                                  scope="col"
-                                  className="sm-text text-capitalize align-middle text-center border-1 border"
-                                >
-                                  Action
-                                </th>
-                              </tr>
-                            </thead>
-                            <tbody className="align-middle">
-                              <tr className="align-middle">
-                                <th
-                                  scope="row"
-                                  className="xsm-text text-capitalize align-middle text-center"
-                                >
-                                  1
-                                </th>
-
-                                <td className="xsm-text align-middle text-center">
-                                  en
-                                </td>
-                                <td className="xsm-text text-capitalize align-middle text-center">
-                                  English
-                                </td>
-                                <td className="xsm-text text-capitalize align-middle text-center">
-                                  <div className="d-flex justify-content-center">
-                                    {/* todo:: background image dynamic */}
-                                    <div class="fk-language__flag"></div>
-                                  </div>
-                                </td>
-                                <td className="xsm-text text-capitalize align-middle text-center">
-                                  <Switch
-                                    checked={true}
-                                    onChange={() => {}}
-                                    height={22}
-                                    width={44}
-                                    offColor="#ee5253"
-                                    disabled
-                                  />
-                                </td>
-                                <td className="xsm-text text-capitalize align-middle text-center">
-                                  <div className="dropdown">
-                                    <button
-                                      className="btn t-bg-clear t-text-dark--light-40"
-                                      type="button"
-                                      data-toggle="dropdown"
-                                    >
-                                      <i className="fa fa-ellipsis-h"></i>
-                                    </button>
-                                    <div className="dropdown-menu">
-                                      <a
-                                        className="dropdown-item sm-text text-capitalize"
-                                        href="#"
-                                      >
-                                        <span className="t-mr-8">
-                                          <i className="fa fa-pencil"></i>
-                                        </span>
-                                        Edit
-                                      </a>
-                                      <a
-                                        className="dropdown-item sm-text text-capitalize"
-                                        href="#"
-                                      >
-                                        <span className="t-mr-8">
-                                          <i className="fa fa-refresh"></i>
-                                        </span>
-                                        Translate
-                                      </a>
-                                      <button
-                                        className="dropdown-item sm-text text-capitalize"
-                                        onClick={handleDeleteConfirmation}
-                                      >
-                                        <span className="t-mr-8">
-                                          <i className="fa fa-trash"></i>
-                                        </span>
-                                        Delete
-                                      </button>
-                                    </div>
-                                  </div>
-                                </td>
-                              </tr>
-                            </tbody>
-                          </table>
-                        </div>
-                      </div>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
                     </div>
                   </div>
                 </div>

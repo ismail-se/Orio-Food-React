@@ -1,21 +1,18 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
 
-/*-------------------------------------------------------------
-|translation functions
-|-------------------------------------------------------------*/
+/*translation functions*/
 const _t = (text) => {
-  // const url = BASE_URL + `/api/languages`;
-  // let formData = {
-  // key: text,
-  // };
-  // axios.post(url, formData);
+  /* const url = BASE_URL + `/api/languages`;
+  let formData = {
+  key: text,
+  };
+  axios.post(url, formData);
+  */
   return text;
 };
 
-/*------------------------------------------------------------
-|console functions, clear and dummy text like facebook
-|------------------------------------------------------------*/
+/*console functions, clear and dummy text like facebook*/
 const consolee = () => {
   var cssStop = "color: Red;" + "font-size: 50px;" + "font-weight: bold;";
   var cssText = "color: Black;" + "font-size: 18px;" + "font-weight: bold;";
@@ -27,10 +24,7 @@ const consolee = () => {
   );
 };
 
-/*-----------------------------------------------------------
-|navlink functions start here
-|------------------------------------------------------------*/
-
+/*navlink functions start here*/
 //navbar links
 const navbarHrefLink = (redirectTo) => {
   if (window.location.pathname === redirectTo) {

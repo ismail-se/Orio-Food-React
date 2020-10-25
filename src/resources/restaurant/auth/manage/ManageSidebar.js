@@ -30,58 +30,34 @@ const ManageSidebar = () => {
         <div className="row">
           <div className="col-12">
             <div className="fk-sm-nav" data-simplebar>
-              <ul className="t-list fk-sm-nav__bar list-group flex-row">
+              <ul className="t-list fk-sm-nav__bar flex-row">
                 <li className="fk-sm-nav__list active">
-                  <a
-                    href="#nav-1"
-                    className="t-link fk-sm-nav__link"
-                    data-toggle="list"
-                  >
+                  <a href="#" className="t-link fk-sm-nav__link">
                     manage page
                   </a>
                 </li>
                 <li className="fk-sm-nav__list">
-                  <a
-                    href="#nav-2"
-                    className="t-link fk-sm-nav__link"
-                    data-toggle="list"
-                  >
+                  <a href="#" className="t-link fk-sm-nav__link">
                     manage instruction
                   </a>
                 </li>
                 <li className="fk-sm-nav__list">
-                  <a
-                    href="#nav-3"
-                    className="t-link fk-sm-nav__link"
-                    data-toggle="list"
-                  >
+                  <a href="#" className="t-link fk-sm-nav__link">
                     manage order
                   </a>
                 </li>
                 <li className="fk-sm-nav__list">
-                  <a
-                    href="#nav-4"
-                    className="t-link fk-sm-nav__link"
-                    data-toggle="list"
-                  >
+                  <a href="#" className="t-link fk-sm-nav__link">
                     manage something
                   </a>
                 </li>
                 <li className="fk-sm-nav__list">
-                  <a
-                    href="#nav-5"
-                    className="t-link fk-sm-nav__link"
-                    data-toggle="list"
-                  >
+                  <a href="#" className="t-link fk-sm-nav__link">
                     manage something 2
                   </a>
                 </li>
                 <li className="fk-sm-nav__list">
-                  <a
-                    href="#nav-6"
-                    className="t-link fk-sm-nav__link"
-                    data-toggle="list"
-                  >
+                  <a href="#" className="t-link fk-sm-nav__link">
                     manage something 3
                   </a>
                 </li>
@@ -107,8 +83,7 @@ const ManageSidebar = () => {
                 <li className="fk-pos-nav__sub-list border-bottom">
                   <a
                     className="w-100 t-text-dark t-heading-font btn font-weight-bold text-uppercase rounded-0 text-left active"
-                    href="#nav-1"
-                    data-toggle="list"
+                    href="#"
                   >
                     <i className="fa fa-arrow-right"></i> Languages
                   </a>
@@ -116,8 +91,7 @@ const ManageSidebar = () => {
                 <li className="fk-pos-nav__sub-list border-bottom">
                   <a
                     className="w-100 t-text-dark t-heading-font btn font-weight-bold text-uppercase rounded-0 text-left"
-                    href="#nav-2"
-                    data-toggle="list"
+                    href="#"
                   >
                     <i className="fa fa-arrow-right"></i> instruction
                   </a>
@@ -125,8 +99,7 @@ const ManageSidebar = () => {
                 <li className="fk-pos-nav__sub-list border-bottom">
                   <a
                     className="w-100 t-text-dark t-heading-font btn font-weight-bold text-uppercase rounded-0 text-left"
-                    href="#nav-3"
-                    data-toggle="list"
+                    href="#"
                   >
                     <i className="fa fa-arrow-right"></i> manage order
                   </a>
@@ -144,8 +117,7 @@ const ManageSidebar = () => {
                 <li className="fk-pos-nav__sub-list border-bottom">
                   <a
                     className="w-100 t-text-dark t-heading-font btn font-weight-bold text-uppercase rounded-0 text-left"
-                    href="#nav-4"
-                    data-toggle="list"
+                    href="#"
                   >
                     manage page
                   </a>
@@ -153,8 +125,7 @@ const ManageSidebar = () => {
                 <li className="fk-pos-nav__sub-list border-bottom">
                   <a
                     className="w-100 t-text-dark t-heading-font btn font-weight-bold text-uppercase rounded-0 text-left"
-                    href="#nav-5"
-                    data-toggle="list"
+                    href="#"
                   >
                     instruction
                   </a>
@@ -162,8 +133,7 @@ const ManageSidebar = () => {
                 <li className="fk-pos-nav__sub-list border-bottom">
                   <a
                     className="w-100 t-text-dark t-heading-font btn font-weight-bold text-uppercase rounded-0 text-left"
-                    href="#nav-6"
-                    data-toggle="list"
+                    href="#"
                   >
                     manage order
                   </a>

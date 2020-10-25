@@ -14,6 +14,7 @@ import {
   Reports,
   Lang,
 } from "./imports/Pages";
+
 import { Navbar, Footer } from "./imports/Components";
 import { consolee } from "./functions/Functions";
 function App() {
