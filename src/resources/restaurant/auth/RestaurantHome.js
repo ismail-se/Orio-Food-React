@@ -9,7 +9,7 @@ import { SettingsContext } from "../../../contexts/Settings";
 //functions
 import { _t, restaurantMenuLink } from "../../../functions/Functions";
 import { useTranslation } from "react-i18next";
-import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
+import Skeleton from "react-loading-skeleton";
 
 const RestaurantHome = () => {
   //getting context values here

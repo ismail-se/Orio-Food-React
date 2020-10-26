@@ -4,6 +4,8 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { BASE_URL } from "../BaseUrl";
 
+//3rd party packages
+
 //creating context api
 const SettingsContext = React.createContext();
 
@@ -12,7 +14,7 @@ const SettingsProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [languageList, setLanguageList] = useState([]);
 
-  //useEffect == componentDidMount()
+  //useEffect- to get data on page load
   useEffect(() => {
     getLanguages();
   }, []);
@@ -28,7 +30,12 @@ const SettingsProvider = ({ children }) => {
 
   return (
     <SettingsContext.Provider
-      value={{ loading, setLoading, languageList, setLanguageList }}
+      value={{
+        loading,
+        setLoading,
+        languageList,
+        setLanguageList,
+      }}
     >
       {children}
     </SettingsContext.Provider>

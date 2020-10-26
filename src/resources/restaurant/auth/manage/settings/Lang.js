@@ -10,7 +10,7 @@ import Switch from "react-switch";
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 import { confirmAlert } from "react-confirm-alert";
 import "react-confirm-alert/src/react-confirm-alert.css";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 //pages & includes
@@ -40,6 +40,11 @@ const Lang = () => {
   const [newDefault, setNewDefault] = useState({
     uploading: false,
   });
+  const [searchedLanguages, setSearchedLanguages] = useState({
+    searchedBy: "",
+    list: null,
+    searched: false,
+  });
 
   //useEffect == componentDidMount()
   useEffect(() => {}, []);
@@ -48,6 +53,7 @@ const Lang = () => {
   const handleSetNewLang = (e) => {
     setNewLang({ ...newLang, [e.target.name]: e.target.value });
   };
+
   //set hook state for flag
   const handleLangFlag = (e) => {
     setNewLang({
@@ -80,7 +86,7 @@ const Lang = () => {
         });
         setLanguageList(res.data);
         setLoading(false);
-        toast.success(`${_t(t("A language has been created"))}`, {
+        toast.success(`${_t(t("A new language has been created"))}`, {
           position: "bottom-center",
           className: "text-center",
           autoClose: 10000,
@@ -91,6 +97,11 @@ const Lang = () => {
         });
       })
       .catch((error) => {
+        setLoading(false);
+        setNewLang({
+          ...newLang,
+          uploading: false,
+        });
         if (error.response.data.errors) {
           if (error.response.data.errors.name) {
             error.response.data.errors.name.forEach((item) => {
@@ -159,8 +170,32 @@ const Lang = () => {
       });
   };
 
-  //delete language
-  const handleDeleteConfirmation = () => {
+  //search language here
+  const handleSearchInput = (e) => {
+    if (searchedLanguages.searchedBy === "") {
+      setSearchedLanguages({ ...searchedLanguages, searched: false });
+    } else {
+      setSearchedLanguages({
+        ...searchedLanguages,
+        searchedBy: e.target.value,
+        searched: true,
+      });
+    }
+  };
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    let searchedLang = languageList.filter((item) => {
+      return (
+        item.name.includes(searchedLanguages.searchedBy) ||
+        item.code.includes(searchedLanguages.searchedBy)
+      );
+    });
+    setSearchedLanguages({ list: searchedLang, searched: true });
+  };
+
+  //delete confirmation of language
+  const handleDeleteConfirmation = (code) => {
     confirmAlert({
       customUI: ({ onClose }) => {
         return (
@@ -171,6 +206,7 @@ const Lang = () => {
               <button
                 className="btn btn-primary"
                 onClick={() => {
+                  handleDeleteLanguage(code);
                   onClose();
                 }}
               >
@@ -185,12 +221,63 @@ const Lang = () => {
       },
     });
   };
+
+  //delete language here
+  const handleDeleteLanguage = (code) => {
+    setLoading(true);
+    if (code !== "en") {
+      const lang_url = BASE_URL + `/settings/delete-lang/${code}`;
+      return (
+        axios
+          //todo:: Authorization here
+          .get(lang_url)
+          .then((res) => {
+            setLanguageList(res.data);
+            setLoading(false);
+            toast.success(
+              `${_t(t("Language has been deleted successfully"))}`,
+              {
+                position: "bottom-center",
+                className: "text-center",
+                autoClose: 10000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                className: "toast-notification",
+              }
+            );
+          })
+          .catch(() => {
+            setLoading(false);
+            toast.error(`${_t(t("Please try again."))}`, {
+              position: "bottom-center",
+              className: "text-center",
+              autoClose: 10000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              className: "toast-notification",
+            });
+          })
+      );
+    } else {
+      toast.error(`${_t(t("English language can not be deleted!"))}`, {
+        position: "bottom-center",
+        className: "text-center",
+        autoClose: 10000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        className: "toast-notification",
+      });
+    }
+  };
+
   return (
     <>
       <Helmet>
         <title>Languages & Translations</title>
       </Helmet>
-      <ToastContainer />
       {/* Add Customer */}
       <div className="modal fade" id="addCustomer" aria-hidden="true">
         <div className="modal-dialog modal-md">
@@ -222,6 +309,7 @@ const Lang = () => {
                         id="name"
                         name="name"
                         placeholder="e.g. English"
+                        value={newLang.name}
                         required
                         onChange={handleSetNewLang}
                       />
@@ -237,6 +325,7 @@ const Lang = () => {
                         id="code"
                         name="code"
                         onChange={handleSetNewLang}
+                        value={newLang.code}
                         required
                         placeholder="e.g. EN for english"
                       />
@@ -350,24 +439,27 @@ const Lang = () => {
                           <div className="col-md-8 col-lg-9">
                             <div className="row gx-0 align-items-center">
                               <div className="col-md-9 col-xl-10 t-mb-15 mb-md-0">
-                                <div className="input-group">
-                                  <div className="form-file">
-                                    <input
-                                      type="text"
-                                      className="form-control border-0 form-control--light-1 rounded-0"
-                                      placeholder="Search.."
-                                    />
+                                <form onSubmit={handleSearch}>
+                                  <div className="input-group">
+                                    <div className="form-file">
+                                      <input
+                                        type="text"
+                                        className="form-control border-0 form-control--light-1 rounded-0"
+                                        placeholder="Search.."
+                                        onChange={handleSearchInput}
+                                      />
+                                    </div>
+                                    <button
+                                      className="btn btn-primary"
+                                      type="submit"
+                                    >
+                                      <i
+                                        className="fa fa-search"
+                                        aria-hidden="true"
+                                      ></i>
+                                    </button>
                                   </div>
-                                  <button
-                                    className="btn btn-primary"
-                                    type="button"
-                                  >
-                                    <i
-                                      className="fa fa-search"
-                                      aria-hidden="true"
-                                    ></i>
-                                  </button>
-                                </div>
+                                </form>
                               </div>
                               <div className="col-md-3 col-xl-2 text-md-right">
                                 <button
@@ -426,97 +518,209 @@ const Lang = () => {
                               </tr>
                             </thead>
                             <tbody className="align-middle">
-                              {languageList.map((item, index) => {
-                                return (
-                                  <tr className="align-middle" key={index}>
-                                    <th
-                                      scope="row"
-                                      className="xsm-text text-capitalize align-middle text-center"
-                                    >
-                                      {index + 1}
-                                    </th>
-
-                                    <td className="xsm-text align-middle text-center">
-                                      {item.code}
-                                    </td>
-                                    <td className="xsm-text text-capitalize align-middle text-center">
-                                      {item.name}
-                                    </td>
-                                    <td className="xsm-text text-capitalize align-middle text-center">
-                                      <div className="d-flex justify-content-center">
-                                        <div
-                                          class="fk-language__flag"
-                                          style={
-                                            item.image !== null
-                                              ? {
-                                                  backgroundImage: `url(${item.image})`,
-                                                }
-                                              : ""
-                                          }
-                                        ></div>
-                                      </div>
-                                    </td>
-                                    <td className="xsm-text text-capitalize align-middle text-center">
-                                      <Switch
-                                        checked={item.is_default}
-                                        onChange={() => {
-                                          setNewDefault({
-                                            ...setNewDefault,
-                                            uploading: false,
-                                          });
-                                        }}
-                                        height={22}
-                                        width={44}
-                                        offColor="#ee5253"
-                                        disabled={
-                                          item.is_default ||
-                                          newDefault.uploading
-                                        }
-                                      />
-                                    </td>
-                                    <td className="xsm-text text-capitalize align-middle text-center">
-                                      <div className="dropdown">
-                                        <button
-                                          className="btn t-bg-clear t-text-dark--light-40"
-                                          type="button"
-                                          data-toggle="dropdown"
+                              {!searchedLanguages.searched
+                                ? [
+                                    languageList.map((item, index) => {
+                                      return (
+                                        <tr
+                                          className="align-middle"
+                                          key={index}
                                         >
-                                          <i className="fa fa-ellipsis-h"></i>
-                                        </button>
-                                        <div className="dropdown-menu">
-                                          <a
-                                            className="dropdown-item sm-text text-capitalize"
-                                            href="#"
+                                          <th
+                                            scope="row"
+                                            className="xsm-text text-capitalize align-middle text-center"
                                           >
-                                            <span className="t-mr-8">
-                                              <i className="fa fa-pencil"></i>
-                                            </span>
-                                            Edit
-                                          </a>
-                                          <a
-                                            className="dropdown-item sm-text text-capitalize"
-                                            href="#"
+                                            {index + 1}
+                                          </th>
+
+                                          <td className="xsm-text align-middle text-center">
+                                            {item.code}
+                                          </td>
+                                          <td className="xsm-text text-capitalize align-middle text-center">
+                                            {item.name}
+                                          </td>
+                                          <td className="xsm-text text-capitalize align-middle text-center">
+                                            <div className="d-flex justify-content-center">
+                                              <div
+                                                className="fk-language__flag"
+                                                style={
+                                                  item.image !== null
+                                                    ? {
+                                                        backgroundImage: `url(${item.image})`,
+                                                      }
+                                                    : ""
+                                                }
+                                              ></div>
+                                            </div>
+                                          </td>
+                                          <td className="xsm-text text-capitalize align-middle text-center">
+                                            <Switch
+                                              checked={item.is_default}
+                                              onChange={() => {
+                                                setNewDefault({
+                                                  ...setNewDefault,
+                                                  uploading: false,
+                                                });
+                                              }}
+                                              height={22}
+                                              width={44}
+                                              offColor="#ee5253"
+                                              disabled={
+                                                item.is_default ||
+                                                newDefault.uploading
+                                              }
+                                            />
+                                          </td>
+                                          <td className="xsm-text text-capitalize align-middle text-center">
+                                            <div className="dropdown">
+                                              <button
+                                                className="btn t-bg-clear t-text-dark--light-40"
+                                                type="button"
+                                                data-toggle="dropdown"
+                                              >
+                                                <i className="fa fa-ellipsis-h"></i>
+                                              </button>
+                                              <div className="dropdown-menu">
+                                                <a
+                                                  className="dropdown-item sm-text text-capitalize"
+                                                  href="#"
+                                                >
+                                                  <span className="t-mr-8">
+                                                    <i className="fa fa-pencil"></i>
+                                                  </span>
+                                                  Edit
+                                                </a>
+                                                <a
+                                                  className="dropdown-item sm-text text-capitalize"
+                                                  href="#"
+                                                >
+                                                  <span className="t-mr-8">
+                                                    <i className="fa fa-refresh"></i>
+                                                  </span>
+                                                  Translate
+                                                </a>
+                                                <button
+                                                  className="dropdown-item sm-text text-capitalize"
+                                                  onClick={() => {
+                                                    handleDeleteConfirmation(
+                                                      item.code
+                                                    );
+                                                  }}
+                                                >
+                                                  <span className="t-mr-8">
+                                                    <i className="fa fa-trash"></i>
+                                                  </span>
+                                                  Delete
+                                                </button>
+                                              </div>
+                                            </div>
+                                          </td>
+                                        </tr>
+                                      );
+                                    }),
+                                  ]
+                                : [
+                                    searchedLanguages.list.map(
+                                      (item, index) => {
+                                        return (
+                                          <tr
+                                            className="align-middle"
+                                            key={index}
                                           >
-                                            <span className="t-mr-8">
-                                              <i className="fa fa-refresh"></i>
-                                            </span>
-                                            Translate
-                                          </a>
-                                          <button
-                                            className="dropdown-item sm-text text-capitalize"
-                                            onClick={handleDeleteConfirmation}
-                                          >
-                                            <span className="t-mr-8">
-                                              <i className="fa fa-trash"></i>
-                                            </span>
-                                            Delete
-                                          </button>
-                                        </div>
-                                      </div>
-                                    </td>
-                                  </tr>
-                                );
-                              })}
+                                            <th
+                                              scope="row"
+                                              className="xsm-text text-capitalize align-middle text-center"
+                                            >
+                                              {index + 1}
+                                            </th>
+
+                                            <td className="xsm-text align-middle text-center">
+                                              {item.code}
+                                            </td>
+                                            <td className="xsm-text text-capitalize align-middle text-center">
+                                              {item.name}
+                                            </td>
+                                            <td className="xsm-text text-capitalize align-middle text-center">
+                                              <div className="d-flex justify-content-center">
+                                                <div
+                                                  className="fk-language__flag"
+                                                  style={
+                                                    item.image !== null
+                                                      ? {
+                                                          backgroundImage: `url(${item.image})`,
+                                                        }
+                                                      : ""
+                                                  }
+                                                ></div>
+                                              </div>
+                                            </td>
+                                            <td className="xsm-text text-capitalize align-middle text-center">
+                                              <Switch
+                                                checked={item.is_default}
+                                                onChange={() => {
+                                                  setNewDefault({
+                                                    ...setNewDefault,
+                                                    uploading: false,
+                                                  });
+                                                }}
+                                                height={22}
+                                                width={44}
+                                                offColor="#ee5253"
+                                                disabled={
+                                                  item.is_default ||
+                                                  newDefault.uploading
+                                                }
+                                              />
+                                            </td>
+                                            <td className="xsm-text text-capitalize align-middle text-center">
+                                              <div className="dropdown">
+                                                <button
+                                                  className="btn t-bg-clear t-text-dark--light-40"
+                                                  type="button"
+                                                  data-toggle="dropdown"
+                                                >
+                                                  <i className="fa fa-ellipsis-h"></i>
+                                                </button>
+                                                <div className="dropdown-menu">
+                                                  <a
+                                                    className="dropdown-item sm-text text-capitalize"
+                                                    href="#"
+                                                  >
+                                                    <span className="t-mr-8">
+                                                      <i className="fa fa-pencil"></i>
+                                                    </span>
+                                                    Edit
+                                                  </a>
+                                                  <a
+                                                    className="dropdown-item sm-text text-capitalize"
+                                                    href="#"
+                                                  >
+                                                    <span className="t-mr-8">
+                                                      <i className="fa fa-refresh"></i>
+                                                    </span>
+                                                    Translate
+                                                  </a>
+                                                  <button
+                                                    className="dropdown-item sm-text text-capitalize"
+                                                    onClick={() => {
+                                                      handleDeleteConfirmation(
+                                                        item.code
+                                                      );
+                                                    }}
+                                                  >
+                                                    <span className="t-mr-8">
+                                                      <i className="fa fa-trash"></i>
+                                                    </span>
+                                                    Delete
+                                                  </button>
+                                                </div>
+                                              </div>
+                                            </td>
+                                          </tr>
+                                        );
+                                      }
+                                    ),
+                                  ]}
                             </tbody>
                           </table>
                         </div>

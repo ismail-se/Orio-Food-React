@@ -1,14 +1,65 @@
-import React, { useContext } from "react";
-import { useTranslation } from "react-i18next";
+import React, { useState, useContext, useEffect } from "react";
 import { withRouter } from "react-router-dom";
+
+//pages, functions
 import { _t, navbarHrefLink } from "../../functions/Functions";
 
 //context consumer
 import { SettingsContext } from "../../contexts/Settings";
 
+//3rd party packages
+import { useTranslation } from "react-i18next";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 const Navbar = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  //getting context values here
   const { languageList } = useContext(SettingsContext);
+
+  // States hook  here
+  const [defaultLang, setDefaultLang] = useState(null);
+
+  useEffect(() => {
+    handleOnLoadDefaultLang();
+  }, [languageList]);
+
+  //set default language on site load
+  const handleOnLoadDefaultLang = () => {
+    let localLang = localStorage.i18nextLng;
+    if (localLang) {
+      if (localLang === "undefined" || localLang.includes("en-")) {
+        languageList.map((item) => {
+          if (item.is_default === true) {
+            i18n.changeLanguage(item.code);
+            setDefaultLang(item);
+          }
+        });
+      } else {
+        const temp = languageList.find((item) => {
+          return item.code === localLang;
+        });
+        setDefaultLang(temp);
+        i18n.changeLanguage(localLang);
+      }
+    }
+  };
+
+  //change language to selected
+  const handleDefaultLang = (lang) => {
+    i18n.changeLanguage(lang.code);
+    setDefaultLang(lang);
+    toast.success(`${_t(t("Language has been switched!"))}`, {
+      position: "bottom-center",
+      className: "text-center",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      className: "toast-notification",
+    });
+  };
+
   return (
     <>
       <header id="header">
@@ -48,41 +99,43 @@ const Navbar = () => {
                 <ul className="t-list config-list d-flex flex-column flex-md-row align-items-md-center flex-wrap justify-content-md-center justify-content-lg-between justify-content-xl-end">
                   <li className="config-list__item">
                     <div className="fk-language d-flex align-items-center">
-                      <div className="fk-language__flag"></div>
+                      <div
+                        className="fk-language__flag"
+                        style={{
+                          backgroundImage: `${
+                            defaultLang && `url(${defaultLang.image})`
+                          }`,
+                        }}
+                      ></div>
                       <div className="dropdown">
                         <a
                           className="text-capitalize sm-text nav-link dropdown-toggle"
                           href="#"
                           data-toggle="dropdown"
                           aria-expanded="false"
+                          rel="noopener noreferrer"
                         >
-                          language
+                          {defaultLang ? defaultLang.name : "Language"}
                         </a>
                         <ul className="dropdown-menu">
-                          <li>
-                            <a
-                              className="dropdown-item sm-text text-capitalize active"
-                              href="#"
-                            >
-                              bangla
-                            </a>
-                          </li>
-                          <li>
-                            <a
-                              className="dropdown-item sm-text text-capitalize"
-                              href="#"
-                            >
-                              english
-                            </a>
-                          </li>
-                          <li>
-                            <a
-                              className="dropdown-item sm-text text-capitalize"
-                              href="#"
-                            >
-                              spanish
-                            </a>
-                          </li>
+                          {languageList.map((item, index) => {
+                            return (
+                              <li key={index}>
+                                <button
+                                  type="button"
+                                  className={`dropdown-item sm-text text-capitalize ${
+                                    defaultLang &&
+                                    item.code === defaultLang.code
+                                      ? "active"
+                                      : ""
+                                  }`}
+                                  onClick={() => handleDefaultLang(item)}
+                                >
+                                  {item.name}
+                                </button>
+                              </li>
+                            );
+                          })}
                         </ul>
                       </div>
                     </div>

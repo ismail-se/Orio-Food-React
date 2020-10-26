@@ -17,12 +17,14 @@ import {
 
 import { Navbar, Footer } from "./imports/Components";
 import { consolee } from "./functions/Functions";
+import { ToastContainer } from "react-toastify";
 function App() {
   useEffect(() => {
     // consolee();
   }, []);
   return (
     <>
+      <ToastContainer />
       <Router>
         <Navbar />
         <Switch>
