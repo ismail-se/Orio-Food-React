@@ -52,7 +52,7 @@ const footerHrefLink = (redirectTo) => {
       <NavLink
         to={{ pathname: "/refresh", state: redirectTo }}
         exact
-        className="t-link w-100 t-h-80"
+        className="t-link w-100 t-h-50"
       >
         <span
           className="bg-primary fk-brand--footer-img fk-brand__img--fk"
@@ -64,7 +64,7 @@ const footerHrefLink = (redirectTo) => {
     );
   } else {
     return (
-      <NavLink to={redirectTo} className="t-link w-100 t-h-80">
+      <NavLink to={redirectTo} className="t-link w-100 t-h-50">
         <span
           className="bg-primary fk-brand--footer-img fk-brand__img--fk"
           style={{

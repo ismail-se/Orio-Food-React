@@ -1,3 +1,9 @@
+/* for no/less table data */
 .min-table-height {
   min-height: 100px;
+}
+
+/* for clock font size */
+.font-10px {
+  font-size: 10px;
 }

@@ -34,16 +34,16 @@ const Footer = () => {
         <div className="container">
           <div className="row align-items-lg-center">
             <div className="col-lg-2 t-mb-30 mb-lg-0">
-              <div className="fk-brand--footer fk-brand--footer-sqr mx-auto ml-lg-0 mr-lg-auto">
+              <div className="fk-brand--footer fk-brand--footer-sqr mx-auto mr-lg-auto ml-lg-0">
                 {footerHrefLink("/dashboard")}
               </div>
             </div>
             <div className="col-lg-6 col-xl-7 t-mb-30 mb-lg-0">
-              <p className="mb-0 text-center">
-                &copy;{" "}
-                <a href="#" className="t-link t-link--alpha text-capitalize">
+              <p className="mb-0 text-center sm-text">
+                &copy;
+                <a href="#" className="t-link t-link--alpha text-capitalize ">
                   Food Khan
-                </a>{" "}
+                </a>
                 | All rights reserved | 2020
               </p>
             </div>
@@ -60,7 +60,7 @@ const Footer = () => {
                       "showTime()";
                     }}
                   ></div>
-                  <p className="mb-0 xsm-text font-weight-normal">
+                  <p className="mb-0 font-10px font-weight-normal">
                     {weekday[new Date().getDay()]}, {new Date().getDate()}{" "}
                     {month[new Date().getMonth()]}, {new Date().getFullYear()}
                   </p>

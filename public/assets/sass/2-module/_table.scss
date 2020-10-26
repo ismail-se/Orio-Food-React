@@ -4,10 +4,10 @@
         background: $light-2;
     }
     &__body {
-        height: 250px;
+        height: 225px;
         background: $white;
         @include xlii-screen {
-            height: 400px;
+            height: 375px;
         }
     }
 }

@@ -2,22 +2,27 @@
     "use strict";
 
     $(document).ready(function () {
-        
-
         /*--------POS Nav with Submenu----------*/
         var posHasSub = $(".fk-pos-nav__list-has-sub");
         var posSub = $(".fk-pos-nav__sub");
 
-        $(".fk-pos-nav__list-has-sub > a").on("click", function(e){
-            e.preventDefault()
-        })
-        posHasSub.on("click", function() {
+        $(".fk-pos-nav__list-has-sub > a").on("click", function (e) {
+            e.preventDefault();
+        });
+        posHasSub.on("click", function () {
             $(this).find(posSub).slideDown();
             $(this).siblings().find(posSub).slideUp();
             $(this).addClass("active").siblings().removeClass("active");
-        })
+        });
 
         /*--------POS Nav with Submenu End----------*/
+
+        /*--------Calculator Toggle----------*/
+        var calculatorToggler = $('.fk-calculator-toggle');
+        calculatorToggler.on("click", function() {
+            $(".calculator").toggleClass("active");
+        })
+        /*--------Calculator Toggle End----------*/
 
         /*--------Feather Icon----------*/
         feather.replace();
@@ -84,6 +89,8 @@
         $(".fk-select").select2();
         /*-----Select End---------*/
 
+        
+
         /*----Enable Bootstrap Tooltip and Popover-------*/
         $('[data-toggle="tooltip"]').tooltip();
         $('[data-toggle="popover"]').popover();
@@ -95,37 +102,9 @@
             $(this).addClass("active").siblings().removeClass("active");
         });
         /*-----Mobile Nav Active Toggle End---------*/
-
-        /*-----------------------------------------
-            Back to Top
-        -------------------------------------------*/
-        // $(document).on("click", ".back-to-top", function () {
-        //     $("html,body").animate(
-        //         {
-        //             scrollTop: 0,
-        //         },
-        //         2000
-        //     );
-        // });
-        /*-----------------------------------------
-            Back to Top End
-        -------------------------------------------*/
+        
     });
 })(jQuery);
 
-$(window).on("scroll", function () {
-    // var ScrollTop = $(".back-to-top");
-    // if ($(window).scrollTop() > 1200) {
-    //     ScrollTop.fadeIn(1000);
-    // } else {
-    //     ScrollTop.fadeOut(1000);
-    // }
-});
 
-$(window).on("load", function () {
-    /*-----------------
-        preloader
-    ------------------*/
-    // var preLoder = $(".preloader");
-    // preLoder.fadeOut(1000);
-});
+

@@ -1,9 +1,14 @@
-import React from "react";
+import React, { useContext } from "react";
 import { useTranslation } from "react-i18next";
 import { withRouter } from "react-router-dom";
 import { _t, navbarHrefLink } from "../../functions/Functions";
+
+//context consumer
+import { SettingsContext } from "../../contexts/Settings";
+
 const Navbar = () => {
   const { t } = useTranslation();
+  const { languageList } = useContext(SettingsContext);
   return (
     <>
       <header id="header">
@@ -56,7 +61,7 @@ const Navbar = () => {
                         <ul className="dropdown-menu">
                           <li>
                             <a
-                              className="dropdown-item sm-text text-capitalize"
+                              className="dropdown-item sm-text text-capitalize active"
                               href="#"
                             >
                               bangla

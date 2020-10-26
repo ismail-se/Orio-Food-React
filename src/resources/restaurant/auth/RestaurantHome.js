@@ -4,13 +4,16 @@ import { Helmet } from "react-helmet";
 
 //importing context consumer here
 import { UserContext } from "../../../contexts/User";
+import { SettingsContext } from "../../../contexts/Settings";
 
 //functions
 import { _t, restaurantMenuLink } from "../../../functions/Functions";
 import { useTranslation } from "react-i18next";
+import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 
 const RestaurantHome = () => {
   //getting context values here
+  const { loading } = useContext(SettingsContext);
   const { signUpInfo } = useContext(UserContext);
 
   const { t } = useTranslation();
@@ -22,105 +25,107 @@ const RestaurantHome = () => {
       <main id="main" data-simplebar>
         <div className="container">
           <div className="row t-mt-70 t-mb-70">
-            <div className="col-md-6 col-lg-4 t-mb-30">
-              {/* image, imgAltTxt, smallInfoIcon, infoTextColorName, infoText, title, redirectToUrl */}
-              {restaurantMenuLink(
-                "/assets/img/product-img-1.png",
-                [_t(t("Work Periods"))],
-                "fa fa-clock-o",
-                "t-text-alpha",
-                [_t(t("Time"))],
-                [_t(t("Work Periods"))],
-                "/dashboard/work-periods"
-              )}
-            </div>
-            <div className="col-md-6 col-lg-4 t-mb-30">
-              {/* image, imgAltTxt, smallInfoIcon, infoTextColorName, infoText, title, redirectToUrl */}
-              {restaurantMenuLink(
-                "/assets/img/product-img-2.png",
-                [_t(t("Point of Sale"))],
-                "fa fa-cart-plus",
-                "t-text-gamma",
-                [_t(t("Pos"))],
-                [_t(t("Point of Sale"))],
-                "/dashboard/pos"
-              )}
-            </div>
-            <div className="col-md-6 col-lg-4 t-mb-30">
-              {/* image, imgAltTxt, smallInfoIcon, infoTextColorName, infoText, title, redirectToUrl */}
-              {restaurantMenuLink(
-                "/assets/img/product-img-3.png",
-                [_t(t("Order Histories"))],
-                "fa fa-pencil",
-                "t-text-delta",
-                [_t(t("orders"))],
-                [_t(t("Order Histories"))],
-                "/dashboard/orders"
-              )}
-            </div>
-            <div className="col-md-6 col-lg-4 t-mb-30">
-              {/* image, imgAltTxt, smallInfoIcon, infoTextColorName, infoText, title, redirectToUrl */}
-              {restaurantMenuLink(
-                "/assets/img/product-img-4.png",
-                [_t(t("Customers"))],
-                "fa fa-user-circle-o",
-                "t-text-primary",
-                [_t(t("Customers"))],
-                [_t(t("Customers"))],
-                "/dashboard/customers"
-              )}
-            </div>
-            <div className="col-md-6 col-lg-4 t-mb-30">
-              {/* image, imgAltTxt, smallInfoIcon, infoTextColorName, infoText, title, redirectToUrl */}
-              {restaurantMenuLink(
-                "/assets/img/product-img-9.gif",
-                [_t(t("Kitchen"))],
-                "fa fa-coffee",
-                "t-text-epsilon",
-                [_t(t("Kitchen"))],
-                [_t(t("Kitchen"))],
-                "/dashboard/kitchen"
-              )}
-            </div>
-            <div className="col-md-6 col-lg-4 t-mb-30">
-              {/* image, imgAltTxt, smallInfoIcon, infoTextColorName, infoText, title, redirectToUrl */}
-              {restaurantMenuLink(
-                "/assets/img/product-img-5.png",
-                [_t(t("Branch"))],
-                "fa fa-home",
-                "t-text-eta",
-                [_t(t("Branch"))],
-                [_t(t("Branches"))],
-                "/dashboard/branches"
-              )}
-            </div>
-            <div className="col-md-6 col-lg-4 t-mb-30">
-              {/* image, imgAltTxt, smallInfoIcon, infoTextColorName, infoText, title, redirectToUrl */}
-              {restaurantMenuLink(
-                "/assets/img/product-img-7.png",
-                [_t(t("Reports"))],
-                "fa fa-clock-o",
-                "t-text-kappa",
-                [_t(t("Reports"))],
-                [_t(t("Reports"))],
-                "/dashboard/reports"
-              )}
-            </div>
-            <div className="col-md-6 col-lg-4 t-mb-30">
-              {/* image, imgAltTxt, smallInfoIcon, infoTextColorName, infoText, title, redirectToUrl */}
-              {restaurantMenuLink(
-                "/assets/img/product-img-8.png",
-                [_t(t("Manage"))],
-                "fa fa-clock-o",
-                "t-text-zeta",
-                [_t(t("Manage"))],
-                [_t(t("Manage"))],
-                "/dashboard/manage/settings/languages"
-              )}
-            </div>
-            {/* <div className="col-md-6 col-lg-4 t-mb-30"> */}
-            {/* image, imgAltTxt, smallInfoIcon, infoTextColorName, infoText, title, redirectToUrl */}
-            {/* {restaurantMenuLink(
+            {!loading ? (
+              <>
+                <div className="col-md-6 col-lg-4 t-mb-30">
+                  {/* image, imgAltTxt, smallInfoIcon, infoTextColorName, infoText, title, redirectToUrl */}
+                  {restaurantMenuLink(
+                    "/assets/img/product-img-1.png",
+                    [_t(t("Work Periods"))],
+                    "fa fa-clock-o",
+                    "t-text-alpha",
+                    [_t(t("Time"))],
+                    [_t(t("Work Periods"))],
+                    "/dashboard/work-periods"
+                  )}
+                </div>
+                <div className="col-md-6 col-lg-4 t-mb-30">
+                  {/* image, imgAltTxt, smallInfoIcon, infoTextColorName, infoText, title, redirectToUrl */}
+                  {restaurantMenuLink(
+                    "/assets/img/product-img-2.png",
+                    [_t(t("Point of Sale"))],
+                    "fa fa-cart-plus",
+                    "t-text-gamma",
+                    [_t(t("Pos"))],
+                    [_t(t("Point of Sale"))],
+                    "/dashboard/pos"
+                  )}
+                </div>
+                <div className="col-md-6 col-lg-4 t-mb-30">
+                  {/* image, imgAltTxt, smallInfoIcon, infoTextColorName, infoText, title, redirectToUrl */}
+                  {restaurantMenuLink(
+                    "/assets/img/product-img-3.png",
+                    [_t(t("Order Histories"))],
+                    "fa fa-pencil",
+                    "t-text-delta",
+                    [_t(t("orders"))],
+                    [_t(t("Order Histories"))],
+                    "/dashboard/orders"
+                  )}
+                </div>
+                <div className="col-md-6 col-lg-4 t-mb-30">
+                  {/* image, imgAltTxt, smallInfoIcon, infoTextColorName, infoText, title, redirectToUrl */}
+                  {restaurantMenuLink(
+                    "/assets/img/product-img-4.png",
+                    [_t(t("Customers"))],
+                    "fa fa-user-circle-o",
+                    "t-text-primary",
+                    [_t(t("Customers"))],
+                    [_t(t("Customers"))],
+                    "/dashboard/customers"
+                  )}
+                </div>
+                <div className="col-md-6 col-lg-4 t-mb-30">
+                  {/* image, imgAltTxt, smallInfoIcon, infoTextColorName, infoText, title, redirectToUrl */}
+                  {restaurantMenuLink(
+                    "/assets/img/product-img-9.gif",
+                    [_t(t("Kitchen"))],
+                    "fa fa-coffee",
+                    "t-text-epsilon",
+                    [_t(t("Kitchen"))],
+                    [_t(t("Kitchen"))],
+                    "/dashboard/kitchen"
+                  )}
+                </div>
+                <div className="col-md-6 col-lg-4 t-mb-30">
+                  {/* image, imgAltTxt, smallInfoIcon, infoTextColorName, infoText, title, redirectToUrl */}
+                  {restaurantMenuLink(
+                    "/assets/img/product-img-5.png",
+                    [_t(t("Branch"))],
+                    "fa fa-home",
+                    "t-text-eta",
+                    [_t(t("Branch"))],
+                    [_t(t("Branches"))],
+                    "/dashboard/branches"
+                  )}
+                </div>
+                <div className="col-md-6 col-lg-4 t-mb-30">
+                  {/* image, imgAltTxt, smallInfoIcon, infoTextColorName, infoText, title, redirectToUrl */}
+                  {restaurantMenuLink(
+                    "/assets/img/product-img-7.png",
+                    [_t(t("Reports"))],
+                    "fa fa-clock-o",
+                    "t-text-kappa",
+                    [_t(t("Reports"))],
+                    [_t(t("Reports"))],
+                    "/dashboard/reports"
+                  )}
+                </div>
+                <div className="col-md-6 col-lg-4 t-mb-30">
+                  {/* image, imgAltTxt, smallInfoIcon, infoTextColorName, infoText, title, redirectToUrl */}
+                  {restaurantMenuLink(
+                    "/assets/img/product-img-8.png",
+                    [_t(t("Manage"))],
+                    "fa fa-clock-o",
+                    "t-text-zeta",
+                    [_t(t("Manage"))],
+                    [_t(t("Manage"))],
+                    "/dashboard/manage/settings/languages"
+                  )}
+                </div>
+                {/* <div className="col-md-6 col-lg-4 t-mb-30"> */}
+                {/* image, imgAltTxt, smallInfoIcon, infoTextColorName, infoText, title, redirectToUrl */}
+                {/* {restaurantMenuLink(
                 "/assets/img/product-img-6.png",
                 [_t(t("Logout"))],
                 "fa fa-clock-o",
@@ -130,6 +135,38 @@ const RestaurantHome = () => {
                 "/logout"
               )}
             </div> */}
+              </>
+            ) : (
+              <>
+                <div className="col-md-6 col-lg-4 t-mb-30">
+                  <Skeleton style={{ height: "250px" }} className="bg-white" />
+                </div>
+                <div className="col-md-6 col-lg-4 t-mb-30">
+                  <Skeleton style={{ height: "250px" }} className="bg-white" />
+                </div>
+                <div className="col-md-6 col-lg-4 t-mb-30">
+                  <Skeleton style={{ height: "250px" }} className="bg-white" />
+                </div>
+                <div className="col-md-6 col-lg-4 t-mb-30">
+                  <Skeleton style={{ height: "250px" }} className="bg-white" />
+                </div>
+                <div className="col-md-6 col-lg-4 t-mb-30">
+                  <Skeleton style={{ height: "250px" }} className="bg-white" />
+                </div>
+                <div className="col-md-6 col-lg-4 t-mb-30">
+                  <Skeleton style={{ height: "250px" }} className="bg-white" />
+                </div>
+                <div className="col-md-6 col-lg-4 t-mb-30">
+                  <Skeleton style={{ height: "250px" }} className="bg-white" />
+                </div>
+                <div className="col-md-6 col-lg-4 t-mb-30">
+                  <Skeleton style={{ height: "250px" }} className="bg-white" />
+                </div>
+                <div className="col-md-6 col-lg-4 t-mb-30">
+                  <Skeleton style={{ height: "250px" }} className="bg-white" />
+                </div>
+              </>
+            )}
           </div>
         </div>
       </main>

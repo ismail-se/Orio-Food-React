@@ -20759,6 +20759,9 @@ hr {
   .simplebar-track.horizontal {
     height: 15px; } }
 
+button.btn.t-bg-clear.t-text-dark--light-40.show {
+  color: #F64E60; }
+
 /*---------------------------------------
     0.2 Modules Style
 -----------------------------------------*/
@@ -20769,13 +20772,13 @@ hr {
   width: 80px;
   position: relative; }
   .fk-brand--footer {
-    width: 80px; }
+    width: 50px; }
     .fk-brand--footer-sqr {
-      height: 80px; }
+      height: 50px; }
     .fk-brand--footer-img {
       display: inline-block;
       width: 100%;
-      height: 80px;
+      height: 50px;
       background-position: center;
       background-size: contain;
       background-repeat: no-repeat; }
@@ -20862,7 +20865,7 @@ hr {
   display: inline-block;
   position: relative; }
   .notification__icon {
-    font-size: 34px;
+    font-size: 30px;
     line-height: 1;
     -webkit-transition: all .3s ease-in;
     -o-transition: all .3s ease-in;
@@ -20905,7 +20908,7 @@ hr {
     2.9 Clock
 -----------------------------------------*/
 .clock {
-  height: 80px;
+  height: 50px;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -20921,16 +20924,16 @@ hr {
     display: -webkit-box;
     display: -ms-flexbox;
     display: flex;
-    width: 50px;
-    height: 50px;
+    width: 40px;
+    height: 40px;
     background: #fff;
     border-radius: 3px;
-    font-size: 30px;
+    font-size: 25px;
     color: #de222a; }
     .clock__icon span {
       margin: auto; }
   .clock__content {
-    font-size: 20px;
+    font-size: 16px;
     color: #fff;
     font-weight: 700; }
 
@@ -21478,7 +21481,10 @@ hr {
     2.16 Scroll
 -----------------------------------------*/
 .fk-scroll--pos-menu {
-  height: calc(100vh - 228px); }
+  height: calc(100vh - 198px); }
+
+.fk-scroll--order-history {
+  height: calc(100vh - 267px); }
 
 /*---------------------------------------
     2.17 POS Nave
@@ -22076,10 +22082,10 @@ hr {
   -webkit-box-sizing: border-box;
   box-sizing: border-box; }
   .fk-dish--scroll {
-    height: calc(100vh - 430px); }
+    height: calc(100vh - 468px); }
     @media screen and (min-width: 1200px) {
       .fk-dish--scroll {
-        height: calc(100vh - 225px); } }
+        height: calc(100vh - 195px); } }
   .fk-dish-card {
     position: relative;
     -webkit-box-shadow: 0 5px 10px 0 rgba(34, 39, 54, 0.15);
@@ -22129,11 +22135,22 @@ hr {
     2.27 Addons Variation
 -----------------------------------------*/
 .fk-addons-variation {
+  margin-right: 10px;
+  margin-left: 10px;
+  position: relative;
   background: #fff;
-  height: 160px; }
+  height: 260px; }
   @media screen and (min-width: 1200px) {
     .fk-addons-variation {
-      height: calc(100vh - 225px); } }
+      height: calc(100vh - 195px); } }
+  @media screen and (min-width: 1200px) {
+    .fk-addons-variation__cart {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      text-align: center;
+      overflow: hidden; } }
 
 /*---------------------------------------
     2.28 Addons Table
@@ -22145,9 +22162,7 @@ hr {
   border: 1px solid #cce3f1; }
   @media screen and (min-width: 1200px) {
     .fk-addons-table {
-      min-width: 350px;
-      margin-left: 10px;
-      margin-right: 10px; } }
+      min-width: 100%; } }
   .fk-addons-table__head {
     padding-top: 3px;
     padding-bottom: 3px;
@@ -22172,7 +22187,7 @@ hr {
     2.29 Right Nav
 -----------------------------------------*/
 .fk-right-nav {
-  height: calc(100vh - 180px); }
+  height: calc(100vh - 150px); }
   .fk-right-nav__scroll {
     height: calc(100vh - 320px); }
   .fk-right-nav__guest-btn {
@@ -22231,7 +22246,7 @@ hr {
   background: #fff; }
   @media screen and (min-width: 1400px) {
     .fk-table__body {
-      height: 400px; } }
+      height: 375px; } }
 
 /*---------------------------------------
     2.31 Calculator
@@ -22411,6 +22426,18 @@ div.equal:active {
   font-weight: bold; }
 
 /*---------------------------------------
+    2.32 Paid Input
+-----------------------------------------*/
+.fk-paid-input::-webkit-input-placeholder {
+  font-weight: 300; }
+.fk-paid-input:-ms-input-placeholder {
+  font-weight: 300; }
+.fk-paid-input::-ms-input-placeholder {
+  font-weight: 300; }
+.fk-paid-input::placeholder {
+  font-weight: 300; }
+
+/*---------------------------------------
     0.3 Theme Style
 -----------------------------------------*/
 /*---------------------------------------
@@ -22508,8 +22535,14 @@ div.equal:active {
 .t-mb-50 {
   margin-bottom: 50px; }
 
+.t-mb-55 {
+  margin-bottom: 55px; }
+
 .t-mb-60 {
   margin-bottom: 60px; }
+
+.t-mb-65 {
+  margin-bottom: 65px; }
 
 .t-mb-70 {
   margin-bottom: 70px; }
@@ -22799,6 +22832,9 @@ div.equal:active {
 .t-heading-font {
   font-family: "Poppins", sans-serif; }
 
+.t-h-50 {
+  height: 50px; }
+
 .t-h-80 {
   height: 80px; }
 
@@ -22884,7 +22920,7 @@ div.equal:active {
 -----------------------------------------*/
 @media screen and (min-width: 768px) {
   #main {
-    height: calc(100vh - 160px); } }
+    height: calc(100vh - 130px); } }
 
 /*---------------------------------------
     4.3 Footer

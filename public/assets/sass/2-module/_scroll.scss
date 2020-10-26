@@ -1,3 +1,9 @@
-.fk-scroll--pos-menu {
-    height: calc(100vh - 228px);
+
+.fk-scroll {
+    &--pos-menu {
+        height: calc(100vh - 198px);
+    }
+    &--order-history {
+        height: calc(100vh - 267px);
+    }
 }
