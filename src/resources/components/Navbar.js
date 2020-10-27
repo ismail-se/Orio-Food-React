@@ -15,30 +15,33 @@ import "react-toastify/dist/ReactToastify.css";
 const Navbar = () => {
   const { t, i18n } = useTranslation();
   //getting context values here
-  const { languageList } = useContext(SettingsContext);
+  let { navLanguageList } = useContext(SettingsContext);
 
   // States hook  here
   const [defaultLang, setDefaultLang] = useState(null);
 
   useEffect(() => {
     handleOnLoadDefaultLang();
-  }, [languageList]);
+  }, [navLanguageList]);
 
   //set default language on site load
   const handleOnLoadDefaultLang = () => {
     let localLang = localStorage.i18nextLng;
     if (localLang) {
       if (localLang === "undefined" || localLang.includes("en-")) {
-        languageList.map((item) => {
-          if (item.is_default === true) {
-            i18n.changeLanguage(item.code);
-            setDefaultLang(item);
-          }
-        });
+        navLanguageList &&
+          navLanguageList.map((item) => {
+            if (item.is_default === true) {
+              i18n.changeLanguage(item.code);
+              setDefaultLang(item);
+            }
+          });
       } else {
-        const temp = languageList.find((item) => {
-          return item.code === localLang;
-        });
+        const temp =
+          navLanguageList &&
+          navLanguageList.find((item) => {
+            return item.code === localLang;
+          });
         setDefaultLang(temp);
         i18n.changeLanguage(localLang);
       }
@@ -118,24 +121,25 @@ const Navbar = () => {
                           {defaultLang ? defaultLang.name : "Language"}
                         </a>
                         <ul className="dropdown-menu">
-                          {languageList.map((item, index) => {
-                            return (
-                              <li key={index}>
-                                <button
-                                  type="button"
-                                  className={`dropdown-item sm-text text-capitalize ${
-                                    defaultLang &&
-                                    item.code === defaultLang.code
-                                      ? "active"
-                                      : ""
-                                  }`}
-                                  onClick={() => handleDefaultLang(item)}
-                                >
-                                  {item.name}
-                                </button>
-                              </li>
-                            );
-                          })}
+                          {navLanguageList &&
+                            navLanguageList.map((item, index) => {
+                              return (
+                                <li key={index}>
+                                  <button
+                                    type="button"
+                                    className={`dropdown-item sm-text text-capitalize ${
+                                      defaultLang &&
+                                      item.code === defaultLang.code
+                                        ? "active"
+                                        : ""
+                                    }`}
+                                    onClick={() => handleDefaultLang(item)}
+                                  >
+                                    {item.name}
+                                  </button>
+                                </li>
+                              );
+                            })}
                         </ul>
                       </div>
                     </div>

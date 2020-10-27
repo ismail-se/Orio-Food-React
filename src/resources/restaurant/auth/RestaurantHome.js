@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useEffect, useContext } from "react";
 import { withRouter } from "react-router-dom";
 import { Helmet } from "react-helmet";
 
@@ -12,11 +12,19 @@ import { useTranslation } from "react-i18next";
 import Skeleton from "react-loading-skeleton";
 
 const RestaurantHome = () => {
+  const { t } = useTranslation();
+
   //getting context values here
-  const { loading } = useContext(SettingsContext);
+  const { loading, setLoading } = useContext(SettingsContext);
   const { signUpInfo } = useContext(UserContext);
 
-  const { t } = useTranslation();
+  //useEffect == componentDidMount()
+  useEffect(() => {
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+    }, 1000);
+  }, []);
   return (
     <>
       <Helmet>

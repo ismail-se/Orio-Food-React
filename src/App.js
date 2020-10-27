@@ -1,6 +1,13 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useContext } from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 
+//functions
+import { consolee } from "./functions/Functions";
+
+//3rd party packages
+import { ToastContainer } from "react-toastify";
+
+//pages & includes
 import {
   RestaurantLanding,
   RestaurantHome,
@@ -14,11 +21,16 @@ import {
   Reports,
   Lang,
 } from "./imports/Pages";
-
 import { Navbar, Footer } from "./imports/Components";
-import { consolee } from "./functions/Functions";
-import { ToastContainer } from "react-toastify";
+
+//context consumer
+import { SettingsContext } from "./contexts/Settings";
+
 function App() {
+  //getting context values here
+  const { loading, setLoading } = useContext(SettingsContext);
+
+  //useEffect == componentDidMount()
   useEffect(() => {
     // consolee();
   }, []);

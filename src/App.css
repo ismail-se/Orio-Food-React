@@ -7,3 +7,14 @@
 .font-10px {
   font-size: 10px;
 }
+
+/* for toast notification */
+.toast-notification {
+  text-align: center;
+}
+
+/* active page in pagination */
+.pagination-active {
+  background-color: #de222a;
+  color: #fff;
+}
