@@ -26,31 +26,35 @@ import { BASE_URL } from "../../../../../BaseUrl";
 
 const Lang = () => {
   const { t } = useTranslation();
-  //getting context values here
+  //getting context values herelet
   let {
     loading,
     setLoading,
     languageList,
     setLanguageList,
     setPaginatedLanguages,
+    dataPaginating,
     setNavLanguageList,
     languageListForSearch,
     setLanguageListForSearch,
   } = useContext(SettingsContext);
 
   // States hook here
-  const [newLang, setNewLang] = useState({
+  //new languages
+  let [newLang, setNewLang] = useState({
     name: "",
     code: "",
     image: null,
     uploading: false,
   });
 
-  const [newDefault, setNewDefault] = useState({
+  //new default
+  let [newDefault, setNewDefault] = useState({
     uploading: false,
   });
 
-  const [searchedLanguages, setSearchedLanguages] = useState({
+  //search result
+  let [searchedLanguages, setSearchedLanguages] = useState({
     searchedBy: "",
     list: null,
     searched: false,
@@ -59,12 +63,12 @@ const Lang = () => {
   //useEffect == componentDidMount()
   useEffect(() => {}, []);
 
-  //set hook state for name, code
+  //set name, code
   const handleSetNewLang = (e) => {
     setNewLang({ ...newLang, [e.target.name]: e.target.value });
   };
 
-  //set hook state for flag
+  //setFlag for image upload
   const handleLangFlag = (e) => {
     setNewLang({
       ...newLang,
@@ -184,12 +188,22 @@ const Lang = () => {
 
   //search language here
   const handleSearchInput = (e) => {
-    if (searchedLanguages.searchedBy === "") {
+    let searchInput = e.target.value.toLowerCase();
+    if (searchInput.length === 0) {
       setSearchedLanguages({ ...searchedLanguages, searched: false });
     } else {
+      let searchedLang = languageListForSearch.filter((item) => {
+        let lowerCaseItemName = item.name.toLowerCase();
+        let lowerCaseItemCode = item.code.toLowerCase();
+        return (
+          lowerCaseItemName.includes(searchInput) ||
+          lowerCaseItemCode.includes(searchInput)
+        );
+      });
       setSearchedLanguages({
         ...searchedLanguages,
         searchedBy: e.target.value,
+        list: searchedLang,
         searched: true,
       });
     }
@@ -197,10 +211,14 @@ const Lang = () => {
 
   const handleSearch = (e) => {
     e.preventDefault();
-    let searchedLang = languageList.filter((item) => {
+    let searchedLang = languageListForSearch.filter((item) => {
       return (
-        item.name.includes(searchedLanguages.searchedBy) ||
-        item.code.includes(searchedLanguages.searchedBy)
+        item.name
+          .toLowerCase()
+          .includes(searchedLanguages.searchedBy.toLowerCase()) ||
+        item.code
+          .toLowerCase()
+          .includes(searchedLanguages.searchedBy.toLowerCase())
       );
     });
     setSearchedLanguages({ list: searchedLang, searched: true });
@@ -294,6 +312,7 @@ const Lang = () => {
         <title>Languages & Translations</title>
       </Helmet>
       {/* Add Customer */}
+
       <div className="modal fade" id="addCustomer" aria-hidden="true">
         <div className="modal-dialog modal-md">
           <div className="modal-content">
@@ -441,6 +460,7 @@ const Lang = () => {
                       </SkeletonTheme>
                     ) : (
                       <>
+                        <div className={`${dataPaginating && "loading"}`}></div>
                         <div className="row gx-2 align-items-center t-pt-15 t-pb-15">
                           <div className="col-md-4 col-lg-3 t-mb-15 mb-md-0">
                             <ul className="t-list fk-breadcrumb">
@@ -535,110 +555,19 @@ const Lang = () => {
                             <tbody className="align-middle">
                               {!searchedLanguages.searched
                                 ? [
-                                    languageList &&
-                                      languageList.data.map((item, index) => {
-                                        return (
-                                          <tr
-                                            className="align-middle"
-                                            key={index}
+                                    languageList && [
+                                      languageList.data.length === 0 ? (
+                                        <tr className="align-middle">
+                                          <td
+                                            scope="row"
+                                            colSpan="6"
+                                            className="xsm-text text-capitalize align-middle text-center"
                                           >
-                                            <th
-                                              scope="row"
-                                              className="xsm-text text-capitalize align-middle text-center"
-                                            >
-                                              {index + 1}
-                                            </th>
-
-                                            <td className="xsm-text align-middle text-center">
-                                              {item.code}
-                                            </td>
-                                            <td className="xsm-text text-capitalize align-middle text-center">
-                                              {item.name}
-                                            </td>
-                                            <td className="xsm-text text-capitalize align-middle text-center">
-                                              <div className="d-flex justify-content-center">
-                                                <div
-                                                  className="fk-language__flag"
-                                                  style={
-                                                    item.image !== null
-                                                      ? {
-                                                          backgroundImage: `url(${item.image})`,
-                                                        }
-                                                      : ""
-                                                  }
-                                                ></div>
-                                              </div>
-                                            </td>
-                                            <td className="xsm-text text-capitalize align-middle text-center">
-                                              <Switch
-                                                checked={item.is_default}
-                                                onChange={() => {
-                                                  setNewDefault({
-                                                    ...setNewDefault,
-                                                    uploading: false,
-                                                  });
-                                                }}
-                                                height={22}
-                                                width={44}
-                                                offColor="#ee5253"
-                                                disabled={
-                                                  item.is_default ||
-                                                  newDefault.uploading
-                                                }
-                                              />
-                                            </td>
-                                            <td className="xsm-text text-capitalize align-middle text-center">
-                                              <div className="dropdown">
-                                                <button
-                                                  className="btn t-bg-clear t-text-dark--light-40"
-                                                  type="button"
-                                                  data-toggle="dropdown"
-                                                >
-                                                  <i className="fa fa-ellipsis-h"></i>
-                                                </button>
-                                                <div className="dropdown-menu">
-                                                  <a
-                                                    className="dropdown-item sm-text text-capitalize"
-                                                    href="#"
-                                                  >
-                                                    <span className="t-mr-8">
-                                                      <i className="fa fa-pencil"></i>
-                                                    </span>
-                                                    Edit
-                                                  </a>
-                                                  <a
-                                                    className="dropdown-item sm-text text-capitalize"
-                                                    href="#"
-                                                  >
-                                                    <span className="t-mr-8">
-                                                      <i className="fa fa-refresh"></i>
-                                                    </span>
-                                                    Translate
-                                                  </a>
-                                                  <button
-                                                    className="dropdown-item sm-text text-capitalize"
-                                                    onClick={() => {
-                                                      handleDeleteConfirmation(
-                                                        item.code
-                                                      );
-                                                    }}
-                                                  >
-                                                    <span className="t-mr-8">
-                                                      <i className="fa fa-trash"></i>
-                                                    </span>
-                                                    Delete
-                                                  </button>
-                                                </div>
-                                              </div>
-                                            </td>
-                                          </tr>
-                                        );
-                                      }),
-                                  ]
-                                : [
-                                    languageList &&
-                                      searchedLanguages.list.map(
-                                        (item, index) => {
+                                            No
+                                          </td>
+                                        </tr>
+                                      ) : (
+                                        languageList.data.map((item, index) => {
                                           return (
                                             <tr
                                               className="align-middle"
@@ -735,8 +664,125 @@ const Lang = () => {
                                               </td>
                                             </tr>
                                           );
-                                        }
+                                        })
                                       ),
+                                    ],
+                                  ]
+                                : [
+                                    languageList && [
+                                      searchedLanguages.list.length === 0 ? (
+                                        <tr className="align-middle">
+                                          <td
+                                            scope="row"
+                                            colSpan="6"
+                                            className="xsm-text align-middle text-center"
+                                          >
+                                            No data available
+                                          </td>
+                                        </tr>
+                                      ) : (
+                                        searchedLanguages.list.map(
+                                          (item, index) => {
+                                            return (
+                                              <tr
+                                                className="align-middle"
+                                                key={index}
+                                              >
+                                                <th
+                                                  scope="row"
+                                                  className="xsm-text text-capitalize align-middle text-center"
+                                                >
+                                                  {index + 1}
+                                                </th>
+
+                                                <td className="xsm-text align-middle text-center">
+                                                  {item.code}
+                                                </td>
+                                                <td className="xsm-text text-capitalize align-middle text-center">
+                                                  {item.name}
+                                                </td>
+                                                <td className="xsm-text text-capitalize align-middle text-center">
+                                                  <div className="d-flex justify-content-center">
+                                                    <div
+                                                      className="fk-language__flag"
+                                                      style={
+                                                        item.image !== null
+                                                          ? {
+                                                              backgroundImage: `url(${item.image})`,
+                                                            }
+                                                          : ""
+                                                      }
+                                                    ></div>
+                                                  </div>
+                                                </td>
+                                                <td className="xsm-text text-capitalize align-middle text-center">
+                                                  <Switch
+                                                    checked={item.is_default}
+                                                    onChange={() => {
+                                                      setNewDefault({
+                                                        ...setNewDefault,
+                                                        uploading: false,
+                                                      });
+                                                    }}
+                                                    height={22}
+                                                    width={44}
+                                                    offColor="#ee5253"
+                                                    disabled={
+                                                      item.is_default ||
+                                                      newDefault.uploading
+                                                    }
+                                                  />
+                                                </td>
+                                                <td className="xsm-text text-capitalize align-middle text-center">
+                                                  <div className="dropdown">
+                                                    <button
+                                                      className="btn t-bg-clear t-text-dark--light-40"
+                                                      type="button"
+                                                      data-toggle="dropdown"
+                                                    >
+                                                      <i className="fa fa-ellipsis-h"></i>
+                                                    </button>
+                                                    <div className="dropdown-menu">
+                                                      <a
+                                                        className="dropdown-item sm-text text-capitalize"
+                                                        href="#"
+                                                      >
+                                                        <span className="t-mr-8">
+                                                          <i className="fa fa-pencil"></i>
+                                                        </span>
+                                                        Edit
+                                                      </a>
+                                                      <a
+                                                        className="dropdown-item sm-text text-capitalize"
+                                                        href="#"
+                                                      >
+                                                        <span className="t-mr-8">
+                                                          <i className="fa fa-refresh"></i>
+                                                        </span>
+                                                        Translate
+                                                      </a>
+                                                      <button
+                                                        className="dropdown-item sm-text text-capitalize"
+                                                        onClick={() => {
+                                                          handleDeleteConfirmation(
+                                                            item.code
+                                                          );
+                                                        }}
+                                                      >
+                                                        <span className="t-mr-8">
+                                                          <i className="fa fa-trash"></i>
+                                                        </span>
+                                                        Delete
+                                                      </button>
+                                                    </div>
+                                                  </div>
+                                                </td>
+                                              </tr>
+                                            );
+                                          }
+                                        )
+                                      ),
+                                    ],
                                   ]}
                             </tbody>
                           </table>
@@ -752,53 +798,87 @@ const Lang = () => {
                   className="card bg-white"
                 />
               ) : (
-                <>
-                  <div className="t-bg-white mt-1 t-pt-5 t-pb-5">
-                    <div className="row align-items-center t-pl-15 t-pr-15">
-                      <div className="col-md-7 t-mb-15 mb-md-0">
-                        <ReactPaginate
-                          pageCount={languageList && languageList.last_page}
-                          initialPage={0}
-                          marginPagesDisplayed={5}
-                          pageRangeDisplayed={2}
-                          onPageChange={(page) => {
-                            setPaginatedLanguages(page.selected + 1);
-                          }}
-                          breakLabel={". . ."}
-                          breakClassName={"px-2"}
-                          containerClassName={"t-list d-flex"}
-                          pageClassName={"t-list__item"}
-                          previousLabel={
-                            <i className="las la-angle-double-left"></i>
-                          }
-                          nextLabel={
-                            <i className="las la-angle-double-right"></i>
-                          }
-                          pageLinkClassName={
-                            "t-link t-pt-5 t-pb-5 t-pl-10 t-pr-10 paginav__link paginav__link--light border text-capitalize sm-text"
-                          }
-                          previousClassName={
-                            "t-link t-pt-5 t-pb-5 t-pl-10 t-pr-10 paginav__link paginav__link--light border text-capitalize sm-text"
-                          }
-                          nextClassName={
-                            "t-link t-pt-5 t-pb-5 t-pl-10 t-pr-10 paginav__link paginav__link--light border text-capitalize sm-text"
-                          }
-                          activeClassName={"pagination-active"}
-                          activeLinkClassName={"text-white"}
-                        />
+                [
+                  !searchedLanguages.searched ? (
+                    <>
+                      <div className="t-bg-white mt-1 t-pt-5 t-pb-5">
+                        <div className="row align-items-center t-pl-15 t-pr-15">
+                          <div className="col-md-7 t-mb-15 mb-md-0">
+                            <ReactPaginate
+                              pageCount={languageList && languageList.last_page}
+                              initialPage={0}
+                              marginPagesDisplayed={5}
+                              pageRangeDisplayed={2}
+                              onPageChange={(page) => {
+                                setPaginatedLanguages(page.selected + 1);
+                              }}
+                              breakLabel={". . ."}
+                              breakClassName={"px-2"}
+                              containerClassName={"t-list d-flex"}
+                              pageClassName={"t-list__item"}
+                              previousLabel={
+                                <i className="las la-angle-double-left"></i>
+                              }
+                              nextLabel={
+                                <i className="las la-angle-double-right"></i>
+                              }
+                              pageLinkClassName={
+                                "t-link t-pt-5 t-pb-5 t-pl-10 t-pr-10 paginav__link paginav__link--light border text-capitalize sm-text"
+                              }
+                              previousClassName={
+                                "t-link t-pt-5 t-pb-5 t-pl-10 t-pr-10 paginav__link paginav__link--light border text-capitalize sm-text"
+                              }
+                              nextClassName={
+                                "t-link t-pt-5 t-pb-5 t-pl-10 t-pr-10 paginav__link paginav__link--light border text-capitalize sm-text"
+                              }
+                              activeClassName={"pagination-active"}
+                              activeLinkClassName={"text-white"}
+                            />
+                          </div>
+                          <div className="col-md-5">
+                            <ul className="t-list d-flex justify-content-md-end align-items-center">
+                              <li className="t-list__item">
+                                <span className="d-inline-block sm-text">
+                                  Showing {languageList && languageList.from} -{" "}
+                                  {languageList && languageList.to} of{" "}
+                                  {languageList && languageList.total}
+                                </span>
+                              </li>
+                            </ul>
+                          </div>
+                        </div>
                       </div>
-                      <div className="col-md-5">
-                        <ul className="t-list d-flex justify-content-md-end align-items-center">
-                          <li className="t-list__item">
-                            <span className="d-inline-block text-capitalize sm-text">
-                              showing 10 -20 of 300
-                            </span>
-                          </li>
-                        </ul>
+                    </>
+                  ) : (
+                    <div className="t-bg-white mt-1 t-pt-5 t-pb-5">
+                      <div className="row align-items-center t-pl-15 t-pr-15">
+                        <div className="col-md-7 t-mb-15 mb-md-0">
+                          <ul className="t-list d-flex">
+                            <li
+                              className="t-list__item"
+                              style={{ width: "36px", height: "33px" }}
+                            ></li>
+                          </ul>
+                        </div>
+                        <div className="col-md-5">
+                          <ul className="t-list d-flex justify-content-md-end align-items-center">
+                            <li className="t-list__item">
+                              <span className="d-inline-block sm-text">
+                                Showing{" "}
+                                {languageListForSearch &&
+                                  searchedLanguages &&
+                                  searchedLanguages.list.length}{" "}
+                                of{" "}
+                                {languageListForSearch &&
+                                  languageListForSearch.length}
+                              </span>
+                            </li>
+                          </ul>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </>
+                  ),
+                ]
               )}
             </div>
           </div>

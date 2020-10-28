@@ -10,13 +10,16 @@ import { BASE_URL } from "../BaseUrl";
 const SettingsContext = React.createContext();
 
 const SettingsProvider = ({ children }) => {
-  // States hook  here
-  const [loading, setLoading] = useState(true);
-  const [languageList, setLanguageList] = useState([]);
-  const [navLanguageList, setNavLanguageList] = useState([]);
-  const [languageListForSearch, setLanguageListForSearch] = useState([]);
+  // State hooks  here
+  //loading
+  const [loading, setLoading] = useState(false);
+  const [dataPaginating, setDataPaginating] = useState(false);
+  //languages
+  const [languageList, setLanguageList] = useState(null);
+  const [navLanguageList, setNavLanguageList] = useState(null);
+  const [languageListForSearch, setLanguageListForSearch] = useState(null);
 
-  //useEffect- to get data on page load
+  //useEffect- to get data on page render
   useEffect(() => {
     getLanguages();
   }, []);
@@ -33,13 +36,15 @@ const SettingsProvider = ({ children }) => {
     });
   };
 
-  // get languages & set pagination
+  // get paginated languages
   const setPaginatedLanguages = (pageNo) => {
+    setDataPaginating(true);
     const langUrl = BASE_URL + "/settings/get-lang?page=" + pageNo;
     return axios
       .get(langUrl)
       .then((res) => {
         setLanguageList(res.data[0]);
+        setDataPaginating(false);
       })
       .catch((error) => {});
   };
@@ -52,6 +57,7 @@ const SettingsProvider = ({ children }) => {
         languageList,
         setLanguageList,
         setPaginatedLanguages,
+        dataPaginating,
         navLanguageList,
         setNavLanguageList,
         languageListForSearch,
