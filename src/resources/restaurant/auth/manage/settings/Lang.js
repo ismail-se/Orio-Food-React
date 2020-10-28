@@ -26,7 +26,7 @@ import { BASE_URL } from "../../../../../BaseUrl";
 
 const Lang = () => {
   const { t } = useTranslation();
-  //getting context values herelet
+  //getting context values here
   let {
     loading,
     setLoading,
@@ -63,12 +63,12 @@ const Lang = () => {
   //useEffect == componentDidMount()
   useEffect(() => {}, []);
 
-  //set name, code
+  //set name, code hook
   const handleSetNewLang = (e) => {
     setNewLang({ ...newLang, [e.target.name]: e.target.value });
   };
 
-  //setFlag for image upload
+  //set flag hook
   const handleLangFlag = (e) => {
     setNewLang({
       ...newLang,
@@ -577,7 +577,11 @@ const Lang = () => {
                                                 scope="row"
                                                 className="xsm-text text-capitalize align-middle text-center"
                                               >
-                                                {index + 1}
+                                                {index +
+                                                  1 +
+                                                  (languageList.current_page -
+                                                    1) *
+                                                    languageList.per_page}
                                               </th>
 
                                               <td className="xsm-text align-middle text-center">
