@@ -1,14 +1,18 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
 
+//axios and base url
+import axios from "axios";
+import { BASE_URL } from "../../src/BaseUrl";
+
 //3rd party packages
 import ReactPaginate from "react-paginate";
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 
-/*console functions, clear and dummy text like facebook*/
+//console functions, clear and dummy text like facebook
 const consolee = () => {
-  var cssStop = "color: Red;" + "font-size: 50px;" + "font-weight: bold;";
-  var cssText = "color: Black;" + "font-size: 18px;" + "font-weight: bold;";
+  var cssStop = "color: Red; font-size: 50px; font-weight: bold;";
+  var cssText = "color: Black; font-size: 18px; font-weight: bold;";
   console.clear();
   console.log("%cStop!", cssStop);
   console.log(
@@ -17,14 +21,13 @@ const consolee = () => {
   );
 };
 
-/*translation functions*/
+//translation functions
 const _t = (text) => {
-  /* const url = BASE_URL + `/api/languages`;
+  const url = BASE_URL + `/settings/save-to-en`;
   let formData = {
-  key: text,
+    key: text,
   };
   axios.post(url, formData);
-  */
   return text;
 };
 
@@ -37,12 +40,14 @@ const navbarHrefLink = (redirectTo) => {
         exact
         className="t-link w-100"
       >
+        {/* todo:: background image dynamic */}
         <span className="bg-primary fk-brand__img fk-brand__img--fk"></span>
       </NavLink>
     );
   } else {
     return (
       <NavLink to={redirectTo} exact className="t-link w-100">
+        {/* todo:: background image dynamic */}
         <span className="bg-primary fk-brand__img fk-brand__img--fk"></span>
       </NavLink>
     );
@@ -58,6 +63,7 @@ const footerHrefLink = (redirectTo) => {
         exact
         className="t-link w-100 t-h-50"
       >
+        {/* todo:: background image dynamic */}
         <span
           className="bg-primary fk-brand--footer-img fk-brand__img--fk"
           style={{
@@ -69,6 +75,7 @@ const footerHrefLink = (redirectTo) => {
   } else {
     return (
       <NavLink to={redirectTo} className="t-link w-100 t-h-50">
+        {/* todo:: background image dynamic */}
         <span
           className="bg-primary fk-brand--footer-img fk-brand__img--fk"
           style={{
@@ -110,6 +117,35 @@ const restaurantMenuLink = (
       </div>
     </NavLink>
   );
+};
+
+//manage page navlink
+const managePageHrefLink = (redirectTo) => {
+  if (window.location.pathname === redirectTo) {
+    return (
+      <NavLink
+        to={{ pathname: "/refresh", state: redirectTo }}
+        exact
+        className={`w-100 t-text-dark t-heading-font btn font-weight-bold text-uppercase rounded-0 text-left ${
+          window.location.pathname === redirectTo && "active"
+        }`}
+      >
+        - Languages
+      </NavLink>
+    );
+  } else {
+    return (
+      <NavLink
+        to={redirectTo}
+        exact
+        className={`w-100 t-text-dark t-heading-font btn font-weight-bold text-uppercase rounded-0 text-left ${
+          window.location.pathname === redirectTo && "active"
+        }`}
+      >
+        - Languages
+      </NavLink>
+    );
+  }
 };
 
 //pagination
@@ -175,6 +211,7 @@ const tableLoading = () => {
 const showingData = (data) => {
   return (
     <>
+      {/* todo:: translation function call */}
       Showing {data && data.from} - {data && data.to} of {data && data.total}
     </>
   );
@@ -184,6 +221,7 @@ const showingData = (data) => {
 const searchedShowingData = (data, allData) => {
   return (
     <>
+      {/* todo:: translation function call */}
       Showing {data && data.list.length} of {allData && allData.length}
     </>
   );
@@ -191,17 +229,29 @@ const searchedShowingData = (data, allData) => {
 
 //export here
 export {
+  // common & necessary
   _t,
   consolee,
+  // common & necessary
+
+  //navLink
   navbarHrefLink,
   footerHrefLink,
   restaurantMenuLink,
+  managePageHrefLink,
+  //navLink
+
+  //loading
   modalLoading,
   tableLoading,
-  pagination,
   paginationLoading,
+  //loading
+
+  //pagination and datacounting
+  pagination,
   showingData,
   searchedShowingData,
+  //pagination and datacounting
 };
 /*
 ----------------------------------------------

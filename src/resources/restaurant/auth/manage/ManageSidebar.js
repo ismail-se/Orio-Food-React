@@ -1,7 +1,11 @@
 import React, { useEffect } from "react";
+import { NavLink } from "react-router-dom";
+
+//jQuery initialization
 import $ from "jquery";
+
 //functions
-import { _t } from "../../../../functions/Functions";
+import { _t, managePageHrefLink } from "../../../../functions/Functions";
 import { useTranslation } from "react-i18next";
 
 const ManageSidebar = () => {
@@ -75,25 +79,20 @@ const ManageSidebar = () => {
             <li className="fk-pos-nav__list fk-pos-nav__list-has-sub active">
               <a
                 className="w-100 t-text-dark t-heading-font btn btn-outline-danger font-weight-bold text-uppercase rounded-0 text-left"
-                href="#"
+                href="/"
               >
                 Settings
               </a>
               <ul className="t-list fk-pos-nav__sub t-bg-white list-group">
                 <li className="fk-pos-nav__sub-list border-bottom">
-                  <a
-                    className="w-100 t-text-dark t-heading-font btn font-weight-bold text-uppercase rounded-0 text-left active"
-                    href="#"
-                  >
-                    - Languages
-                  </a>
+                  {managePageHrefLink("/dashboard/manage/settings/languages")}
                 </li>
                 <li className="fk-pos-nav__sub-list border-bottom">
                   <a
                     className="w-100 t-text-dark t-heading-font btn font-weight-bold text-uppercase rounded-0 text-left"
                     href="#"
                   >
-                    - instruction
+                    - email / smtp
                   </a>
                 </li>
                 <li className="fk-pos-nav__sub-list border-bottom">

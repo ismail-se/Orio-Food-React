@@ -22,6 +22,10 @@ html {
   background-color: var(--primary);
   color: #fff;
 }
+/* no pagination style */
+.no-pagination-style {
+  height: 33px;
+}
 
 /* table data loading */
 .loading {
@@ -38,7 +42,6 @@ html {
   -webkit-animation: laoding-animation 1s infinite linear;
   -moz-animation: laoding-animation 1s infinite linear;
 }
-
 @keyframes laoding-animation {
   from {
     transform: rotate(0deg);
@@ -46,4 +49,9 @@ html {
   to {
     transform: rotate(360deg);
   }
+}
+
+/* background of language */
+.fk-language__flag {
+  background-size: cover;
 }

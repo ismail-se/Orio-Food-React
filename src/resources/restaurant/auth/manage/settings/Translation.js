@@ -3,7 +3,6 @@ import React, { useState, useEffect, useContext } from "react";
 //functions
 import {
   _t,
-  consolee,
   modalLoading,
   tableLoading,
   pagination,
@@ -31,25 +30,25 @@ import { SettingsContext } from "../../../../../contexts/Settings";
 import axios from "axios";
 import { BASE_URL } from "../../../../../BaseUrl";
 
-const Lang = () => {
+const Translation = () => {
   const { t } = useTranslation();
   //getting context values here
   let {
     loading,
     setLoading,
-    languageList,
-    setLanguageList,
-    setPaginatedLanguages,
+    TranslationuageList,
+    setTranslationuageList,
+    setPaginatedTranslationuages,
     dataPaginating,
     setDataPaginating,
-    setNavLanguageList,
-    languageListForSearch,
-    setLanguageListForSearch,
+    setNavTranslationuageList,
+    TranslationuageListForSearch,
+    setTranslationuageListForSearch,
   } = useContext(SettingsContext);
 
   // States hook here
-  //new languages
-  let [newLang, setNewLang] = useState({
+  //new Translationuages
+  let [newTranslation, setNewTranslation] = useState({
     name: "",
     code: "",
     image: null,
@@ -65,7 +64,7 @@ const Lang = () => {
   });
 
   //search result
-  let [searchedLanguages, setSearchedLanguages] = useState({
+  let [searchedTranslationuages, setSearchedTranslationuages] = useState({
     list: null,
     searched: false,
   });
@@ -74,72 +73,74 @@ const Lang = () => {
   useEffect(() => {}, []);
 
   //set name, code hook
-  const handleSetNewLang = (e) => {
-    setNewLang({ ...newLang, [e.target.name]: e.target.value });
+  const handleSetNewTranslation = (e) => {
+    setNewTranslation({ ...newTranslation, [e.target.name]: e.target.value });
   };
 
   //set flag hook
-  const handleLangFlag = (e) => {
-    setNewLang({
-      ...newLang,
+  const handleTranslationFlag = (e) => {
+    setNewTranslation({
+      ...newTranslation,
       [e.target.name]: e.target.files[0],
     });
   };
 
-  //Save New Language
-  const handleSaveNewLang = (e) => {
+  //Save New Translationuage
+  const handleSaveNewTranslation = (e) => {
     e.preventDefault();
-    setNewLang({
-      ...newLang,
+    setNewTranslation({
+      ...newTranslation,
       uploading: true,
     });
-    const langUrl = BASE_URL + `/settings/new-lang`;
+    const TranslationUrl = BASE_URL + `/settings/new-Translation`;
     let formData = new FormData();
-    formData.append("name", newLang.name);
-    formData.append("code", newLang.code);
-    formData.append("image", newLang.image);
+    formData.append("name", newTranslation.name);
+    formData.append("code", newTranslation.code);
+    formData.append("image", newTranslation.image);
     // todo:: add Authorization here
     return axios
-      .post(langUrl, formData)
+      .post(TranslationUrl, formData)
       .then((res) => {
-        setNewLang({
+        setNewTranslation({
           name: "",
           code: "",
           image: null,
           uploading: false,
         });
-        setLanguageList(res.data[0]);
-        setNavLanguageList(res.data[1]);
-        setLanguageListForSearch(res.data[1]);
+        setTranslationuageList(res.data[0]);
+        setNavTranslationuageList(res.data[1]);
+        setTranslationuageListForSearch(res.data[1]);
         setLoading(false);
-        toast.success(`${_t(t("A new language has been created"))}`, {
+        toast.success(`${_t(t("A new Translationuage has been created"))}`, {
           position: "bottom-center",
+          className: "text-center",
           autoClose: 10000,
           hideProgressBar: false,
           closeOnClick: true,
           pauseOnHover: true,
-          className: "text-center toast-notification",
+          className: "toast-notification",
         });
       })
       .catch((error) => {
         setLoading(false);
-        setNewLang({
-          ...newLang,
+        setNewTranslation({
+          ...newTranslation,
           uploading: false,
         });
         if (error.response.data.errors) {
           if (error.response.data.errors.name) {
             error.response.data.errors.name.forEach((item) => {
-              if (item === "A language already exist with this name") {
+              if (item === "A Translationuage already exist with this name") {
                 toast.error(
-                  `${_t(t("A language already exist with this name"))}`,
+                  `${_t(t("A Translationuage already exist with this name"))}`,
                   {
                     position: "bottom-center",
+                    className: "text-center",
                     autoClose: 10000,
                     hideProgressBar: false,
                     closeOnClick: true,
                     pauseOnHover: true,
-                    className: "text-center toast-notification",
+                    className: "toast-notification",
                   }
                 );
               }
@@ -148,16 +149,17 @@ const Lang = () => {
 
           if (error.response.data.errors.code) {
             error.response.data.errors.code.forEach((item) => {
-              if (item === "A language already exist with this code") {
+              if (item === "A Translationuage already exist with this code") {
                 toast.error(
-                  `${_t(t("A language already exist with this code"))}`,
+                  `${_t(t("A Translationuage already exist with this code"))}`,
                   {
                     position: "bottom-center",
+                    className: "text-center",
                     autoClose: 10000,
                     hideProgressBar: false,
                     closeOnClick: true,
                     pauseOnHover: true,
-                    className: "text-center toast-notification",
+                    className: "toast-notification",
                   }
                 );
               }
@@ -168,21 +170,23 @@ const Lang = () => {
               if (item === "Please select a valid image file") {
                 toast.error(`${_t(t("Please select a valid image file"))}`, {
                   position: "bottom-center",
+                  className: "text-center",
                   autoClose: 10000,
                   hideProgressBar: false,
                   closeOnClick: true,
                   pauseOnHover: true,
-                  className: "text-center toast-notification",
+                  className: "toast-notification",
                 });
               }
               if (item === "Please select a file less than 5MB") {
                 toast.error(`${_t(t("Please select a file less than 5MB"))}`, {
                   position: "bottom-center",
+                  className: "text-center",
                   autoClose: 10000,
                   hideProgressBar: false,
                   closeOnClick: true,
                   pauseOnHover: true,
-                  className: "text-center toast-notification",
+                  className: "toast-notification",
                 });
               }
             });
@@ -192,36 +196,36 @@ const Lang = () => {
   };
 
   const handleSetEdit = (id) => {
-    let lang = languageListForSearch.filter((item) => {
+    let Translation = TranslationuageListForSearch.filter((item) => {
       return item.id === id;
     });
-    setNewLang({
-      ...newLang,
-      name: lang[0].name,
-      code: lang[0].code,
-      editCode: lang[0].code,
-      editImage: lang[0].image,
+    setNewTranslation({
+      ...newTranslation,
+      name: Translation[0].name,
+      code: Translation[0].code,
+      editCode: Translation[0].code,
+      editImage: Translation[0].image,
       edit: true,
     });
   };
 
-  const handleUpdateLang = (e) => {
+  const handleUpdateTranslation = (e) => {
     e.preventDefault();
-    setNewLang({
-      ...newLang,
+    setNewTranslation({
+      ...newTranslation,
       uploading: true,
     });
-    const langUrl = BASE_URL + `/settings/update-lang`;
+    const TranslationUrl = BASE_URL + `/settings/update-Translation`;
     let formData = new FormData();
-    formData.append("name", newLang.name);
-    formData.append("code", newLang.code);
-    formData.append("image", newLang.image);
-    formData.append("editCode", newLang.editCode);
+    formData.append("name", newTranslation.name);
+    formData.append("code", newTranslation.code);
+    formData.append("image", newTranslation.image);
+    formData.append("editCode", newTranslation.editCode);
     // todo:: add Authorization here
     return axios
-      .post(langUrl, formData)
+      .post(TranslationUrl, formData)
       .then((res) => {
-        setNewLang({
+        setNewTranslation({
           name: "",
           code: "",
           image: null,
@@ -230,42 +234,44 @@ const Lang = () => {
           editImage: null,
           uploading: false,
         });
-        setLanguageList(res.data[0]);
-        setNavLanguageList(res.data[1]);
-        setLanguageListForSearch(res.data[1]);
-        setSearchedLanguages({
-          ...searchedLanguages,
+        setTranslationuageList(res.data[0]);
+        setNavTranslationuageList(res.data[1]);
+        setTranslationuageListForSearch(res.data[1]);
+        setSearchedTranslationuages({
+          ...searchedTranslationuages,
           list: res.data[1],
         });
         setLoading(false);
-        toast.success(`${_t(t("Language has been updated"))}`, {
+        toast.success(`${_t(t("Translationuage has been updated"))}`, {
           position: "bottom-center",
+          className: "text-center",
           autoClose: 10000,
           hideProgressBar: false,
           closeOnClick: true,
           pauseOnHover: true,
-          className: "text-center toast-notification",
+          className: "toast-notification",
         });
       })
       .catch((error) => {
         setLoading(false);
-        setNewLang({
-          ...newLang,
+        setNewTranslation({
+          ...newTranslation,
           uploading: false,
         });
         if (error.response.data.errors) {
           if (error.response.data.errors.name) {
             error.response.data.errors.name.forEach((item) => {
-              if (item === "A language already exist with this name") {
+              if (item === "A Translationuage already exist with this name") {
                 toast.error(
-                  `${_t(t("A language already exist with this name"))}`,
+                  `${_t(t("A Translationuage already exist with this name"))}`,
                   {
                     position: "bottom-center",
+                    className: "text-center",
                     autoClose: 10000,
                     hideProgressBar: false,
                     closeOnClick: true,
                     pauseOnHover: true,
-                    className: "text-center toast-notification",
+                    className: "toast-notification",
                   }
                 );
               }
@@ -277,21 +283,23 @@ const Lang = () => {
               if (item === "Please select a valid image file") {
                 toast.error(`${_t(t("Please select a valid image file"))}`, {
                   position: "bottom-center",
+                  className: "text-center",
                   autoClose: 10000,
                   hideProgressBar: false,
                   closeOnClick: true,
                   pauseOnHover: true,
-                  className: "text-center toast-notification",
+                  className: "toast-notification",
                 });
               }
               if (item === "Please select a file less than 5MB") {
                 toast.error(`${_t(t("Please select a file less than 5MB"))}`, {
                   position: "bottom-center",
+                  className: "text-center",
                   autoClose: 10000,
                   hideProgressBar: false,
                   closeOnClick: true,
                   pauseOnHover: true,
-                  className: "text-center toast-notification",
+                  className: "toast-notification",
                 });
               }
             });
@@ -300,33 +308,34 @@ const Lang = () => {
       });
   };
 
-  //Save New Language
+  //Save New Translationuage
   const handleDefault = (code) => {
     setNewDefault({ ...newDefault, uploading: true });
     setDataPaginating(true);
-    const langUrl = BASE_URL + `/settings/update-default`;
+    const TranslationUrl = BASE_URL + `/settings/update-default`;
     let formData = new FormData();
     formData.append("code", code);
     // todo:: add Authorization here
     return axios
-      .post(langUrl, formData)
+      .post(TranslationUrl, formData)
       .then((res) => {
-        setLanguageList(res.data[0]);
-        setNavLanguageList(res.data[1]);
-        setLanguageListForSearch(res.data[1]);
-        setSearchedLanguages({
-          ...searchedLanguages,
+        setTranslationuageList(res.data[0]);
+        setNavTranslationuageList(res.data[1]);
+        setTranslationuageListForSearch(res.data[1]);
+        setSearchedTranslationuages({
+          ...searchedTranslationuages,
           list: res.data[1],
         });
         setDataPaginating(false);
         setNewDefault({ ...newDefault, uploading: false });
-        toast.success(`${_t(t("Default language has been updated"))}`, {
+        toast.success(`${_t(t("Default Translationuage updated"))}`, {
           position: "bottom-center",
+          className: "text-center",
           autoClose: 10000,
           hideProgressBar: false,
           closeOnClick: true,
           pauseOnHover: true,
-          className: "text-center toast-notification",
+          className: "toast-notification",
         });
       })
       .catch(() => {
@@ -334,13 +343,16 @@ const Lang = () => {
       });
   };
 
-  //search language here
+  //search Translationuage here
   const handleSearch = (e) => {
     let searchInput = e.target.value.toLowerCase();
     if (searchInput.length === 0) {
-      setSearchedLanguages({ ...searchedLanguages, searched: false });
+      setSearchedTranslationuages({
+        ...searchedTranslationuages,
+        searched: false,
+      });
     } else {
-      let searchedLang = languageListForSearch.filter((item) => {
+      let searchedTranslation = TranslationuageListForSearch.filter((item) => {
         let lowerCaseItemName = item.name.toLowerCase();
         let lowerCaseItemCode = item.code.toLowerCase();
         return (
@@ -348,15 +360,15 @@ const Lang = () => {
           lowerCaseItemCode.includes(searchInput)
         );
       });
-      setSearchedLanguages({
-        ...searchedLanguages,
-        list: searchedLang,
+      setSearchedTranslationuages({
+        ...searchedTranslationuages,
+        list: searchedTranslation,
         searched: true,
       });
     }
   };
 
-  //delete confirmation modal of language
+  //delete confirmation modal of Translationuage
   const handleDeleteConfirmation = (code) => {
     confirmAlert({
       customUI: ({ onClose }) => {
@@ -368,7 +380,7 @@ const Lang = () => {
               <button
                 className="btn btn-primary"
                 onClick={() => {
-                  handleDeleteLanguage(code);
+                  handleDeleteTranslationuage(code);
                   onClose();
                 }}
               >
@@ -384,33 +396,34 @@ const Lang = () => {
     });
   };
 
-  //delete language here
-  const handleDeleteLanguage = (code) => {
+  //delete Translationuage here
+  const handleDeleteTranslationuage = (code) => {
     setLoading(true);
     if (code !== "en") {
-      const lang_url = BASE_URL + `/settings/delete-lang/${code}`;
+      const Translation_url = BASE_URL + `/settings/delete-Translation/${code}`;
       return (
         axios
           //todo:: Authorization here
-          .get(lang_url)
+          .get(Translation_url)
           .then((res) => {
-            setLanguageList(res.data[0]);
-            setNavLanguageList(res.data[1]);
-            setLanguageListForSearch(res.data[1]);
-            setSearchedLanguages({
-              ...searchedLanguages,
+            setTranslationuageList(res.data[0]);
+            setNavTranslationuageList(res.data[1]);
+            setTranslationuageListForSearch(res.data[1]);
+            setSearchedTranslationuages({
+              ...searchedTranslationuages,
               list: res.data[1],
             });
             setLoading(false);
             toast.success(
-              `${_t(t("Language has been deleted successfully"))}`,
+              `${_t(t("Translationuage has been deleted successfully"))}`,
               {
                 position: "bottom-center",
+                className: "text-center",
                 autoClose: 10000,
                 hideProgressBar: false,
                 closeOnClick: true,
                 pauseOnHover: true,
-                className: "text-center toast-notification",
+                className: "toast-notification",
               }
             );
           })
@@ -418,23 +431,25 @@ const Lang = () => {
             setLoading(false);
             toast.error(`${_t(t("Please try again."))}`, {
               position: "bottom-center",
+              className: "text-center",
               autoClose: 10000,
               hideProgressBar: false,
               closeOnClick: true,
               pauseOnHover: true,
-              className: "text-center toast-notification",
+              className: "toast-notification",
             });
           })
       );
     } else {
       setLoading(false);
-      toast.error(`${_t(t("English language can not be deleted!"))}`, {
+      toast.error(`${_t(t("English Translationuage can not be deleted!"))}`, {
         position: "bottom-center",
+        className: "text-center",
         autoClose: 10000,
         hideProgressBar: false,
         closeOnClick: true,
         pauseOnHover: true,
-        className: "text-center toast-notification",
+        className: "toast-notification",
       });
     }
   };
@@ -442,17 +457,19 @@ const Lang = () => {
   return (
     <>
       <Helmet>
-        <title>Languages & Translations</title>
+        <title>Translationuages & Translations</title>
       </Helmet>
 
-      {/* Add language modal */}
-      <div className="modal fade" id="addLang" aria-hidden="true">
+      {/* Add Translationuage modal */}
+      <div className="modal fade" id="addTranslation" aria-hidden="true">
         <div className="modal-dialog modal-md">
           <div className="modal-content">
             <div className="modal-header align-items-center">
               <div className="fk-sm-card__content">
                 <h5 className="text-capitalize fk-sm-card__title">
-                  {!newLang.edit ? "Add new language" : "Update Language"}
+                  {!newTranslation.edit
+                    ? "Add new Translationuage"
+                    : "Update Translationuage"}
                 </h5>
               </div>
               <button
@@ -464,11 +481,13 @@ const Lang = () => {
             </div>
             <div className="modal-body">
               {/* show form or show saving loading */}
-              {newLang.uploading === false ? (
+              {newTranslation.uploading === false ? (
                 <>
                   <form
                     onSubmit={
-                      !newLang.edit ? handleSaveNewLang : handleUpdateLang
+                      !newTranslation.edit
+                        ? handleSaveNewTranslation
+                        : handleUpdateTranslation
                     }
                   >
                     <div>
@@ -481,9 +500,9 @@ const Lang = () => {
                         id="name"
                         name="name"
                         placeholder="e.g. English"
-                        value={newLang.name}
+                        value={newTranslation.name}
                         required
-                        onChange={handleSetNewLang}
+                        onChange={handleSetNewTranslation}
                       />
                     </div>
 
@@ -496,9 +515,9 @@ const Lang = () => {
                         className="form-control"
                         id="code"
                         name="code"
-                        onChange={handleSetNewLang}
-                        value={newLang.code}
-                        disabled={newLang.edit}
+                        onChange={handleSetNewTranslation}
+                        value={newTranslation.code}
+                        disabled={newTranslation.edit}
                         required
                         placeholder="e.g. EN for english"
                       />
@@ -512,11 +531,11 @@ const Lang = () => {
                             (Square Image Preferable)
                           </small>
                         </label>
-                        {newLang.edit && (
+                        {newTranslation.edit && (
                           <div
-                            className="fk-language__flag"
+                            className="fk-Translationuage__flag"
                             style={{
-                              backgroundImage: `url(${newLang.editImage})`,
+                              backgroundImage: `url(${newTranslation.editImage})`,
                             }}
                           ></div>
                         )}
@@ -526,7 +545,7 @@ const Lang = () => {
                         className="form-control"
                         id="image"
                         name="image"
-                        onChange={handleLangFlag}
+                        onChange={handleTranslationFlag}
                       />
                     </div>
                     <div className="mt-4">
@@ -536,7 +555,7 @@ const Lang = () => {
                             type="submit"
                             className="btn btn-success w-100 xsm-text text-uppercase t-width-max"
                           >
-                            {!newLang.edit ? "Save" : "Update"}
+                            {!newTranslation.edit ? "Save" : "Update"}
                           </button>
                         </div>
                         <div className="col-6">
@@ -588,10 +607,10 @@ const Lang = () => {
           </div>
         </div>
       </div>
-      {/* Add language modal Ends*/}
+      {/* Add Translationuage modal Ends*/}
 
-      {/* Edit Language Modal */}
-      {/* Edit Language Modal Ends */}
+      {/* Edit Translationuage Modal */}
+      {/* Edit Translationuage Modal Ends */}
 
       {/* main body */}
       <main id="main" data-simplebar>
@@ -609,7 +628,7 @@ const Lang = () => {
                 <div className="fk-scroll--pos-menu" data-simplebar>
                   <div className="t-pl-15 t-pr-15">
                     {/* Loading effect */}
-                    {newLang.uploading === true || loading === true ? (
+                    {newTranslation.uploading === true || loading === true ? (
                       tableLoading()
                     ) : (
                       <>
@@ -622,8 +641,8 @@ const Lang = () => {
                             <ul className="t-list fk-breadcrumb">
                               <li className="fk-breadcrumb__list">
                                 <span className="t-link fk-breadcrumb__link text-capitalize">
-                                  {!searchedLanguages.searched
-                                    ? "Language List"
+                                  {!searchedTranslationuages.searched
+                                    ? "Translationuage List"
                                     : "Search Result"}
                                 </span>
                               </li>
@@ -631,7 +650,7 @@ const Lang = () => {
                           </div>
                           <div className="col-md-8 col-lg-9">
                             <div className="row gx-0 align-items-center">
-                              {/* Search languages */}
+                              {/* Search Translationuages */}
                               <div className="col-md-9 col-xl-10 t-mb-15 mb-md-0">
                                 <div className="input-group">
                                   <div className="form-file">
@@ -654,16 +673,16 @@ const Lang = () => {
                                 </div>
                               </div>
 
-                              {/* Add language modal trigger button */}
+                              {/* Add Translationuage modal trigger button */}
                               <div className="col-md-3 col-xl-2 text-md-right">
                                 <button
                                   type="button"
                                   className="btn btn-primary xsm-text text-uppercase btn-lg"
                                   data-toggle="modal"
-                                  data-target="#addLang"
+                                  data-target="#addTranslation"
                                   onClick={() => {
-                                    setNewLang({
-                                      ...newLang,
+                                    setNewTranslation({
+                                      ...newTranslation,
                                       edit: false,
                                       uploading: false,
                                     });
@@ -721,10 +740,10 @@ const Lang = () => {
                             </thead>
                             <tbody className="align-middle">
                               {/* loop here, logic === !search && haveData && haveDataLegnth > 0*/}
-                              {!searchedLanguages.searched
+                              {!searchedTranslationuages.searched
                                 ? [
-                                    languageList && [
-                                      languageList.data.length === 0 ? (
+                                    TranslationuageList && [
+                                      TranslationuageList.data.length === 0 ? (
                                         <tr className="align-middle">
                                           <td
                                             scope="row"
@@ -735,127 +754,7 @@ const Lang = () => {
                                           </td>
                                         </tr>
                                       ) : (
-                                        languageList.data.map((item, index) => {
-                                          return (
-                                            <tr
-                                              className="align-middle"
-                                              key={index}
-                                            >
-                                              <th
-                                                scope="row"
-                                                className="xsm-text text-capitalize align-middle text-center"
-                                              >
-                                                {index +
-                                                  1 +
-                                                  (languageList.current_page -
-                                                    1) *
-                                                    languageList.per_page}
-                                              </th>
-
-                                              <td className="xsm-text align-middle text-center">
-                                                {item.code}
-                                              </td>
-                                              <td className="xsm-text text-capitalize align-middle text-center">
-                                                {item.name}
-                                              </td>
-                                              <td className="xsm-text text-capitalize align-middle text-center">
-                                                <div className="d-flex justify-content-center">
-                                                  <div
-                                                    className="fk-language__flag"
-                                                    style={
-                                                      item.image !== null
-                                                        ? {
-                                                            backgroundImage: `url(${item.image})`,
-                                                          }
-                                                        : ""
-                                                    }
-                                                  ></div>
-                                                </div>
-                                              </td>
-                                              <td className="xsm-text text-capitalize align-middle text-center">
-                                                <Switch
-                                                  checked={item.is_default}
-                                                  onChange={() => {
-                                                    handleDefault(item.code);
-                                                  }}
-                                                  height={22}
-                                                  width={44}
-                                                  offColor="#ee5253"
-                                                  disabled={
-                                                    item.is_default ||
-                                                    newDefault.uploading
-                                                  }
-                                                />
-                                              </td>
-                                              <td className="xsm-text text-capitalize align-middle text-center">
-                                                <div className="dropdown">
-                                                  <button
-                                                    className="btn t-bg-clear t-text-dark--light-40"
-                                                    type="button"
-                                                    data-toggle="dropdown"
-                                                  >
-                                                    <i className="fa fa-ellipsis-h"></i>
-                                                  </button>
-                                                  <div className="dropdown-menu">
-                                                    <button
-                                                      className="dropdown-item sm-text text-capitalize"
-                                                      onClick={() =>
-                                                        handleSetEdit(item.id)
-                                                      }
-                                                      data-toggle="modal"
-                                                      data-target="#addLang"
-                                                    >
-                                                      <span className="t-mr-8">
-                                                        <i className="fa fa-pencil"></i>
-                                                      </span>
-                                                      Edit
-                                                    </button>
-                                                    <a
-                                                      className="dropdown-item sm-text text-capitalize"
-                                                      href="#"
-                                                    >
-                                                      <span className="t-mr-8">
-                                                        <i className="fa fa-refresh"></i>
-                                                      </span>
-                                                      Translate
-                                                    </a>
-                                                    <button
-                                                      className="dropdown-item sm-text text-capitalize"
-                                                      onClick={() => {
-                                                        handleDeleteConfirmation(
-                                                          item.code
-                                                        );
-                                                      }}
-                                                    >
-                                                      <span className="t-mr-8">
-                                                        <i className="fa fa-trash"></i>
-                                                      </span>
-                                                      Delete
-                                                    </button>
-                                                  </div>
-                                                </div>
-                                              </td>
-                                            </tr>
-                                          );
-                                        })
-                                      ),
-                                    ],
-                                  ]
-                                : [
-                                    /* searched data, logic === haveData*/
-                                    searchedLanguages && [
-                                      searchedLanguages.list.length === 0 ? (
-                                        <tr className="align-middle">
-                                          <td
-                                            scope="row"
-                                            colSpan="6"
-                                            className="xsm-text align-middle text-center"
-                                          >
-                                            No data available
-                                          </td>
-                                        </tr>
-                                      ) : (
-                                        searchedLanguages.list.map(
+                                        TranslationuageList.data.map(
                                           (item, index) => {
                                             return (
                                               <tr
@@ -866,7 +765,11 @@ const Lang = () => {
                                                   scope="row"
                                                   className="xsm-text text-capitalize align-middle text-center"
                                                 >
-                                                  {index + 1}
+                                                  {index +
+                                                    1 +
+                                                    (TranslationuageList.current_page -
+                                                      1) *
+                                                      TranslationuageList.per_page}
                                                 </th>
 
                                                 <td className="xsm-text align-middle text-center">
@@ -878,7 +781,7 @@ const Lang = () => {
                                                 <td className="xsm-text text-capitalize align-middle text-center">
                                                   <div className="d-flex justify-content-center">
                                                     <div
-                                                      className="fk-language__flag"
+                                                      className="fk-Translationuage__flag"
                                                       style={
                                                         item.image !== null
                                                           ? {
@@ -920,7 +823,126 @@ const Lang = () => {
                                                           handleSetEdit(item.id)
                                                         }
                                                         data-toggle="modal"
-                                                        data-target="#addLang"
+                                                        data-target="#addTranslation"
+                                                      >
+                                                        <span className="t-mr-8">
+                                                          <i className="fa fa-pencil"></i>
+                                                        </span>
+                                                        Edit
+                                                      </button>
+                                                      <a
+                                                        className="dropdown-item sm-text text-capitalize"
+                                                        href="#"
+                                                      >
+                                                        <span className="t-mr-8">
+                                                          <i className="fa fa-refresh"></i>
+                                                        </span>
+                                                        Translate
+                                                      </a>
+                                                      <button
+                                                        className="dropdown-item sm-text text-capitalize"
+                                                        onClick={() => {
+                                                          handleDeleteConfirmation(
+                                                            item.code
+                                                          );
+                                                        }}
+                                                      >
+                                                        <span className="t-mr-8">
+                                                          <i className="fa fa-trash"></i>
+                                                        </span>
+                                                        Delete
+                                                      </button>
+                                                    </div>
+                                                  </div>
+                                                </td>
+                                              </tr>
+                                            );
+                                          }
+                                        )
+                                      ),
+                                    ],
+                                  ]
+                                : [
+                                    /* searched data, logic === haveData*/
+                                    searchedTranslationuages && [
+                                      searchedTranslationuages.list.length ===
+                                      0 ? (
+                                        <tr className="align-middle">
+                                          <td
+                                            scope="row"
+                                            colSpan="6"
+                                            className="xsm-text align-middle text-center"
+                                          >
+                                            No data available
+                                          </td>
+                                        </tr>
+                                      ) : (
+                                        searchedTranslationuages.list.map(
+                                          (item, index) => {
+                                            return (
+                                              <tr
+                                                className="align-middle"
+                                                key={index}
+                                              >
+                                                <th
+                                                  scope="row"
+                                                  className="xsm-text text-capitalize align-middle text-center"
+                                                >
+                                                  {index + 1}
+                                                </th>
+
+                                                <td className="xsm-text align-middle text-center">
+                                                  {item.code}
+                                                </td>
+                                                <td className="xsm-text text-capitalize align-middle text-center">
+                                                  {item.name}
+                                                </td>
+                                                <td className="xsm-text text-capitalize align-middle text-center">
+                                                  <div className="d-flex justify-content-center">
+                                                    <div
+                                                      className="fk-Translationuage__flag"
+                                                      style={
+                                                        item.image !== null
+                                                          ? {
+                                                              backgroundImage: `url(${item.image})`,
+                                                            }
+                                                          : ""
+                                                      }
+                                                    ></div>
+                                                  </div>
+                                                </td>
+                                                <td className="xsm-text text-capitalize align-middle text-center">
+                                                  <Switch
+                                                    checked={item.is_default}
+                                                    onChange={() => {
+                                                      handleDefault(item.code);
+                                                    }}
+                                                    height={22}
+                                                    width={44}
+                                                    offColor="#ee5253"
+                                                    disabled={
+                                                      item.is_default ||
+                                                      newDefault.uploading
+                                                    }
+                                                  />
+                                                </td>
+                                                <td className="xsm-text text-capitalize align-middle text-center">
+                                                  <div className="dropdown">
+                                                    <button
+                                                      className="btn t-bg-clear t-text-dark--light-40"
+                                                      type="button"
+                                                      data-toggle="dropdown"
+                                                    >
+                                                      <i className="fa fa-ellipsis-h"></i>
+                                                    </button>
+                                                    <div className="dropdown-menu">
+                                                      <button
+                                                        className="dropdown-item sm-text text-capitalize"
+                                                        onClick={() =>
+                                                          handleSetEdit(item.id)
+                                                        }
+                                                        data-toggle="modal"
+                                                        data-target="#addTranslation"
                                                       >
                                                         <span className="t-mr-8">
                                                           <i className="fa fa-pencil"></i>
@@ -969,23 +991,26 @@ const Lang = () => {
               </div>
 
               {/* pagination loading effect */}
-              {newLang.uploading === true || loading === true
+              {newTranslation.uploading === true || loading === true
                 ? paginationLoading()
                 : [
                     // logic === !searched
-                    !searchedLanguages.searched ? (
+                    !searchedTranslationuages.searched ? (
                       <>
                         <div className="t-bg-white mt-1 t-pt-5 t-pb-5">
                           <div className="row align-items-center t-pl-15 t-pr-15">
                             <div className="col-md-7 t-mb-15 mb-md-0">
                               {/* pagination function */}
-                              {pagination(languageList, setPaginatedLanguages)}
+                              {pagination(
+                                TranslationuageList,
+                                setPaginatedTranslationuages
+                              )}
                             </div>
                             <div className="col-md-5">
                               <ul className="t-list d-flex justify-content-md-end align-items-center">
                                 <li className="t-list__item">
                                   <span className="d-inline-block sm-text">
-                                    {showingData(languageList)}
+                                    {showingData(TranslationuageList)}
                                   </span>
                                 </li>
                               </ul>
@@ -1003,8 +1028,8 @@ const Lang = () => {
                                 <button
                                   className="btn btn-primary btn-sm"
                                   onClick={() =>
-                                    setSearchedLanguages({
-                                      ...searchedLanguages,
+                                    setSearchedTranslationuages({
+                                      ...searchedTranslationuages,
                                       searched: false,
                                     })
                                   }
@@ -1019,8 +1044,8 @@ const Lang = () => {
                               <li className="t-list__item">
                                 <span className="d-inline-block sm-text">
                                   {searchedShowingData(
-                                    searchedLanguages,
-                                    languageListForSearch
+                                    searchedTranslationuages,
+                                    TranslationuageListForSearch
                                   )}
                                 </span>
                               </li>
@@ -1040,4 +1065,4 @@ const Lang = () => {
   );
 };
 
-export default Lang;
+export default Translation;

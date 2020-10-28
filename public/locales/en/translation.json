@@ -1,3 +1,24 @@
 {
-    "Search": "Search"
+    "A language already exist with this code": "A language already exist with this code",
+    "A language already exist with this name": "A language already exist with this name",
+    "A new language has been created": "A new language has been created",
+    "Branch": "Branch",
+    "Branches": "Branches",
+    "Customers": "Customers",
+    "Default language has been updated": "Default language has been updated",
+    "Kitchen": "Kitchen",
+    "Language has been deleted successfully": "Language has been deleted successfully",
+    "Language has been switched!": "Language has been switched!",
+    "Manage": "Manage",
+    "Order Histories": "Order Histories",
+    "Please select a file less than 5MB": "Please select a file less than 5MB",
+    "Please select a valid image file": "Please select a valid image file",
+    "Point of Sale": "Point of Sale",
+    "Pos": "Pos",
+    "Reports": "Reports",
+    "Restaurant Landing": "Restaurant Landing",
+    "Search": "Search",
+    "Time": "Time",
+    "Work Periods": "Work Periods",
+    "orders": "orders"
 }

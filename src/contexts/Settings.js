@@ -58,6 +58,7 @@ const SettingsProvider = ({ children }) => {
         setLanguageList,
         setPaginatedLanguages,
         dataPaginating,
+        setDataPaginating,
         navLanguageList,
         setNavLanguageList,
         languageListForSearch,

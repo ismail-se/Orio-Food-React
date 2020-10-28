@@ -35,6 +35,7 @@ const Navbar = () => {
               i18n.changeLanguage(item.code);
               setDefaultLang(item);
             }
+            return true;
           });
       } else {
         const temp =
@@ -54,12 +55,11 @@ const Navbar = () => {
     setDefaultLang(lang);
     toast.success(`${_t(t("Language has been switched!"))}`, {
       position: "bottom-center",
-      className: "text-center",
       autoClose: 5000,
       hideProgressBar: false,
       closeOnClick: true,
       pauseOnHover: true,
-      className: "toast-notification",
+      className: "text-center toast-notification",
     });
   };
 
