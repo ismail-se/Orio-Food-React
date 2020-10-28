@@ -1,18 +1,24 @@
 import React, { useState, useEffect, useContext } from "react";
 
 //functions
-import { _t } from "../../../../../functions/Functions";
+import {
+  _t,
+  modalLoading,
+  tableLoading,
+  pagination,
+  paginationLoading,
+  showingData,
+  searchedShowingData,
+} from "../../../../../functions/Functions";
 import { useTranslation } from "react-i18next";
 
 //3rd party packages
 import { Helmet } from "react-helmet";
 import Switch from "react-switch";
-import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 import { confirmAlert } from "react-confirm-alert";
 import "react-confirm-alert/src/react-confirm-alert.css";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import ReactPaginate from "react-paginate";
 
 //pages & includes
 import ManageSidebar from "../ManageSidebar";
@@ -55,7 +61,6 @@ const Lang = () => {
 
   //search result
   let [searchedLanguages, setSearchedLanguages] = useState({
-    searchedBy: "",
     list: null,
     searched: false,
   });
@@ -99,8 +104,8 @@ const Lang = () => {
           uploading: false,
         });
         setLanguageList(res.data[0]);
-        setLanguageListForSearch(res.data[1]);
         setNavLanguageList(res.data[1]);
+        setLanguageListForSearch(res.data[1]);
         setLoading(false);
         toast.success(`${_t(t("A new language has been created"))}`, {
           position: "bottom-center",
@@ -187,7 +192,7 @@ const Lang = () => {
   };
 
   //search language here
-  const handleSearchInput = (e) => {
+  const handleSearch = (e) => {
     let searchInput = e.target.value.toLowerCase();
     if (searchInput.length === 0) {
       setSearchedLanguages({ ...searchedLanguages, searched: false });
@@ -202,29 +207,13 @@ const Lang = () => {
       });
       setSearchedLanguages({
         ...searchedLanguages,
-        searchedBy: e.target.value,
         list: searchedLang,
         searched: true,
       });
     }
   };
 
-  const handleSearch = (e) => {
-    e.preventDefault();
-    let searchedLang = languageListForSearch.filter((item) => {
-      return (
-        item.name
-          .toLowerCase()
-          .includes(searchedLanguages.searchedBy.toLowerCase()) ||
-        item.code
-          .toLowerCase()
-          .includes(searchedLanguages.searchedBy.toLowerCase())
-      );
-    });
-    setSearchedLanguages({ list: searchedLang, searched: true });
-  };
-
-  //delete confirmation of language
+  //delete confirmation modal of language
   const handleDeleteConfirmation = (code) => {
     confirmAlert({
       customUI: ({ onClose }) => {
@@ -311,8 +300,8 @@ const Lang = () => {
       <Helmet>
         <title>Languages & Translations</title>
       </Helmet>
-      {/* Add Customer */}
 
+      {/* Add language modal */}
       <div className="modal fade" id="addCustomer" aria-hidden="true">
         <div className="modal-dialog modal-md">
           <div className="modal-content">
@@ -330,6 +319,7 @@ const Lang = () => {
               ></button>
             </div>
             <div className="modal-body">
+              {/* show form or show saving loading */}
               {newLang.uploading === false ? (
                 <>
                   <form onSubmit={handleSaveNewLang}>
@@ -405,11 +395,7 @@ const Lang = () => {
                   <div className="text-center text-primary font-weight-bold text-uppercase">
                     Please wait
                   </div>
-                  <SkeletonTheme color="#ff7675" highlightColor="#dfe4ea">
-                    <p>
-                      <Skeleton count={3} />
-                    </p>
-                  </SkeletonTheme>
+                  {modalLoading(3)}
                   <div className="mt-4">
                     <div className="row">
                       <div className="col-6">
@@ -440,27 +426,35 @@ const Lang = () => {
           </div>
         </div>
       </div>
-      {/* Add Customer End*/}
+      {/* Add language modal Ends*/}
 
+      {/* Edit Language Modal */}
+      {/* Edit Language Modal Ends */}
+
+      {/* main body */}
       <main id="main" data-simplebar>
         <div className="container">
           <div className="row t-mt-10 gx-2">
+            {/* left Sidebar */}
             <div className="col-lg-3 col-xxl-2 t-mb-30 mb-lg-0">
               <ManageSidebar />
             </div>
+            {/* left Sidebar ends */}
+
+            {/* Rightbar contents */}
             <div className="col-lg-9 col-xxl-10 t-mb-30 mb-lg-0">
               <div className="t-bg-white">
                 <div className="fk-scroll--pos-menu" data-simplebar>
                   <div className="t-pl-15 t-pr-15">
+                    {/* Loading effect */}
                     {newLang.uploading === true || loading === true ? (
-                      <SkeletonTheme color="#f1f2f6" highlightColor="#dfe4ea">
-                        <p>
-                          <Skeleton style={{ height: `calc(100vh - 222px)` }} />
-                        </p>
-                      </SkeletonTheme>
+                      tableLoading()
                     ) : (
                       <>
+                        {/* next page data spin loading */}
                         <div className={`${dataPaginating && "loading"}`}></div>
+                        {/* spin loading ends */}
+
                         <div className="row gx-2 align-items-center t-pt-15 t-pb-15">
                           <div className="col-md-4 col-lg-3 t-mb-15 mb-md-0">
                             <ul className="t-list fk-breadcrumb">
@@ -473,29 +467,30 @@ const Lang = () => {
                           </div>
                           <div className="col-md-8 col-lg-9">
                             <div className="row gx-0 align-items-center">
+                              {/* Search languages */}
                               <div className="col-md-9 col-xl-10 t-mb-15 mb-md-0">
-                                <form onSubmit={handleSearch}>
-                                  <div className="input-group">
-                                    <div className="form-file">
-                                      <input
-                                        type="text"
-                                        className="form-control border-0 form-control--light-1 rounded-0"
-                                        placeholder="Search.."
-                                        onChange={handleSearchInput}
-                                      />
-                                    </div>
-                                    <button
-                                      className="btn btn-primary"
-                                      type="submit"
-                                    >
-                                      <i
-                                        className="fa fa-search"
-                                        aria-hidden="true"
-                                      ></i>
-                                    </button>
+                                <div className="input-group">
+                                  <div className="form-file">
+                                    <input
+                                      type="text"
+                                      className="form-control border-0 form-control--light-1 rounded-0"
+                                      placeholder="Search.."
+                                      onChange={handleSearch}
+                                    />
                                   </div>
-                                </form>
+                                  <button
+                                    className="btn btn-primary"
+                                    type="button"
+                                  >
+                                    <i
+                                      className="fa fa-search"
+                                      aria-hidden="true"
+                                    ></i>
+                                  </button>
+                                </div>
                               </div>
+
+                              {/* Add language modal trigger button */}
                               <div className="col-md-3 col-xl-2 text-md-right">
                                 <button
                                   type="button"
@@ -509,6 +504,7 @@ const Lang = () => {
                             </div>
                           </div>
                         </div>
+                        {/* Table */}
                         <div className="table-responsive">
                           <table className="table table-bordered min-table-height">
                             <thead className="align-middle">
@@ -553,6 +549,7 @@ const Lang = () => {
                               </tr>
                             </thead>
                             <tbody className="align-middle">
+                              {/* loop here, logic === !search && haveData && haveDataLegnth > 0*/}
                               {!searchedLanguages.searched
                                 ? [
                                     languageList && [
@@ -673,7 +670,8 @@ const Lang = () => {
                                     ],
                                   ]
                                 : [
-                                    languageList && [
+                                    /* searched data, logic === haveData*/
+                                    searchedLanguages && [
                                       searchedLanguages.list.length === 0 ? (
                                         <tr className="align-middle">
                                           <td
@@ -796,98 +794,66 @@ const Lang = () => {
                   </div>
                 </div>
               </div>
-              {newLang.uploading === true || loading === true ? (
-                <Skeleton
-                  style={{ height: "40px" }}
-                  className="card bg-white"
-                />
-              ) : (
-                [
-                  !searchedLanguages.searched ? (
-                    <>
+
+              {/* pagination loading effect */}
+              {newLang.uploading === true || loading === true
+                ? paginationLoading()
+                : [
+                    // logic === !searched
+                    !searchedLanguages.searched ? (
+                      <>
+                        <div className="t-bg-white mt-1 t-pt-5 t-pb-5">
+                          <div className="row align-items-center t-pl-15 t-pr-15">
+                            <div className="col-md-7 t-mb-15 mb-md-0">
+                              {/* pagination function */}
+                              {pagination(languageList, setPaginatedLanguages)}
+                            </div>
+                            <div className="col-md-5">
+                              <ul className="t-list d-flex justify-content-md-end align-items-center">
+                                <li className="t-list__item">
+                                  <span className="d-inline-block sm-text">
+                                    {showingData(languageList)}
+                                  </span>
+                                </li>
+                              </ul>
+                            </div>
+                          </div>
+                        </div>
+                      </>
+                    ) : (
+                      // if searched
                       <div className="t-bg-white mt-1 t-pt-5 t-pb-5">
                         <div className="row align-items-center t-pl-15 t-pr-15">
                           <div className="col-md-7 t-mb-15 mb-md-0">
-                            <ReactPaginate
-                              pageCount={languageList && languageList.last_page}
-                              initialPage={0}
-                              marginPagesDisplayed={5}
-                              pageRangeDisplayed={2}
-                              onPageChange={(page) => {
-                                setPaginatedLanguages(page.selected + 1);
-                              }}
-                              breakLabel={". . ."}
-                              breakClassName={"px-2"}
-                              containerClassName={"t-list d-flex"}
-                              pageClassName={"t-list__item"}
-                              previousLabel={
-                                <i className="las la-angle-double-left"></i>
-                              }
-                              nextLabel={
-                                <i className="las la-angle-double-right"></i>
-                              }
-                              pageLinkClassName={
-                                "t-link t-pt-5 t-pb-5 t-pl-10 t-pr-10 paginav__link paginav__link--light border text-capitalize sm-text"
-                              }
-                              previousClassName={
-                                "t-link t-pt-5 t-pb-5 t-pl-10 t-pr-10 paginav__link paginav__link--light border text-capitalize sm-text"
-                              }
-                              nextClassName={
-                                "t-link t-pt-5 t-pb-5 t-pl-10 t-pr-10 paginav__link paginav__link--light border text-capitalize sm-text"
-                              }
-                              activeClassName={"pagination-active"}
-                              activeLinkClassName={"text-white"}
-                            />
+                            <ul className="t-list d-flex">
+                              <li
+                                className="t-list__item"
+                                style={{ width: "36px", height: "33px" }}
+                              ></li>
+                            </ul>
                           </div>
                           <div className="col-md-5">
                             <ul className="t-list d-flex justify-content-md-end align-items-center">
                               <li className="t-list__item">
                                 <span className="d-inline-block sm-text">
-                                  Showing {languageList && languageList.from} -{" "}
-                                  {languageList && languageList.to} of{" "}
-                                  {languageList && languageList.total}
+                                  {searchedShowingData(
+                                    searchedLanguages,
+                                    languageListForSearch
+                                  )}
                                 </span>
                               </li>
                             </ul>
                           </div>
                         </div>
                       </div>
-                    </>
-                  ) : (
-                    <div className="t-bg-white mt-1 t-pt-5 t-pb-5">
-                      <div className="row align-items-center t-pl-15 t-pr-15">
-                        <div className="col-md-7 t-mb-15 mb-md-0">
-                          <ul className="t-list d-flex">
-                            <li
-                              className="t-list__item"
-                              style={{ width: "36px", height: "33px" }}
-                            ></li>
-                          </ul>
-                        </div>
-                        <div className="col-md-5">
-                          <ul className="t-list d-flex justify-content-md-end align-items-center">
-                            <li className="t-list__item">
-                              <span className="d-inline-block sm-text">
-                                Showing{" "}
-                                {languageListForSearch &&
-                                  searchedLanguages &&
-                                  searchedLanguages.list.length}{" "}
-                                of{" "}
-                                {languageListForSearch &&
-                                  languageListForSearch.length}
-                              </span>
-                            </li>
-                          </ul>
-                        </div>
-                      </div>
-                    </div>
-                  ),
-                ]
-              )}
+                    ),
+                  ]}
             </div>
+            {/* Rightbar contents end*/}
           </div>
         </div>
       </main>
+      {/* main body ends */}
     </>
   );
 };

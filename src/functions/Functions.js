@@ -1,6 +1,22 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
 
+//3rd party packages
+import ReactPaginate from "react-paginate";
+import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
+
+/*console functions, clear and dummy text like facebook*/
+const consolee = () => {
+  var cssStop = "color: Red;" + "font-size: 50px;" + "font-weight: bold;";
+  var cssText = "color: Black;" + "font-size: 18px;" + "font-weight: bold;";
+  console.clear();
+  console.log("%cStop!", cssStop);
+  console.log(
+    "%cThis is a browser feature intended for developers. If someone told you to copy-paste something here to enable a feature or hack someone's account, it is a scam.",
+    cssText
+  );
+};
+
 /*translation functions*/
 const _t = (text) => {
   /* const url = BASE_URL + `/api/languages`;
@@ -12,19 +28,6 @@ const _t = (text) => {
   return text;
 };
 
-/*console functions, clear and dummy text like facebook*/
-const consolee = () => {
-  var cssStop = "color: Red;" + "font-size: 50px;" + "font-weight: bold;";
-  var cssText = "color: Black;" + "font-size: 18px;" + "font-weight: bold;";
-  console.clear();
-  console.log("%cStop!", cssStop);
-  console.log(
-    "%cThis is a browser feature intended for developers. If someone told you to copy-paste something here to enable a feature or hack someone's account, it is a scam and will give them access to many of your accounts.",
-    cssText
-  );
-};
-
-/*navlink functions start here*/
 //navbar links
 const navbarHrefLink = (redirectTo) => {
   if (window.location.pathname === redirectTo) {
@@ -45,6 +48,7 @@ const navbarHrefLink = (redirectTo) => {
     );
   }
 };
+
 //footer logo link
 const footerHrefLink = (redirectTo) => {
   if (window.location.pathname === redirectTo) {
@@ -76,7 +80,7 @@ const footerHrefLink = (redirectTo) => {
   }
 };
 
-//restaurant menu links
+//restaurant dashboard menu links
 const restaurantMenuLink = (
   img,
   imgAlt,
@@ -108,4 +112,99 @@ const restaurantMenuLink = (
   );
 };
 
-export { _t, consolee, navbarHrefLink, footerHrefLink, restaurantMenuLink };
+//pagination
+const pagination = (data, customFunction) => {
+  return (
+    <ReactPaginate
+      pageCount={data && data.last_page}
+      initialPage={0}
+      marginPagesDisplayed={5}
+      pageRangeDisplayed={2}
+      onPageChange={(page) => {
+        customFunction(page.selected + 1);
+      }}
+      breakLabel={". . ."}
+      breakClassName={"px-2"}
+      containerClassName={"t-list d-flex"}
+      pageClassName={"t-list__item"}
+      previousLabel={<i className="las la-angle-double-left"></i>}
+      nextLabel={<i className="las la-angle-double-right"></i>}
+      pageLinkClassName={
+        "t-link t-pt-5 t-pb-5 t-pl-10 t-pr-10 paginav__link paginav__link--light border text-capitalize sm-text"
+      }
+      previousClassName={
+        "t-link t-pt-5 t-pb-5 t-pl-10 t-pr-10 paginav__link paginav__link--light border text-capitalize sm-text"
+      }
+      nextClassName={
+        "t-link t-pt-5 t-pb-5 t-pl-10 t-pr-10 paginav__link paginav__link--light border text-capitalize sm-text"
+      }
+      activeClassName={"pagination-active"}
+      activeLinkClassName={"text-white"}
+    />
+  );
+};
+
+// pagination loading
+const paginationLoading = () => {
+  return <Skeleton style={{ height: "40px" }} className="card bg-white" />;
+};
+
+// modal loading
+const modalLoading = (count) => {
+  return (
+    <SkeletonTheme color="#ff7675" highlightColor="#dfe4ea">
+      <p>
+        <Skeleton count={count} />
+      </p>
+    </SkeletonTheme>
+  );
+};
+
+// table loading
+const tableLoading = () => {
+  return (
+    <SkeletonTheme color="#f1f2f6" highlightColor="#dfe4ea">
+      <p>
+        <Skeleton style={{ height: `calc(100vh - 222px)` }} />
+      </p>
+    </SkeletonTheme>
+  );
+};
+
+// data count details of tables
+const showingData = (data) => {
+  return (
+    <>
+      Showing {data && data.from} - {data && data.to} of {data && data.total}
+    </>
+  );
+};
+
+// searched data count details of table
+const searchedShowingData = (data, allData) => {
+  return (
+    <>
+      Showing {data && data.list.length} of {allData && allData.length}
+    </>
+  );
+};
+
+//export here
+export {
+  _t,
+  consolee,
+  navbarHrefLink,
+  footerHrefLink,
+  restaurantMenuLink,
+  modalLoading,
+  tableLoading,
+  pagination,
+  paginationLoading,
+  showingData,
+  searchedShowingData,
+};
+/*
+----------------------------------------------
+                      Ends
+----------------------------------------------
+*/
