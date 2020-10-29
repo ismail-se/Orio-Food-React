@@ -469,7 +469,7 @@ const Lang = () => {
             <div className="modal-body">
               {/* show form or show saving loading */}
               {newLang.uploading === false ? (
-                <>
+                <div key="fragment1">
                   <form
                     onSubmit={
                       !newLang.edit ? handleSaveNewLang : handleUpdateLang
@@ -555,9 +555,9 @@ const Lang = () => {
                       </div>
                     </div>
                   </form>
-                </>
+                </div>
               ) : (
-                <>
+                <div key="fragment2">
                   <div className="text-center text-primary font-weight-bold text-uppercase">
                     Please wait
                   </div>
@@ -586,7 +586,7 @@ const Lang = () => {
                       </div>
                     </div>
                   </div>
-                </>
+                </div>
               )}
             </div>
           </div>
@@ -616,7 +616,7 @@ const Lang = () => {
                     {newLang.uploading === true || loading === true ? (
                       tableLoading()
                     ) : (
-                      <>
+                      <div key="fragment3">
                         {/* next page data spin loading */}
                         <div className={`${dataPaginating && "loading"}`}></div>
                         {/* spin loading ends */}
@@ -966,7 +966,7 @@ const Lang = () => {
                             </tbody>
                           </table>
                         </div>
-                      </>
+                      </div>
                     )}
                   </div>
                 </div>
@@ -978,7 +978,7 @@ const Lang = () => {
                 : [
                     // logic === !searched
                     !searchedLanguages.searched ? (
-                      <>
+                      <div key="fragment4">
                         <div className="t-bg-white mt-1 t-pt-5 t-pb-5">
                           <div className="row align-items-center t-pl-15 t-pr-15">
                             <div className="col-md-7 t-mb-15 mb-md-0">
@@ -996,7 +996,7 @@ const Lang = () => {
                             </div>
                           </div>
                         </div>
-                      </>
+                      </div>
                     ) : (
                       // if searched
                       <div className="t-bg-white mt-1 t-pt-5 t-pb-5">
