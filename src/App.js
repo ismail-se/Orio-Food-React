@@ -20,6 +20,7 @@ import {
   Branch,
   Reports,
   Lang,
+  Translation,
 } from "./imports/Pages";
 import { Navbar, Footer } from "./imports/Components";
 
@@ -73,6 +74,9 @@ function App() {
           </Route>
           <Route path="/dashboard/manage/settings/languages" exact>
             <Lang />
+          </Route>
+          <Route path="/dashboard/manage/settings/languages/:code" exact>
+            <Translation />
           </Route>
         </Switch>
         <Footer />

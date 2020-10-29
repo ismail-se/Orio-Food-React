@@ -30,6 +30,7 @@ import { SettingsContext } from "../../../../../contexts/Settings";
 //axios and base url
 import axios from "axios";
 import { BASE_URL } from "../../../../../BaseUrl";
+import { NavLink } from "react-router-dom";
 
 const Lang = () => {
   const { t } = useTranslation();
@@ -302,6 +303,7 @@ const Lang = () => {
 
   //Save New Language
   const handleDefault = (code) => {
+    setLoading(true);
     setNewDefault({ ...newDefault, uploading: true });
     setDataPaginating(true);
     const langUrl = BASE_URL + `/settings/update-default`;
@@ -317,7 +319,9 @@ const Lang = () => {
         setSearchedLanguages({
           ...searchedLanguages,
           list: res.data[1],
+          searched: false,
         });
+        setLoading(false);
         setDataPaginating(false);
         setNewDefault({ ...newDefault, uploading: false });
         toast.success(`${_t(t("Default language has been updated"))}`, {
@@ -810,15 +814,15 @@ const Lang = () => {
                                                       </span>
                                                       Edit
                                                     </button>
-                                                    <a
+                                                    <NavLink
                                                       className="dropdown-item sm-text text-capitalize"
-                                                      href="#"
+                                                      to={`/dashboard/manage/settings/languages/${item.code}`}
                                                     >
                                                       <span className="t-mr-8">
                                                         <i className="fa fa-refresh"></i>
                                                       </span>
                                                       Translate
-                                                    </a>
+                                                    </NavLink>
                                                     <button
                                                       className="dropdown-item sm-text text-capitalize"
                                                       onClick={() => {
@@ -927,15 +931,15 @@ const Lang = () => {
                                                         </span>
                                                         Edit
                                                       </button>
-                                                      <a
+                                                      <NavLink
                                                         className="dropdown-item sm-text text-capitalize"
-                                                        href="#"
+                                                        to={`/dashboard/manage/settings/languages/${item.code}`}
                                                       >
                                                         <span className="t-mr-8">
                                                           <i className="fa fa-refresh"></i>
                                                         </span>
                                                         Translate
-                                                      </a>
+                                                      </NavLink>
                                                       <button
                                                         className="dropdown-item sm-text text-capitalize"
                                                         onClick={() => {

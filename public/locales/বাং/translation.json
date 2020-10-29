@@ -1,3 +1,25 @@
 {
-    "Search": "Search"
+    "A language already exist with this code": "এই কোড সহ একটি ভাষা ইতিমধ্যে বিদ্যমান",
+    "A language already exist with this name": "এই নামের সাথে একটি ভাষা ইতিমধ্যে বিদ্যমান",
+    "A new language has been created": "একটি নতুন ভাষা তৈরি করা হয়েছে",
+    "Branch": "শাখা",
+    "Branches": "শাখা",
+    "Customers": "গ্রাহকরা",
+    "Default language has been updated": "ডিফল্ট ভাষা আপডেট করা হয়েছে",
+    "Kitchen": "রান্নাঘর",
+    "Language has been deleted successfully": "ভাষা সফলভাবে মুছে ফেলা হয়েছে",
+    "Language has been switched!": "ভাষা বদলানো হয়েছে!",
+    "Manage": "পরিচালনা করুন",
+    "Order Histories": "ইতিহাস ইতিহাস",
+    "Please select a file less than 5MB": "দয়া করে 5MB এর চেয়ে কম ফাইল নির্বাচন করুন",
+    "Please select a valid image file": "একটি বৈধ ইমেজ ফাইল নির্বাচন করুন",
+    "Point of Sale": "বিক্রয় বিন্দু",
+    "Pos": "পোস",
+    "Reports": "রিপোর্ট",
+    "Restaurant Landing": "রেস্তোঁরা অবতরণ",
+    "Search": "অনুসন্ধান করুন",
+    "Time": "সময়",
+    "Translation has been saved": "অনুবাদ সংরক্ষণ করা হয়েছে",
+    "Work Periods": "কাজের সময়কাল",
+    "orders": "আদেশ"
 }

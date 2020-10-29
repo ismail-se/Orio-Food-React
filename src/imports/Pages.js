@@ -12,6 +12,7 @@ import Kitchen from "../resources/restaurant/auth/Kitchen";
 import Branch from "../resources/restaurant/auth/Branch";
 import Reports from "../resources/restaurant/auth/Reports";
 import Lang from "../resources/restaurant/auth/manage/settings/Lang";
+import Translation from "../resources/restaurant/auth/manage/settings/Translation";
 
 export {
   RestaurantHome,
@@ -24,5 +25,6 @@ export {
   Branch,
   Reports,
   Lang,
+  Translation,
   RestaurantLanding,
 };
