@@ -7,7 +7,7 @@
     &--scroll {
         height: calc(100vh - 468px);
         @include xl-screen {
-            height: calc(100vh - 195px);
+            height: calc(100vh - 168px);
         }
     }
     &-card {

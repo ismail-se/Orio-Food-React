@@ -10,5 +10,8 @@
     }
     &__icon {
         font-size: 14px;
+        &:hover {
+            cursor: pointer;
+        }
     }
 }

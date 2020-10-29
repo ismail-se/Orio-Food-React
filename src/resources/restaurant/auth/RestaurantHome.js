@@ -30,12 +30,12 @@ const RestaurantHome = () => {
       <Helmet>
         <title>{signUpInfo.name}</title>
       </Helmet>
-      <main id="main" data-simplebar>
-        <div className="container">
-          <div className="row t-mt-70 t-mb-70">
-            {!loading ? (
-              <>
-                <div className="col-md-6 col-lg-4 t-mb-30">
+      <main>
+        <div class="fk-scroll--index t-mt-15 t-mb-15" data-simplebar>
+          <div className="container">
+            <div className="row gx-3">
+              {!loading ? (
+                <>
                   {/* image, imgAltTxt, smallInfoIcon, infoTextColorName, infoText, title, redirectToUrl */}
                   {restaurantMenuLink(
                     "/assets/img/product-img-1.png",
@@ -46,8 +46,6 @@ const RestaurantHome = () => {
                     [_t(t("Work Periods"))],
                     "/dashboard/work-periods"
                   )}
-                </div>
-                <div className="col-md-6 col-lg-4 t-mb-30">
                   {/* image, imgAltTxt, smallInfoIcon, infoTextColorName, infoText, title, redirectToUrl */}
                   {restaurantMenuLink(
                     "/assets/img/product-img-2.png",
@@ -58,8 +56,6 @@ const RestaurantHome = () => {
                     [_t(t("Point of Sale"))],
                     "/dashboard/pos"
                   )}
-                </div>
-                <div className="col-md-6 col-lg-4 t-mb-30">
                   {/* image, imgAltTxt, smallInfoIcon, infoTextColorName, infoText, title, redirectToUrl */}
                   {restaurantMenuLink(
                     "/assets/img/product-img-3.png",
@@ -70,8 +66,6 @@ const RestaurantHome = () => {
                     [_t(t("Order Histories"))],
                     "/dashboard/orders"
                   )}
-                </div>
-                <div className="col-md-6 col-lg-4 t-mb-30">
                   {/* image, imgAltTxt, smallInfoIcon, infoTextColorName, infoText, title, redirectToUrl */}
                   {restaurantMenuLink(
                     "/assets/img/product-img-4.png",
@@ -82,8 +76,6 @@ const RestaurantHome = () => {
                     [_t(t("Customers"))],
                     "/dashboard/customers"
                   )}
-                </div>
-                <div className="col-md-6 col-lg-4 t-mb-30">
                   {/* image, imgAltTxt, smallInfoIcon, infoTextColorName, infoText, title, redirectToUrl */}
                   {restaurantMenuLink(
                     "/assets/img/product-img-9.gif",
@@ -94,8 +86,6 @@ const RestaurantHome = () => {
                     [_t(t("Kitchen"))],
                     "/dashboard/kitchen"
                   )}
-                </div>
-                <div className="col-md-6 col-lg-4 t-mb-30">
                   {/* image, imgAltTxt, smallInfoIcon, infoTextColorName, infoText, title, redirectToUrl */}
                   {restaurantMenuLink(
                     "/assets/img/product-img-5.png",
@@ -106,8 +96,6 @@ const RestaurantHome = () => {
                     [_t(t("Branches"))],
                     "/dashboard/branches"
                   )}
-                </div>
-                <div className="col-md-6 col-lg-4 t-mb-30">
                   {/* image, imgAltTxt, smallInfoIcon, infoTextColorName, infoText, title, redirectToUrl */}
                   {restaurantMenuLink(
                     "/assets/img/product-img-7.png",
@@ -118,8 +106,6 @@ const RestaurantHome = () => {
                     [_t(t("Reports"))],
                     "/dashboard/reports"
                   )}
-                </div>
-                <div className="col-md-6 col-lg-4 t-mb-30">
                   {/* image, imgAltTxt, smallInfoIcon, infoTextColorName, infoText, title, redirectToUrl */}
                   {restaurantMenuLink(
                     "/assets/img/product-img-8.png",
@@ -130,10 +116,8 @@ const RestaurantHome = () => {
                     [_t(t("Manage"))],
                     "/dashboard/manage/settings/languages"
                   )}
-                </div>
-                {/* <div className="col-md-6 col-lg-4 t-mb-30"> */}
-                {/* image, imgAltTxt, smallInfoIcon, infoTextColorName, infoText, title, redirectToUrl */}
-                {/* {restaurantMenuLink(
+                  {/* image, imgAltTxt, smallInfoIcon, infoTextColorName, infoText, title, redirectToUrl */}
+                  {/* {restaurantMenuLink(
                 "/assets/img/product-img-6.png",
                 [_t(t("Logout"))],
                 "fa fa-clock-o",
@@ -141,40 +125,67 @@ const RestaurantHome = () => {
                 [_t(t("Logout"))],
                 [_t(t("Logout"))],
                 "/logout"
+                  )}*/}
+                </>
+              ) : (
+                <>
+                  <div className="col-md-6 col-lg-4 t-mb-30">
+                    <Skeleton
+                      style={{ height: "250px" }}
+                      className="bg-white"
+                    />
+                  </div>
+                  <div className="col-md-6 col-lg-4 t-mb-30">
+                    <Skeleton
+                      style={{ height: "250px" }}
+                      className="bg-white"
+                    />
+                  </div>
+                  <div className="col-md-6 col-lg-4 t-mb-30">
+                    <Skeleton
+                      style={{ height: "250px" }}
+                      className="bg-white"
+                    />
+                  </div>
+                  <div className="col-md-6 col-lg-4 t-mb-30">
+                    <Skeleton
+                      style={{ height: "250px" }}
+                      className="bg-white"
+                    />
+                  </div>
+                  <div className="col-md-6 col-lg-4 t-mb-30">
+                    <Skeleton
+                      style={{ height: "250px" }}
+                      className="bg-white"
+                    />
+                  </div>
+                  <div className="col-md-6 col-lg-4 t-mb-30">
+                    <Skeleton
+                      style={{ height: "250px" }}
+                      className="bg-white"
+                    />
+                  </div>
+                  <div className="col-md-6 col-lg-4 t-mb-30">
+                    <Skeleton
+                      style={{ height: "250px" }}
+                      className="bg-white"
+                    />
+                  </div>
+                  <div className="col-md-6 col-lg-4 t-mb-30">
+                    <Skeleton
+                      style={{ height: "250px" }}
+                      className="bg-white"
+                    />
+                  </div>
+                  <div className="col-md-6 col-lg-4 t-mb-30">
+                    <Skeleton
+                      style={{ height: "250px" }}
+                      className="bg-white"
+                    />
+                  </div>
+                </>
               )}
-            </div> */}
-              </>
-            ) : (
-              <>
-                <div className="col-md-6 col-lg-4 t-mb-30">
-                  <Skeleton style={{ height: "250px" }} className="bg-white" />
-                </div>
-                <div className="col-md-6 col-lg-4 t-mb-30">
-                  <Skeleton style={{ height: "250px" }} className="bg-white" />
-                </div>
-                <div className="col-md-6 col-lg-4 t-mb-30">
-                  <Skeleton style={{ height: "250px" }} className="bg-white" />
-                </div>
-                <div className="col-md-6 col-lg-4 t-mb-30">
-                  <Skeleton style={{ height: "250px" }} className="bg-white" />
-                </div>
-                <div className="col-md-6 col-lg-4 t-mb-30">
-                  <Skeleton style={{ height: "250px" }} className="bg-white" />
-                </div>
-                <div className="col-md-6 col-lg-4 t-mb-30">
-                  <Skeleton style={{ height: "250px" }} className="bg-white" />
-                </div>
-                <div className="col-md-6 col-lg-4 t-mb-30">
-                  <Skeleton style={{ height: "250px" }} className="bg-white" />
-                </div>
-                <div className="col-md-6 col-lg-4 t-mb-30">
-                  <Skeleton style={{ height: "250px" }} className="bg-white" />
-                </div>
-                <div className="col-md-6 col-lg-4 t-mb-30">
-                  <Skeleton style={{ height: "250px" }} className="bg-white" />
-                </div>
-              </>
-            )}
+            </div>
           </div>
         </div>
       </main>

@@ -3,9 +3,9 @@
     margin-left: 10px;
     position: relative;
     background: $white;
-    height: 260px;
+    height: 340px;
     @include xl-screen {
-        height: calc(100vh - 195px);
+        height: calc(100vh - 168px);
     }
     &__cart {
         @include xl-screen {

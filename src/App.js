@@ -12,6 +12,7 @@ import {
   RestaurantLanding,
   RestaurantHome,
   Refresh,
+  Login,
   WorkPeriod,
   Pos,
   OrderHistories,
@@ -43,6 +44,9 @@ function App() {
         <Switch>
           <Route path="/refresh" exact>
             <Refresh />
+          </Route>
+          <Route path="/login" exact>
+            <Login />
           </Route>
           <Route path="/" exact>
             <RestaurantLanding />

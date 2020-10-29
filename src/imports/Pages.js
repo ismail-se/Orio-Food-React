@@ -1,4 +1,6 @@
+//common pages
 import Refresh from "../resources/common/Refresh";
+import Login from "../resources/common/Login";
 //public page
 import RestaurantLanding from "../resources/restaurant/public/RestaurantLanding";
 
@@ -17,6 +19,7 @@ import Translation from "../resources/restaurant/auth/manage/settings/Translatio
 export {
   RestaurantHome,
   Refresh,
+  Login,
   WorkPeriod,
   Pos,
   OrderHistories,

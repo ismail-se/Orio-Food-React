@@ -3,7 +3,12 @@
     align-items: center;
     cursor: pointer;
     position: relative;
-
+    &--empty {
+        display: inline-block ;
+        .mx-checkbox__input-sm + .mx-checkbox__text:before {
+            top: 1px !important;
+        }
+    }
     &__input {
         -webkit-appearance: none;
         -moz-appearance: none;

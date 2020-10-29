@@ -18,11 +18,37 @@
         /*--------POS Nav with Submenu End----------*/
 
         /*--------Calculator Toggle----------*/
-        var calculatorToggler = $('.fk-calculator-toggle');
-        calculatorToggler.on("click", function() {
+        var calculatorToggler = $(".fk-calculator-toggle");
+        calculatorToggler.on("click", function () {
             $(".calculator").toggleClass("active");
-        })
+        });
         /*--------Calculator Toggle End----------*/
+
+        /*--------Nav Slider----------*/
+        var smNav = $(".fk-nav-slider");
+        if (smNav.length) {
+            smNav.slick({
+                mobileFirst: true,
+                slidesToShow: 2,
+                variableWidth: true,
+                prevArrow:
+                    '<button type="button" class="fk-slick-arrow fk-slick-arrow__prev"><span class="fa fa-angle-left"></span></button>',
+                nextArrow:
+                    '<button type="button" class="fk-slick-arrow fk-slick-arrow__next"><span class="fa fa-angle-right"></span></button>',
+            });
+        }
+        /*--------Nav Slider End----------*/
+
+        /*--------Filterizer----------*/
+        var filterizd = $(".filtr-container");
+        if (filterizd.length) {
+            filterizd.filterizr({
+                //options object
+                layout: "sameWidth",
+                gutterPixels: 10,
+            });
+        }
+        /*--------Filterizer End----------*/
 
         /*--------Feather Icon----------*/
         feather.replace();
@@ -75,9 +101,11 @@
             s = s < 10 ? "0" + s : s;
 
             var time = h + ":" + m + ":" + s + " " + session;
-
-            document.getElementById("MyClockDisplay").innerText = time;
-            document.getElementById("MyClockDisplay").textContent = time;
+            var clockDisplay = $("#MyClockDisplay");
+            if (clockDisplay.length) {
+                document.getElementById("MyClockDisplay").innerText = time;
+                document.getElementById("MyClockDisplay").textContent = time;
+            }
 
             setTimeout(showTime, 1000);
         }
@@ -88,8 +116,6 @@
         /*-----Select---------*/
         $(".fk-select").select2();
         /*-----Select End---------*/
-
-        
 
         /*----Enable Bootstrap Tooltip and Popover-------*/
         $('[data-toggle="tooltip"]').tooltip();
@@ -102,9 +128,13 @@
             $(this).addClass("active").siblings().removeClass("active");
         });
         /*-----Mobile Nav Active Toggle End---------*/
-        
     });
 })(jQuery);
 
-
-
+$(window).on("load", function () {
+    /*-----------------
+        preloader
+    ------------------*/
+    var preLoder = $(".fk-preloader");
+    preLoder.fadeOut(1000);
+});

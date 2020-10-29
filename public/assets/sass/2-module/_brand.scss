@@ -1,5 +1,5 @@
 .fk-brand {
-    width: 80px;
+    max-width: 130px;
     position: relative;
     &--footer {
         width: 50px;
@@ -27,7 +27,7 @@
         // }
     }
     &--sr-lg {
-        height: 80px;
+        height: 50px;
     }
     &__name {
         font-family: $heading-font;
@@ -37,7 +37,7 @@
     &__img {
         display: inline-block;
         width: 100%;
-        height: 80px;
+        height: 50px;
         background-position: center;
         background-size: contain;
         background-repeat: no-repeat;

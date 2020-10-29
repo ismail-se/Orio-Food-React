@@ -1,7 +1,10 @@
 .fk-right-nav {
-    height: calc(100vh - 150px);
+    height: calc(100vh - 70px);
+    @include xl-screen {
+        height: calc(100vh - 120px);
+    }
     &__scroll {
-        height: calc(100vh - 320px);
+        height: calc(100vh - 250px);
     }
     &__guest-btn {
         padding-top: 8px;

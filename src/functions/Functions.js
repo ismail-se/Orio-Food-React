@@ -23,11 +23,14 @@ const consolee = () => {
 
 //translation functions
 const _t = (text) => {
-  const url = BASE_URL + `/settings/save-to-en`;
-  let formData = {
-    key: text,
-  };
-  axios.post(url, formData);
+  let localLang = localStorage.getItem("i18nextLng");
+  if (localLang.includes("en")) {
+    const url = BASE_URL + `/settings/save-to-en`;
+    let formData = {
+      key: text,
+    };
+    axios.post(url, formData);
+  }
   return text;
 };
 
@@ -98,24 +101,26 @@ const restaurantMenuLink = (
   redirectTo
 ) => {
   return (
-    <NavLink to={redirectTo} className="t-link product-card t-bg-white">
-      <div className="product-card__head">
-        <img src={img} alt={imgAlt} className="img-fluid" />
-      </div>
-      <div className="product-card__body">
-        <div className="product-card__add">
-          <span className="product-card__add-icon">
-            <span className="las la-plus"></span>
-          </span>
+    <div className="col-md-6 col-lg-4 t-mb-15">
+      <NavLink to={redirectTo} className="t-link product-card t-bg-white">
+        <div className="product-card__head">
+          <img src={img} alt={imgAlt} className="img-fluid" />
         </div>
-        <span
-          className={`product-card__sub-title ${infoTextColor} text-uppercase`}
-        >
-          <span className={icon}></span> {info}
-        </span>
-        <span className="product-card__title text-capitalize">{title}</span>
-      </div>
-    </NavLink>
+        <div className="product-card__body">
+          <div className="product-card__add">
+            <span className="product-card__add-icon">
+              <span className="las la-plus"></span>
+            </span>
+          </div>
+          <span
+            className={`product-card__sub-title ${infoTextColor} text-uppercase`}
+          >
+            <span className={icon}></span> {info}
+          </span>
+          <span className="product-card__title text-capitalize">{title}</span>
+        </div>
+      </NavLink>
+    </div>
   );
 };
 
@@ -127,7 +132,9 @@ const managePageHrefLink = (redirectTo) => {
         to={{ pathname: "/refresh", state: redirectTo }}
         exact
         className={`w-100 t-text-dark t-heading-font btn font-weight-bold text-uppercase rounded-0 text-left ${
-          window.location.pathname === redirectTo && "active"
+          window.location.href.includes(
+            "/dashboard/manage/settings/languages"
+          ) && "active"
         }`}
       >
         - Languages
@@ -139,7 +146,9 @@ const managePageHrefLink = (redirectTo) => {
         to={redirectTo}
         exact
         className={`w-100 t-text-dark t-heading-font btn font-weight-bold text-uppercase rounded-0 text-left ${
-          window.location.pathname === redirectTo && "active"
+          window.location.href.includes(
+            "/dashboard/manage/settings/languages"
+          ) && "active"
         }`}
       >
         - Languages
@@ -162,7 +171,7 @@ const pagination = (data, customFunction) => {
       breakLabel={". . ."}
       breakClassName={"px-2"}
       containerClassName={"t-list d-flex"}
-      pageClassName={"t-list__item"}
+      pageClassName={"t-list__item mr-0"}
       previousLabel={<i className="las la-angle-double-left"></i>}
       nextLabel={<i className="las la-angle-double-right"></i>}
       pageLinkClassName={
