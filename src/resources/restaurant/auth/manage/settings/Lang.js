@@ -446,7 +446,7 @@ const Lang = () => {
   return (
     <>
       <Helmet>
-        <title>Languages & Translations</title>
+        <title>Languages</title>
       </Helmet>
 
       {/* Add language modal */}

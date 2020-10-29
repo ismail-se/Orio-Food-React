@@ -5,11 +5,7 @@ import { NavLink, useParams } from "react-router-dom";
 import $ from "jquery";
 
 //functions
-import {
-  _t,
-  tableLoading,
-  paginationLoading,
-} from "../../../../../functions/Functions";
+import { _t, tableLoading } from "../../../../../functions/Functions";
 import { useTranslation } from "react-i18next";
 
 //3rd party packages
@@ -27,12 +23,15 @@ import { SettingsContext } from "../../../../../contexts/Settings";
 import axios from "axios";
 import { BASE_URL } from "../../../../../BaseUrl";
 
-const Translation = (props) => {
+const Translation = () => {
   const { t } = useTranslation();
   //getting context values here
-  let { loading, setLoading, languageListForSearch } = useContext(
-    SettingsContext
-  );
+  let {
+    loading,
+    languageListForSearch,
+    dataPaginating,
+    setDataPaginating,
+  } = useContext(SettingsContext);
 
   //getting url parameter
   let { code } = useParams();
@@ -60,11 +59,11 @@ const Translation = (props) => {
   };
 
   const handleTranslate = (langCode) => {
-    setLoading(true);
+    setDataPaginating(true);
     const t_url = BASE_URL + `/settings/get-lang/${langCode}`;
     axios.get(t_url).then((res) => {
       setToTranslate(Object.entries(res.data));
-      setLoading(false);
+      setDataPaginating(false);
     });
   };
 
@@ -117,7 +116,7 @@ const Translation = (props) => {
   return (
     <>
       <Helmet>
-        <title>Translationuages & Translations</title>
+        <title>Update Translation</title>
       </Helmet>
 
       {/* main body */}
@@ -140,6 +139,9 @@ const Translation = (props) => {
                       tableLoading()
                     ) : (
                       <>
+                        {/* next page data spin loading */}
+                        <div className={`${dataPaginating && "loading"}`}></div>
+                        {/* spin loading ends */}
                         <div className="row gx-2 align-items-center pt-0">
                           <div className="col-md-4 col-lg-3 mb-md-0">
                             <ul className="t-list fk-breadcrumb">
@@ -241,52 +243,47 @@ const Translation = (props) => {
               </div>
 
               {/* pagination loading effect */}
-              {loading === true ? (
-                paginationLoading()
-              ) : (
-                <>
-                  <div className="t-bg-white mt-1 t-pt-5 t-pb-5">
-                    <div className="row align-items-center t-pl-15 t-pr-15">
-                      <div className="col-md-7 t-mb-15 mb-md-0">
-                        <ul className="t-list d-flex justify-content-center justify-content-md-start">
-                          <li className="t-list__item no-pagination-style">
-                            <NavLink
-                              className="btn btn-primary btn-sm"
-                              to="/dashboard/manage/settings/languages"
-                            >
-                              <i className="fa fa-reply"></i> Go back
-                            </NavLink>
-                          </li>
-                        </ul>
-                      </div>
-                      <div className="col-md-5">
-                        <ul className="t-list d-flex justify-content-center justify-content-md-end align-items-center">
-                          <li className="t-list__item">
-                            <div className="form-group">
-                              <div className="col-lg-12 text-right">
-                                <button
-                                  className="btn btn-warning btn-sm text-dark"
-                                  type="button"
-                                  onClick={handleCopy}
-                                >
-                                  Copy Translations
-                                </button>
-                                <button
-                                  className="btn btn-success btn-sm ml-2 text-dark"
-                                  type="button"
-                                  onClick={handleSubmitTranslation}
-                                >
-                                  Save
-                                </button>
-                              </div>
-                            </div>
-                          </li>
-                        </ul>
-                      </div>
-                    </div>
+              {/* pagination loading effect removed */}
+              <div className="t-bg-white mt-1 t-pt-5 t-pb-5">
+                <div className="row align-items-center t-pl-15 t-pr-15">
+                  <div className="col-md-7 t-mb-15 mb-md-0">
+                    <ul className="t-list d-flex justify-content-center justify-content-md-start">
+                      <li className="t-list__item no-pagination-style">
+                        <NavLink
+                          className="btn btn-primary btn-sm"
+                          to="/dashboard/manage/settings/languages"
+                        >
+                          <i className="fa fa-reply"></i> Go back
+                        </NavLink>
+                      </li>
+                    </ul>
                   </div>
-                </>
-              )}
+                  <div className="col-md-5">
+                    <ul className="t-list d-flex justify-content-center justify-content-md-end align-items-center">
+                      <li className="t-list__item">
+                        <div className="form-group">
+                          <div className="col-lg-12 text-right">
+                            <button
+                              className="btn btn-warning btn-sm text-dark"
+                              type="button"
+                              onClick={handleCopy}
+                            >
+                              Copy Translations
+                            </button>
+                            <button
+                              className="btn btn-success btn-sm ml-2 text-dark"
+                              type="button"
+                              onClick={handleSubmitTranslation}
+                            >
+                              Save
+                            </button>
+                          </div>
+                        </div>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
             </div>
             {/* Rightbar contents end*/}
           </div>
