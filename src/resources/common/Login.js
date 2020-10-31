@@ -69,7 +69,6 @@ const Login = () => {
 
   //redirect if logged in
   const checkAuth = () => {
-    console.log(getCookie());
     getCookie() !== undefined && history.replace("/dashboard");
   };
 

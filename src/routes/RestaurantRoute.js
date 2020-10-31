@@ -7,13 +7,12 @@ import { _t, consolee, getCookie } from "../functions/Functions";
 
 export default class AdminRoute extends Component {
   render() {
-    let token = getCookie();
     const { children, ...rest } = this.props;
     return (
       <Route
         {...rest}
         render={() => {
-          return token !== undefined ? (
+          return getCookie() !== undefined ? (
             children
           ) : (
             <Redirect

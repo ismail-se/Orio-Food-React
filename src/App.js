@@ -59,34 +59,36 @@ function App() {
           <RestaurantRoute path="/dashboard" exact>
             <RestaurantHome />
           </RestaurantRoute>
-
-          <Route path="/dashboard/work-periods" exact>
+          <RestaurantRoute path="/dashboard/work-periods" exact>
             <WorkPeriod />
-          </Route>
-          <Route path="/dashboard/pos" exact>
+          </RestaurantRoute>
+          <RestaurantRoute path="/dashboard/pos" exact>
             <Pos />
-          </Route>
-          <Route path="/dashboard/orders" exact>
+          </RestaurantRoute>
+          <RestaurantRoute path="/dashboard/orders" exact>
             <OrderHistories />
-          </Route>
-          <Route path="/dashboard/customers" exact>
+          </RestaurantRoute>
+          <RestaurantRoute path="/dashboard/customers" exact>
             <Customers />
-          </Route>
-          <Route path="/dashboard/kitchen" exact>
+          </RestaurantRoute>
+          <RestaurantRoute path="/dashboard/kitchen" exact>
             <Kitchen />
-          </Route>
-          <Route path="/dashboard/branches" exact>
+          </RestaurantRoute>
+          <RestaurantRoute path="/dashboard/branches" exact>
             <Branch />
-          </Route>
-          <Route path="/dashboard/reports" exact>
+          </RestaurantRoute>
+          <RestaurantRoute path="/dashboard/reports" exact>
             <Reports />
-          </Route>
-          <Route path="/dashboard/manage/settings/languages" exact>
+          </RestaurantRoute>
+          <RestaurantRoute path="/dashboard/manage/settings/languages" exact>
             <Lang />
-          </Route>
-          <Route path="/dashboard/manage/settings/languages/:code" exact>
+          </RestaurantRoute>
+          <RestaurantRoute
+            path="/dashboard/manage/settings/languages/:code"
+            exact
+          >
             <Translation />
-          </Route>
+          </RestaurantRoute>
         </Switch>
         <Footer />
       </Router>

@@ -52,24 +52,46 @@ const getCookie = () => {
 
 //navbar links
 const navbarHrefLink = (redirectTo) => {
-  if (window.location.pathname === redirectTo) {
-    return (
-      <NavLink
-        to={{ pathname: "/refresh", state: redirectTo }}
-        exact
-        className="t-link w-100"
-      >
-        {/* todo:: background image dynamic */}
-        <span className="bg-primary fk-brand__img fk-brand__img--fk"></span>
-      </NavLink>
-    );
+  if (getCookie() !== undefined) {
+    if (window.location.pathname === redirectTo) {
+      return (
+        <NavLink
+          to={{ pathname: "/refresh", state: redirectTo }}
+          exact
+          className="t-link w-100"
+        >
+          {/* todo:: background image dynamic */}
+          <span className="bg-primary fk-brand__img fk-brand__img--fk"></span>
+        </NavLink>
+      );
+    } else {
+      return (
+        <NavLink to={redirectTo} exact className="t-link w-100">
+          {/* todo:: background image dynamic */}
+          <span className="bg-primary fk-brand__img fk-brand__img--fk"></span>
+        </NavLink>
+      );
+    }
   } else {
-    return (
-      <NavLink to={redirectTo} exact className="t-link w-100">
-        {/* todo:: background image dynamic */}
-        <span className="bg-primary fk-brand__img fk-brand__img--fk"></span>
-      </NavLink>
-    );
+    if (window.location.pathname === redirectTo) {
+      return (
+        <NavLink
+          to={{ pathname: "/refresh", state: redirectTo }}
+          exact
+          className="t-link w-100"
+        >
+          {/* todo:: background image dynamic */}
+          <span className="bg-primary fk-brand__img fk-brand__img--fk"></span>
+        </NavLink>
+      );
+    } else {
+      return (
+        <NavLink to={redirectTo} exact className="t-link w-100">
+          {/* todo:: background image dynamic */}
+          <span className="bg-primary fk-brand__img fk-brand__img--fk"></span>
+        </NavLink>
+      );
+    }
   }
 };
 
