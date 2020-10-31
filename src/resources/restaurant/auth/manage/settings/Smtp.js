@@ -1,4 +1,5 @@
 import React, { useEffect, useContext } from "react";
+import { useHistory } from "react-router-dom";
 
 //functions
 import {
@@ -25,6 +26,7 @@ import { BASE_URL } from "../../../../../BaseUrl";
 
 const Smtp = () => {
   const { t } = useTranslation();
+  const history = useHistory();
   //getting context values here
   let { loading, setLoading, dataPaginating, smtp, setSmtp } = useContext(
     SettingsContext
@@ -69,9 +71,35 @@ const Smtp = () => {
           MAIL_FROM_ADDRESS: res.data[0].MAIL_FROM_ADDRESS,
           MAIL_FROM_NAME: res.data[0].MAIL_FROM_NAME,
         });
+        toast.success(
+          `${_t(
+            t(
+              "SMTP settings has been updated, you will see the updates on next time you visit this page"
+            )
+          )}`,
+          {
+            position: "bottom-center",
+            autoClose: 10000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            className: "text-center toast-notification",
+          }
+        );
         setLoading(false);
       })
       .catch((error) => {
+        toast.error(
+          `${_t(t("Something unexpected happened, please try again"))}`,
+          {
+            position: "bottom-center",
+            autoClose: 10000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            className: "text-center toast-notification",
+          }
+        );
         setLoading(false);
       });
   };
