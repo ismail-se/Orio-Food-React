@@ -1,8 +1,17 @@
 import React, { useState, useContext, useEffect } from "react";
-import { NavLink, Link, withRouter } from "react-router-dom";
+import { NavLink, Link, withRouter, useHistory } from "react-router-dom";
+
+//axios and base url
+import axios from "axios";
+import { BASE_URL } from "../../BaseUrl";
 
 //pages, functions
-import { _t, navbarHrefLink, getCookie } from "../../functions/Functions";
+import {
+  _t,
+  navbarHrefLink,
+  getCookie,
+  deleteCookie,
+} from "../../functions/Functions";
 
 //context consumer
 import { SettingsContext } from "../../contexts/Settings";
@@ -12,8 +21,10 @@ import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-const Navbar = () => {
+const Navbar = (props) => {
   const { t, i18n } = useTranslation();
+  const history = useHistory();
+
   //getting context values here
   let { navLanguageList } = useContext(SettingsContext);
 
@@ -63,9 +74,22 @@ const Navbar = () => {
     });
   };
 
+  const handleLogout = () => {
+    deleteCookie();
+    history.push({ pathname: "/", state: "loggedOut" });
+    toast.success(`${_t(t("You have been logged out"))}`, {
+      position: "bottom-center",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      className: "text-center toast-notification",
+    });
+  };
+
   return (
     <>
-      {window.location.pathname !== "/login" && (
+      {props.location.pathname !== "/login" && (
         <header id="header">
           <div className="container">
             <div className="row align-items-center">
@@ -195,7 +219,9 @@ const Navbar = () => {
                       </div>
                     </li>
 
-                    {getCookie() === undefined ? (
+                    {getCookie() === undefined ||
+                    (props.location.state &&
+                      props.location.state === "loggedOut") ? (
                       <li>
                         <NavLink
                           className="sm-text text-capitalize btn btn-primary"
@@ -260,12 +286,13 @@ const Navbar = () => {
                               )}
                               <hr className="my-1" />
                               <li>
-                                <Link
+                                <button
                                   className="dropdown-item sm-text text-capitalize"
-                                  to="#"
+                                  onClick={handleLogout}
+                                  rel="noopener noreferrer"
                                 >
                                   Logout
-                                </Link>
+                                </button>
                               </li>
                             </ul>
                           </div>

@@ -1,12 +1,28 @@
-import React from "react";
-import { Helmet } from "react-helmet";
+import React, { useEffect } from "react";
+import { useHistory } from "react-router-dom";
 
 //functions
 import { _t } from "../../../functions/Functions";
 import { useTranslation } from "react-i18next";
 
+//3rd party packages
+import { Helmet } from "react-helmet";
+
 const RestaurantLanding = () => {
   const { t } = useTranslation();
+  const history = useHistory();
+
+  useEffect(() => {
+    checkReload();
+  }, []);
+
+  //check reload
+  const checkReload = () => {
+    if (history.location.state) {
+      if (history.location.state.alert === "reload") {
+      }
+    }
+  };
   return (
     <>
       <Helmet>

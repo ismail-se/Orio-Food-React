@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { Route, Redirect } from "react-router-dom";
 //functions
-import { _t, consolee, getCookie } from "../functions/Functions";
+import { _t, getCookie } from "../functions/Functions";
 
 //3rd party packages
 

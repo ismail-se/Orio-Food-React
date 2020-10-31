@@ -7,7 +7,6 @@ import $ from "jquery";
 //functions
 import {
   _t,
-  consolee,
   getCookie,
   modalLoading,
   footerHrefLink,
@@ -105,34 +104,29 @@ const Login = () => {
     return axios
       .post(url, credentials)
       .then((res) => {
-        let date = new Date();
         let access_token = {
-          _user: res.data.access_token.slice(0, 8),
-          sbb: res.data.access_token.slice(8, 10),
-          frr: res.data.access_token.slice(10, 13),
-          xss: res.data.access_token.slice(13),
+          _user: res.data[0].access_token.slice(0, 8),
+          sbb: res.data[0].access_token.slice(8, 10),
+          frr: res.data[0].access_token.slice(10, 13),
+          xss: res.data[0].access_token.slice(13),
         };
-
+        let date = new Date();
         date.setFullYear(date.getFullYear() + 1);
-
         cookies.set("_user", access_token._user, {
           path: "/",
           expires: date,
           sameSite: "lax",
         });
-
         cookies.set("sbb", access_token.sbb, {
           path: "/",
           expires: date,
           sameSite: "lax",
         });
-
         cookies.set("frr", access_token.frr, {
           path: "/",
           expires: date,
           sameSite: "lax",
         });
-
         cookies.set("xss", access_token.xss, {
           path: "/",
           expires: date,
