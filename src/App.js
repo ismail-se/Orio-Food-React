@@ -1,6 +1,9 @@
 import React, { useEffect, useContext } from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 
+//routes
+import RestaurantRoute from "./routes/RestaurantRoute";
+
 //functions
 import { consolee } from "./functions/Functions";
 
@@ -51,10 +54,12 @@ function App() {
           <Route path="/" exact>
             <RestaurantLanding />
           </Route>
+
           {/* restaurant dashboard pages */}
-          <Route path="/dashboard" exact>
+          <RestaurantRoute path="/dashboard" exact>
             <RestaurantHome />
-          </Route>
+          </RestaurantRoute>
+
           <Route path="/dashboard/work-periods" exact>
             <WorkPeriod />
           </Route>

@@ -14,6 +14,7 @@ const ManageSidebar = () => {
     handleJquery();
   }, []);
 
+  //jQuery goes here
   const handleJquery = () => {
     var posHasSub = $(".fk-pos-nav__list-has-sub");
     var posSub = $(".fk-pos-nav__sub");

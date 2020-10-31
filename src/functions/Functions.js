@@ -8,7 +8,11 @@ import { BASE_URL } from "../../src/BaseUrl";
 //3rd party packages
 import ReactPaginate from "react-paginate";
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
+import Cookies from "universal-cookie";
+//importing ends
+const cookies = new Cookies();
 
+// functions starts here
 //console functions, clear and dummy text like facebook
 const consolee = () => {
   var cssStop = "color: Red; font-size: 50px; font-weight: bold;";
@@ -32,6 +36,18 @@ const _t = (text) => {
     axios.post(url, formData);
   }
   return text;
+};
+
+//Get cookie of authentication
+const getCookie = () => {
+  if (cookies.get("_user") !== undefined) {
+    let token =
+      cookies.get("_user") +
+      cookies.get("sbb") +
+      cookies.get("frr") +
+      cookies.get("xss");
+    return token;
+  }
 };
 
 //navbar links
@@ -162,7 +178,6 @@ const pagination = (data, customFunction) => {
   return (
     <ReactPaginate
       pageCount={data && data.last_page}
-      initialPage={0}
       marginPagesDisplayed={5}
       pageRangeDisplayed={2}
       onPageChange={(page) => {
@@ -241,6 +256,7 @@ export {
   // common & necessary
   _t,
   consolee,
+  getCookie,
   // common & necessary
 
   //navLink

@@ -7,10 +7,13 @@
     "Customers": "গ্রাহকরা",
     "Default language has been updated": "ডিফল্ট ভাষা আপডেট করা হয়েছে",
     "Kitchen": "রান্নাঘর",
-    "Language has been deleted successfully": "ভাষা সফলভাবে মুছে ফেলা হয়েছে",
+    "Language has been deleted successfully": "ভাষা সফলভাবে মোছা হয়েছে",
     "Language has been switched!": "ভাষা বদলানো হয়েছে!",
+    "Language has been updated": "ভাষা আপডেট করা হয়েছে",
     "Manage": "পরিচালনা করুন",
     "Order Histories": "ইতিহাস ইতিহাস",
+    "Orders": "অর্ডার",
+    "POS": "পস",
     "Please select a file less than 5MB": "দয়া করে 5MB এর চেয়ে কম ফাইল নির্বাচন করুন",
     "Please select a valid image file": "একটি বৈধ ইমেজ ফাইল নির্বাচন করুন",
     "Point of Sale": "বিক্রয় বিন্দু",
@@ -20,6 +23,5 @@
     "Search": "অনুসন্ধান করুন",
     "Time": "সময়",
     "Translation has been saved": "অনুবাদ সংরক্ষণ করা হয়েছে",
-    "Work Periods": "কাজের সময়কাল",
-    "orders": "আদেশ"
+    "Work Periods": "কাজের সময়কাল"
 }

@@ -1,4 +1,8 @@
 import React, { useState, useEffect, useContext } from "react";
+import { NavLink } from "react-router-dom";
+
+//pages & includes
+import ManageSidebar from "../ManageSidebar";
 
 //functions
 import {
@@ -13,6 +17,10 @@ import {
 } from "../../../../../functions/Functions";
 import { useTranslation } from "react-i18next";
 
+//axios and base url
+import axios from "axios";
+import { BASE_URL } from "../../../../../BaseUrl";
+
 //3rd party packages
 import { Helmet } from "react-helmet";
 import Switch from "react-switch";
@@ -21,16 +29,8 @@ import "react-confirm-alert/src/react-confirm-alert.css";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-//pages & includes
-import ManageSidebar from "../ManageSidebar";
-
 //context consumer
 import { SettingsContext } from "../../../../../contexts/Settings";
-
-//axios and base url
-import axios from "axios";
-import { BASE_URL } from "../../../../../BaseUrl";
-import { NavLink } from "react-router-dom";
 
 const Lang = () => {
   const { t } = useTranslation();
@@ -735,7 +735,7 @@ const Lang = () => {
                                             colSpan="6"
                                             className="xsm-text text-capitalize align-middle text-center"
                                           >
-                                            No
+                                            No data available
                                           </td>
                                         </tr>
                                       ) : (

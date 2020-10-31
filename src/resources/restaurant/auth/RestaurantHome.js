@@ -62,7 +62,7 @@ const RestaurantHome = () => {
                     [_t(t("Order Histories"))],
                     "fa fa-pencil",
                     "t-text-delta",
-                    [_t(t("orders"))],
+                    [_t(t("Orders"))],
                     [_t(t("Order Histories"))],
                     "/dashboard/orders"
                   )}

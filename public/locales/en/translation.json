@@ -6,12 +6,14 @@
     "Branches": "Branches",
     "Customers": "Customers",
     "Default language has been updated": "Default language has been updated",
+    "Email or password is wrong!": "Email or password is wrong!",
     "Kitchen": "Kitchen",
     "Language has been deleted successfully": "Language has been deleted successfully",
     "Language has been switched!": "Language has been switched!",
     "Language has been updated": "Language has been updated",
     "Manage": "Manage",
     "Order Histories": "Order Histories",
+    "Orders": "Orders",
     "POS": "POS",
     "Please select a file less than 5MB": "Please select a file less than 5MB",
     "Please select a valid image file": "Please select a valid image file",
@@ -23,5 +25,5 @@
     "Time": "Time",
     "Translation has been saved": "Translation has been saved",
     "Work Periods": "Work Periods",
-    "orders": "orders"
+    "You need to login first!": "You need to login first!"
 }
