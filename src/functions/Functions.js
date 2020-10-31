@@ -187,19 +187,17 @@ const restaurantMenuLink = (
 };
 
 //manage page navlink
-const managePageHrefLink = (redirectTo) => {
+const managePageHrefLink = (redirectTo, menuName) => {
   if (window.location.pathname === redirectTo) {
     return (
       <NavLink
         to={{ pathname: "/refresh", state: redirectTo }}
         exact
         className={`w-100 t-text-dark t-heading-font btn font-weight-bold text-uppercase rounded-0 text-left ${
-          window.location.href.includes(
-            "/dashboard/manage/settings/languages"
-          ) && "active"
+          window.location.href.includes(redirectTo) && "active"
         }`}
       >
-        - Languages
+        - {menuName}
       </NavLink>
     );
   } else {
@@ -208,12 +206,10 @@ const managePageHrefLink = (redirectTo) => {
         to={redirectTo}
         exact
         className={`w-100 t-text-dark t-heading-font btn font-weight-bold text-uppercase rounded-0 text-left ${
-          window.location.href.includes(
-            "/dashboard/manage/settings/languages"
-          ) && "active"
+          window.location.href.includes(redirectTo) && "active"
         }`}
       >
-        - Languages
+        - {menuName}
       </NavLink>
     );
   }

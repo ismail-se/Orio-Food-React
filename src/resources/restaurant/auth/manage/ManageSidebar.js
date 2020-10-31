@@ -37,6 +37,7 @@ const ManageSidebar = () => {
             <div className="fk-sm-nav" data-simplebar>
               <ul className="t-list fk-sm-nav__bar flex-row">
                 <li className="fk-sm-nav__list active">
+                  {/* todo:: menu for mobile screen */}
                   <a href="#" className="t-link fk-sm-nav__link">
                     manage page
                   </a>
@@ -80,21 +81,23 @@ const ManageSidebar = () => {
             <li className="fk-pos-nav__list fk-pos-nav__list-has-sub active">
               <a
                 className="w-100 t-text-dark t-heading-font btn btn-outline-danger font-weight-bold text-uppercase rounded-0 text-left"
-                href="/"
+                rel="noopener noreferrer"
+                href="#"
               >
                 Settings
               </a>
               <ul className="t-list fk-pos-nav__sub t-bg-white list-group">
                 <li className="fk-pos-nav__sub-list border-bottom">
-                  {managePageHrefLink("/dashboard/manage/settings/languages")}
+                  {managePageHrefLink(
+                    "/dashboard/manage/settings/languages",
+                    _t(t("Languages"))
+                  )}
                 </li>
                 <li className="fk-pos-nav__sub-list border-bottom">
-                  <a
-                    className="w-100 t-text-dark t-heading-font btn font-weight-bold text-uppercase rounded-0 text-left"
-                    href="#"
-                  >
-                    - email / smtp
-                  </a>
+                  {managePageHrefLink(
+                    "/dashboard/manage/settings/smtp-settings",
+                    _t(t("Email / Smtp"))
+                  )}
                 </li>
                 <li className="fk-pos-nav__sub-list border-bottom">
                   <a

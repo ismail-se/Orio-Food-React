@@ -55,3 +55,9 @@ html {
 .fk-language__flag {
   background-size: cover;
 }
+
+@media screen and (min-width: 1200px) {
+  .table-bottom-info-hide {
+    height: calc(100vh - 120px);
+  }
+}

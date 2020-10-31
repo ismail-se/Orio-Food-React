@@ -25,6 +25,7 @@ import {
   Reports,
   Lang,
   Translation,
+  Smtp,
 } from "./imports/Pages";
 import { Navbar, Footer } from "./imports/Components";
 
@@ -88,6 +89,12 @@ function App() {
             exact
           >
             <Translation />
+          </RestaurantRoute>
+          <RestaurantRoute
+            path="/dashboard/manage/settings/smtp-settings"
+            exact
+          >
+            <Smtp />
           </RestaurantRoute>
         </Switch>
         <Footer />

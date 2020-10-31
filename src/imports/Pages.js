@@ -15,6 +15,7 @@ import Branch from "../resources/restaurant/auth/Branch";
 import Reports from "../resources/restaurant/auth/Reports";
 import Lang from "../resources/restaurant/auth/manage/settings/Lang";
 import Translation from "../resources/restaurant/auth/manage/settings/Translation";
+import Smtp from "../resources/restaurant/auth/manage/settings/Smtp";
 
 export {
   RestaurantHome,
@@ -29,5 +30,6 @@ export {
   Reports,
   Lang,
   Translation,
+  Smtp,
   RestaurantLanding,
 };
