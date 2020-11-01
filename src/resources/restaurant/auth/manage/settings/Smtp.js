@@ -107,7 +107,7 @@ const Smtp = () => {
   return (
     <>
       <Helmet>
-        <title>Update Smtp</title>
+        <title>{_t(t("Update Smtp"))}</title>
       </Helmet>
 
       {/* main body */}
@@ -157,13 +157,15 @@ const Smtp = () => {
                         </div>
                         <div className="card-header border-bottom-0">
                           <h3 className="panel-title text-center">
-                            Update Smtp
+                            {_t(t("Update Smtp"))}
                           </h3>
 
                           <p className="text-muted text-center">
-                            Please be carefull when you are configuring SMTP.
-                            For incorrect configuration you may get error in few
-                            features.
+                            {_t(
+                              t(
+                                "Please be carefull when you are configuring SMTP. For incorrect configuration you may get error in few features."
+                              )
+                            )}
                           </p>
                         </div>
                         <div className="card-body">
@@ -187,7 +189,7 @@ const Smtp = () => {
                                         required
                                       >
                                         <option value="">
-                                          Please select an option
+                                          {_t(t("Please select an option"))}
                                         </option>
                                         <option value="sendmail">
                                           Sendmail
@@ -287,7 +289,7 @@ const Smtp = () => {
                                       required
                                     >
                                       <option value="">
-                                        Please select an option
+                                        {_t(t("Please select an option"))}
                                       </option>
                                       <option value="ssl">ssl</option>
                                       <option value="tls">tls</option>
@@ -337,48 +339,63 @@ const Smtp = () => {
                                         className="btn btn-primary px-5"
                                         type="submit"
                                       >
-                                        Save
+                                        {_t(t("Save"))}
                                       </button>
                                     </div>
                                   </div>
                                 </div>
                                 <div className="col-12 col-md-6 order-1 order-sm-2 mb-3">
-                                  <p className="mb-2">For Non-SSL</p>
+                                  <p className="mb-2">{_t(t("For Non-SSL"))}</p>
                                   <ul className="list-group">
                                     <li className="list-group-item text-dark">
-                                      Select 'sendmail' for Mail Driver if you
-                                      face any issue after configuring 'smtp' as
-                                      Mail Driver
+                                      {_t(
+                                        t(
+                                          "Select 'sendmail' for Mail Mailer if you face any issue after configuring 'smtp' as Mail Mailer"
+                                        )
+                                      )}
                                     </li>
                                     <li className="list-group-item text-dark">
-                                      Set Mail Host according to your server
-                                      Mail Client Manual Settings
+                                      {_t(
+                                        t(
+                                          "Set Mail Host according to your server Mail Client Manual Settings"
+                                        )
+                                      )}
                                     </li>
                                     <li className="list-group-item text-dark">
-                                      Set Mail port as '587'
+                                      {_t(t("Set Mail port as '587'"))}
                                     </li>
                                     <li className="list-group-item text-dark">
-                                      Set Mail Encryption as 'ssl' if you face
-                                      issue with 'tls'
+                                      {_t(
+                                        t(
+                                          "Set Mail Encryption as 'ssl' if you face issue with 'tls'"
+                                        )
+                                      )}
                                     </li>
                                   </ul>
 
-                                  <p className="mt-3 mb-2">For SSL</p>
+                                  <p className="mt-3 mb-2">
+                                    {_t(t("For SSL"))}
+                                  </p>
                                   <ul className="list-group mar-no">
                                     <li className="list-group-item text-dark">
-                                      Select 'sendmail' for Mail Driver if you
-                                      face any issue after configuring 'smtp' as
-                                      Mail Driver
+                                      {_t(
+                                        t(
+                                          "Select 'sendmail' for Mail Mailer if you face any issue after configuring 'smtp' as Mail Mailer"
+                                        )
+                                      )}
                                     </li>
                                     <li className="list-group-item text-dark">
-                                      Set Mail Host according to your server
-                                      Mail Client Manual Settings
+                                      {_t(
+                                        t(
+                                          "Set Mail Host according to your server Mail Client Manual Settings"
+                                        )
+                                      )}
                                     </li>
                                     <li className="list-group-item text-dark">
-                                      Set Mail port as '465'
+                                      {_t(t("Set Mail port as '465'"))}
                                     </li>
                                     <li className="list-group-item text-dark">
-                                      Set Mail Encryption as 'ssl'
+                                      {_t(t("Set Mail Encryption as 'ssl'"))}
                                     </li>
                                   </ul>
                                 </div>
