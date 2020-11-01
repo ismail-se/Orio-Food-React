@@ -23,7 +23,6 @@ import { BASE_URL } from "../../../../../BaseUrl";
 
 //3rd party packages
 import { Helmet } from "react-helmet";
-import Switch from "react-switch";
 import { confirmAlert } from "react-confirm-alert";
 import "react-confirm-alert/src/react-confirm-alert.css";
 import { toast } from "react-toastify";
@@ -36,16 +35,22 @@ const Permissions = () => {
   const { t } = useTranslation();
   //getting context values here
   let {
+    //common
     loading,
     setLoading,
 
-    //
+    //group
     getPermissionGroups,
     permissionGroup,
     setPermissionGroup,
-    //
+    permissionGroupForSearch,
+    setPermissionGroupForSearch,
 
-    languageList,
+    //permissions
+    permissions,
+    setPermissions,
+
+    //
     setLanguageList,
     setPaginatedLanguages,
     dataPaginating,
@@ -57,23 +62,16 @@ const Permissions = () => {
 
   // States hook here
   //new languages
-  let [newLang, setNewLang] = useState({
-    name: "",
-    code: "",
-    image: null,
+  let [newGroup, setNewGroup] = useState({
+    name: null,
+    permission_ids: null,
     edit: false,
-    editCode: null,
-    editImage: null,
-    uploading: false,
-  });
-
-  //new default
-  let [newDefault, setNewDefault] = useState({
+    editSlug: null,
     uploading: false,
   });
 
   //search result
-  let [searchedLanguages, setSearchedLanguages] = useState({
+  let [searchedGroups, setSearchedGroups] = useState({
     list: null,
     searched: false,
   });
@@ -81,41 +79,32 @@ const Permissions = () => {
   //useEffect == componentDidMount()
   useEffect(() => {}, []);
 
-  //set name, code hook
-  const handleSetNewLang = (e) => {
-    setNewLang({ ...newLang, [e.target.name]: e.target.value });
+  //set name, permission id array hook
+  const handleSetNewGroup = (e) => {
+    setNewGroup({ ...newGroup, [e.target.name]: e.target.value });
   };
 
-  //set flag hook
-  const handleLangFlag = (e) => {
-    setNewLang({
-      ...newLang,
-      [e.target.name]: e.target.files[0],
-    });
-  };
-
-  //Save New Language
-  const handleSaveNewLang = (e) => {
+  //Save New Group
+  const handleSaveNewGroup = (e) => {
     e.preventDefault();
-    setNewLang({
-      ...newLang,
+    setNewGroup({
+      ...newGroup,
       uploading: true,
     });
-    const langUrl = BASE_URL + `/settings/new-lang`;
+    const groupUrl = BASE_URL + `/settings/new-permission-group`;
     let formData = new FormData();
-    formData.append("name", newLang.name);
-    formData.append("code", newLang.code);
-    formData.append("image", newLang.image);
-    // todo:: add Authorization here
+    formData.append("name", newGroup.name);
+    formData.append("code", newGroup.permission_ids);
     return axios
-      .post(langUrl, formData, {
+      .post(groupUrl, formData, {
         headers: { Authorization: `Bearer ${getCookie()}` },
       })
       .then((res) => {
-        setNewLang({
-          name: "",
-          code: "",
-          image: null,
+        setNewGroup({
+          name: null,
+          permission_ids: null,
+          edit: false,
+          editSlug: null,
           uploading: false,
         });
         setLanguageList(res.data[0]);
@@ -133,8 +122,8 @@ const Permissions = () => {
       })
       .catch((error) => {
         setLoading(false);
-        setNewLang({
-          ...newLang,
+        setNewGroup({
+          ...newGroup,
           uploading: false,
         });
         if (error.response.data.errors) {
@@ -205,11 +194,11 @@ const Permissions = () => {
     let lang = languageListForSearch.filter((item) => {
       return item.id === id;
     });
-    setNewLang({
-      ...newLang,
+    setNewGroup({
+      ...newGroup,
       name: lang[0].name,
       code: lang[0].code,
-      editCode: lang[0].code,
+      editSlug: lang[0].code,
       editImage: lang[0].image,
       edit: true,
     });
@@ -217,36 +206,33 @@ const Permissions = () => {
 
   const handleUpdateLang = (e) => {
     e.preventDefault();
-    setNewLang({
-      ...newLang,
+    setNewGroup({
+      ...newGroup,
       uploading: true,
     });
-    const langUrl = BASE_URL + `/settings/update-lang`;
+    const groupUrl = BASE_URL + `/settings/update-lang`;
     let formData = new FormData();
-    formData.append("name", newLang.name);
-    formData.append("code", newLang.code);
-    formData.append("image", newLang.image);
-    formData.append("editCode", newLang.editCode);
-    // todo:: add Authorization here
+    formData.append("name", newGroup.name);
+    formData.append("code", newGroup.code);
+    formData.append("image", newGroup.image);
+    formData.append("editSlug", newGroup.editSlug);
     return axios
-      .post(langUrl, formData, {
+      .post(groupUrl, formData, {
         headers: { Authorization: `Bearer ${getCookie()}` },
       })
       .then((res) => {
-        setNewLang({
-          name: "",
-          code: "",
-          image: null,
+        setNewGroup({
+          name: null,
+          permission_ids: null,
           edit: false,
-          editCode: null,
-          editImage: null,
+          editSlug: null,
           uploading: false,
         });
         setLanguageList(res.data[0]);
         setNavLanguageList(res.data[1]);
         setLanguageListForSearch(res.data[1]);
-        setSearchedLanguages({
-          ...searchedLanguages,
+        setSearchedGroups({
+          ...searchedGroups,
           list: res.data[1],
         });
         setLoading(false);
@@ -261,8 +247,8 @@ const Permissions = () => {
       })
       .catch((error) => {
         setLoading(false);
-        setNewLang({
-          ...newLang,
+        setNewGroup({
+          ...newGroup,
           uploading: false,
         });
         if (error.response.data.errors) {
@@ -312,62 +298,19 @@ const Permissions = () => {
       });
   };
 
-  //Save New Language
-  const handleDefault = (code) => {
-    setLoading(true);
-    setNewDefault({ ...newDefault, uploading: true });
-    setDataPaginating(true);
-    const langUrl = BASE_URL + `/settings/update-default`;
-    let formData = new FormData();
-    formData.append("code", code);
-    // todo:: add Authorization here
-    return axios
-      .post(langUrl, formData, {
-        headers: { Authorization: `Bearer ${getCookie()}` },
-      })
-      .then((res) => {
-        setLanguageList(res.data[0]);
-        setNavLanguageList(res.data[1]);
-        setLanguageListForSearch(res.data[1]);
-        setSearchedLanguages({
-          ...searchedLanguages,
-          list: res.data[1],
-          searched: false,
-        });
-        setLoading(false);
-        setDataPaginating(false);
-        setNewDefault({ ...newDefault, uploading: false });
-        toast.success(`${_t(t("Default language has been updated"))}`, {
-          position: "bottom-center",
-          autoClose: 10000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          className: "text-center toast-notification",
-        });
-      })
-      .catch(() => {
-        setLoading(false);
-      });
-  };
-
-  //search language here
+  //search groups here
   const handleSearch = (e) => {
     let searchInput = e.target.value.toLowerCase();
     if (searchInput.length === 0) {
-      setSearchedLanguages({ ...searchedLanguages, searched: false });
+      setSearchedGroups({ ...searchedGroups, searched: false });
     } else {
-      let searchedLang = languageListForSearch.filter((item) => {
+      let searchedList = permissionGroupForSearch.filter((item) => {
         let lowerCaseItemName = item.name.toLowerCase();
-        let lowerCaseItemCode = item.code.toLowerCase();
-        return (
-          lowerCaseItemName.includes(searchInput) ||
-          lowerCaseItemCode.includes(searchInput)
-        );
+        return lowerCaseItemName.includes(searchInput);
       });
-      setSearchedLanguages({
-        ...searchedLanguages,
-        list: searchedLang,
+      setSearchedGroups({
+        ...searchedGroups,
+        list: searchedList,
         searched: true,
       });
     }
@@ -416,8 +359,8 @@ const Permissions = () => {
             setLanguageList(res.data[0]);
             setNavLanguageList(res.data[1]);
             setLanguageListForSearch(res.data[1]);
-            setSearchedLanguages({
-              ...searchedLanguages,
+            setSearchedGroups({
+              ...searchedGroups,
               list: res.data[1],
             });
             setLoading(false);
@@ -471,7 +414,7 @@ const Permissions = () => {
             <div className="modal-header align-items-center">
               <div className="fk-sm-card__content">
                 <h5 className="text-capitalize fk-sm-card__title">
-                  {!newLang.edit
+                  {!newGroup.edit
                     ? _t(t("Add new permission group"))
                     : _t(t("Update permission group"))}
                 </h5>
@@ -485,11 +428,11 @@ const Permissions = () => {
             </div>
             <div className="modal-body">
               {/* show form or show saving loading */}
-              {newLang.uploading === false ? (
+              {newGroup.uploading === false ? (
                 <div key="fragment-permission-1">
                   <form
                     onSubmit={
-                      !newLang.edit ? handleSaveNewLang : handleUpdateLang
+                      !newGroup.edit ? handleSaveNewGroup : handleUpdateLang
                     }
                   >
                     <div>
@@ -503,55 +446,14 @@ const Permissions = () => {
                         id="name"
                         name="name"
                         placeholder="e.g. English"
-                        value={newLang.name}
+                        value={newGroup.name}
                         required
-                        onChange={handleSetNewLang}
+                        onChange={handleSetNewGroup}
                       />
                     </div>
 
-                    <div className="mt-2">
-                      <label htmlFor="code" className="form-label">
-                        {_t(t("code"))}{" "}
-                        <small className="text-primary">*</small>
-                      </label>
-                      <input
-                        type="text"
-                        className="form-control"
-                        id="code"
-                        name="code"
-                        onChange={handleSetNewLang}
-                        value={newLang.code}
-                        disabled={newLang.edit}
-                        required
-                        placeholder="e.g. EN for english"
-                      />
-                    </div>
+                    <div className="mt-2"></div>
 
-                    <div className="mt-2">
-                      <div className="d-flex align-items-center mb-1">
-                        <label htmlFor="image" className="form-label mb-0 mr-3">
-                          {_t(t("Flag"))}{" "}
-                          <small className="text-secondary">
-                            ({_t(t("Square Image Preferable"))})
-                          </small>
-                        </label>
-                        {newLang.edit && (
-                          <div
-                            className="fk-language__flag"
-                            style={{
-                              backgroundImage: `url(${newLang.editImage})`,
-                            }}
-                          ></div>
-                        )}
-                      </div>
-                      <input
-                        type="file"
-                        className="form-control"
-                        id="image"
-                        name="image"
-                        onChange={handleLangFlag}
-                      />
-                    </div>
                     <div className="mt-4">
                       <div className="row">
                         <div className="col-6">
@@ -559,7 +461,7 @@ const Permissions = () => {
                             type="submit"
                             className="btn btn-success w-100 xsm-text text-uppercase t-width-max"
                           >
-                            {!newLang.edit ? _t(t("Save")) : _t(t("Update"))}
+                            {!newGroup.edit ? _t(t("Save")) : _t(t("Update"))}
                           </button>
                         </div>
                         <div className="col-6">
@@ -632,7 +534,7 @@ const Permissions = () => {
                 <div className="fk-scroll--pos-menu" data-simplebar>
                   <div className="t-pl-15 t-pr-15">
                     {/* Loading effect */}
-                    {newLang.uploading === true || loading === true ? (
+                    {newGroup.uploading === true || loading === true ? (
                       tableLoading()
                     ) : (
                       <div key="fragment3">
@@ -645,7 +547,7 @@ const Permissions = () => {
                             <ul className="t-list fk-breadcrumb">
                               <li className="fk-breadcrumb__list">
                                 <span className="t-link fk-breadcrumb__link text-capitalize">
-                                  {!searchedLanguages.searched
+                                  {!searchedGroups.searched
                                     ? _t(t("Permission Group List"))
                                     : _t(t("Search Result"))}
                                 </span>
@@ -685,8 +587,8 @@ const Permissions = () => {
                                   data-toggle="modal"
                                   data-target="#addLang"
                                   onClick={() => {
-                                    setNewLang({
-                                      ...newLang,
+                                    setNewGroup({
+                                      ...newGroup,
                                       edit: false,
                                       uploading: false,
                                     });
@@ -722,18 +624,7 @@ const Permissions = () => {
                                 >
                                   {_t(t("Name"))}
                                 </th>
-                                <th
-                                  scope="col"
-                                  className="sm-text text-capitalize align-middle text-center border-1 border"
-                                >
-                                  {_t(t("Flag"))}
-                                </th>
-                                <th
-                                  scope="col"
-                                  className="sm-text text-capitalize align-middle text-center border-1 border"
-                                >
-                                  {_t(t("Set default"))}
-                                </th>
+
                                 <th
                                   scope="col"
                                   className="sm-text text-capitalize align-middle text-center border-1 border"
@@ -744,7 +635,7 @@ const Permissions = () => {
                             </thead>
                             <tbody className="align-middle">
                               {/* loop here, logic === !search && haveData && haveDataLegnth > 0*/}
-                              {!searchedLanguages.searched
+                              {!searchedGroups.searched
                                 ? [
                                     permissionGroup && [
                                       permissionGroup.data.length === 0 ? (
@@ -782,35 +673,7 @@ const Permissions = () => {
                                                 <td className="xsm-text text-capitalize align-middle text-center">
                                                   {item.name}
                                                 </td>
-                                                <td className="xsm-text text-capitalize align-middle text-center">
-                                                  <div className="d-flex justify-content-center">
-                                                    <div
-                                                      className="fk-language__flag"
-                                                      style={
-                                                        item.image !== null
-                                                          ? {
-                                                              backgroundImage: `url(${item.image})`,
-                                                            }
-                                                          : ""
-                                                      }
-                                                    ></div>
-                                                  </div>
-                                                </td>
-                                                <td className="xsm-text text-capitalize align-middle text-center">
-                                                  <Switch
-                                                    checked={item.is_default}
-                                                    onChange={() => {
-                                                      handleDefault(item.code);
-                                                    }}
-                                                    height={22}
-                                                    width={44}
-                                                    offColor="#ee5253"
-                                                    disabled={
-                                                      item.is_default ||
-                                                      newDefault.uploading
-                                                    }
-                                                  />
-                                                </td>
+
                                                 <td className="xsm-text text-capitalize align-middle text-center">
                                                   <div className="dropdown">
                                                     <button
@@ -868,8 +731,8 @@ const Permissions = () => {
                                   ]
                                 : [
                                     /* searched data, logic === haveData*/
-                                    searchedLanguages && [
-                                      searchedLanguages.list.length === 0 ? (
+                                    searchedGroups && [
+                                      searchedGroups.list.length === 0 ? (
                                         <tr className="align-middle">
                                           <td
                                             scope="row"
@@ -880,7 +743,7 @@ const Permissions = () => {
                                           </td>
                                         </tr>
                                       ) : (
-                                        searchedLanguages.list.map(
+                                        searchedGroups.list.map(
                                           (item, index) => {
                                             return (
                                               <tr
@@ -900,35 +763,7 @@ const Permissions = () => {
                                                 <td className="xsm-text text-capitalize align-middle text-center">
                                                   {item.name}
                                                 </td>
-                                                <td className="xsm-text text-capitalize align-middle text-center">
-                                                  <div className="d-flex justify-content-center">
-                                                    <div
-                                                      className="fk-language__flag"
-                                                      style={
-                                                        item.image !== null
-                                                          ? {
-                                                              backgroundImage: `url(${item.image})`,
-                                                            }
-                                                          : ""
-                                                      }
-                                                    ></div>
-                                                  </div>
-                                                </td>
-                                                <td className="xsm-text text-capitalize align-middle text-center">
-                                                  <Switch
-                                                    checked={item.is_default}
-                                                    onChange={() => {
-                                                      handleDefault(item.code);
-                                                    }}
-                                                    height={22}
-                                                    width={44}
-                                                    offColor="#ee5253"
-                                                    disabled={
-                                                      item.is_default ||
-                                                      newDefault.uploading
-                                                    }
-                                                  />
-                                                </td>
+
                                                 <td className="xsm-text text-capitalize align-middle text-center">
                                                   <div className="dropdown">
                                                     <button
@@ -994,11 +829,11 @@ const Permissions = () => {
               </div>
 
               {/* pagination loading effect */}
-              {newLang.uploading === true || loading === true
+              {newGroup.uploading === true || loading === true
                 ? paginationLoading()
                 : [
                     // logic === !searched
-                    !searchedLanguages.searched ? (
+                    !searchedGroups.searched ? (
                       <div key="fragment4">
                         <div className="t-bg-white mt-1 t-pt-5 t-pb-5">
                           <div className="row align-items-center t-pl-15 t-pr-15">
@@ -1031,8 +866,8 @@ const Permissions = () => {
                                 <button
                                   className="btn btn-primary btn-sm"
                                   onClick={() =>
-                                    setSearchedLanguages({
-                                      ...searchedLanguages,
+                                    setSearchedGroups({
+                                      ...searchedGroups,
                                       searched: false,
                                     })
                                   }
@@ -1047,8 +882,8 @@ const Permissions = () => {
                               <li className="t-list__item">
                                 <span className="d-inline-block sm-text">
                                   {searchedShowingData(
-                                    searchedLanguages,
-                                    languageListForSearch
+                                    searchedGroups,
+                                    permissionGroupForSearch
                                   )}
                                 </span>
                               </li>

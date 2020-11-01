@@ -38,7 +38,9 @@ const Smtp = () => {
   } = useContext(SettingsContext);
 
   //useEffect == componentDidMount()
-  useEffect(() => {}, []);
+  useEffect(() => {
+    getSmtp();
+  }, []);
 
   //on change input field
   const handleChange = (e) => {

@@ -36,6 +36,12 @@ const SettingsProvider = ({ children }) => {
 
   //permission group
   const [permissionGroup, setPermissionGroup] = useState(null);
+  const [permissionGroupForSearch, setPermissionGroupForSearch] = useState(
+    null
+  );
+
+  //permissions
+  const [permissions, setPermissions] = useState(null);
 
   //useEffect- to get data on render
   useEffect(() => {
@@ -108,6 +114,8 @@ const SettingsProvider = ({ children }) => {
       })
       .then((res) => {
         setPermissionGroup(res.data[0]);
+        setPermissionGroupForSearch(res.data[1]);
+        setPermissions(res.data[2]);
         setLoading(false);
       });
   };
@@ -137,6 +145,13 @@ const SettingsProvider = ({ children }) => {
         getPermissionGroups,
         permissionGroup,
         setPermissionGroup,
+        permissionGroup,
+        permissionGroupForSearch,
+        setPermissionGroupForSearch,
+
+        //permissions
+        permissions,
+        setPermissions,
 
         //pagination
         dataPaginating,

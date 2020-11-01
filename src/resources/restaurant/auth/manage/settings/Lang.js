@@ -99,7 +99,6 @@ const Lang = () => {
     formData.append("name", newLang.name);
     formData.append("code", newLang.code);
     formData.append("image", newLang.image);
-    // todo:: add Authorization here
     return axios
       .post(langUrl, formData, {
         headers: { Authorization: `Bearer ${getCookie()}` },
@@ -220,7 +219,6 @@ const Lang = () => {
     formData.append("code", newLang.code);
     formData.append("image", newLang.image);
     formData.append("editCode", newLang.editCode);
-    // todo:: add Authorization here
     return axios
       .post(langUrl, formData, {
         headers: { Authorization: `Bearer ${getCookie()}` },
@@ -313,7 +311,6 @@ const Lang = () => {
     const langUrl = BASE_URL + `/settings/update-default`;
     let formData = new FormData();
     formData.append("code", code);
-    // todo:: add Authorization here
     return axios
       .post(langUrl, formData, {
         headers: { Authorization: `Bearer ${getCookie()}` },
