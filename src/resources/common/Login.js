@@ -230,6 +230,7 @@ const Login = () => {
                               type="email"
                               name="email"
                               placeholder="Email"
+                              required
                               className="form-control border-0 rounded-1"
                             />
                           </div>
@@ -239,6 +240,7 @@ const Login = () => {
                               name="password"
                               type="password"
                               placeholder="Password"
+                              required
                               className="form-control border-0 rounded-1"
                             />
                           </div>

@@ -28,9 +28,14 @@ const Smtp = () => {
   const { t } = useTranslation();
   const history = useHistory();
   //getting context values here
-  let { loading, setLoading, dataPaginating, smtp, setSmtp } = useContext(
-    SettingsContext
-  );
+  let {
+    loading,
+    setLoading,
+    dataPaginating,
+    smtp,
+    getSmtp,
+    setSmtp,
+  } = useContext(SettingsContext);
 
   //useEffect == componentDidMount()
   useEffect(() => {}, []);
@@ -71,21 +76,15 @@ const Smtp = () => {
           MAIL_FROM_ADDRESS: res.data[0].MAIL_FROM_ADDRESS,
           MAIL_FROM_NAME: res.data[0].MAIL_FROM_NAME,
         });
-        toast.success(
-          `${_t(
-            t(
-              "SMTP settings has been updated, you will see the updates on next time you visit this page"
-            )
-          )}`,
-          {
-            position: "bottom-center",
-            autoClose: 10000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            className: "text-center toast-notification",
-          }
-        );
+        getSmtp();
+        toast.success(`${_t(t("SMTP settings has been updated"))}`, {
+          position: "bottom-center",
+          autoClose: 10000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          className: "text-center toast-notification",
+        });
         setLoading(false);
       })
       .catch((error) => {

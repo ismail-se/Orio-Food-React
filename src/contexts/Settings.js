@@ -99,6 +99,7 @@ const SettingsProvider = ({ children }) => {
 
         //smtp
         smtp,
+        getSmtp,
         setSmtp,
 
         //pagination

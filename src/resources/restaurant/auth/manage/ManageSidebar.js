@@ -84,7 +84,7 @@ const ManageSidebar = () => {
                 rel="noopener noreferrer"
                 href="#"
               >
-                Settings
+                {_t(t("Settings"))}
               </a>
               <ul className="t-list fk-pos-nav__sub t-bg-white list-group">
                 <li className="fk-pos-nav__sub-list border-bottom">
@@ -98,14 +98,6 @@ const ManageSidebar = () => {
                     "/dashboard/manage/settings/smtp-settings",
                     _t(t("Email / Smtp"))
                   )}
-                </li>
-                <li className="fk-pos-nav__sub-list border-bottom">
-                  <a
-                    className="w-100 t-text-dark t-heading-font btn font-weight-bold text-uppercase rounded-0 text-left"
-                    href="#"
-                  >
-                    - manage order
-                  </a>
                 </li>
               </ul>
             </li>
