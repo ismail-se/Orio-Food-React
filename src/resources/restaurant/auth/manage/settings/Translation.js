@@ -116,7 +116,7 @@ const Translation = () => {
   return (
     <>
       <Helmet>
-        <title>Update Translation</title>
+        <title>{_t(t("Update Translation"))}</title>
       </Helmet>
 
       {/* main body */}
@@ -163,7 +163,7 @@ const Translation = () => {
                         {/* Table */}
                         <div className="card-header border-bottom-0">
                           <h3 className="panel-title text-center">
-                            Update Translation
+                            {_t(t("Update Translation"))}
                           </h3>
                           {/* Showing language name and flag */}
                           <div className="d-flex justify-content-center">
@@ -188,11 +188,20 @@ const Translation = () => {
                               })}
                           </div>
                           <p className="text-muted text-center">
-                            You can update the translation in a very easy way.
-                            <br /> Install any google translation extention in
-                            your browser, translate the whole page.
-                            <br /> Click "Copy Translation" button. <br />
-                            Click save.
+                            {_t(
+                              t(
+                                "You can update the translation in a very easy way."
+                              )
+                            )}
+                            <br />{" "}
+                            {_t(
+                              t(
+                                "Install any google translation extention in your browser, translate the whole page."
+                              )
+                            )}
+                            <br /> {_t(t("Click Copy Translation button."))}
+                            <br />
+                            {_t(t("Click save."))}
                           </p>
                         </div>
                         <div className="card-body">
@@ -253,7 +262,7 @@ const Translation = () => {
                           className="btn btn-primary btn-sm"
                           to="/dashboard/manage/settings/languages"
                         >
-                          <i className="fa fa-reply"></i> Go back
+                          <i className="fa fa-reply"></i> {_t(t("Go back"))}
                         </NavLink>
                       </li>
                     </ul>
@@ -268,14 +277,14 @@ const Translation = () => {
                               type="button"
                               onClick={handleCopy}
                             >
-                              Copy Translations
+                              {_t(t("Copy Translations"))}
                             </button>
                             <button
                               className="btn btn-success btn-sm ml-2 text-dark"
                               type="button"
                               onClick={handleSubmitTranslation}
                             >
-                              Save
+                              {_t(t("Save"))}
                             </button>
                           </div>
                         </div>

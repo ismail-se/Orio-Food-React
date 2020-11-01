@@ -7,7 +7,6 @@ import ManageSidebar from "../ManageSidebar";
 //functions
 import {
   _t,
-  consolee,
   modalLoading,
   tableLoading,
   pagination,
@@ -366,8 +365,8 @@ const Lang = () => {
       customUI: ({ onClose }) => {
         return (
           <div className="card card-body">
-            <h1>Are you sure?</h1>
-            <p className="text-center">You want to delete this?</p>
+            <h1>{_t(t("Are you sure?"))}</h1>
+            <p className="text-center">{_t(t("You want to delete this?"))}</p>
             <div className="d-flex justify-content-center">
               <button
                 className="btn btn-primary"
@@ -376,10 +375,10 @@ const Lang = () => {
                   onClose();
                 }}
               >
-                Yes, delete it!
+                {_t(t("Yes, delete it!"))}
               </button>
               <button className="btn btn-success ml-2 px-3" onClick={onClose}>
-                No
+                {_t(t("No"))}
               </button>
             </div>
           </div>
@@ -446,7 +445,7 @@ const Lang = () => {
   return (
     <>
       <Helmet>
-        <title>Languages</title>
+        <title>{_t(t("Languages"))}</title>
       </Helmet>
 
       {/* Add language modal */}
@@ -456,7 +455,9 @@ const Lang = () => {
             <div className="modal-header align-items-center">
               <div className="fk-sm-card__content">
                 <h5 className="text-capitalize fk-sm-card__title">
-                  {!newLang.edit ? "Add new language" : "Update Language"}
+                  {!newLang.edit
+                    ? _t(t("Add new language"))
+                    : _t(t("Update Language"))}
                 </h5>
               </div>
               <button
@@ -477,7 +478,8 @@ const Lang = () => {
                   >
                     <div>
                       <label htmlFor="name" className="form-label">
-                        Name <small className="text-primary">*</small>
+                        {_t(t("Name"))}{" "}
+                        <small className="text-primary">*</small>
                       </label>
                       <input
                         type="text"
@@ -493,7 +495,8 @@ const Lang = () => {
 
                     <div className="mt-2">
                       <label htmlFor="code" className="form-label">
-                        code <small className="text-primary">*</small>
+                        {_t(t("code"))}{" "}
+                        <small className="text-primary">*</small>
                       </label>
                       <input
                         type="text"
@@ -511,9 +514,9 @@ const Lang = () => {
                     <div className="mt-2">
                       <div className="d-flex align-items-center mb-1">
                         <label htmlFor="image" className="form-label mb-0 mr-3">
-                          Flag{" "}
+                          {_t(t("Flag"))}{" "}
                           <small className="text-secondary">
-                            (Square Image Preferable)
+                            ({_t(t("Square Image Preferable"))})
                           </small>
                         </label>
                         {newLang.edit && (
@@ -540,7 +543,7 @@ const Lang = () => {
                             type="submit"
                             className="btn btn-success w-100 xsm-text text-uppercase t-width-max"
                           >
-                            {!newLang.edit ? "Save" : "Update"}
+                            {!newLang.edit ? _t(t("Save")) : _t(t("Update"))}
                           </button>
                         </div>
                         <div className="col-6">
@@ -549,7 +552,7 @@ const Lang = () => {
                             className="btn btn-primary w-100 xsm-text text-uppercase t-width-max"
                             data-dismiss="modal"
                           >
-                            Close
+                            {_t(t("Close"))}
                           </button>
                         </div>
                       </div>
@@ -559,7 +562,7 @@ const Lang = () => {
               ) : (
                 <div key="fragment2">
                   <div className="text-center text-primary font-weight-bold text-uppercase">
-                    Please wait
+                    {_t(t("Please wait"))}
                   </div>
                   {modalLoading(3)}
                   <div className="mt-4">
@@ -572,7 +575,7 @@ const Lang = () => {
                             e.preventDefault();
                           }}
                         >
-                          save
+                          {_t(t("save"))}
                         </button>
                       </div>
                       <div className="col-6">
@@ -581,7 +584,7 @@ const Lang = () => {
                           className="btn btn-primary w-100 xsm-text text-uppercase t-width-max"
                           data-dismiss="modal"
                         >
-                          Close
+                          {_t(t("Close"))}
                         </button>
                       </div>
                     </div>
@@ -627,8 +630,8 @@ const Lang = () => {
                               <li className="fk-breadcrumb__list">
                                 <span className="t-link fk-breadcrumb__link text-capitalize">
                                   {!searchedLanguages.searched
-                                    ? "Language List"
-                                    : "Search Result"}
+                                    ? _t(t("Language List"))
+                                    : _t(t("Search Result"))}
                                 </span>
                               </li>
                             </ul>
@@ -642,7 +645,7 @@ const Lang = () => {
                                     <input
                                       type="text"
                                       className="form-control border-0 form-control--light-1 rounded-0"
-                                      placeholder="Search.."
+                                      placeholder={_t(t("Search")) + ".."}
                                       onChange={handleSearch}
                                     />
                                   </div>
@@ -673,7 +676,7 @@ const Lang = () => {
                                     });
                                   }}
                                 >
-                                  add new
+                                  {_t(t("add new"))}
                                 </button>
                               </div>
                             </div>
@@ -688,38 +691,38 @@ const Lang = () => {
                                   scope="col"
                                   className="sm-text text-capitalize align-middle text-center border-1 border"
                                 >
-                                  S/L
+                                  {_t(t("S/L"))}
                                 </th>
 
                                 <th
                                   scope="col"
                                   className="sm-text text-capitalize align-middle text-center border-1 border"
                                 >
-                                  Code
+                                  {_t(t("Code"))}
                                 </th>
                                 <th
                                   scope="col"
                                   className="sm-text text-capitalize align-middle text-center border-1 border"
                                 >
-                                  Name
+                                  {_t(t("Name"))}
                                 </th>
                                 <th
                                   scope="col"
                                   className="sm-text text-capitalize align-middle text-center border-1 border"
                                 >
-                                  Flag
+                                  {_t(t("Flag"))}
                                 </th>
                                 <th
                                   scope="col"
                                   className="sm-text text-capitalize align-middle text-center border-1 border"
                                 >
-                                  Set default
+                                  {_t(t("Set default"))}
                                 </th>
                                 <th
                                   scope="col"
                                   className="sm-text text-capitalize align-middle text-center border-1 border"
                                 >
-                                  Action
+                                  {_t(t("Action"))}
                                 </th>
                               </tr>
                             </thead>
@@ -735,7 +738,7 @@ const Lang = () => {
                                             colSpan="6"
                                             className="xsm-text text-capitalize align-middle text-center"
                                           >
-                                            No data available
+                                            {_t(t("No data available"))}
                                           </td>
                                         </tr>
                                       ) : (
@@ -812,7 +815,7 @@ const Lang = () => {
                                                       <span className="t-mr-8">
                                                         <i className="fa fa-pencil"></i>
                                                       </span>
-                                                      Edit
+                                                      {_t(t("Edit"))}
                                                     </button>
                                                     <NavLink
                                                       className="dropdown-item sm-text text-capitalize"
@@ -821,7 +824,7 @@ const Lang = () => {
                                                       <span className="t-mr-8">
                                                         <i className="fa fa-refresh"></i>
                                                       </span>
-                                                      Translate
+                                                      {_t(t("Translate"))}
                                                     </NavLink>
                                                     <button
                                                       className="dropdown-item sm-text text-capitalize"
@@ -834,7 +837,7 @@ const Lang = () => {
                                                       <span className="t-mr-8">
                                                         <i className="fa fa-trash"></i>
                                                       </span>
-                                                      Delete
+                                                      {_t(t("Delete"))}
                                                     </button>
                                                   </div>
                                                 </div>
@@ -855,7 +858,7 @@ const Lang = () => {
                                             colSpan="6"
                                             className="xsm-text align-middle text-center"
                                           >
-                                            No data available
+                                            {_t(t("No data available"))}
                                           </td>
                                         </tr>
                                       ) : (
@@ -929,7 +932,7 @@ const Lang = () => {
                                                         <span className="t-mr-8">
                                                           <i className="fa fa-pencil"></i>
                                                         </span>
-                                                        Edit
+                                                        {_t(t("Edit"))}
                                                       </button>
                                                       <NavLink
                                                         className="dropdown-item sm-text text-capitalize"
@@ -938,7 +941,7 @@ const Lang = () => {
                                                         <span className="t-mr-8">
                                                           <i className="fa fa-refresh"></i>
                                                         </span>
-                                                        Translate
+                                                        {_t(t("Translate"))}
                                                       </NavLink>
                                                       <button
                                                         className="dropdown-item sm-text text-capitalize"
@@ -951,7 +954,7 @@ const Lang = () => {
                                                         <span className="t-mr-8">
                                                           <i className="fa fa-trash"></i>
                                                         </span>
-                                                        Delete
+                                                        {_t(t("Delete"))}
                                                       </button>
                                                     </div>
                                                   </div>
@@ -1013,7 +1016,7 @@ const Lang = () => {
                                     })
                                   }
                                 >
-                                  Clear Search
+                                  {_t(t("Clear Search"))}
                                 </button>
                               </li>
                             </ul>
