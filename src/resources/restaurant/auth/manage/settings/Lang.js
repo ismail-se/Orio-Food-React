@@ -643,9 +643,9 @@ const Lang = () => {
                             </ul>
                           </div>
                           <div className="col-md-6 col-lg-7">
-                            <div className="row gx-0 align-items-center">
+                            <div className="row gx-3 align-items-center">
                               {/* Search languages */}
-                              <div className="col-md-9 col-xxl-10 t-mb-15 mb-md-0">
+                              <div className="col-md-9 t-mb-15 mb-md-0">
                                 <div className="input-group">
                                   <div className="form-file">
                                     <input
@@ -668,10 +668,10 @@ const Lang = () => {
                               </div>
 
                               {/* Add language modal trigger button */}
-                              <div className="col-md-3 col-xxl-2 text-md-right">
+                              <div className="col-md-3 text-md-right">
                                 <button
                                   type="button"
-                                  className="btn btn-primary xsm-text text-uppercase btn-lg"
+                                  className="btn btn-primary xsm-text text-uppercase btn-lg btn-block"
                                   data-toggle="modal"
                                   data-target="#addLang"
                                   onClick={() => {

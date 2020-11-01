@@ -27,6 +27,8 @@ import { confirmAlert } from "react-confirm-alert";
 import "react-confirm-alert/src/react-confirm-alert.css";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Select from "react-select";
+import makeAnimated from "react-select/animated";
 
 //context consumer
 import { SettingsContext } from "../../../../../contexts/Settings";
@@ -349,45 +351,39 @@ const Permissions = () => {
     setLoading(true);
     if (code !== "en") {
       const lang_url = BASE_URL + `/settings/delete-lang/${code}`;
-      return (
-        axios
-          //todo:: Authorization here
-          .get(lang_url, {
-            headers: { Authorization: `Bearer ${getCookie()}` },
-          })
-          .then((res) => {
-            setLanguageList(res.data[0]);
-            setNavLanguageList(res.data[1]);
-            setLanguageListForSearch(res.data[1]);
-            setSearchedGroups({
-              ...searchedGroups,
-              list: res.data[1],
-            });
-            setLoading(false);
-            toast.success(
-              `${_t(t("Language has been deleted successfully"))}`,
-              {
-                position: "bottom-center",
-                autoClose: 10000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                className: "text-center toast-notification",
-              }
-            );
-          })
-          .catch(() => {
-            setLoading(false);
-            toast.error(`${_t(t("Please try again."))}`, {
-              position: "bottom-center",
-              autoClose: 10000,
-              hideProgressBar: false,
-              closeOnClick: true,
-              pauseOnHover: true,
-              className: "text-center toast-notification",
-            });
-          })
-      );
+      return axios
+        .get(lang_url, {
+          headers: { Authorization: `Bearer ${getCookie()}` },
+        })
+        .then((res) => {
+          setLanguageList(res.data[0]);
+          setNavLanguageList(res.data[1]);
+          setLanguageListForSearch(res.data[1]);
+          setSearchedGroups({
+            ...searchedGroups,
+            list: res.data[1],
+          });
+          setLoading(false);
+          toast.success(`${_t(t("Language has been deleted successfully"))}`, {
+            position: "bottom-center",
+            autoClose: 10000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            className: "text-center toast-notification",
+          });
+        })
+        .catch(() => {
+          setLoading(false);
+          toast.error(`${_t(t("Please try again."))}`, {
+            position: "bottom-center",
+            autoClose: 10000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            className: "text-center toast-notification",
+          });
+        });
     } else {
       setLoading(false);
       toast.error(`${_t(t("English language can not be deleted!"))}`, {
@@ -445,14 +441,30 @@ const Permissions = () => {
                         className="form-control"
                         id="name"
                         name="name"
-                        placeholder="e.g. English"
+                        placeholder="e.g. Employee"
                         value={newGroup.name}
                         required
                         onChange={handleSetNewGroup}
                       />
                     </div>
 
-                    <div className="mt-2"></div>
+                    <div className="mt-3">
+                      <label htmlFor="name" className="form-label">
+                        {_t(t("Select permissions"))}{" "}
+                        <small className="text-primary">*</small>
+                      </label>
+                      <Select
+                        options={permissions}
+                        components={makeAnimated()}
+                        getOptionLabel={(option) => option.name}
+                        getOptionValue={(option) => option.id}
+                        className="basic-multi-select"
+                        classNamePrefix="select"
+                        isMulti
+                        onChange={""}
+                        placeholder="Please select permissions"
+                      />
+                    </div>
 
                     <div className="mt-4">
                       <div className="row">
@@ -555,9 +567,9 @@ const Permissions = () => {
                             </ul>
                           </div>
                           <div className="col-md-6 col-lg-7">
-                            <div className="row gx-0 align-items-center">
+                            <div className="row gx-3 align-items-center">
                               {/* Search languages */}
-                              <div className="col-md-9 col-xxl-10 t-mb-15 mb-md-0">
+                              <div className="col-md-9 t-mb-15 mb-md-0">
                                 <div className="input-group">
                                   <div className="form-file">
                                     <input
@@ -580,10 +592,10 @@ const Permissions = () => {
                               </div>
 
                               {/* Add language modal trigger button */}
-                              <div className="col-md-3 col-xxl-2 text-md-right">
+                              <div className="col-md-3 text-md-right">
                                 <button
                                   type="button"
-                                  className="btn btn-primary xsm-text text-uppercase btn-lg"
+                                  className="btn btn-primary xsm-text text-uppercase btn-lg btn-block"
                                   data-toggle="modal"
                                   data-target="#addLang"
                                   onClick={() => {
