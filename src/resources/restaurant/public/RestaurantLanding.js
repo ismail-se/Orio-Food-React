@@ -13,16 +13,16 @@ const RestaurantLanding = () => {
   const history = useHistory();
 
   useEffect(() => {
-    checkReload();
+    // checkReload();
   }, []);
 
   //check reload
-  const checkReload = () => {
-    if (history.location.state) {
-      if (history.location.state.alert === "reload") {
-      }
-    }
-  };
+  // const checkReload = () => {
+  //   if (history.location.state) {
+  //     if (history.location.state.alert === "reload") {
+  //     }
+  //   }
+  // };
   return (
     <>
       <Helmet>

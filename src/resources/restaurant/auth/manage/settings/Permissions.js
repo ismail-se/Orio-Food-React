@@ -32,12 +32,19 @@ import "react-toastify/dist/ReactToastify.css";
 //context consumer
 import { SettingsContext } from "../../../../../contexts/Settings";
 
-const Lang = () => {
+const Permissions = () => {
   const { t } = useTranslation();
   //getting context values here
   let {
     loading,
     setLoading,
+
+    //
+    getPermissionGroups,
+    permissionGroup,
+    setPermissionGroup,
+    //
+
     languageList,
     setLanguageList,
     setPaginatedLanguages,
@@ -454,19 +461,19 @@ const Lang = () => {
   return (
     <>
       <Helmet>
-        <title>{_t(t("Languages"))}</title>
+        <title>{_t(t("Permissions"))}</title>
       </Helmet>
 
       {/* Add language modal */}
       <div className="modal fade" id="addLang" aria-hidden="true">
-        <div className="modal-dialog modal-md">
+        <div className="modal-dialog modal-lg">
           <div className="modal-content">
             <div className="modal-header align-items-center">
               <div className="fk-sm-card__content">
                 <h5 className="text-capitalize fk-sm-card__title">
                   {!newLang.edit
-                    ? _t(t("Add new language"))
-                    : _t(t("Update Language"))}
+                    ? _t(t("Add new permission group"))
+                    : _t(t("Update permission group"))}
                 </h5>
               </div>
               <button
@@ -479,7 +486,7 @@ const Lang = () => {
             <div className="modal-body">
               {/* show form or show saving loading */}
               {newLang.uploading === false ? (
-                <div key="fragment1">
+                <div key="fragment-permission-1">
                   <form
                     onSubmit={
                       !newLang.edit ? handleSaveNewLang : handleUpdateLang
@@ -639,7 +646,7 @@ const Lang = () => {
                               <li className="fk-breadcrumb__list">
                                 <span className="t-link fk-breadcrumb__link text-capitalize">
                                   {!searchedLanguages.searched
-                                    ? _t(t("Language List"))
+                                    ? _t(t("Permission Group List"))
                                     : _t(t("Search Result"))}
                                 </span>
                               </li>
@@ -739,8 +746,8 @@ const Lang = () => {
                               {/* loop here, logic === !search && haveData && haveDataLegnth > 0*/}
                               {!searchedLanguages.searched
                                 ? [
-                                    languageList && [
-                                      languageList.data.length === 0 ? (
+                                    permissionGroup && [
+                                      permissionGroup.data.length === 0 ? (
                                         <tr className="align-middle">
                                           <td
                                             scope="row"
@@ -751,109 +758,111 @@ const Lang = () => {
                                           </td>
                                         </tr>
                                       ) : (
-                                        languageList.data.map((item, index) => {
-                                          return (
-                                            <tr
-                                              className="align-middle"
-                                              key={index}
-                                            >
-                                              <th
-                                                scope="row"
-                                                className="xsm-text text-capitalize align-middle text-center"
+                                        permissionGroup.data.map(
+                                          (item, index) => {
+                                            return (
+                                              <tr
+                                                className="align-middle"
+                                                key={index}
                                               >
-                                                {index +
-                                                  1 +
-                                                  (languageList.current_page -
-                                                    1) *
-                                                    languageList.per_page}
-                                              </th>
+                                                <th
+                                                  scope="row"
+                                                  className="xsm-text text-capitalize align-middle text-center"
+                                                >
+                                                  {index +
+                                                    1 +
+                                                    (permissionGroup.current_page -
+                                                      1) *
+                                                      permissionGroup.per_page}
+                                                </th>
 
-                                              <td className="xsm-text align-middle text-center">
-                                                {item.code}
-                                              </td>
-                                              <td className="xsm-text text-capitalize align-middle text-center">
-                                                {item.name}
-                                              </td>
-                                              <td className="xsm-text text-capitalize align-middle text-center">
-                                                <div className="d-flex justify-content-center">
-                                                  <div
-                                                    className="fk-language__flag"
-                                                    style={
-                                                      item.image !== null
-                                                        ? {
-                                                            backgroundImage: `url(${item.image})`,
-                                                          }
-                                                        : ""
-                                                    }
-                                                  ></div>
-                                                </div>
-                                              </td>
-                                              <td className="xsm-text text-capitalize align-middle text-center">
-                                                <Switch
-                                                  checked={item.is_default}
-                                                  onChange={() => {
-                                                    handleDefault(item.code);
-                                                  }}
-                                                  height={22}
-                                                  width={44}
-                                                  offColor="#ee5253"
-                                                  disabled={
-                                                    item.is_default ||
-                                                    newDefault.uploading
-                                                  }
-                                                />
-                                              </td>
-                                              <td className="xsm-text text-capitalize align-middle text-center">
-                                                <div className="dropdown">
-                                                  <button
-                                                    className="btn t-bg-clear t-text-dark--light-40"
-                                                    type="button"
-                                                    data-toggle="dropdown"
-                                                  >
-                                                    <i className="fa fa-ellipsis-h"></i>
-                                                  </button>
-                                                  <div className="dropdown-menu">
-                                                    <button
-                                                      className="dropdown-item sm-text text-capitalize"
-                                                      onClick={() =>
-                                                        handleSetEdit(item.id)
+                                                <td className="xsm-text align-middle text-center">
+                                                  {item.code}
+                                                </td>
+                                                <td className="xsm-text text-capitalize align-middle text-center">
+                                                  {item.name}
+                                                </td>
+                                                <td className="xsm-text text-capitalize align-middle text-center">
+                                                  <div className="d-flex justify-content-center">
+                                                    <div
+                                                      className="fk-language__flag"
+                                                      style={
+                                                        item.image !== null
+                                                          ? {
+                                                              backgroundImage: `url(${item.image})`,
+                                                            }
+                                                          : ""
                                                       }
-                                                      data-toggle="modal"
-                                                      data-target="#addLang"
-                                                    >
-                                                      <span className="t-mr-8">
-                                                        <i className="fa fa-pencil"></i>
-                                                      </span>
-                                                      {_t(t("Edit"))}
-                                                    </button>
-                                                    <NavLink
-                                                      className="dropdown-item sm-text text-capitalize"
-                                                      to={`/dashboard/manage/settings/languages/${item.code}`}
-                                                    >
-                                                      <span className="t-mr-8">
-                                                        <i className="fa fa-refresh"></i>
-                                                      </span>
-                                                      {_t(t("Translate"))}
-                                                    </NavLink>
-                                                    <button
-                                                      className="dropdown-item sm-text text-capitalize"
-                                                      onClick={() => {
-                                                        handleDeleteConfirmation(
-                                                          item.code
-                                                        );
-                                                      }}
-                                                    >
-                                                      <span className="t-mr-8">
-                                                        <i className="fa fa-trash"></i>
-                                                      </span>
-                                                      {_t(t("Delete"))}
-                                                    </button>
+                                                    ></div>
                                                   </div>
-                                                </div>
-                                              </td>
-                                            </tr>
-                                          );
-                                        })
+                                                </td>
+                                                <td className="xsm-text text-capitalize align-middle text-center">
+                                                  <Switch
+                                                    checked={item.is_default}
+                                                    onChange={() => {
+                                                      handleDefault(item.code);
+                                                    }}
+                                                    height={22}
+                                                    width={44}
+                                                    offColor="#ee5253"
+                                                    disabled={
+                                                      item.is_default ||
+                                                      newDefault.uploading
+                                                    }
+                                                  />
+                                                </td>
+                                                <td className="xsm-text text-capitalize align-middle text-center">
+                                                  <div className="dropdown">
+                                                    <button
+                                                      className="btn t-bg-clear t-text-dark--light-40"
+                                                      type="button"
+                                                      data-toggle="dropdown"
+                                                    >
+                                                      <i className="fa fa-ellipsis-h"></i>
+                                                    </button>
+                                                    <div className="dropdown-menu">
+                                                      <button
+                                                        className="dropdown-item sm-text text-capitalize"
+                                                        onClick={() =>
+                                                          handleSetEdit(item.id)
+                                                        }
+                                                        data-toggle="modal"
+                                                        data-target="#addLang"
+                                                      >
+                                                        <span className="t-mr-8">
+                                                          <i className="fa fa-pencil"></i>
+                                                        </span>
+                                                        {_t(t("Edit"))}
+                                                      </button>
+                                                      <NavLink
+                                                        className="dropdown-item sm-text text-capitalize"
+                                                        to={`/dashboard/manage/settings/languages/${item.code}`}
+                                                      >
+                                                        <span className="t-mr-8">
+                                                          <i className="fa fa-refresh"></i>
+                                                        </span>
+                                                        {_t(t("Translate"))}
+                                                      </NavLink>
+                                                      <button
+                                                        className="dropdown-item sm-text text-capitalize"
+                                                        onClick={() => {
+                                                          handleDeleteConfirmation(
+                                                            item.code
+                                                          );
+                                                        }}
+                                                      >
+                                                        <span className="t-mr-8">
+                                                          <i className="fa fa-trash"></i>
+                                                        </span>
+                                                        {_t(t("Delete"))}
+                                                      </button>
+                                                    </div>
+                                                  </div>
+                                                </td>
+                                              </tr>
+                                            );
+                                          }
+                                        )
                                       ),
                                     ],
                                   ]
@@ -995,13 +1004,16 @@ const Lang = () => {
                           <div className="row align-items-center t-pl-15 t-pr-15">
                             <div className="col-md-7 t-mb-15 mb-md-0">
                               {/* pagination function */}
-                              {pagination(languageList, setPaginatedLanguages)}
+                              {pagination(
+                                permissionGroup,
+                                setPaginatedLanguages
+                              )}
                             </div>
                             <div className="col-md-5">
                               <ul className="t-list d-flex justify-content-md-end align-items-center">
                                 <li className="t-list__item">
                                   <span className="d-inline-block sm-text">
-                                    {showingData(languageList)}
+                                    {showingData(permissionGroup)}
                                   </span>
                                 </li>
                               </ul>
@@ -1056,4 +1068,4 @@ const Lang = () => {
   );
 };
 
-export default Lang;
+export default Permissions;

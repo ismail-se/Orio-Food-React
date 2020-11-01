@@ -4,6 +4,9 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { BASE_URL } from "../BaseUrl";
 
+//functions
+import { getCookie } from "../functions/Functions";
+
 //3rd party packages
 
 //creating context api
@@ -31,10 +34,19 @@ const SettingsProvider = ({ children }) => {
     MAIL_FROM_NAME: null,
   });
 
-  //useEffect- to get data on page render
+  //permission group
+  const [permissionGroup, setPermissionGroup] = useState(null);
+
+  //useEffect- to get data on render
   useEffect(() => {
+    //call- unauthenticated
     getLanguages();
-    getSmtp();
+
+    //call if authenticated
+    if (getCookie() !== undefined) {
+      getSmtp();
+      getPermissionGroups();
+    }
   }, []);
 
   //get all languages
@@ -66,25 +78,44 @@ const SettingsProvider = ({ children }) => {
   const getSmtp = () => {
     setLoading(true);
     const smtpUrl = BASE_URL + "/settings/get-smtp";
-    return axios.get(smtpUrl).then((res) => {
-      setSmtp({
-        ...smtp,
-        MAIL_MAILER: res.data[0].MAIL_MAILER,
-        MAIL_HOST: res.data[0].MAIL_HOST,
-        MAIL_PORT: res.data[0].MAIL_PORT,
-        MAIL_USERNAME: res.data[0].MAIL_USERNAME,
-        MAIL_PASSWORD: res.data[0].MAIL_PASSWORD,
-        MAIL_ENCRYPTION: res.data[0].MAIL_ENCRYPTION,
-        MAIL_FROM_ADDRESS: res.data[0].MAIL_FROM_ADDRESS,
-        MAIL_FROM_NAME: res.data[0].MAIL_FROM_NAME,
+    return axios
+      .get(smtpUrl, {
+        headers: { Authorization: `Bearer ${getCookie()}` },
+      })
+      .then((res) => {
+        setSmtp({
+          ...smtp,
+          MAIL_MAILER: res.data[0].MAIL_MAILER,
+          MAIL_HOST: res.data[0].MAIL_HOST,
+          MAIL_PORT: res.data[0].MAIL_PORT,
+          MAIL_USERNAME: res.data[0].MAIL_USERNAME,
+          MAIL_PASSWORD: res.data[0].MAIL_PASSWORD,
+          MAIL_ENCRYPTION: res.data[0].MAIL_ENCRYPTION,
+          MAIL_FROM_ADDRESS: res.data[0].MAIL_FROM_ADDRESS,
+          MAIL_FROM_NAME: res.data[0].MAIL_FROM_NAME,
+        });
+        setLoading(false);
       });
-      setLoading(false);
-    });
+  };
+
+  //get permission groups
+  const getPermissionGroups = () => {
+    setLoading(true);
+    const permissionGroupUrl = BASE_URL + "/settings/permission-group-list";
+    return axios
+      .get(permissionGroupUrl, {
+        headers: { Authorization: `Bearer ${getCookie()}` },
+      })
+      .then((res) => {
+        setPermissionGroup(res.data[0]);
+        setLoading(false);
+      });
   };
 
   return (
     <SettingsContext.Provider
       value={{
+        //common
         loading,
         setLoading,
 
@@ -101,6 +132,11 @@ const SettingsProvider = ({ children }) => {
         smtp,
         getSmtp,
         setSmtp,
+
+        //permission group
+        getPermissionGroups,
+        permissionGroup,
+        setPermissionGroup,
 
         //pagination
         dataPaginating,

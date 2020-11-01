@@ -27,14 +27,14 @@ const consolee = () => {
 
 //translation functions
 const _t = (text) => {
-  let localLang = localStorage.getItem("i18nextLng");
-  if (localLang.includes("en")) {
-    const url = BASE_URL + `/settings/save-to-en`;
-    let formData = {
-      key: text,
-    };
-    axios.post(url, formData);
-  }
+  // let localLang = localStorage.getItem("i18nextLng");
+  // if (localLang.includes("en")) {
+  //   const url = BASE_URL + `/settings/save-to-en`;
+  //   let formData = {
+  //     key: text,
+  //   };
+  //   axios.post(url, formData);
+  // }
   return text;
 };
 
@@ -58,7 +58,20 @@ const deleteCookie = () => {
       headers: { Authorization: `Bearer ${getCookie()}` },
     })
     .then(() => {
-      console.log(cookies.get("_user"));
+      if (cookies.get("_user") !== undefined) {
+        cookies.remove("_user", { path: "/" });
+      }
+      if (cookies.get("sbb") !== undefined) {
+        cookies.remove("sbb", { path: "/" });
+      }
+      if (cookies.get("frr") !== undefined) {
+        cookies.remove("frr", { path: "/" });
+      }
+      if (cookies.get("xss") !== undefined) {
+        cookies.remove("xss", { path: "/" });
+      }
+    })
+    .catch(() => {
       if (cookies.get("_user") !== undefined) {
         cookies.remove("_user", { path: "/" });
       }

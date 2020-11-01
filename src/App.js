@@ -12,10 +12,13 @@ import { ToastContainer } from "react-toastify";
 
 //pages & includes
 import {
+  //landing
   RestaurantLanding,
-  RestaurantHome,
+  //common
   Refresh,
   Login,
+  //dashboard
+  RestaurantHome,
   WorkPeriod,
   Pos,
   OrderHistories,
@@ -23,9 +26,11 @@ import {
   Kitchen,
   Branch,
   Reports,
+  //manage
   Lang,
   Translation,
   Smtp,
+  Permissions,
 } from "./imports/Pages";
 import { Navbar, Footer } from "./imports/Components";
 
@@ -95,6 +100,9 @@ function App() {
             exact
           >
             <Smtp />
+          </RestaurantRoute>
+          <RestaurantRoute path="/dashboard/manage/roles-and-permissions" exact>
+            <Permissions />
           </RestaurantRoute>
         </Switch>
         <Footer />

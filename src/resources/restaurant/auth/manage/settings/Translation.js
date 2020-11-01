@@ -5,7 +5,11 @@ import { NavLink, useParams } from "react-router-dom";
 import $ from "jquery";
 
 //functions
-import { _t, tableLoading } from "../../../../../functions/Functions";
+import {
+  _t,
+  getCookie,
+  tableLoading,
+} from "../../../../../functions/Functions";
 import { useTranslation } from "react-i18next";
 
 //3rd party packages
@@ -61,10 +65,14 @@ const Translation = () => {
   const handleTranslate = (langCode) => {
     setDataPaginating(true);
     const t_url = BASE_URL + `/settings/get-lang/${langCode}`;
-    axios.get(t_url).then((res) => {
-      setToTranslate(Object.entries(res.data));
-      setDataPaginating(false);
-    });
+    axios
+      .get(t_url, {
+        headers: { Authorization: `Bearer ${getCookie()}` },
+      })
+      .then((res) => {
+        setToTranslate(Object.entries(res.data));
+        setDataPaginating(false);
+      });
   };
 
   const handleTranslationInput = (e, index, key) => {
@@ -107,10 +115,14 @@ const Translation = () => {
       code: code,
     };
     const t_url = BASE_URL + `/settings/save-translation`;
-    return axios.post(t_url, formData).then(() => {
-      window.location.href =
-        window.location.pathname + "?translation-successful=true";
-    });
+    return axios
+      .post(t_url, formData, {
+        headers: { Authorization: `Bearer ${getCookie()}` },
+      })
+      .then(() => {
+        window.location.href =
+          window.location.pathname + "?translation-successful=true";
+      });
   };
 
   return (

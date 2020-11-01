@@ -33,7 +33,7 @@ const Login = () => {
   const history = useHistory();
 
   //getting context values here
-  let { loading, setLoading } = useContext(SettingsContext);
+  let { loading, setLoading, getSmtp } = useContext(SettingsContext);
 
   //state hooks here
   const [credentials, setCredentials] = useState({
@@ -132,6 +132,7 @@ const Login = () => {
           expires: date,
           sameSite: "lax",
         });
+        getSmtp();
         history.push("/dashboard");
       })
       .catch((error) => {
