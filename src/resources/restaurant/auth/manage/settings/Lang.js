@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useContext } from "react";
 import { NavLink } from "react-router-dom";
 
 //pages & includes
@@ -70,9 +70,6 @@ const Lang = () => {
     list: null,
     searched: false,
   });
-
-  //useEffect == componentDidMount()
-  useEffect(() => {}, []);
 
   //set name, code hook
   const handleSetNewLang = (e) => {

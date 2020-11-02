@@ -1,5 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
-import { NavLink } from "react-router-dom";
+import React, { useState, useContext } from "react";
 
 //pages & includes
 import ManageSidebar from "../ManageSidebar";
@@ -42,7 +41,6 @@ const Permissions = () => {
     setLoading,
 
     //group
-    getPermissionGroups,
     permissionGroup,
     setPermissionGroup,
     permissionGroupForSearch,
@@ -50,16 +48,10 @@ const Permissions = () => {
 
     //permissions
     permissions,
-    setPermissions,
 
-    //
-    setLanguageList,
-    setPaginatedLanguages,
+    //pagination
+    setPaginatedGropus,
     dataPaginating,
-    setDataPaginating,
-    setNavLanguageList,
-    languageListForSearch,
-    setLanguageListForSearch,
   } = useContext(SettingsContext);
 
   // States hook here
@@ -69,6 +61,7 @@ const Permissions = () => {
     permission_ids: null,
     edit: false,
     editSlug: null,
+    selectedPermissions: null,
     uploading: false,
   });
 
@@ -77,9 +70,6 @@ const Permissions = () => {
     list: null,
     searched: false,
   });
-
-  //useEffect == componentDidMount()
-  useEffect(() => {}, []);
 
   //set name array hook
   const handleSetNewGroup = (e) => {
@@ -166,32 +156,41 @@ const Permissions = () => {
     }
   };
 
+  //set edit true & values
   const handleSetEdit = (id) => {
-    let lang = languageListForSearch.filter((item) => {
+    let group = permissionGroupForSearch.filter((item) => {
       return item.id === id;
+    });
+    let tempArray = [];
+    group[0].permission_array_id.map((item) => {
+      permissions.map((permissionListItem) => {
+        if (item === permissionListItem.id) {
+          tempArray.push(permissionListItem);
+        }
+      });
     });
     setNewGroup({
       ...newGroup,
-      name: lang[0].name,
-      code: lang[0].code,
-      editSlug: lang[0].code,
-      editImage: lang[0].image,
+      name: group[0].name,
+      editSlug: group[0].slug,
+      selectedPermissions: tempArray,
       edit: true,
     });
   };
 
-  const handleUpdateLang = (e) => {
+  //update Group
+  const handleUpdateGroup = (e) => {
     e.preventDefault();
     setNewGroup({
       ...newGroup,
       uploading: true,
     });
-    const groupUrl = BASE_URL + `/settings/update-lang`;
-    let formData = new FormData();
-    formData.append("name", newGroup.name);
-    formData.append("code", newGroup.code);
-    formData.append("image", newGroup.image);
-    formData.append("editSlug", newGroup.editSlug);
+    const groupUrl = BASE_URL + `/settings/update-permission-group`;
+    let formData = {
+      name: newGroup.name,
+      editSlug: newGroup.editSlug,
+      permissionIds: newGroup.permission_ids,
+    };
     return axios
       .post(groupUrl, formData, {
         headers: { Authorization: `Bearer ${getCookie()}` },
@@ -204,15 +203,10 @@ const Permissions = () => {
           editSlug: null,
           uploading: false,
         });
-        setLanguageList(res.data[0]);
-        setNavLanguageList(res.data[1]);
-        setLanguageListForSearch(res.data[1]);
-        setSearchedGroups({
-          ...searchedGroups,
-          list: res.data[1],
-        });
+        setPermissionGroup(res.data[0]);
+        setPermissionGroupForSearch(res.data[1]);
         setLoading(false);
-        toast.success(`${_t(t("Language has been updated"))}`, {
+        toast.success(`${_t(t("Permission group has been updated"))}`, {
           position: "bottom-center",
           autoClose: 10000,
           hideProgressBar: false,
@@ -227,12 +221,12 @@ const Permissions = () => {
           ...newGroup,
           uploading: false,
         });
-        if (error.response.data.errors) {
+        if (error && error.response.data.errors) {
           if (error.response.data.errors.name) {
             error.response.data.errors.name.forEach((item) => {
-              if (item === "A language already exist with this name") {
+              if (item === "A group already exist with this name") {
                 toast.error(
-                  `${_t(t("A language already exist with this name"))}`,
+                  `${_t(t("A group already exist with this name"))}`,
                   {
                     position: "bottom-center",
                     autoClose: 10000,
@@ -242,31 +236,6 @@ const Permissions = () => {
                     className: "text-center toast-notification",
                   }
                 );
-              }
-            });
-          }
-
-          if (error.response.data.errors.image) {
-            error.response.data.errors.image.forEach((item) => {
-              if (item === "Please select a valid image file") {
-                toast.error(`${_t(t("Please select a valid image file"))}`, {
-                  position: "bottom-center",
-                  autoClose: 10000,
-                  hideProgressBar: false,
-                  closeOnClick: true,
-                  pauseOnHover: true,
-                  className: "text-center toast-notification",
-                });
-              }
-              if (item === "Please select a file less than 5MB") {
-                toast.error(`${_t(t("Please select a file less than 5MB"))}`, {
-                  position: "bottom-center",
-                  autoClose: 10000,
-                  hideProgressBar: false,
-                  closeOnClick: true,
-                  pauseOnHover: true,
-                  className: "text-center toast-notification",
-                });
               }
             });
           }
@@ -292,8 +261,8 @@ const Permissions = () => {
     }
   };
 
-  //delete confirmation modal of language
-  const handleDeleteConfirmation = (code) => {
+  //delete confirmation modal of group
+  const handleDeleteConfirmation = (slug) => {
     confirmAlert({
       customUI: ({ onClose }) => {
         return (
@@ -304,7 +273,7 @@ const Permissions = () => {
               <button
                 className="btn btn-primary"
                 onClick={() => {
-                  handleDeleteLanguage(code);
+                  handleDeleteGroup(slug);
                   onClose();
                 }}
               >
@@ -320,32 +289,63 @@ const Permissions = () => {
     });
   };
 
-  //delete language here
-  const handleDeleteLanguage = (code) => {
+  //delete group here
+  const handleDeleteGroup = (slug) => {
     setLoading(true);
-    if (code !== "en") {
-      const lang_url = BASE_URL + `/settings/delete-lang/${code}`;
+    //todo:: add superAdmin when it will be SaaS
+    if (slug !== "admin" || slug !== "customer") {
+      const groupUrl = BASE_URL + `/settings/delete-permission-group/${slug}`;
       return axios
-        .get(lang_url, {
+        .get(groupUrl, {
           headers: { Authorization: `Bearer ${getCookie()}` },
         })
         .then((res) => {
-          setLanguageList(res.data[0]);
-          setNavLanguageList(res.data[1]);
-          setLanguageListForSearch(res.data[1]);
-          setSearchedGroups({
-            ...searchedGroups,
-            list: res.data[1],
-          });
-          setLoading(false);
-          toast.success(`${_t(t("Language has been deleted successfully"))}`, {
-            position: "bottom-center",
-            autoClose: 10000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            className: "text-center toast-notification",
-          });
+          if (res.data === "Please remove this group from users first") {
+            setLoading(false);
+            toast.error(
+              `${_t(t("Please remove this group from users first!"))}`,
+              {
+                position: "bottom-center",
+                autoClose: 10000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                className: "text-center toast-notification",
+              }
+            );
+          } else if (res.data === "This group can not be deleted") {
+            setLoading(false);
+            toast.error(
+              `${_t(t("Please remove this group from users first!"))}`,
+              {
+                position: "bottom-center",
+                autoClose: 10000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                className: "text-center toast-notification",
+              }
+            );
+          } else {
+            setNewGroup({
+              name: null,
+              permission_ids: null,
+              edit: false,
+              editSlug: null,
+              uploading: false,
+            });
+            setPermissionGroup(res.data[0]);
+            setPermissionGroupForSearch(res.data[1]);
+            setLoading(false);
+            toast.success(`${_t(t("Group has been deleted successfully"))}`, {
+              position: "bottom-center",
+              autoClose: 10000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              className: "text-center toast-notification",
+            });
+          }
         })
         .catch(() => {
           setLoading(false);
@@ -360,7 +360,7 @@ const Permissions = () => {
         });
     } else {
       setLoading(false);
-      toast.error(`${_t(t("English language can not be deleted!"))}`, {
+      toast.error(`${_t(t("This group can not be deleted!"))}`, {
         position: "bottom-center",
         autoClose: 10000,
         hideProgressBar: false,
@@ -377,8 +377,8 @@ const Permissions = () => {
         <title>{_t(t("Permissions"))}</title>
       </Helmet>
 
-      {/* Add language modal */}
-      <div className="modal fade" id="addLang" aria-hidden="true">
+      {/* Add group modal */}
+      <div className="modal fade" id="addGroup" aria-hidden="true">
         <div className="modal-dialog modal-lg">
           <div className="modal-content">
             <div className="modal-header align-items-center">
@@ -402,7 +402,7 @@ const Permissions = () => {
                 <div key="fragment-permission-1">
                   <form
                     onSubmit={
-                      !newGroup.edit ? handleSaveNewGroup : handleUpdateLang
+                      !newGroup.edit ? handleSaveNewGroup : handleUpdateGroup
                     }
                   >
                     <div>
@@ -423,15 +423,36 @@ const Permissions = () => {
                     </div>
 
                     <div className="mt-3">
-                      <label htmlFor="name" className="form-label">
+                      <label htmlFor="name" className="form-label mb-0">
                         {_t(t("Select permissions"))}{" "}
-                        <small className="text-primary">*</small>
+                        {newGroup.edit && (
+                          <small className="text-primary">
+                            {"( "}
+                            {_t(
+                              t(
+                                "Leave empty if you do not want to change permissions"
+                              )
+                            )}
+                            {" )"}
+                          </small>
+                        )}
                       </label>
+                      {newGroup.edit && (
+                        <ul className="list-group list-group-horizontal-sm row col-12 mb-2 ml-md-1">
+                          {newGroup.selectedPermissions.map((selectedItem) => {
+                            return (
+                              <li className="list-group-item col-12 col-md-3 bg-success rounded-sm py-1 px-2 mx-2 my-1 text-center">
+                                {selectedItem.name}
+                              </li>
+                            );
+                          })}
+                        </ul>
+                      )}
                       <Select
                         options={permissions}
                         components={makeAnimated()}
                         getOptionLabel={(option) => option.name}
-                        getOptionValue={(option) => option.id}
+                        getOptionValue={(option) => option.name}
                         className="basic-multi-select"
                         classNamePrefix="select"
                         onChange={handleSetPermissionIds}
@@ -499,10 +520,10 @@ const Permissions = () => {
           </div>
         </div>
       </div>
-      {/* Add language modal Ends*/}
+      {/* Add group modal Ends*/}
 
-      {/* Edit Language Modal */}
-      {/* Edit Language Modal Ends */}
+      {/* Edit group Modal */}
+      {/* Edit group Modal Ends */}
 
       {/* main body */}
       <main id="main" data-simplebar>
@@ -542,14 +563,16 @@ const Permissions = () => {
                           </div>
                           <div className="col-md-6 col-lg-7">
                             <div className="row gx-3 align-items-center">
-                              {/* Search languages */}
+                              {/* Search group */}
                               <div className="col-md-9 t-mb-15 mb-md-0">
                                 <div className="input-group">
                                   <div className="form-file">
                                     <input
                                       type="text"
                                       className="form-control border-0 form-control--light-1 rounded-0"
-                                      placeholder={_t(t("Search")) + ".."}
+                                      placeholder={
+                                        _t(t("Search by name")) + ".."
+                                      }
                                       onChange={handleSearch}
                                     />
                                   </div>
@@ -565,13 +588,13 @@ const Permissions = () => {
                                 </div>
                               </div>
 
-                              {/* Add language modal trigger button */}
+                              {/* Add group modal trigger button */}
                               <div className="col-md-3 text-md-right">
                                 <button
                                   type="button"
                                   className="btn btn-primary xsm-text text-uppercase btn-lg btn-block"
                                   data-toggle="modal"
-                                  data-target="#addLang"
+                                  data-target="#addGroup"
                                   onClick={() => {
                                     setNewGroup({
                                       ...newGroup,
@@ -696,53 +719,62 @@ const Permissions = () => {
                                                     : "-"}
                                                 </td>
 
-                                                <td className="xsm-text text-capitalize align-middle text-center">
-                                                  <div className="dropdown">
-                                                    <button
-                                                      className="btn t-bg-clear t-text-dark--light-40"
-                                                      type="button"
-                                                      data-toggle="dropdown"
-                                                    >
-                                                      <i className="fa fa-ellipsis-h"></i>
-                                                    </button>
-                                                    <div className="dropdown-menu">
+                                                <td className="xsm-text align-middle text-center">
+                                                  {/* todo::add superAdmin here when it will be SaaS */}
+                                                  {item.name !== "Admin" ? (
+                                                    <div className="dropdown">
                                                       <button
-                                                        className="dropdown-item sm-text text-capitalize"
-                                                        onClick={() =>
-                                                          handleSetEdit(item.id)
-                                                        }
-                                                        data-toggle="modal"
-                                                        data-target="#addLang"
+                                                        className="btn t-bg-clear t-text-dark--light-40"
+                                                        type="button"
+                                                        data-toggle="dropdown"
                                                       >
-                                                        <span className="t-mr-8">
-                                                          <i className="fa fa-pencil"></i>
-                                                        </span>
-                                                        {_t(t("Edit"))}
+                                                        <i className="fa fa-ellipsis-h"></i>
                                                       </button>
-                                                      <NavLink
-                                                        className="dropdown-item sm-text text-capitalize"
-                                                        to={`/dashboard/manage/settings/languages/${item.code}`}
-                                                      >
-                                                        <span className="t-mr-8">
-                                                          <i className="fa fa-refresh"></i>
-                                                        </span>
-                                                        {_t(t("Translate"))}
-                                                      </NavLink>
-                                                      <button
-                                                        className="dropdown-item sm-text text-capitalize"
-                                                        onClick={() => {
-                                                          handleDeleteConfirmation(
-                                                            item.code
-                                                          );
-                                                        }}
-                                                      >
-                                                        <span className="t-mr-8">
-                                                          <i className="fa fa-trash"></i>
-                                                        </span>
-                                                        {_t(t("Delete"))}
-                                                      </button>
+                                                      <div className="dropdown-menu">
+                                                        <button
+                                                          className="dropdown-item sm-text text-capitalize"
+                                                          onClick={() =>
+                                                            handleSetEdit(
+                                                              item.id
+                                                            )
+                                                          }
+                                                          data-toggle="modal"
+                                                          data-target="#addGroup"
+                                                        >
+                                                          <span className="t-mr-8">
+                                                            <i className="fa fa-pencil"></i>
+                                                          </span>
+                                                          {_t(t("Edit"))}
+                                                        </button>
+
+                                                        <button
+                                                          className="dropdown-item sm-text text-capitalize"
+                                                          onClick={() => {
+                                                            handleDeleteConfirmation(
+                                                              item.slug
+                                                            );
+                                                          }}
+                                                        >
+                                                          <span className="t-mr-8">
+                                                            <i className="fa fa-trash"></i>
+                                                          </span>
+                                                          {_t(t("Delete"))}
+                                                        </button>
+                                                      </div>
                                                     </div>
-                                                  </div>
+                                                  ) : (
+                                                    _t(
+                                                      t(
+                                                        "Edit or Delete is not allowed for"
+                                                      )
+                                                    ) +
+                                                    [
+                                                      " " +
+                                                        item.name +
+                                                        " " +
+                                                        _t(t("group")),
+                                                    ]
+                                                  )}
                                                 </td>
                                               </tr>
                                             );
@@ -826,53 +858,62 @@ const Permissions = () => {
                                                     : "-"}
                                                 </td>
 
-                                                <td className="xsm-text text-capitalize align-middle text-center">
-                                                  <div className="dropdown">
-                                                    <button
-                                                      className="btn t-bg-clear t-text-dark--light-40"
-                                                      type="button"
-                                                      data-toggle="dropdown"
-                                                    >
-                                                      <i className="fa fa-ellipsis-h"></i>
-                                                    </button>
-                                                    <div className="dropdown-menu">
+                                                <td className="xsm-text align-middle text-center">
+                                                  {/* todo::add superAdmin here when it will be SaaS */}
+                                                  {item.name !== "Admin" ? (
+                                                    <div className="dropdown">
                                                       <button
-                                                        className="dropdown-item sm-text text-capitalize"
-                                                        onClick={() =>
-                                                          handleSetEdit(item.id)
-                                                        }
-                                                        data-toggle="modal"
-                                                        data-target="#addLang"
+                                                        className="btn t-bg-clear t-text-dark--light-40"
+                                                        type="button"
+                                                        data-toggle="dropdown"
                                                       >
-                                                        <span className="t-mr-8">
-                                                          <i className="fa fa-pencil"></i>
-                                                        </span>
-                                                        {_t(t("Edit"))}
+                                                        <i className="fa fa-ellipsis-h"></i>
                                                       </button>
-                                                      <NavLink
-                                                        className="dropdown-item sm-text text-capitalize"
-                                                        to={`/dashboard/manage/settings/languages/${item.code}`}
-                                                      >
-                                                        <span className="t-mr-8">
-                                                          <i className="fa fa-refresh"></i>
-                                                        </span>
-                                                        {_t(t("Translate"))}
-                                                      </NavLink>
-                                                      <button
-                                                        className="dropdown-item sm-text text-capitalize"
-                                                        onClick={() => {
-                                                          handleDeleteConfirmation(
-                                                            item.code
-                                                          );
-                                                        }}
-                                                      >
-                                                        <span className="t-mr-8">
-                                                          <i className="fa fa-trash"></i>
-                                                        </span>
-                                                        {_t(t("Delete"))}
-                                                      </button>
+                                                      <div className="dropdown-menu">
+                                                        <button
+                                                          className="dropdown-item sm-text text-capitalize"
+                                                          onClick={() =>
+                                                            handleSetEdit(
+                                                              item.id
+                                                            )
+                                                          }
+                                                          data-toggle="modal"
+                                                          data-target="#addGroup"
+                                                        >
+                                                          <span className="t-mr-8">
+                                                            <i className="fa fa-pencil"></i>
+                                                          </span>
+                                                          {_t(t("Edit"))}
+                                                        </button>
+
+                                                        <button
+                                                          className="dropdown-item sm-text text-capitalize"
+                                                          onClick={() => {
+                                                            handleDeleteConfirmation(
+                                                              item.slug
+                                                            );
+                                                          }}
+                                                        >
+                                                          <span className="t-mr-8">
+                                                            <i className="fa fa-trash"></i>
+                                                          </span>
+                                                          {_t(t("Delete"))}
+                                                        </button>
+                                                      </div>
                                                     </div>
-                                                  </div>
+                                                  ) : (
+                                                    _t(
+                                                      t(
+                                                        "Edit or Delete is not allowed for"
+                                                      )
+                                                    ) +
+                                                    [
+                                                      " " +
+                                                        item.name +
+                                                        " " +
+                                                        _t(t("group")),
+                                                    ]
+                                                  )}
                                                 </td>
                                               </tr>
                                             );
@@ -901,10 +942,7 @@ const Permissions = () => {
                           <div className="row align-items-center t-pl-15 t-pr-15">
                             <div className="col-md-7 t-mb-15 mb-md-0">
                               {/* pagination function */}
-                              {pagination(
-                                permissionGroup,
-                                setPaginatedLanguages
-                              )}
+                              {pagination(permissionGroup, setPaginatedGropus)}
                             </div>
                             <div className="col-md-5">
                               <ul className="t-list d-flex justify-content-md-end align-items-center">

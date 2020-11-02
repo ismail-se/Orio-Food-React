@@ -120,6 +120,23 @@ const SettingsProvider = ({ children }) => {
       });
   };
 
+  // get paginated groups
+  const setPaginatedGropus = (pageNo) => {
+    setDataPaginating(true);
+    const url = BASE_URL + "/settings/permission-group-list?page=" + pageNo;
+    return axios
+      .get(url, {
+        headers: { Authorization: `Bearer ${getCookie()}` },
+      })
+      .then((res) => {
+        setPermissionGroup(res.data[0]);
+        setPermissionGroupForSearch(res.data[1]);
+        setPermissions(res.data[2]);
+        setDataPaginating(false);
+      })
+      .catch(() => {});
+  };
+
   return (
     <SettingsContext.Provider
       value={{
@@ -145,7 +162,7 @@ const SettingsProvider = ({ children }) => {
         getPermissionGroups,
         permissionGroup,
         setPermissionGroup,
-        permissionGroup,
+        setPaginatedGropus,
         permissionGroupForSearch,
         setPermissionGroupForSearch,
 

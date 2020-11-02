@@ -124,7 +124,7 @@ const ManageSidebar = () => {
                 <li className="fk-pos-nav__sub-list border-bottom">
                   {managePageHrefLink(
                     "/dashboard/manage/roles-and-permissions",
-                    _t(t("Role Groups"))
+                    _t(t("Role Group"))
                   )}
                 </li>
               </ul>

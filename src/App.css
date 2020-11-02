@@ -41,6 +41,7 @@ html {
   animation: loading-animation 1s infinite linear;
   -webkit-animation: laoding-animation 1s infinite linear;
   -moz-animation: laoding-animation 1s infinite linear;
+  z-index: 1000;
 }
 @keyframes laoding-animation {
   from {
