@@ -283,46 +283,6 @@ const Login = () => {
               </div>
             </div>
           </div>
-          <div className="fk-global-footer">
-            <div className="container">
-              <div className="row align-items-center">
-                <div className="col-md-7 t-mb-15 mb-md-0">
-                  <ul className="t-list d-flex flex-wrap justify-content-center justify-content-md-start">
-                    <li className="t-list__item">
-                      <a href="#card-2" className="t-link fk-global-link">
-                        help
-                      </a>
-                    </li>
-                    <li className="t-list__item">
-                      <a href="#card-3" className="t-link fk-global-link">
-                        press
-                      </a>
-                    </li>
-                    <li className="t-list__item">
-                      <a href="#card-4" className="t-link fk-global-link">
-                        jobs
-                      </a>
-                    </li>
-                    <li className="t-list__item">
-                      <a href="#card-5" className="t-link fk-global-link">
-                        privacy
-                      </a>
-                    </li>
-                    <li className="t-list__item">
-                      <a href="#card-6" className="t-link fk-global-link">
-                        terms
-                      </a>
-                    </li>
-                  </ul>
-                </div>
-                <div className="col-md-5 text-center text-md-right">
-                  <p className="xsm-text text-uppercase mb-0">
-                    &copy; Food Khan | All rights reserved | 2020
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
         </div>
       </main>
     </>

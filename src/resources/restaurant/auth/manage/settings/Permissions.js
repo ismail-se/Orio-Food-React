@@ -63,7 +63,7 @@ const Permissions = () => {
   } = useContext(SettingsContext);
 
   // States hook here
-  //new languages
+  //new group
   let [newGroup, setNewGroup] = useState({
     name: null,
     permission_ids: null,
@@ -81,115 +81,89 @@ const Permissions = () => {
   //useEffect == componentDidMount()
   useEffect(() => {}, []);
 
-  //set name, permission id array hook
+  //set name array hook
   const handleSetNewGroup = (e) => {
     setNewGroup({ ...newGroup, [e.target.name]: e.target.value });
+  };
+
+  //set permission id array hook
+  const handleSetPermissionIds = (permission) => {
+    setNewGroup({ ...newGroup, permission_ids: permission });
   };
 
   //Save New Group
   const handleSaveNewGroup = (e) => {
     e.preventDefault();
-    setNewGroup({
-      ...newGroup,
-      uploading: true,
-    });
-    const groupUrl = BASE_URL + `/settings/new-permission-group`;
-    let formData = new FormData();
-    formData.append("name", newGroup.name);
-    formData.append("code", newGroup.permission_ids);
-    return axios
-      .post(groupUrl, formData, {
-        headers: { Authorization: `Bearer ${getCookie()}` },
-      })
-      .then((res) => {
-        setNewGroup({
-          name: null,
-          permission_ids: null,
-          edit: false,
-          editSlug: null,
-          uploading: false,
-        });
-        setLanguageList(res.data[0]);
-        setNavLanguageList(res.data[1]);
-        setLanguageListForSearch(res.data[1]);
-        setLoading(false);
-        toast.success(`${_t(t("A new language has been created"))}`, {
-          position: "bottom-center",
-          autoClose: 10000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          className: "text-center toast-notification",
-        });
-      })
-      .catch((error) => {
-        setLoading(false);
-        setNewGroup({
-          ...newGroup,
-          uploading: false,
-        });
-        if (error.response.data.errors) {
-          if (error.response.data.errors.name) {
-            error.response.data.errors.name.forEach((item) => {
-              if (item === "A language already exist with this name") {
-                toast.error(
-                  `${_t(t("A language already exist with this name"))}`,
-                  {
-                    position: "bottom-center",
-                    autoClose: 10000,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    className: "text-center toast-notification",
-                  }
-                );
-              }
-            });
-          }
-
-          if (error.response.data.errors.code) {
-            error.response.data.errors.code.forEach((item) => {
-              if (item === "A language already exist with this code") {
-                toast.error(
-                  `${_t(t("A language already exist with this code"))}`,
-                  {
-                    position: "bottom-center",
-                    autoClose: 10000,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    className: "text-center toast-notification",
-                  }
-                );
-              }
-            });
-          }
-          if (error.response.data.errors.image) {
-            error.response.data.errors.image.forEach((item) => {
-              if (item === "Please select a valid image file") {
-                toast.error(`${_t(t("Please select a valid image file"))}`, {
-                  position: "bottom-center",
-                  autoClose: 10000,
-                  hideProgressBar: false,
-                  closeOnClick: true,
-                  pauseOnHover: true,
-                  className: "text-center toast-notification",
-                });
-              }
-              if (item === "Please select a file less than 5MB") {
-                toast.error(`${_t(t("Please select a file less than 5MB"))}`, {
-                  position: "bottom-center",
-                  autoClose: 10000,
-                  hideProgressBar: false,
-                  closeOnClick: true,
-                  pauseOnHover: true,
-                  className: "text-center toast-notification",
-                });
-              }
-            });
-          }
-        }
+    if (newGroup.permission_ids !== null) {
+      setNewGroup({
+        ...newGroup,
+        uploading: true,
       });
+      const groupUrl = BASE_URL + `/settings/new-permission-group`;
+      let formData = {
+        name: newGroup.name,
+        permissionIds: newGroup.permission_ids,
+      };
+      return axios
+        .post(groupUrl, formData, {
+          headers: { Authorization: `Bearer ${getCookie()}` },
+        })
+        .then((res) => {
+          setNewGroup({
+            name: null,
+            permission_ids: null,
+            edit: false,
+            editSlug: null,
+            uploading: false,
+          });
+          setPermissionGroup(res.data[0]);
+          setPermissionGroupForSearch(res.data[1]);
+          setLoading(false);
+          toast.success(`${_t(t("A new group has been created"))}`, {
+            position: "bottom-center",
+            autoClose: 10000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            className: "text-center toast-notification",
+          });
+        })
+        .catch((error) => {
+          setLoading(false);
+          setNewGroup({
+            ...newGroup,
+            uploading: false,
+          });
+          if (error && error.response.data.errors) {
+            if (error.response.data.errors.name) {
+              error.response.data.errors.name.forEach((item) => {
+                if (item === "A group already exist with this name") {
+                  toast.error(
+                    `${_t(t("A group already exist with this name"))}`,
+                    {
+                      position: "bottom-center",
+                      autoClose: 10000,
+                      hideProgressBar: false,
+                      closeOnClick: true,
+                      pauseOnHover: true,
+                      className: "text-center toast-notification",
+                    }
+                  );
+                }
+              });
+            }
+          }
+        });
+    } else {
+      toast.error(`${_t(t("Please select permissions"))}`, {
+        position: "bottom-center",
+        autoClose: 10000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        className: "text-center toast-notification",
+      });
+    }
   };
 
   const handleSetEdit = (id) => {
@@ -442,7 +416,7 @@ const Permissions = () => {
                         id="name"
                         name="name"
                         placeholder="e.g. Employee"
-                        value={newGroup.name}
+                        value={newGroup.name || ""}
                         required
                         onChange={handleSetNewGroup}
                       />
@@ -460,9 +434,9 @@ const Permissions = () => {
                         getOptionValue={(option) => option.id}
                         className="basic-multi-select"
                         classNamePrefix="select"
-                        isMulti
-                        onChange={""}
+                        onChange={handleSetPermissionIds}
                         placeholder="Please select permissions"
+                        isMulti
                       />
                     </div>
 
@@ -471,7 +445,7 @@ const Permissions = () => {
                         <div className="col-6">
                           <button
                             type="submit"
-                            className="btn btn-success w-100 xsm-text text-uppercase t-width-max"
+                            className="btn btn-success text-dark w-100 xsm-text text-uppercase t-width-max"
                           >
                             {!newGroup.edit ? _t(t("Save")) : _t(t("Update"))}
                           </button>
@@ -500,12 +474,12 @@ const Permissions = () => {
                       <div className="col-6">
                         <button
                           type="button"
-                          className="btn btn-success w-100 xsm-text text-uppercase t-width-max"
+                          className="btn btn-success text-dark w-100 xsm-text text-uppercase t-width-max"
                           onClick={(e) => {
                             e.preventDefault();
                           }}
                         >
-                          {_t(t("save"))}
+                          {!newGroup.edit ? _t(t("Save")) : _t(t("Update"))}
                         </button>
                       </div>
                       <div className="col-6">
@@ -628,13 +602,13 @@ const Permissions = () => {
                                   scope="col"
                                   className="sm-text text-capitalize align-middle text-center border-1 border"
                                 >
-                                  {_t(t("Code"))}
+                                  {_t(t("Name"))}
                                 </th>
                                 <th
                                   scope="col"
                                   className="sm-text text-capitalize align-middle text-center border-1 border"
                                 >
-                                  {_t(t("Name"))}
+                                  {_t(t("Permissions"))}
                                 </th>
 
                                 <th
@@ -680,10 +654,46 @@ const Permissions = () => {
                                                 </th>
 
                                                 <td className="xsm-text align-middle text-center">
-                                                  {item.code}
+                                                  {item.name}
                                                 </td>
                                                 <td className="xsm-text text-capitalize align-middle text-center">
-                                                  {item.name}
+                                                  {item.permission_array_id !==
+                                                  null
+                                                    ? item.permission_array_id.map(
+                                                        (permissionItem) => {
+                                                          let secondMap =
+                                                            permissions &&
+                                                            permissions.map(
+                                                              (
+                                                                ItemFromListPermission
+                                                              ) => {
+                                                                if (
+                                                                  ItemFromListPermission.id ===
+                                                                  permissionItem
+                                                                ) {
+                                                                  return (
+                                                                    <ul
+                                                                      className="list-group"
+                                                                      key={
+                                                                        permissionItem
+                                                                      }
+                                                                    >
+                                                                      <li className="list-group-item bg-success rounded-sm p-1 m-1 mx-3">
+                                                                        {
+                                                                          ItemFromListPermission.name
+                                                                        }
+                                                                      </li>
+                                                                    </ul>
+                                                                  );
+                                                                } else {
+                                                                  return true;
+                                                                }
+                                                              }
+                                                            );
+                                                          return secondMap;
+                                                        }
+                                                      )
+                                                    : "-"}
                                                 </td>
 
                                                 <td className="xsm-text text-capitalize align-middle text-center">
@@ -766,14 +776,54 @@ const Permissions = () => {
                                                   scope="row"
                                                   className="xsm-text text-capitalize align-middle text-center"
                                                 >
-                                                  {index + 1}
+                                                  {index +
+                                                    1 +
+                                                    (permissionGroup.current_page -
+                                                      1) *
+                                                      permissionGroup.per_page}
                                                 </th>
 
                                                 <td className="xsm-text align-middle text-center">
-                                                  {item.code}
+                                                  {item.name}
                                                 </td>
                                                 <td className="xsm-text text-capitalize align-middle text-center">
-                                                  {item.name}
+                                                  {item.permission_array_id !==
+                                                  null
+                                                    ? item.permission_array_id.map(
+                                                        (permissionItem) => {
+                                                          let secondMap =
+                                                            permissions &&
+                                                            permissions.map(
+                                                              (
+                                                                ItemFromListPermission
+                                                              ) => {
+                                                                if (
+                                                                  ItemFromListPermission.id ===
+                                                                  permissionItem
+                                                                ) {
+                                                                  return (
+                                                                    <ul
+                                                                      className="list-group"
+                                                                      key={
+                                                                        permissionItem
+                                                                      }
+                                                                    >
+                                                                      <li className="list-group-item bg-success rounded-sm p-1 m-1 mx-3">
+                                                                        {
+                                                                          ItemFromListPermission.name
+                                                                        }
+                                                                      </li>
+                                                                    </ul>
+                                                                  );
+                                                                } else {
+                                                                  return true;
+                                                                }
+                                                              }
+                                                            );
+                                                          return secondMap;
+                                                        }
+                                                      )
+                                                    : "-"}
                                                 </td>
 
                                                 <td className="xsm-text text-capitalize align-middle text-center">

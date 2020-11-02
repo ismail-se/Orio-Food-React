@@ -103,8 +103,7 @@ const Navbar = (props) => {
               <div className="order-2 order-lg-1 col-10 col-lg-3 col-xl-4 col-xxl-5 t-mb-15 mb-lg-0 t-mt-15 mt-lg-0">
                 {getCookie() !== undefined
                   ? [
-                      window.location.pathname.includes("/dashboard/manage/") ||
-                      window.location.pathname === "/" ? null : (
+                      window.location.pathname !== "/" ? null : (
                         <div className="input-group">
                           <div className="form-file">
                             <input
