@@ -1,5 +1,5 @@
 import React, { useEffect, useContext } from "react";
-import { withRouter } from "react-router-dom";
+import { withRouter, useHistory } from "react-router-dom";
 import { Helmet } from "react-helmet";
 
 //importing context consumer here
@@ -7,12 +7,19 @@ import { UserContext } from "../../../contexts/User";
 import { SettingsContext } from "../../../contexts/Settings";
 
 //functions
-import { _t, restaurantMenuLink } from "../../../functions/Functions";
+import {
+  _t,
+  restaurantMenuLink,
+  deleteCookie,
+} from "../../../functions/Functions";
 import { useTranslation } from "react-i18next";
 import Skeleton from "react-loading-skeleton";
 
+//3rd party packages
+
 const RestaurantHome = () => {
   const { t } = useTranslation();
+  const history = useHistory();
 
   //getting context values here
   const { loading, setLoading } = useContext(SettingsContext);
@@ -25,6 +32,11 @@ const RestaurantHome = () => {
       setLoading(false);
     }, 1000);
   }, []);
+
+  const handleLogout = () => {
+    deleteCookie();
+    history.push({ pathname: "/login", state: "loggedOut" });
+  };
   return (
     <>
       <Helmet>
@@ -116,16 +128,37 @@ const RestaurantHome = () => {
                     [_t(t("Manage"))],
                     "/dashboard/manage/settings/languages"
                   )}
-                  {/* image, imgAltTxt, smallInfoIcon, infoTextColorName, infoText, title, redirectToUrl */}
-                  {/* {restaurantMenuLink(
-                "/assets/img/product-img-6.png",
-                [_t(t("Logout"))],
-                "fa fa-clock-o",
-                "t-text-alpha",
-                [_t(t("Logout"))],
-                [_t(t("Logout"))],
-                "/logout"
-                  )}*/}
+
+                  <div className="col-md-6 col-lg-4 t-mb-15">
+                    <button
+                      onClick={handleLogout}
+                      className="t-link product-card t-bg-white pb-2 border-0 text-left"
+                    >
+                      <div className="product-card__head">
+                        <img
+                          src="/assets/img/product-img-6.png"
+                          alt={_t(t("Logout"))}
+                          className="img-fluid"
+                        />
+                      </div>
+                      <div className="product-card__body">
+                        <div className="product-card__add">
+                          <span className="product-card__add-icon">
+                            <span className="las la-plus"></span>
+                          </span>
+                        </div>
+                        <span
+                          className={`product-card__sub-title t-text-alpha text-uppercase`}
+                        >
+                          <span className="fa fa-clock-o"></span>{" "}
+                          {_t(t("Logout"))}
+                        </span>
+                        <span className="product-card__title text-capitalize">
+                          {_t(t("Logout"))}
+                        </span>
+                      </div>
+                    </button>
+                  </div>
                 </>
               ) : (
                 <>

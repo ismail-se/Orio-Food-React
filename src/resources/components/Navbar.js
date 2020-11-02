@@ -1,10 +1,6 @@
 import React, { useState, useContext, useEffect } from "react";
 import { NavLink, Link, withRouter, useHistory } from "react-router-dom";
 
-//axios and base url
-import axios from "axios";
-import { BASE_URL } from "../../BaseUrl";
-
 //pages, functions
 import {
   _t,
@@ -76,15 +72,7 @@ const Navbar = (props) => {
 
   const handleLogout = () => {
     deleteCookie();
-    history.push({ pathname: "/", state: "loggedOut" });
-    toast.success(`${_t(t("You have been logged out"))}`, {
-      position: "bottom-center",
-      autoClose: 5000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      className: "text-center toast-notification",
-    });
+    history.push({ pathname: "/login", state: "loggedOut" });
   };
 
   return (

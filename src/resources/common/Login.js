@@ -33,7 +33,9 @@ const Login = () => {
   const history = useHistory();
 
   //getting context values here
-  let { loading, setLoading, getSmtp } = useContext(SettingsContext);
+  let { loading, setLoading, getSmtp, getPermissionGroups } = useContext(
+    SettingsContext
+  );
 
   //state hooks here
   const [credentials, setCredentials] = useState({
@@ -45,7 +47,6 @@ const Login = () => {
   useEffect(() => {
     handleJquery();
     checkAuth();
-    checkAlert();
   }, []);
 
   //jQuery
@@ -69,22 +70,6 @@ const Login = () => {
   //redirect if logged in
   const checkAuth = () => {
     getCookie() !== undefined && history.replace("/dashboard");
-  };
-
-  //check alert
-  const checkAlert = () => {
-    if (history.location.state) {
-      if (history.location.state.alert === "You need to login first!")
-        toast.error(`${_t(t("You need to login first!"))}`, {
-          position: "bottom-center",
-          autoClose: 10000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          className: "text-center toast-notification",
-        });
-      history.replace("/login");
-    }
   };
 
   //set credentials here on input change
@@ -132,7 +117,9 @@ const Login = () => {
           expires: date,
           sameSite: "lax",
         });
+        // todo:: get all data here after authentication
         getSmtp();
+        getPermissionGroups();
         history.push("/dashboard");
       })
       .catch((error) => {

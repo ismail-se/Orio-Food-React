@@ -4,7 +4,7 @@ import { Redirect } from "react-router-dom";
 const RestaurantLanding = () => {
   return (
     <>
-      <Redirect to="/dashboard" />;
+      <Redirect to="/login" />;
     </>
   );
 };
