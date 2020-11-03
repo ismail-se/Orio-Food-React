@@ -1,4 +1,4 @@
-import React, { useEffect, useContext } from "react";
+import React, { useEffect, useContext, useState } from "react";
 import { withRouter, useHistory } from "react-router-dom";
 import { Helmet } from "react-helmet";
 
@@ -22,8 +22,12 @@ const RestaurantHome = () => {
   const history = useHistory();
 
   //getting context values here
-  const { loading, setLoading } = useContext(SettingsContext);
-  const { signUpInfo } = useContext(UserContext);
+  let {
+    //common
+    loading,
+    setLoading,
+  } = useContext(SettingsContext);
+  const { signUpInfo, authUserInfo } = useContext(UserContext);
 
   //useEffect == componentDidMount()
   useEffect(() => {
@@ -43,91 +47,116 @@ const RestaurantHome = () => {
         <title>{signUpInfo.name}</title>
       </Helmet>
       <main>
-        <div class="fk-scroll--index t-mt-15 t-mb-15" data-simplebar>
+        <div className="fk-scroll--index t-mt-15 t-mb-15" data-simplebar>
           <div className="container">
             <div className="row gx-3">
               {!loading ? (
                 <>
                   {/* image, imgAltTxt, smallInfoIcon, infoTextColorName, infoText, title, redirectToUrl */}
-                  {restaurantMenuLink(
-                    "/assets/img/product-img-1.png",
-                    [_t(t("Work Periods"))],
-                    "fa fa-clock-o",
-                    "t-text-alpha",
-                    [_t(t("Time"))],
-                    [_t(t("Work Periods"))],
-                    "/dashboard/work-periods"
-                  )}
+                  {authUserInfo.permissions !== null &&
+                  authUserInfo.permissions.includes("Work period")
+                    ? restaurantMenuLink(
+                        "/assets/img/product-img-1.png",
+                        [_t(t("Work Periods"))],
+                        "fa fa-clock-o",
+                        "t-text-alpha",
+                        [_t(t("Time"))],
+                        [_t(t("Work Periods"))],
+                        "/dashboard/work-periods"
+                      )
+                    : null}
+
                   {/* image, imgAltTxt, smallInfoIcon, infoTextColorName, infoText, title, redirectToUrl */}
-                  {restaurantMenuLink(
-                    "/assets/img/product-img-2.png",
-                    [_t(t("Point of Sale"))],
-                    "fa fa-cart-plus",
-                    "t-text-gamma",
-                    [_t(t("Pos"))],
-                    [_t(t("Point of Sale"))],
-                    "/dashboard/pos"
-                  )}
+                  {authUserInfo.permissions !== null &&
+                  authUserInfo.permissions.includes("POS")
+                    ? restaurantMenuLink(
+                        "/assets/img/product-img-2.png",
+                        [_t(t("Point of Sale"))],
+                        "fa fa-cart-plus",
+                        "t-text-gamma",
+                        [_t(t("Pos"))],
+                        [_t(t("Point of Sale"))],
+                        "/dashboard/pos"
+                      )
+                    : null}
                   {/* image, imgAltTxt, smallInfoIcon, infoTextColorName, infoText, title, redirectToUrl */}
-                  {restaurantMenuLink(
-                    "/assets/img/product-img-3.png",
-                    [_t(t("Order Histories"))],
-                    "fa fa-pencil",
-                    "t-text-delta",
-                    [_t(t("Orders"))],
-                    [_t(t("Order Histories"))],
-                    "/dashboard/orders"
-                  )}
+                  {authUserInfo.permissions !== null &&
+                  authUserInfo.permissions.includes("Order history")
+                    ? restaurantMenuLink(
+                        "/assets/img/product-img-3.png",
+                        [_t(t("Order Histories"))],
+                        "fa fa-pencil",
+                        "t-text-delta",
+                        [_t(t("Orders"))],
+                        [_t(t("Order Histories"))],
+                        "/dashboard/orders"
+                      )
+                    : null}
                   {/* image, imgAltTxt, smallInfoIcon, infoTextColorName, infoText, title, redirectToUrl */}
-                  {restaurantMenuLink(
-                    "/assets/img/product-img-4.png",
-                    [_t(t("Customers"))],
-                    "fa fa-user-circle-o",
-                    "t-text-primary",
-                    [_t(t("Customers"))],
-                    [_t(t("Customers"))],
-                    "/dashboard/customers"
-                  )}
+                  {authUserInfo.permissions !== null &&
+                  authUserInfo.permissions.includes("Customer")
+                    ? restaurantMenuLink(
+                        "/assets/img/product-img-4.png",
+                        [_t(t("Customers"))],
+                        "fa fa-user-circle-o",
+                        "t-text-primary",
+                        [_t(t("Customers"))],
+                        [_t(t("Customers"))],
+                        "/dashboard/customers"
+                      )
+                    : null}
                   {/* image, imgAltTxt, smallInfoIcon, infoTextColorName, infoText, title, redirectToUrl */}
-                  {restaurantMenuLink(
-                    "/assets/img/product-img-9.gif",
-                    [_t(t("Kitchen"))],
-                    "fa fa-coffee",
-                    "t-text-epsilon",
-                    [_t(t("Kitchen"))],
-                    [_t(t("Kitchen"))],
-                    "/dashboard/kitchen"
-                  )}
+                  {authUserInfo.permissions !== null &&
+                  authUserInfo.permissions.includes("Kitchen")
+                    ? restaurantMenuLink(
+                        "/assets/img/product-img-9.gif",
+                        [_t(t("Kitchen"))],
+                        "fa fa-coffee",
+                        "t-text-epsilon",
+                        [_t(t("Kitchen"))],
+                        [_t(t("Kitchen"))],
+                        "/dashboard/kitchen"
+                      )
+                    : null}
                   {/* image, imgAltTxt, smallInfoIcon, infoTextColorName, infoText, title, redirectToUrl */}
-                  {restaurantMenuLink(
-                    "/assets/img/product-img-5.png",
-                    [_t(t("Branch"))],
-                    "fa fa-home",
-                    "t-text-eta",
-                    [_t(t("Branch"))],
-                    [_t(t("Branches"))],
-                    "/dashboard/branches"
-                  )}
+                  {authUserInfo.permissions !== null &&
+                  authUserInfo.permissions.includes("Branch")
+                    ? restaurantMenuLink(
+                        "/assets/img/product-img-5.png",
+                        [_t(t("Branch"))],
+                        "fa fa-home",
+                        "t-text-eta",
+                        [_t(t("Branch"))],
+                        [_t(t("Branches"))],
+                        "/dashboard/branches"
+                      )
+                    : null}
                   {/* image, imgAltTxt, smallInfoIcon, infoTextColorName, infoText, title, redirectToUrl */}
-                  {restaurantMenuLink(
-                    "/assets/img/product-img-7.png",
-                    [_t(t("Reports"))],
-                    "fa fa-clock-o",
-                    "t-text-kappa",
-                    [_t(t("Reports"))],
-                    [_t(t("Reports"))],
-                    "/dashboard/reports"
-                  )}
+                  {authUserInfo.permissions !== null &&
+                  authUserInfo.permissions.includes("Report")
+                    ? restaurantMenuLink(
+                        "/assets/img/product-img-7.png",
+                        [_t(t("Reports"))],
+                        "fa fa-clock-o",
+                        "t-text-kappa",
+                        [_t(t("Reports"))],
+                        [_t(t("Reports"))],
+                        "/dashboard/reports"
+                      )
+                    : null}
                   {/* image, imgAltTxt, smallInfoIcon, infoTextColorName, infoText, title, redirectToUrl */}
-                  {restaurantMenuLink(
-                    "/assets/img/product-img-8.png",
-                    [_t(t("Manage"))],
-                    "fa fa-clock-o",
-                    "t-text-zeta",
-                    [_t(t("Manage"))],
-                    [_t(t("Manage"))],
-                    "/dashboard/manage/settings/languages"
-                  )}
+                  {authUserInfo.permissions !== null &&
+                  authUserInfo.permissions.includes("Manage")
+                    ? restaurantMenuLink(
+                        "/assets/img/product-img-8.png",
+                        [_t(t("Manage"))],
+                        "fa fa-clock-o",
+                        "t-text-zeta",
+                        [_t(t("Manage"))],
+                        [_t(t("Manage"))],
+                        "/dashboard/manage/settings/languages"
+                      )
+                    : null}
 
                   <div className="col-md-6 col-lg-4 t-mb-15">
                     <button

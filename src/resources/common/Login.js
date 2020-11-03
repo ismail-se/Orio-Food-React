@@ -25,6 +25,7 @@ import Cookies from "universal-cookie";
 
 //context consumer
 import { SettingsContext } from "../../contexts/Settings";
+import { UserContext } from "../../contexts/User";
 
 const cookies = new Cookies();
 
@@ -36,6 +37,7 @@ const Login = () => {
   let { loading, setLoading, getSmtp, getPermissionGroups } = useContext(
     SettingsContext
   );
+  let { authUserInfo, setAuthUserInfo } = useContext(UserContext);
 
   //state hooks here
   const [credentials, setCredentials] = useState({
@@ -118,6 +120,11 @@ const Login = () => {
           sameSite: "lax",
         });
         // todo:: get all data here after authentication
+        setAuthUserInfo({
+          ...authUserInfo,
+          details: res.data[0],
+          permissions: res.data[1],
+        });
         getSmtp();
         getPermissionGroups();
         history.push("/dashboard");
