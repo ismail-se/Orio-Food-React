@@ -203,27 +203,31 @@ const restaurantMenuLink = (
 const managePageHrefLink = (redirectTo, menuName) => {
   if (window.location.pathname === redirectTo) {
     return (
-      <NavLink
-        to={{ pathname: "/refresh", state: redirectTo }}
-        exact
-        className={`w-100 t-text-dark t-heading-font btn font-weight-bold text-uppercase rounded-0 text-left ${
-          window.location.href.includes(redirectTo) && "active"
-        }`}
-      >
-        - {menuName}
-      </NavLink>
+      <li className="fk-pos-nav__sub-list border-bottom">
+        <NavLink
+          to={{ pathname: "/refresh", state: redirectTo }}
+          exact
+          className={`w-100 t-text-dark t-heading-font btn font-weight-bold text-uppercase rounded-0 text-left ${
+            window.location.href.includes(redirectTo) && "active"
+          }`}
+        >
+          - {menuName}
+        </NavLink>
+      </li>
     );
   } else {
     return (
-      <NavLink
-        to={redirectTo}
-        exact
-        className={`w-100 t-text-dark t-heading-font btn font-weight-bold text-uppercase rounded-0 text-left ${
-          window.location.href.includes(redirectTo) && "active"
-        }`}
-      >
-        - {menuName}
-      </NavLink>
+      <li className="fk-pos-nav__sub-list border-bottom">
+        <NavLink
+          to={redirectTo}
+          exact
+          className={`w-100 t-text-dark t-heading-font btn font-weight-bold text-uppercase rounded-0 text-left ${
+            window.location.href.includes(redirectTo) && "active"
+          }`}
+        >
+          - {menuName}
+        </NavLink>
+      </li>
     );
   }
 };

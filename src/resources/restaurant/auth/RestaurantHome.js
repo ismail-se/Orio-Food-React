@@ -37,6 +37,7 @@ const RestaurantHome = () => {
     }, 1000);
   }, []);
 
+  //logout
   const handleLogout = () => {
     deleteCookie();
     history.push({ pathname: "/login", state: "loggedOut" });
@@ -44,7 +45,9 @@ const RestaurantHome = () => {
   return (
     <>
       <Helmet>
-        <title>{signUpInfo.name}</title>
+        <title>
+          {authUserInfo.details !== null && authUserInfo.details.name}
+        </title>
       </Helmet>
       <main>
         <div className="fk-scroll--index t-mt-15 t-mb-15" data-simplebar>

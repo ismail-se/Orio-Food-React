@@ -80,6 +80,38 @@ const ManageSidebar = () => {
           <ul className="t-list fk-pos-nav">
             <li
               className={`fk-pos-nav__list fk-pos-nav__list-has-sub ${
+                window.location.pathname.includes("/roles") ||
+                window.location.pathname.includes("/user/")
+                  ? "active"
+                  : ""
+              }`}
+            >
+              <a
+                className="w-100 t-text-dark t-heading-font btn btn-outline-danger font-weight-bold text-uppercase rounded-0 text-left"
+                rel="noopener noreferrer"
+                href="#"
+              >
+                {_t(t("User Management"))}
+              </a>
+              <ul className="t-list fk-pos-nav__sub t-bg-white list-group">
+                {managePageHrefLink(
+                  "/dashboard/manage/user/admin-staff-user",
+                  _t(t("Admin / Staff"))
+                )}
+
+                {managePageHrefLink(
+                  "/dashboard/manage/user/waiter",
+                  _t(t("Waiter"))
+                )}
+
+                {managePageHrefLink(
+                  "/dashboard/manage/roles-and-permissions",
+                  _t(t("Role Group"))
+                )}
+              </ul>
+            </li>
+            <li
+              className={`fk-pos-nav__list fk-pos-nav__list-has-sub ${
                 window.location.pathname.includes("/languages") ||
                 window.location.pathname.includes("/smtp")
                   ? "active"
@@ -94,39 +126,15 @@ const ManageSidebar = () => {
                 {_t(t("Settings"))}
               </a>
               <ul className="t-list fk-pos-nav__sub t-bg-white list-group">
-                <li className="fk-pos-nav__sub-list border-bottom">
-                  {managePageHrefLink(
-                    "/dashboard/manage/settings/languages",
-                    _t(t("Languages"))
-                  )}
-                </li>
-                <li className="fk-pos-nav__sub-list border-bottom">
-                  {managePageHrefLink(
-                    "/dashboard/manage/settings/smtp-settings",
-                    _t(t("Email / Smtp"))
-                  )}
-                </li>
-              </ul>
-            </li>
-            <li
-              className={`fk-pos-nav__list fk-pos-nav__list-has-sub ${
-                window.location.pathname.includes("/roles") ? "active" : ""
-              }`}
-            >
-              <a
-                className="w-100 t-text-dark t-heading-font btn btn-outline-danger font-weight-bold text-uppercase rounded-0 text-left"
-                rel="noopener noreferrer"
-                href="#"
-              >
-                {_t(t("Permissions"))}
-              </a>
-              <ul className="t-list fk-pos-nav__sub t-bg-white list-group">
-                <li className="fk-pos-nav__sub-list border-bottom">
-                  {managePageHrefLink(
-                    "/dashboard/manage/roles-and-permissions",
-                    _t(t("Role Group"))
-                  )}
-                </li>
+                {managePageHrefLink(
+                  "/dashboard/manage/settings/languages",
+                  _t(t("Languages"))
+                )}
+
+                {managePageHrefLink(
+                  "/dashboard/manage/settings/smtp-settings",
+                  _t(t("Email / Smtp"))
+                )}
               </ul>
             </li>
           </ul>

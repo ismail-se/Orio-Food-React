@@ -17,7 +17,7 @@ import Reports from "../resources/restaurant/auth/Reports";
 import Lang from "../resources/restaurant/auth/manage/settings/Lang";
 import Translation from "../resources/restaurant/auth/manage/settings/Translation";
 import Smtp from "../resources/restaurant/auth/manage/settings/Smtp";
-import Permissions from "../resources/restaurant/auth/manage/permissions/Permissions";
+import Permissions from "../resources/restaurant/auth/manage/user/Permissions";
 
 export {
   //landing

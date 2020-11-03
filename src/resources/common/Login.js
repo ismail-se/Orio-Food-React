@@ -37,7 +37,7 @@ const Login = () => {
   let { loading, setLoading, getSmtp, getPermissionGroups } = useContext(
     SettingsContext
   );
-  let { authUserInfo, setAuthUserInfo } = useContext(UserContext);
+  let { getAuthUser, authUserInfo } = useContext(UserContext);
 
   //state hooks here
   const [credentials, setCredentials] = useState({
@@ -119,14 +119,18 @@ const Login = () => {
           expires: date,
           sameSite: "lax",
         });
-        // todo:: get all data here after authentication
-        setAuthUserInfo({
-          ...authUserInfo,
-          details: res.data[0],
-          permissions: res.data[1],
-        });
-        getSmtp();
+        // todo:: get data if have permission here after authentication
+        //common
+        getAuthUser();
         getPermissionGroups();
+
+        //permission based
+        if (
+          authUserInfo.permissions !== null &&
+          authUserInfo.permissions.includes("Manage")
+        ) {
+          getSmtp();
+        }
         history.push("/dashboard");
       })
       .catch((error) => {
@@ -225,6 +229,7 @@ const Login = () => {
                               type="email"
                               name="email"
                               placeholder="Email"
+                              value={credentials.email}
                               required
                               className="form-control border-0 rounded-1"
                             />
@@ -235,6 +240,7 @@ const Login = () => {
                               name="password"
                               type="password"
                               placeholder="Password"
+                              value={credentials.password}
                               required
                               className="form-control border-0 rounded-1"
                             />
