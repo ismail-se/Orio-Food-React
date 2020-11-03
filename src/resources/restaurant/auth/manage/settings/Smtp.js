@@ -5,6 +5,7 @@ import { useHistory } from "react-router-dom";
 import {
   _t,
   getCookie,
+  checkPermission,
   tableLoading,
 } from "../../../../../functions/Functions";
 import { useTranslation } from "react-i18next";
@@ -19,6 +20,7 @@ import ManageSidebar from "../ManageSidebar";
 
 //context consumer
 import { SettingsContext } from "../../../../../contexts/Settings";
+import { UserContext } from "../../../../../contexts/User";
 
 //axios and base url
 import axios from "axios";
@@ -37,10 +39,17 @@ const Smtp = () => {
     setSmtp,
   } = useContext(SettingsContext);
 
+  let { authUserInfo } = useContext(UserContext);
+
   //useEffect == componentDidMount()
   useEffect(() => {
+    if (authUserInfo.permissions !== null) {
+      if (!checkPermission(authUserInfo.permissions, "Manage")) {
+        history.push("/dashboard");
+      }
+    }
     getSmtp();
-  }, []);
+  }, [authUserInfo]);
 
   //on change input field
   const handleChange = (e) => {

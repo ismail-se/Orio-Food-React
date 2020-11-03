@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import { NavLink, useParams } from "react-router-dom";
+import { NavLink, useParams, useHistory } from "react-router-dom";
 
 //jQuery initialization
 import $ from "jquery";
@@ -8,9 +8,14 @@ import $ from "jquery";
 import {
   _t,
   getCookie,
+  checkPermission,
   tableLoading,
 } from "../../../../../functions/Functions";
 import { useTranslation } from "react-i18next";
+
+//axios and base url
+import axios from "axios";
+import { BASE_URL } from "../../../../../BaseUrl";
 
 //3rd party packages
 import { Helmet } from "react-helmet";
@@ -22,13 +27,11 @@ import ManageSidebar from "../ManageSidebar";
 
 //context consumer
 import { SettingsContext } from "../../../../../contexts/Settings";
-
-//axios and base url
-import axios from "axios";
-import { BASE_URL } from "../../../../../BaseUrl";
+import { UserContext } from "../../../../../contexts/User";
 
 const Translation = () => {
   const { t } = useTranslation();
+  const history = useHistory();
   //getting context values here
   let {
     loading,
@@ -36,6 +39,8 @@ const Translation = () => {
     dataPaginating,
     setDataPaginating,
   } = useContext(SettingsContext);
+
+  let { authUserInfo } = useContext(UserContext);
 
   //getting url parameter
   let { code } = useParams();
@@ -45,9 +50,14 @@ const Translation = () => {
 
   //useEffect == componentDidMount()
   useEffect(() => {
+    if (authUserInfo.permissions !== null) {
+      if (!checkPermission(authUserInfo.permissions, "Manage")) {
+        history.push("/dashboard");
+      }
+    }
     handleTranslate(code);
     toastAfterReload();
-  }, []);
+  }, [authUserInfo]);
 
   const toastAfterReload = () => {
     if (window.location.href.includes("translation-successful=true")) {

@@ -1,5 +1,5 @@
-import React, { useState, useContext } from "react";
-import { NavLink } from "react-router-dom";
+import React, { useState, useContext, useEffect } from "react";
+import { NavLink, useHistory } from "react-router-dom";
 
 //pages & includes
 import ManageSidebar from "../ManageSidebar";
@@ -8,6 +8,7 @@ import ManageSidebar from "../ManageSidebar";
 import {
   _t,
   getCookie,
+  checkPermission,
   modalLoading,
   tableLoading,
   pagination,
@@ -31,9 +32,11 @@ import "react-toastify/dist/ReactToastify.css";
 
 //context consumer
 import { SettingsContext } from "../../../../../contexts/Settings";
+import { UserContext } from "../../../../../contexts/User";
 
 const Lang = () => {
   const { t } = useTranslation();
+  const history = useHistory();
   //getting context values here
   let {
     loading,
@@ -48,6 +51,7 @@ const Lang = () => {
     setLanguageListForSearch,
   } = useContext(SettingsContext);
 
+  let { authUserInfo } = useContext(UserContext);
   // States hook here
   //new languages
   let [newLang, setNewLang] = useState({
@@ -70,6 +74,15 @@ const Lang = () => {
     list: null,
     searched: false,
   });
+
+  //useEffect == componentDidMount
+  useEffect(() => {
+    if (authUserInfo.permissions !== null) {
+      if (!checkPermission(authUserInfo.permissions, "Manage")) {
+        history.push("/dashboard");
+      }
+    }
+  }, [authUserInfo]);
 
   //set name, code hook
   const handleSetNewLang = (e) => {

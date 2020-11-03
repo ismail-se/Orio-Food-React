@@ -1,6 +1,7 @@
 //common pages
 import Refresh from "../resources/common/Refresh";
 import Login from "../resources/common/Login";
+
 //public page
 import RestaurantLanding from "../resources/restaurant/public/RestaurantLanding";
 
@@ -14,10 +15,13 @@ import Kitchen from "../resources/restaurant/auth/Kitchen";
 import Branch from "../resources/restaurant/auth/Branch";
 import Reports from "../resources/restaurant/auth/Reports";
 //from restaurant-auth-manage
+//-settings
 import Lang from "../resources/restaurant/auth/manage/settings/Lang";
 import Translation from "../resources/restaurant/auth/manage/settings/Translation";
 import Smtp from "../resources/restaurant/auth/manage/settings/Smtp";
+//-users
 import Permissions from "../resources/restaurant/auth/manage/user/Permissions";
+import Waiter from "../resources/restaurant/auth/manage/user/Waiter";
 
 export {
   //landing
@@ -34,9 +38,11 @@ export {
   Kitchen,
   Branch,
   Reports,
-  //manage
+  //manage->settings
   Lang,
   Translation,
   Smtp,
+  //manage->users
+  Waiter,
   Permissions,
 };

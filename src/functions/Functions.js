@@ -50,6 +50,16 @@ const getCookie = () => {
   }
 };
 
+//check permission
+const checkPermission = (authUserPermissions, permission) => {
+  if (authUserPermissions !== false)
+    if (authUserPermissions.includes(permission)) {
+      return true;
+    } else {
+      return false;
+    }
+};
+
 //Delete cookie of authentication
 const deleteCookie = () => {
   const url = BASE_URL + `/auth/logout`;
@@ -318,6 +328,7 @@ export {
   consolee,
   getCookie,
   deleteCookie,
+  checkPermission,
   // common & necessary
 
   //navLink

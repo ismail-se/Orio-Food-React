@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 
 //pages & includes
@@ -35,7 +35,7 @@ import makeAnimated from "react-select/animated";
 import { SettingsContext } from "../../../../../contexts/Settings";
 import { UserContext } from "../../../../../contexts/User";
 
-const Permissions = () => {
+const Waiter = () => {
   const { t } = useTranslation();
   const history = useHistory();
   //getting context values here
@@ -77,7 +77,7 @@ const Permissions = () => {
     searched: false,
   });
 
-  //useEffect == componentDidMount()
+  //useEffect == componentDidMount
   useEffect(() => {
     if (authUserInfo.permissions !== null) {
       if (!checkPermission(authUserInfo.permissions, "Manage")) {
@@ -1018,4 +1018,4 @@ const Permissions = () => {
   );
 };
 
-export default Permissions;
+export default Waiter;

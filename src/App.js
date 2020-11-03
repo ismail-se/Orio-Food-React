@@ -26,10 +26,12 @@ import {
   Kitchen,
   Branch,
   Reports,
-  //manage
+  //manage->settings
   Lang,
   Translation,
   Smtp,
+  //manage->settings
+  Waiter,
   Permissions,
 } from "./imports/Pages";
 import { Navbar, Footer } from "./imports/Components";
@@ -86,6 +88,19 @@ function App() {
           <RestaurantRoute path="/dashboard/reports" exact>
             <Reports />
           </RestaurantRoute>
+
+          {/* Manage menu routes */}
+
+          {/* Users */}
+          <RestaurantRoute path="/dashboard/manage/user/waiter" exact>
+            <Waiter />
+          </RestaurantRoute>
+
+          <RestaurantRoute path="/dashboard/manage/roles-and-permissions" exact>
+            <Permissions />
+          </RestaurantRoute>
+
+          {/* Settings */}
           <RestaurantRoute path="/dashboard/manage/settings/languages" exact>
             <Lang />
           </RestaurantRoute>
@@ -100,9 +115,6 @@ function App() {
             exact
           >
             <Smtp />
-          </RestaurantRoute>
-          <RestaurantRoute path="/dashboard/manage/roles-and-permissions" exact>
-            <Permissions />
           </RestaurantRoute>
         </Switch>
         <Footer />
