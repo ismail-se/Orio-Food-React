@@ -28,8 +28,6 @@ import { confirmAlert } from "react-confirm-alert";
 import "react-confirm-alert/src/react-confirm-alert.css";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import Select from "react-select";
-import makeAnimated from "react-select/animated";
 
 //context consumer
 import { SettingsContext } from "../../../../../contexts/Settings";
@@ -45,34 +43,42 @@ const Waiter = () => {
     setLoading,
 
     //group
-    permissionGroup,
     setPermissionGroup,
     permissionGroupForSearch,
     setPermissionGroupForSearch,
-
     //permissions
     permissions,
-
-    //pagination
-    setPaginatedGropus,
-    dataPaginating,
   } = useContext(SettingsContext);
 
-  let { authUserInfo } = useContext(UserContext);
+  let {
+    //auth user
+    authUserInfo,
+    //waiter
+    waiterList,
+    setWaiterList,
+    setPaginatedWaiter,
+    waiterForSearch,
+    setWaiterforSearch,
+
+    //pagination
+    dataPaginating,
+    setDataPaginating,
+  } = useContext(UserContext);
 
   // States hook here
   //new group
-  let [newGroup, setNewGroup] = useState({
-    name: null,
-    permission_ids: null,
+  let [newWaiter, setNewWaiter] = useState({
+    name: "",
+    phn_no: "",
+    image: null,
     edit: false,
     editSlug: null,
-    selectedPermissions: null,
+    editImage: null,
     uploading: false,
   });
 
   //search result
-  let [searchedGroups, setSearchedGroups] = useState({
+  let [searchedWaiter, setSearchedWaiter] = useState({
     list: null,
     searched: false,
   });
@@ -86,142 +92,49 @@ const Waiter = () => {
     }
   }, [authUserInfo]);
 
-  //set name array hook
-  const handleSetNewGroup = (e) => {
-    setNewGroup({ ...newGroup, [e.target.name]: e.target.value });
+  //set name, phn no hook
+  const handleSetNewWaiter = (e) => {
+    setNewWaiter({ ...newWaiter, [e.target.name]: e.target.value });
   };
 
-  //set permission id array hook
-  const handleSetPermissionIds = (permission) => {
-    setNewGroup({ ...newGroup, permission_ids: permission });
+  //set image hook
+  const handleWaiterImage = (e) => {
+    setNewWaiter({
+      ...newWaiter,
+      [e.target.name]: e.target.files[0],
+    });
   };
 
-  //Save New Group
-  const handleSaveNewGroup = (e) => {
+  //Save New waiter
+  const handleSaveNewWaiter = (e) => {
     e.preventDefault();
-    if (newGroup.permission_ids !== null) {
-      setNewGroup({
-        ...newGroup,
-        uploading: true,
-      });
-      const groupUrl = BASE_URL + `/settings/new-permission-group`;
-      let formData = {
-        name: newGroup.name,
-        permissionIds: newGroup.permission_ids,
-      };
-      return axios
-        .post(groupUrl, formData, {
-          headers: { Authorization: `Bearer ${getCookie()}` },
-        })
-        .then((res) => {
-          setNewGroup({
-            name: null,
-            permission_ids: null,
-            edit: false,
-            editSlug: null,
-            uploading: false,
-          });
-          setPermissionGroup(res.data[0]);
-          setPermissionGroupForSearch(res.data[1]);
-          setLoading(false);
-          toast.success(`${_t(t("A new group has been created"))}`, {
-            position: "bottom-center",
-            autoClose: 10000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            className: "text-center toast-notification",
-          });
-        })
-        .catch((error) => {
-          setLoading(false);
-          setNewGroup({
-            ...newGroup,
-            uploading: false,
-          });
-          if (error && error.response.data.errors) {
-            if (error.response.data.errors.name) {
-              error.response.data.errors.name.forEach((item) => {
-                if (item === "A group already exist with this name") {
-                  toast.error(
-                    `${_t(t("A group already exist with this name"))}`,
-                    {
-                      position: "bottom-center",
-                      autoClose: 10000,
-                      hideProgressBar: false,
-                      closeOnClick: true,
-                      pauseOnHover: true,
-                      className: "text-center toast-notification",
-                    }
-                  );
-                }
-              });
-            }
-          }
-        });
-    } else {
-      toast.error(`${_t(t("Please select permissions"))}`, {
-        position: "bottom-center",
-        autoClose: 10000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        className: "text-center toast-notification",
-      });
-    }
-  };
-
-  //set edit true & values
-  const handleSetEdit = (id) => {
-    let group = permissionGroupForSearch.filter((item) => {
-      return item.id === id;
-    });
-    let tempArray = [];
-    group[0].permission_array_id.map((item) => {
-      permissions.map((permissionListItem) => {
-        if (item === permissionListItem.id) {
-          tempArray.push(permissionListItem);
-        }
-      });
-    });
-    setNewGroup({
-      ...newGroup,
-      name: group[0].name,
-      editSlug: group[0].slug,
-      selectedPermissions: tempArray,
-      edit: true,
-    });
-  };
-
-  //update Group
-  const handleUpdateGroup = (e) => {
-    e.preventDefault();
-    setNewGroup({
-      ...newGroup,
+    setNewWaiter({
+      ...newWaiter,
       uploading: true,
     });
-    const groupUrl = BASE_URL + `/settings/update-permission-group`;
-    let formData = {
-      name: newGroup.name,
-      editSlug: newGroup.editSlug,
-      permissionIds: newGroup.permission_ids,
-    };
+    const groupUrl = BASE_URL + `/settings/new-waiter`;
+    let formData = new FormData();
+    formData.append("name", newWaiter.name);
+    formData.append("phn_no", newWaiter.phn_no);
+    formData.append("image", newWaiter.image);
     return axios
       .post(groupUrl, formData, {
         headers: { Authorization: `Bearer ${getCookie()}` },
       })
       .then((res) => {
-        setNewGroup({
-          name: null,
-          permission_ids: null,
+        setNewWaiter({
+          name: "",
+          phn_no: "",
+          image: null,
           edit: false,
           editSlug: null,
+          editImage: null,
           uploading: false,
         });
-        setPermissionGroup(res.data[0]);
-        setPermissionGroupForSearch(res.data[1]);
+        setWaiterList(res.data[0]);
+        setWaiterforSearch(res.data[1]);
         setLoading(false);
-        toast.success(`${_t(t("Permission group has been updated"))}`, {
+        toast.success(`${_t(t("Waiter has been added"))}`, {
           position: "bottom-center",
           autoClose: 10000,
           hideProgressBar: false,
@@ -232,16 +145,16 @@ const Waiter = () => {
       })
       .catch((error) => {
         setLoading(false);
-        setNewGroup({
-          ...newGroup,
+        setNewWaiter({
+          ...newWaiter,
           uploading: false,
         });
         if (error && error.response.data.errors) {
-          if (error.response.data.errors.name) {
-            error.response.data.errors.name.forEach((item) => {
-              if (item === "A group already exist with this name") {
+          if (error.response.data.errors.phn_no) {
+            error.response.data.errors.phn_no.forEach((item) => {
+              if (item === "A waiter exist with this phone number") {
                 toast.error(
-                  `${_t(t("A group already exist with this name"))}`,
+                  `${_t(t("A waiter exist with this phone number"))}`,
                   {
                     position: "bottom-center",
                     autoClose: 10000,
@@ -258,18 +171,28 @@ const Waiter = () => {
       });
   };
 
+  //set edit true & values
+  const handleSetEdit = (id) => {};
+
+  //update Group
+  const handleUpdateWaiter = (e) => {};
+
   //search groups here
   const handleSearch = (e) => {
     let searchInput = e.target.value.toLowerCase();
     if (searchInput.length === 0) {
-      setSearchedGroups({ ...searchedGroups, searched: false });
+      setSearchedWaiter({ ...searchedWaiter, searched: false });
     } else {
-      let searchedList = permissionGroupForSearch.filter((item) => {
+      let searchedList = waiterForSearch.filter((item) => {
         let lowerCaseItemName = item.name.toLowerCase();
-        return lowerCaseItemName.includes(searchInput);
+        let lowerCaseItemPhnNo = item.phn_no.toLowerCase();
+        return (
+          lowerCaseItemName.includes(searchInput) ||
+          lowerCaseItemPhnNo.includes(searchInput)
+        );
       });
-      setSearchedGroups({
-        ...searchedGroups,
+      setSearchedWaiter({
+        ...searchedWaiter,
         list: searchedList,
         searched: true,
       });
@@ -342,7 +265,7 @@ const Waiter = () => {
               }
             );
           } else {
-            setNewGroup({
+            setNewWaiter({
               name: null,
               permission_ids: null,
               edit: false,
@@ -389,19 +312,19 @@ const Waiter = () => {
   return (
     <>
       <Helmet>
-        <title>{_t(t("Permissions"))}</title>
+        <title>{_t(t("Waiter"))}</title>
       </Helmet>
 
       {/* Add group modal */}
-      <div className="modal fade" id="addGroup" aria-hidden="true">
+      <div className="modal fade" id="addWaiter" aria-hidden="true">
         <div className="modal-dialog modal-lg">
           <div className="modal-content">
             <div className="modal-header align-items-center">
               <div className="fk-sm-card__content">
                 <h5 className="text-capitalize fk-sm-card__title">
-                  {!newGroup.edit
-                    ? _t(t("Add new permission group"))
-                    : _t(t("Update permission group"))}
+                  {!newWaiter.edit
+                    ? _t(t("Add new waiter"))
+                    : _t(t("Update waiter"))}
                 </h5>
               </div>
               <button
@@ -413,11 +336,11 @@ const Waiter = () => {
             </div>
             <div className="modal-body">
               {/* show form or show saving loading */}
-              {newGroup.uploading === false ? (
+              {newWaiter.uploading === false ? (
                 <div key="fragment-permission-1">
                   <form
                     onSubmit={
-                      !newGroup.edit ? handleSaveNewGroup : handleUpdateGroup
+                      !newWaiter.edit ? handleSaveNewWaiter : handleUpdateWaiter
                     }
                   >
                     <div>
@@ -430,49 +353,53 @@ const Waiter = () => {
                         className="form-control"
                         id="name"
                         name="name"
-                        placeholder="e.g. Employee"
-                        value={newGroup.name || ""}
+                        placeholder="e.g. Mr. John"
+                        value={newWaiter.name || ""}
                         required
-                        onChange={handleSetNewGroup}
+                        onChange={handleSetNewWaiter}
                       />
                     </div>
 
                     <div className="mt-3">
-                      <label htmlFor="name" className="form-label mb-0">
-                        {_t(t("Select permissions"))}{" "}
-                        {newGroup.edit && (
-                          <small className="text-primary">
-                            {"( "}
-                            {_t(
-                              t(
-                                "Leave empty if you do not want to change permissions"
-                              )
-                            )}
-                            {" )"}
-                          </small>
-                        )}
+                      <label htmlFor="phn_no" className="form-label">
+                        {_t(t("Phone number"))}{" "}
+                        <small className="text-primary">*</small>
                       </label>
-                      {newGroup.edit && (
-                        <ul className="list-group list-group-horizontal-sm row col-12 mb-2 ml-md-1">
-                          {newGroup.selectedPermissions.map((selectedItem) => {
-                            return (
-                              <li className="list-group-item col-12 col-md-3 bg-success rounded-sm py-1 px-2 mx-2 my-1 text-center">
-                                {selectedItem.name}
-                              </li>
-                            );
-                          })}
-                        </ul>
-                      )}
-                      <Select
-                        options={permissions}
-                        components={makeAnimated()}
-                        getOptionLabel={(option) => option.name}
-                        getOptionValue={(option) => option.name}
-                        className="basic-multi-select"
-                        classNamePrefix="select"
-                        onChange={handleSetPermissionIds}
-                        placeholder="Please select permissions"
-                        isMulti
+                      <input
+                        type="text"
+                        className="form-control"
+                        id="phn_no"
+                        name="phn_no"
+                        placeholder="e.g. 01xxx xxx xxx"
+                        value={newWaiter.phn_no || ""}
+                        required
+                        onChange={handleSetNewWaiter}
+                      />
+                    </div>
+
+                    <div className="mt-3">
+                      <div className="d-flex align-items-center mb-1">
+                        <label htmlFor="image" className="form-label mb-0 mr-3">
+                          {_t(t("Image"))}{" "}
+                          <small className="text-secondary">
+                            ({_t(t("Square Image Preferable"))})
+                          </small>
+                        </label>
+                        {newWaiter.edit && (
+                          <div
+                            className="fk-language__flag"
+                            style={{
+                              backgroundImage: `url(${newWaiter.editImage})`,
+                            }}
+                          ></div>
+                        )}
+                      </div>
+                      <input
+                        type="file"
+                        className="form-control"
+                        id="image"
+                        name="image"
+                        onChange={handleWaiterImage}
                       />
                     </div>
 
@@ -483,7 +410,7 @@ const Waiter = () => {
                             type="submit"
                             className="btn btn-success text-dark w-100 xsm-text text-uppercase t-width-max"
                           >
-                            {!newGroup.edit ? _t(t("Save")) : _t(t("Update"))}
+                            {!newWaiter.edit ? _t(t("Save")) : _t(t("Update"))}
                           </button>
                         </div>
                         <div className="col-6">
@@ -515,7 +442,7 @@ const Waiter = () => {
                             e.preventDefault();
                           }}
                         >
-                          {!newGroup.edit ? _t(t("Save")) : _t(t("Update"))}
+                          {!newWaiter.edit ? _t(t("Save")) : _t(t("Update"))}
                         </button>
                       </div>
                       <div className="col-6">
@@ -556,7 +483,7 @@ const Waiter = () => {
                 <div className="fk-scroll--pos-menu" data-simplebar>
                   <div className="t-pl-15 t-pr-15">
                     {/* Loading effect */}
-                    {newGroup.uploading === true || loading === true ? (
+                    {newWaiter.uploading === true || loading === true ? (
                       tableLoading()
                     ) : (
                       <div key="fragment3">
@@ -569,8 +496,8 @@ const Waiter = () => {
                             <ul className="t-list fk-breadcrumb">
                               <li className="fk-breadcrumb__list">
                                 <span className="t-link fk-breadcrumb__link text-capitalize">
-                                  {!searchedGroups.searched
-                                    ? _t(t("Permission Group List"))
+                                  {!searchedWaiter.searched
+                                    ? _t(t("Waiter List"))
                                     : _t(t("Search Result"))}
                                 </span>
                               </li>
@@ -585,9 +512,7 @@ const Waiter = () => {
                                     <input
                                       type="text"
                                       className="form-control border-0 form-control--light-1 rounded-0"
-                                      placeholder={
-                                        _t(t("Search by name")) + ".."
-                                      }
+                                      placeholder={_t(t("Search")) + ".."}
                                       onChange={handleSearch}
                                     />
                                   </div>
@@ -609,10 +534,10 @@ const Waiter = () => {
                                   type="button"
                                   className="btn btn-primary xsm-text text-uppercase btn-lg btn-block"
                                   data-toggle="modal"
-                                  data-target="#addGroup"
+                                  data-target="#addWaiter"
                                   onClick={() => {
-                                    setNewGroup({
-                                      ...newGroup,
+                                    setNewWaiter({
+                                      ...newWaiter,
                                       edit: false,
                                       uploading: false,
                                     });
@@ -640,13 +565,19 @@ const Waiter = () => {
                                   scope="col"
                                   className="sm-text text-capitalize align-middle text-center border-1 border"
                                 >
+                                  {_t(t("Image"))}
+                                </th>
+                                <th
+                                  scope="col"
+                                  className="sm-text text-capitalize align-middle text-center border-1 border"
+                                >
                                   {_t(t("Name"))}
                                 </th>
                                 <th
                                   scope="col"
                                   className="sm-text text-capitalize align-middle text-center border-1 border"
                                 >
-                                  {_t(t("Permissions"))}
+                                  {_t(t("phn no."))}
                                 </th>
 
                                 <th
@@ -659,10 +590,10 @@ const Waiter = () => {
                             </thead>
                             <tbody className="align-middle">
                               {/* loop here, logic === !search && haveData && haveDataLegnth > 0*/}
-                              {!searchedGroups.searched
+                              {!searchedWaiter.searched
                                 ? [
-                                    permissionGroup && [
-                                      permissionGroup.data.length === 0 ? (
+                                    waiterList && [
+                                      waiterList.data.length === 0 ? (
                                         <tr className="align-middle">
                                           <td
                                             scope="row"
@@ -673,135 +604,97 @@ const Waiter = () => {
                                           </td>
                                         </tr>
                                       ) : (
-                                        permissionGroup.data.map(
-                                          (item, index) => {
-                                            return (
-                                              <tr
-                                                className="align-middle"
-                                                key={index}
+                                        waiterList.data.map((item, index) => {
+                                          return (
+                                            <tr
+                                              className="align-middle"
+                                              key={index}
+                                            >
+                                              <th
+                                                scope="row"
+                                                className="xsm-text text-capitalize align-middle text-center"
                                               >
-                                                <th
-                                                  scope="row"
-                                                  className="xsm-text text-capitalize align-middle text-center"
+                                                {index +
+                                                  1 +
+                                                  (waiterList.current_page -
+                                                    1) *
+                                                    waiterList.per_page}
+                                              </th>
+
+                                              <td className="xsm-text align-middle d-flex justify-content-center">
+                                                <div
+                                                  className="table-img-large"
+                                                  style={{
+                                                    backgroundImage: `url(${
+                                                      item.image !== null
+                                                        ? item.image
+                                                        : "/assets/img/waiter.jpg"
+                                                    })`,
+                                                  }}
+                                                ></div>
+                                              </td>
+                                              <td className="xsm-text text-capitalize align-middle text-center">
+                                                {item.name}
+                                              </td>
+                                              <td className="xsm-text text-capitalize align-middle text-center">
+                                                <a
+                                                  href={`tel:${item.phn_no}`}
+                                                  rel="noopener noreferrer"
                                                 >
-                                                  {index +
-                                                    1 +
-                                                    (permissionGroup.current_page -
-                                                      1) *
-                                                      permissionGroup.per_page}
-                                                </th>
+                                                  {item.phn_no}
+                                                </a>
+                                              </td>
 
-                                                <td className="xsm-text align-middle text-center">
-                                                  {item.name}
-                                                </td>
-                                                <td className="xsm-text text-capitalize align-middle text-center">
-                                                  {item.permission_array_id !==
-                                                  null
-                                                    ? item.permission_array_id.map(
-                                                        (permissionItem) => {
-                                                          let secondMap =
-                                                            permissions &&
-                                                            permissions.map(
-                                                              (
-                                                                ItemFromListPermission
-                                                              ) => {
-                                                                if (
-                                                                  ItemFromListPermission.id ===
-                                                                  permissionItem
-                                                                ) {
-                                                                  return (
-                                                                    <ul
-                                                                      className="list-group"
-                                                                      key={
-                                                                        permissionItem
-                                                                      }
-                                                                    >
-                                                                      <li className="list-group-item bg-success rounded-sm p-1 m-1 mx-3">
-                                                                        {
-                                                                          ItemFromListPermission.name
-                                                                        }
-                                                                      </li>
-                                                                    </ul>
-                                                                  );
-                                                                } else {
-                                                                  return true;
-                                                                }
-                                                              }
-                                                            );
-                                                          return secondMap;
-                                                        }
-                                                      )
-                                                    : "-"}
-                                                </td>
+                                              <td className="xsm-text text-capitalize align-middle text-center">
+                                                <div className="dropdown">
+                                                  <button
+                                                    className="btn t-bg-clear t-text-dark--light-40"
+                                                    type="button"
+                                                    data-toggle="dropdown"
+                                                  >
+                                                    <i className="fa fa-ellipsis-h"></i>
+                                                  </button>
+                                                  <div className="dropdown-menu">
+                                                    <button
+                                                      className="dropdown-item sm-text text-capitalize"
+                                                      onClick={() =>
+                                                        handleSetEdit(item.id)
+                                                      }
+                                                      data-toggle="modal"
+                                                      data-target="#addLang"
+                                                    >
+                                                      <span className="t-mr-8">
+                                                        <i className="fa fa-pencil"></i>
+                                                      </span>
+                                                      {_t(t("Edit"))}
+                                                    </button>
 
-                                                <td className="xsm-text align-middle text-center">
-                                                  {/* todo::add superAdmin here when it will be SaaS */}
-                                                  {item.name !== "Admin" ? (
-                                                    <div className="dropdown">
-                                                      <button
-                                                        className="btn t-bg-clear t-text-dark--light-40"
-                                                        type="button"
-                                                        data-toggle="dropdown"
-                                                      >
-                                                        <i className="fa fa-ellipsis-h"></i>
-                                                      </button>
-                                                      <div className="dropdown-menu">
-                                                        <button
-                                                          className="dropdown-item sm-text text-capitalize"
-                                                          onClick={() =>
-                                                            handleSetEdit(
-                                                              item.id
-                                                            )
-                                                          }
-                                                          data-toggle="modal"
-                                                          data-target="#addGroup"
-                                                        >
-                                                          <span className="t-mr-8">
-                                                            <i className="fa fa-pencil"></i>
-                                                          </span>
-                                                          {_t(t("Edit"))}
-                                                        </button>
-
-                                                        <button
-                                                          className="dropdown-item sm-text text-capitalize"
-                                                          onClick={() => {
-                                                            handleDeleteConfirmation(
-                                                              item.slug
-                                                            );
-                                                          }}
-                                                        >
-                                                          <span className="t-mr-8">
-                                                            <i className="fa fa-trash"></i>
-                                                          </span>
-                                                          {_t(t("Delete"))}
-                                                        </button>
-                                                      </div>
-                                                    </div>
-                                                  ) : (
-                                                    _t(
-                                                      t(
-                                                        "Edit or Delete is not allowed for"
-                                                      )
-                                                    ) +
-                                                    [
-                                                      " " +
-                                                        item.name +
-                                                        " " +
-                                                        _t(t("group")),
-                                                    ]
-                                                  )}
-                                                </td>
-                                              </tr>
-                                            );
-                                          }
-                                        )
+                                                    <button
+                                                      className="dropdown-item sm-text text-capitalize"
+                                                      onClick={() => {
+                                                        handleDeleteConfirmation(
+                                                          item.code
+                                                        );
+                                                      }}
+                                                    >
+                                                      <span className="t-mr-8">
+                                                        <i className="fa fa-trash"></i>
+                                                      </span>
+                                                      {_t(t("Delete"))}
+                                                    </button>
+                                                  </div>
+                                                </div>
+                                              </td>
+                                            </tr>
+                                          );
+                                        })
                                       ),
                                     ],
                                   ]
                                 : [
                                     /* searched data, logic === haveData*/
-                                    searchedGroups && [
-                                      searchedGroups.list.length === 0 ? (
+                                    searchedWaiter && [
+                                      searchedWaiter.list.length === 0 ? (
                                         <tr className="align-middle">
                                           <td
                                             scope="row"
@@ -812,7 +705,7 @@ const Waiter = () => {
                                           </td>
                                         </tr>
                                       ) : (
-                                        searchedGroups.list.map(
+                                        searchedWaiter.list.map(
                                           (item, index) => {
                                             return (
                                               <tr
@@ -825,110 +718,74 @@ const Waiter = () => {
                                                 >
                                                   {index +
                                                     1 +
-                                                    (permissionGroup.current_page -
+                                                    (waiterList.current_page -
                                                       1) *
-                                                      permissionGroup.per_page}
+                                                      waiterList.per_page}
                                                 </th>
 
-                                                <td className="xsm-text align-middle text-center">
+                                                <td className="xsm-text align-middle d-flex justify-content-center">
+                                                  <div
+                                                    className="table-img-large"
+                                                    style={{
+                                                      backgroundImage: `url(${
+                                                        item.image !== null
+                                                          ? item.image
+                                                          : "/assets/img/waiter.jpg"
+                                                      })`,
+                                                    }}
+                                                  ></div>
+                                                </td>
+                                                <td className="xsm-text text-capitalize align-middle text-center">
                                                   {item.name}
                                                 </td>
                                                 <td className="xsm-text text-capitalize align-middle text-center">
-                                                  {item.permission_array_id !==
-                                                  null
-                                                    ? item.permission_array_id.map(
-                                                        (permissionItem) => {
-                                                          let secondMap =
-                                                            permissions &&
-                                                            permissions.map(
-                                                              (
-                                                                ItemFromListPermission
-                                                              ) => {
-                                                                if (
-                                                                  ItemFromListPermission.id ===
-                                                                  permissionItem
-                                                                ) {
-                                                                  return (
-                                                                    <ul
-                                                                      className="list-group"
-                                                                      key={
-                                                                        permissionItem
-                                                                      }
-                                                                    >
-                                                                      <li className="list-group-item bg-success rounded-sm p-1 m-1 mx-3">
-                                                                        {
-                                                                          ItemFromListPermission.name
-                                                                        }
-                                                                      </li>
-                                                                    </ul>
-                                                                  );
-                                                                } else {
-                                                                  return true;
-                                                                }
-                                                              }
-                                                            );
-                                                          return secondMap;
-                                                        }
-                                                      )
-                                                    : "-"}
+                                                  <a
+                                                    href={`tel:${item.phn_no}`}
+                                                    rel="noopener noreferrer"
+                                                  >
+                                                    {item.phn_no}
+                                                  </a>
                                                 </td>
 
-                                                <td className="xsm-text align-middle text-center">
-                                                  {/* todo::add superAdmin here when it will be SaaS */}
-                                                  {item.name !== "Admin" ? (
-                                                    <div className="dropdown">
+                                                <td className="xsm-text text-capitalize align-middle text-center">
+                                                  <div className="dropdown">
+                                                    <button
+                                                      className="btn t-bg-clear t-text-dark--light-40"
+                                                      type="button"
+                                                      data-toggle="dropdown"
+                                                    >
+                                                      <i className="fa fa-ellipsis-h"></i>
+                                                    </button>
+                                                    <div className="dropdown-menu">
                                                       <button
-                                                        className="btn t-bg-clear t-text-dark--light-40"
-                                                        type="button"
-                                                        data-toggle="dropdown"
+                                                        className="dropdown-item sm-text text-capitalize"
+                                                        onClick={() =>
+                                                          handleSetEdit(item.id)
+                                                        }
+                                                        data-toggle="modal"
+                                                        data-target="#addLang"
                                                       >
-                                                        <i className="fa fa-ellipsis-h"></i>
+                                                        <span className="t-mr-8">
+                                                          <i className="fa fa-pencil"></i>
+                                                        </span>
+                                                        {_t(t("Edit"))}
                                                       </button>
-                                                      <div className="dropdown-menu">
-                                                        <button
-                                                          className="dropdown-item sm-text text-capitalize"
-                                                          onClick={() =>
-                                                            handleSetEdit(
-                                                              item.id
-                                                            )
-                                                          }
-                                                          data-toggle="modal"
-                                                          data-target="#addGroup"
-                                                        >
-                                                          <span className="t-mr-8">
-                                                            <i className="fa fa-pencil"></i>
-                                                          </span>
-                                                          {_t(t("Edit"))}
-                                                        </button>
 
-                                                        <button
-                                                          className="dropdown-item sm-text text-capitalize"
-                                                          onClick={() => {
-                                                            handleDeleteConfirmation(
-                                                              item.slug
-                                                            );
-                                                          }}
-                                                        >
-                                                          <span className="t-mr-8">
-                                                            <i className="fa fa-trash"></i>
-                                                          </span>
-                                                          {_t(t("Delete"))}
-                                                        </button>
-                                                      </div>
+                                                      <button
+                                                        className="dropdown-item sm-text text-capitalize"
+                                                        onClick={() => {
+                                                          handleDeleteConfirmation(
+                                                            item.code
+                                                          );
+                                                        }}
+                                                      >
+                                                        <span className="t-mr-8">
+                                                          <i className="fa fa-trash"></i>
+                                                        </span>
+                                                        {_t(t("Delete"))}
+                                                      </button>
                                                     </div>
-                                                  ) : (
-                                                    _t(
-                                                      t(
-                                                        "Edit or Delete is not allowed for"
-                                                      )
-                                                    ) +
-                                                    [
-                                                      " " +
-                                                        item.name +
-                                                        " " +
-                                                        _t(t("group")),
-                                                    ]
-                                                  )}
+                                                  </div>
                                                 </td>
                                               </tr>
                                             );
@@ -947,23 +804,23 @@ const Waiter = () => {
               </div>
 
               {/* pagination loading effect */}
-              {newGroup.uploading === true || loading === true
+              {newWaiter.uploading === true || loading === true
                 ? paginationLoading()
                 : [
                     // logic === !searched
-                    !searchedGroups.searched ? (
+                    !searchedWaiter.searched ? (
                       <div key="fragment4">
                         <div className="t-bg-white mt-1 t-pt-5 t-pb-5">
                           <div className="row align-items-center t-pl-15 t-pr-15">
                             <div className="col-md-7 t-mb-15 mb-md-0">
                               {/* pagination function */}
-                              {pagination(permissionGroup, setPaginatedGropus)}
+                              {pagination(waiterList, setPaginatedWaiter)}
                             </div>
                             <div className="col-md-5">
                               <ul className="t-list d-flex justify-content-md-end align-items-center">
                                 <li className="t-list__item">
                                   <span className="d-inline-block sm-text">
-                                    {showingData(permissionGroup)}
+                                    {showingData(waiterList)}
                                   </span>
                                 </li>
                               </ul>
@@ -981,8 +838,8 @@ const Waiter = () => {
                                 <button
                                   className="btn btn-primary btn-sm"
                                   onClick={() =>
-                                    setSearchedGroups({
-                                      ...searchedGroups,
+                                    setSearchedWaiter({
+                                      ...searchedWaiter,
                                       searched: false,
                                     })
                                   }
@@ -997,8 +854,8 @@ const Waiter = () => {
                               <li className="t-list__item">
                                 <span className="d-inline-block sm-text">
                                   {searchedShowingData(
-                                    searchedGroups,
-                                    permissionGroupForSearch
+                                    searchedWaiter,
+                                    waiterForSearch
                                   )}
                                 </span>
                               </li>

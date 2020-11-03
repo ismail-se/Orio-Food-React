@@ -18,18 +18,15 @@ const UserProvider = ({ children }) => {
   const [loading, setLoading] = useState(false);
   const [dataPaginating, setDataPaginating] = useState(false);
 
-  // Signup
-  const [signUpInfo, setSignUpInfo] = useState({
-    name: "Akash",
-    email: null,
-    password: null,
-  });
-
   // auth user
   const [authUserInfo, setAuthUserInfo] = useState({
     details: null,
     permissions: null,
   });
+
+  //waiter
+  const [waiterList, setWaiterList] = useState(null);
+  const [waiterForSearch, setWaiterforSearch] = useState(null);
 
   //useEffect- to get data on render
   useEffect(() => {
@@ -38,6 +35,7 @@ const UserProvider = ({ children }) => {
     //call if authenticated
     if (getCookie() !== undefined) {
       getAuthUser();
+      getWaiter();
     }
   }, []);
 
@@ -60,9 +58,57 @@ const UserProvider = ({ children }) => {
       .catch(() => {});
   };
 
+  //get waiter
+  const getWaiter = () => {
+    setLoading(true);
+    const waiterUrl = BASE_URL + "/settings/get-waiter";
+    return axios
+      .get(waiterUrl, {
+        headers: { Authorization: `Bearer ${getCookie()}` },
+      })
+      .then((res) => {
+        setWaiterList(res.data[0]);
+        setWaiterforSearch(res.data[1]);
+        setLoading(false);
+      });
+  };
+
+  // get paginated waiter
+  const setPaginatedWaiter = (pageNo) => {
+    setDataPaginating(true);
+    const url = BASE_URL + "/settings/get-waiter?page=" + pageNo;
+    return axios
+      .get(url, {
+        headers: { Authorization: `Bearer ${getCookie()}` },
+      })
+      .then((res) => {
+        setWaiterList(res.data[0]);
+        setWaiterforSearch(res.data[1]);
+        setDataPaginating(false);
+      })
+      .catch(() => {});
+  };
+
   return (
     <UserContext.Provider
-      value={{ getAuthUser, setAuthUserInfo, authUserInfo, signUpInfo }}
+      value={{
+        //auth user
+        getAuthUser,
+        setAuthUserInfo,
+        authUserInfo,
+
+        //waiter
+        getWaiter,
+        waiterList,
+        setWaiterList,
+        setPaginatedWaiter,
+        waiterForSearch,
+        setWaiterforSearch,
+
+        //pagination
+        dataPaginating,
+        setDataPaginating,
+      }}
     >
       {children}
     </UserContext.Provider>

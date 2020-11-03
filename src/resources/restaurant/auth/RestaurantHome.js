@@ -27,7 +27,7 @@ const RestaurantHome = () => {
     loading,
     setLoading,
   } = useContext(SettingsContext);
-  const { signUpInfo, authUserInfo } = useContext(UserContext);
+  const { authUserInfo } = useContext(UserContext);
 
   //useEffect == componentDidMount()
   useEffect(() => {

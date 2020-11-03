@@ -62,3 +62,13 @@ html {
     height: calc(100vh - 120px);
   }
 }
+
+/* image in table td */
+.table-img-large {
+  width: 60px;
+  height: 60px;
+  background-size: cover;
+  border-radius: 60px;
+  background-position: center;
+  background-repeat: no-repeat;
+}
