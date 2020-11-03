@@ -57,6 +57,7 @@ html {
   background-size: cover;
 }
 
+/* hide pagination */
 @media screen and (min-width: 1200px) {
   .table-bottom-info-hide {
     height: calc(100vh - 120px);
@@ -71,4 +72,5 @@ html {
   border-radius: 60px;
   background-position: center;
   background-repeat: no-repeat;
+  background-image: url("/assets/img/waiter.jpg");
 }

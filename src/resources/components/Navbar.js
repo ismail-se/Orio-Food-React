@@ -11,6 +11,7 @@ import {
 
 //context consumer
 import { SettingsContext } from "../../contexts/Settings";
+import { UserContext } from "../../contexts/User";
 
 //3rd party packages
 import { useTranslation } from "react-i18next";
@@ -23,6 +24,7 @@ const Navbar = (props) => {
 
   //getting context values here
   let { navLanguageList } = useContext(SettingsContext);
+  let { authUserInfo } = useContext(UserContext);
 
   // States hook  here
   const [defaultLang, setDefaultLang] = useState(null);
@@ -234,7 +236,8 @@ const Navbar = (props) => {
                               data-toggle="dropdown"
                               aria-expanded="false"
                             >
-                              jhon doe
+                              {authUserInfo.details !== null &&
+                                authUserInfo.details.name}
                             </a>
                             <ul className="dropdown-menu">
                               <li>
