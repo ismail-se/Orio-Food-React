@@ -28,10 +28,13 @@ import { confirmAlert } from "react-confirm-alert";
 import "react-confirm-alert/src/react-confirm-alert.css";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Select from "react-select";
+import makeAnimated from "react-select/animated";
 
 //context consumer
 import { SettingsContext } from "../../../../../contexts/Settings";
 import { UserContext } from "../../../../../contexts/User";
+import { RestaurantContext } from "../../../../../contexts/Restaurant";
 
 const Waiter = () => {
   const { t } = useTranslation();
@@ -59,14 +62,20 @@ const Waiter = () => {
 
     //pagination
     dataPaginating,
-    setDataPaginating,
   } = useContext(UserContext);
+
+  let {
+    //branch
+    branchForSearch,
+  } = useContext(RestaurantContext);
 
   // States hook here
   //new group
   let [newWaiter, setNewWaiter] = useState({
     name: "",
     phn_no: "",
+    branch: null,
+    selectedBranch: null,
     image: null,
     edit: false,
     editSlug: null,
@@ -94,6 +103,11 @@ const Waiter = () => {
     setNewWaiter({ ...newWaiter, [e.target.name]: e.target.value });
   };
 
+  //set branch hook
+  const handleSetBranch = (branch) => {
+    setNewWaiter({ ...newWaiter, branch });
+  };
+
   //set image hook
   const handleWaiterImage = (e) => {
     setNewWaiter({
@@ -105,67 +119,81 @@ const Waiter = () => {
   //Save New waiter
   const handleSaveNewWaiter = (e) => {
     e.preventDefault();
-    setNewWaiter({
-      ...newWaiter,
-      uploading: true,
-    });
-    const waiterUrl = BASE_URL + `/settings/new-waiter`;
-    let formData = new FormData();
-    formData.append("name", newWaiter.name);
-    formData.append("phn_no", newWaiter.phn_no);
-    formData.append("image", newWaiter.image);
-    return axios
-      .post(waiterUrl, formData, {
-        headers: { Authorization: `Bearer ${getCookie()}` },
-      })
-      .then((res) => {
-        setNewWaiter({
-          name: "",
-          phn_no: "",
-          image: null,
-          edit: false,
-          editSlug: null,
-          editImage: null,
-          uploading: false,
-        });
-        setWaiterList(res.data[0]);
-        setWaiterforSearch(res.data[1]);
-        setLoading(false);
-        toast.success(`${_t(t("Waiter has been added"))}`, {
-          position: "bottom-center",
-          autoClose: 10000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          className: "text-center toast-notification",
-        });
-      })
-      .catch((error) => {
-        setLoading(false);
-        setNewWaiter({
-          ...newWaiter,
-          uploading: false,
-        });
-        if (error && error.response.data.errors) {
-          if (error.response.data.errors.phn_no) {
-            error.response.data.errors.phn_no.forEach((item) => {
-              if (item === "A waiter exist with this phone number") {
-                toast.error(
-                  `${_t(t("A waiter exist with this phone number"))}`,
-                  {
-                    position: "bottom-center",
-                    autoClose: 10000,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    className: "text-center toast-notification",
-                  }
-                );
-              }
-            });
-          }
-        }
+    if (newWaiter.branch !== null) {
+      setNewWaiter({
+        ...newWaiter,
+        uploading: true,
       });
+      const waiterUrl = BASE_URL + `/settings/new-waiter`;
+      let formData = new FormData();
+      formData.append("name", newWaiter.name);
+      formData.append("phn_no", newWaiter.phn_no);
+      formData.append("branch_id", newWaiter.branch.id);
+      formData.append("image", newWaiter.image);
+      return axios
+        .post(waiterUrl, formData, {
+          headers: { Authorization: `Bearer ${getCookie()}` },
+        })
+        .then((res) => {
+          setNewWaiter({
+            name: "",
+            phn_no: "",
+            branch: null,
+            selectedBranch: null,
+            image: null,
+            edit: false,
+            editSlug: null,
+            editImage: null,
+            uploading: false,
+          });
+          setWaiterList(res.data[0]);
+          setWaiterforSearch(res.data[1]);
+          setLoading(false);
+          toast.success(`${_t(t("Waiter has been added"))}`, {
+            position: "bottom-center",
+            autoClose: 10000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            className: "text-center toast-notification",
+          });
+        })
+        .catch((error) => {
+          setLoading(false);
+          setNewWaiter({
+            ...newWaiter,
+            uploading: false,
+          });
+          if (error && error.response.data.errors) {
+            if (error.response.data.errors.phn_no) {
+              error.response.data.errors.phn_no.forEach((item) => {
+                if (item === "A waiter exist with this phone number") {
+                  toast.error(
+                    `${_t(t("A waiter exist with this phone number"))}`,
+                    {
+                      position: "bottom-center",
+                      autoClose: 10000,
+                      hideProgressBar: false,
+                      closeOnClick: true,
+                      pauseOnHover: true,
+                      className: "text-center toast-notification",
+                    }
+                  );
+                }
+              });
+            }
+          }
+        });
+    } else {
+      toast.error(`${_t(t("Please select a branch"))}`, {
+        position: "bottom-center",
+        autoClose: 10000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        className: "text-center toast-notification",
+      });
+    }
   };
 
   //set edit true & values
@@ -173,10 +201,17 @@ const Waiter = () => {
     let waiter = waiterForSearch.filter((item) => {
       return item.slug === slug;
     });
+    let selectedOptionForBranch = null;
+    if (waiter[0].branch_id) {
+      selectedOptionForBranch = branchForSearch.filter((branchItem) => {
+        return branchItem.id === waiter[0].branch_id;
+      });
+    }
     setNewWaiter({
       ...newWaiter,
       name: waiter[0].name,
       phn_no: waiter[0].phn_no,
+      selectedBranch: selectedOptionForBranch[0] || null,
       editSlug: waiter[0].slug,
       editImage: waiter[0].image,
       edit: true,
@@ -194,6 +229,9 @@ const Waiter = () => {
     let formData = new FormData();
     formData.append("name", newWaiter.name);
     formData.append("phn_no", newWaiter.phn_no);
+    if (newWaiter.branch !== null) {
+      formData.append("branch_id", newWaiter.branch.id);
+    }
     formData.append("image", newWaiter.image);
     formData.append("editSlug", newWaiter.editSlug);
     return axios
@@ -204,6 +242,8 @@ const Waiter = () => {
         setNewWaiter({
           name: "",
           phn_no: "",
+          branch: null,
+          selectedBranch: null,
           image: null,
           edit: false,
           editSlug: null,
@@ -263,9 +303,12 @@ const Waiter = () => {
       let searchedList = waiterForSearch.filter((item) => {
         let lowerCaseItemName = item.name.toLowerCase();
         let lowerCaseItemPhnNo = item.phn_no.toLowerCase();
+        let lowerCaseItemBranch =
+          item.branch_name !== null && item.branch_name.toLowerCase();
         return (
           lowerCaseItemName.includes(searchInput) ||
-          lowerCaseItemPhnNo.includes(searchInput)
+          lowerCaseItemPhnNo.includes(searchInput) ||
+          (lowerCaseItemBranch && lowerCaseItemBranch.includes(searchInput))
         );
       });
       setSearchedWaiter({
@@ -407,6 +450,42 @@ const Waiter = () => {
                         value={newWaiter.phn_no || ""}
                         required
                         onChange={handleSetNewWaiter}
+                      />
+                    </div>
+
+                    <div className="mt-3">
+                      <label className="form-label mb-0">
+                        {_t(t("Select a branch"))}{" "}
+                        {newWaiter.edit ? (
+                          <small className="text-primary">
+                            {"( "}
+                            {_t(
+                              t(
+                                "Leave empty if you do not want to change branch"
+                              )
+                            )}
+                            {" )"}
+                          </small>
+                        ) : (
+                          <small className="text-primary">*</small>
+                        )}
+                      </label>
+                      {newWaiter.edit && newWaiter.selectedBranch !== null && (
+                        <ul className="list-group list-group-horizontal-sm row col-12 mb-2 ml-md-1">
+                          <li className="list-group-item col-12 col-md-3 bg-success rounded-sm py-1 px-2 my-1 text-center">
+                            {newWaiter.selectedBranch.name}
+                          </li>
+                        </ul>
+                      )}
+                      <Select
+                        options={branchForSearch}
+                        components={makeAnimated()}
+                        getOptionLabel={(option) => option.name}
+                        getOptionValue={(option) => option.name}
+                        className="basic-multi-select"
+                        classNamePrefix="select"
+                        onChange={handleSetBranch}
+                        placeholder={_t(t("Please select a branch"))}
                       />
                     </div>
 
@@ -614,6 +693,13 @@ const Waiter = () => {
                                   scope="col"
                                   className="sm-text text-capitalize align-middle text-center border-1 border"
                                 >
+                                  {_t(t("Branch"))}
+                                </th>
+
+                                <th
+                                  scope="col"
+                                  className="sm-text text-capitalize align-middle text-center border-1 border"
+                                >
                                   {_t(t("Action"))}
                                 </th>
                               </tr>
@@ -673,6 +759,10 @@ const Waiter = () => {
                                                 >
                                                   {item.phn_no}
                                                 </a>
+                                              </td>
+
+                                              <td className="xsm-text align-middle text-center">
+                                                {item.branch_name || "-"}
                                               </td>
 
                                               <td className="xsm-text text-capitalize align-middle text-center">
@@ -775,6 +865,10 @@ const Waiter = () => {
                                                   >
                                                     {item.phn_no}
                                                   </a>
+                                                </td>
+
+                                                <td className="xsm-text align-middle text-center">
+                                                  {item.branch_name || "-"}
                                                 </td>
 
                                                 <td className="xsm-text text-capitalize align-middle text-center">

@@ -78,11 +78,6 @@ const TableCrud = () => {
     uploading: false,
   });
 
-  //set branch hook
-  const handleSetBranch = (branch) => {
-    setNewTable({ ...newTable, branch });
-  };
-
   //search result
   let [searchedTable, setSearchedTable] = useState({
     list: null,
@@ -101,6 +96,11 @@ const TableCrud = () => {
   //set name, capacity hook
   const handleSetNewTable = (e) => {
     setNewTable({ ...newTable, [e.target.name]: e.target.value });
+  };
+
+  //set branch hook
+  const handleSetBranch = (branch) => {
+    setNewTable({ ...newTable, branch });
   };
 
   //Save New table
@@ -179,14 +179,17 @@ const TableCrud = () => {
     let table = tableForSearch.filter((item) => {
       return item.slug === slug;
     });
-    let selectedOptionForBranch = branchForSearch.filter((branchItem) => {
-      return branchItem.id === table[0].branch_id;
-    });
+    let selectedOptionForBranch = null;
+    if (table[0].branch_id) {
+      selectedOptionForBranch = branchForSearch.filter((branchItem) => {
+        return branchItem.id === table[0].branch_id;
+      });
+    }
     setNewTable({
       ...newTable,
       name: table[0].name,
       capacity: table[0].capacity,
-      selectedBranch: selectedOptionForBranch[0],
+      selectedBranch: selectedOptionForBranch[0] || null,
       editSlug: table[0].slug,
       edit: true,
     });
@@ -416,7 +419,7 @@ const TableCrud = () => {
                           <small className="text-primary">*</small>
                         )}
                       </label>
-                      {newTable.edit && (
+                      {newTable.edit && newTable.selectedBranch !== null && (
                         <ul className="list-group list-group-horizontal-sm row col-12 mb-2 ml-md-1">
                           <li className="list-group-item col-12 col-md-3 bg-success rounded-sm py-1 px-2 my-1 text-center">
                             {newTable.selectedBranch.name}
