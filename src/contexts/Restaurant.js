@@ -22,6 +22,10 @@ const RestaurantProvider = ({ children }) => {
   const [branchList, setBranchList] = useState(null);
   const [branchForSearch, setBranchforSearch] = useState(null);
 
+  //table
+  const [tableList, setTableList] = useState(null);
+  const [tableForSearch, setTableforSearch] = useState(null);
+
   //useEffect- to get data on render
   useEffect(() => {
     //call- unauthenticated
@@ -29,6 +33,7 @@ const RestaurantProvider = ({ children }) => {
     //call if authenticated
     if (getCookie() !== undefined) {
       getBranch();
+      getTable();
     }
   }, []);
 
@@ -63,6 +68,37 @@ const RestaurantProvider = ({ children }) => {
       .catch(() => {});
   };
 
+  //get tables
+  const getTable = () => {
+    setLoading(true);
+    const branchUrl = BASE_URL + "/settings/get-table";
+    return axios
+      .get(branchUrl, {
+        headers: { Authorization: `Bearer ${getCookie()}` },
+      })
+      .then((res) => {
+        setTableList(res.data[0]);
+        setTableforSearch(res.data[1]);
+        setLoading(false);
+      });
+  };
+
+  // get paginated tables
+  const setPaginatedTable = (pageNo) => {
+    setDataPaginating(true);
+    const url = BASE_URL + "/settings/get-table?page=" + pageNo;
+    return axios
+      .get(url, {
+        headers: { Authorization: `Bearer ${getCookie()}` },
+      })
+      .then((res) => {
+        setTableList(res.data[0]);
+        setTableforSearch(res.data[1]);
+        setDataPaginating(false);
+      })
+      .catch(() => {});
+  };
+
   return (
     <RestaurantContext.Provider
       value={{
@@ -73,6 +109,14 @@ const RestaurantProvider = ({ children }) => {
         setPaginatedBranch,
         branchForSearch,
         setBranchforSearch,
+
+        //table
+        getTable,
+        tableList,
+        setTableList,
+        setPaginatedTable,
+        tableForSearch,
+        setTableforSearch,
 
         //pagination
         dataPaginating,

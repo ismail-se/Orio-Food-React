@@ -438,7 +438,7 @@ const Permissions = () => {
                     </div>
 
                     <div className="mt-3">
-                      <label htmlFor="name" className="form-label mb-0">
+                      <label className="form-label mb-0">
                         {_t(t("Select permissions"))}{" "}
                         {newGroup.edit && (
                           <small className="text-primary">
@@ -471,7 +471,7 @@ const Permissions = () => {
                         className="basic-multi-select"
                         classNamePrefix="select"
                         onChange={handleSetPermissionIds}
-                        placeholder="Please select permissions"
+                        placeholder={_t(t("Please select permissions"))}
                         isMulti
                       />
                     </div>

@@ -28,10 +28,13 @@ import { confirmAlert } from "react-confirm-alert";
 import "react-confirm-alert/src/react-confirm-alert.css";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Select from "react-select";
+import makeAnimated from "react-select/animated";
 
 //context consumer
 import { SettingsContext } from "../../../../../contexts/Settings";
 import { UserContext } from "../../../../../contexts/User";
+import { RestaurantContext } from "../../../../../contexts/Restaurant";
 
 const TableCrud = () => {
   const { t } = useTranslation();
@@ -41,41 +44,47 @@ const TableCrud = () => {
     //common
     loading,
     setLoading,
-
-    //group
-    setPermissionGroup,
-    setPermissionGroupForSearch,
   } = useContext(SettingsContext);
 
   let {
     //auth user
     authUserInfo,
-    //waiter
-    waiterList,
-    setWaiterList,
-    setPaginatedWaiter,
-    waiterForSearch,
-    setWaiterforSearch,
+  } = useContext(UserContext);
+
+  let {
+    //branch
+    branchForSearch,
+
+    //tables
+    tableList,
+    setTableList,
+    setPaginatedTable,
+    setTableforSearch,
+    tableForSearch,
 
     //pagination
     dataPaginating,
-    setDataPaginating,
-  } = useContext(UserContext);
+  } = useContext(RestaurantContext);
 
   // States hook here
   //new group
-  let [newWaiter, setNewWaiter] = useState({
+  let [newTable, setNewTable] = useState({
     name: "",
-    phn_no: "",
-    image: null,
+    capacity: "",
+    branch: null,
+    selectedBranch: null,
     edit: false,
     editSlug: null,
-    editImage: null,
     uploading: false,
   });
 
+  //set branch hook
+  const handleSetBranch = (branch) => {
+    setNewTable({ ...newTable, branch });
+  };
+
   //search result
-  let [searchedWaiter, setSearchedWaiter] = useState({
+  let [searchedBranch, setSearchedBranch] = useState({
     list: null,
     searched: false,
   });
@@ -89,135 +98,130 @@ const TableCrud = () => {
     }
   }, [authUserInfo]);
 
-  //set name, phn no hook
-  const handleSetNewWaiter = (e) => {
-    setNewWaiter({ ...newWaiter, [e.target.name]: e.target.value });
+  //set name, capacity hook
+  const handleSetNewTable = (e) => {
+    setNewTable({ ...newTable, [e.target.name]: e.target.value });
   };
 
-  //set image hook
-  const handleWaiterImage = (e) => {
-    setNewWaiter({
-      ...newWaiter,
-      [e.target.name]: e.target.files[0],
-    });
-  };
-
-  //Save New waiter
-  const handleSaveNewWaiter = (e) => {
+  //Save New table
+  const handleSaveNewTable = (e) => {
     e.preventDefault();
-    setNewWaiter({
-      ...newWaiter,
-      uploading: true,
-    });
-    const waiterUrl = BASE_URL + `/settings/new-waiter`;
-    let formData = new FormData();
-    formData.append("name", newWaiter.name);
-    formData.append("phn_no", newWaiter.phn_no);
-    formData.append("image", newWaiter.image);
-    return axios
-      .post(waiterUrl, formData, {
-        headers: { Authorization: `Bearer ${getCookie()}` },
-      })
-      .then((res) => {
-        setNewWaiter({
-          name: "",
-          phn_no: "",
-          image: null,
-          edit: false,
-          editSlug: null,
-          editImage: null,
-          uploading: false,
-        });
-        setWaiterList(res.data[0]);
-        setWaiterforSearch(res.data[1]);
-        setLoading(false);
-        toast.success(`${_t(t("Waiter has been added"))}`, {
-          position: "bottom-center",
-          autoClose: 10000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          className: "text-center toast-notification",
-        });
-      })
-      .catch((error) => {
-        setLoading(false);
-        setNewWaiter({
-          ...newWaiter,
-          uploading: false,
-        });
-        if (error && error.response.data.errors) {
-          if (error.response.data.errors.phn_no) {
-            error.response.data.errors.phn_no.forEach((item) => {
-              if (item === "A waiter exist with this phone number") {
-                toast.error(
-                  `${_t(t("A waiter exist with this phone number"))}`,
-                  {
-                    position: "bottom-center",
-                    autoClose: 10000,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    className: "text-center toast-notification",
-                  }
-                );
-              }
-            });
-          }
-        }
+    if (newTable.branch !== null) {
+      setNewTable({
+        ...newTable,
+        uploading: true,
       });
+      const branchUrl = BASE_URL + `/settings/new-table`;
+      let formData = new FormData();
+      formData.append("name", newTable.name);
+      formData.append("capacity", newTable.capacity);
+      formData.append("branch_id", newTable.branch.id);
+      return axios
+        .post(branchUrl, formData, {
+          headers: { Authorization: `Bearer ${getCookie()}` },
+        })
+        .then((res) => {
+          setNewTable({
+            name: "",
+            capacity: "",
+            branch: null,
+            selectedBranch: null,
+            edit: false,
+            editSlug: null,
+            uploading: false,
+          });
+          setTableList(res.data[0]);
+          setTableforSearch(res.data[1]);
+          setLoading(false);
+          toast.success(`${_t(t("Table has been added"))}`, {
+            position: "bottom-center",
+            autoClose: 10000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            className: "text-center toast-notification",
+          });
+        })
+        .catch((error) => {
+          console.log(error);
+          setLoading(false);
+          setNewTable({
+            ...newTable,
+            uploading: false,
+          });
+          toast.error(`${_t(t("Please try again."))}`, {
+            position: "bottom-center",
+            autoClose: 10000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            className: "text-center toast-notification",
+          });
+        });
+    } else {
+      toast.error(`${_t(t("Please select a branch"))}`, {
+        position: "bottom-center",
+        autoClose: 10000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        className: "text-center toast-notification",
+      });
+    }
   };
 
   //set edit true & values
   const handleSetEdit = (slug) => {
-    let waiter = waiterForSearch.filter((item) => {
+    let table = tableForSearch.filter((item) => {
       return item.slug === slug;
     });
-    setNewWaiter({
-      ...newWaiter,
-      name: waiter[0].name,
-      phn_no: waiter[0].phn_no,
-      editSlug: waiter[0].slug,
-      editImage: waiter[0].image,
+    let selectedOptionForBranch = branchForSearch.filter((branchItem) => {
+      return branchItem.id === table[0].branch_id;
+    });
+    setNewTable({
+      ...newTable,
+      name: table[0].name,
+      capacity: table[0].capacity,
+      selectedBranch: selectedOptionForBranch[0],
+      editSlug: table[0].slug,
       edit: true,
     });
   };
 
-  //update Group
-  const handleUpdateWaiter = (e) => {
+  //update table
+  const handleUpdateTable = (e) => {
     e.preventDefault();
-    setNewWaiter({
-      ...newWaiter,
+    setNewTable({
+      ...newTable,
       uploading: true,
     });
-    const waiterUrl = BASE_URL + `/settings/update-waiter`;
+    const branchUrl = BASE_URL + `/settings/update-table`;
     let formData = new FormData();
-    formData.append("name", newWaiter.name);
-    formData.append("phn_no", newWaiter.phn_no);
-    formData.append("image", newWaiter.image);
-    formData.append("editSlug", newWaiter.editSlug);
+    formData.append("name", newTable.name);
+    formData.append("capacity", newTable.capacity);
+
+    if (newTable.branch !== null) {
+      formData.append("branch_id", newTable.branch.id);
+    }
+    formData.append("editSlug", newTable.editSlug);
     return axios
-      .post(waiterUrl, formData, {
+      .post(branchUrl, formData, {
         headers: { Authorization: `Bearer ${getCookie()}` },
       })
       .then((res) => {
-        setNewWaiter({
+        setNewTable({
           name: "",
-          phn_no: "",
-          image: null,
+          capacity: "",
+          branch: null,
+          selectedBranch: null,
           edit: false,
           editSlug: null,
-          editImage: null,
           uploading: false,
         });
-        setWaiterList(res.data[0]);
-        setWaiterforSearch(res.data[1]);
-        setSearchedWaiter({
-          ...searchedWaiter,
-          list: res.data[1],
-        });
+        setTableList(res.data[0]);
+        setTableforSearch(res.data[1]);
         setLoading(false);
-        toast.success(`${_t(t("Waiter has been updated"))}`, {
+        toast.success(`${_t(t("Table has been updated"))}`, {
           position: "bottom-center",
           autoClose: 10000,
           hideProgressBar: false,
@@ -226,57 +230,50 @@ const TableCrud = () => {
           className: "text-center toast-notification",
         });
       })
-      .catch((error) => {
+      .catch(() => {
         setLoading(false);
-        setNewWaiter({
-          ...newWaiter,
+        setNewTable({
+          ...newTable,
           uploading: false,
         });
-        if (error && error.response.data.errors) {
-          if (error.response.data.errors.phn_no) {
-            error.response.data.errors.phn_no.forEach((item) => {
-              if (item === "A waiter exist with this phone number") {
-                toast.error(
-                  `${_t(t("A waiter exist with this phone number"))}`,
-                  {
-                    position: "bottom-center",
-                    autoClose: 10000,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    className: "text-center toast-notification",
-                  }
-                );
-              }
-            });
-          }
-        }
+        toast.error(`${_t(t("Please try again."))}`, {
+          position: "bottom-center",
+          autoClose: 10000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          className: "text-center toast-notification",
+        });
       });
   };
 
-  //search waiters here
+  //search branch here
   const handleSearch = (e) => {
     let searchInput = e.target.value.toLowerCase();
     if (searchInput.length === 0) {
-      setSearchedWaiter({ ...searchedWaiter, searched: false });
+      setSearchedBranch({ ...searchedBranch, searched: false });
     } else {
-      let searchedList = waiterForSearch.filter((item) => {
+      let searchedList = tableForSearch.filter((item) => {
         let lowerCaseItemName = item.name.toLowerCase();
-        let lowerCaseItemPhnNo = item.phn_no.toLowerCase();
+        let lowerCaseItemPhnNo =
+          item.phn_no !== null && item.phn_no.toLowerCase();
+        let lowerCaseItemAddress =
+          item.address !== null && item.address.toLowerCase();
         return (
           lowerCaseItemName.includes(searchInput) ||
-          lowerCaseItemPhnNo.includes(searchInput)
+          (lowerCaseItemPhnNo && lowerCaseItemPhnNo.includes(searchInput)) ||
+          (lowerCaseItemAddress && lowerCaseItemAddress.includes(searchInput))
         );
       });
-      setSearchedWaiter({
-        ...searchedWaiter,
+      setSearchedBranch({
+        ...searchedBranch,
         list: searchedList,
         searched: true,
       });
     }
   };
 
-  //delete confirmation modal of waiter
+  //delete confirmation modal of branch
   const handleDeleteConfirmation = (slug) => {
     confirmAlert({
       customUI: ({ onClose }) => {
@@ -288,7 +285,7 @@ const TableCrud = () => {
               <button
                 className="btn btn-primary"
                 onClick={() => {
-                  handleDeleteWaiter(slug);
+                  handleDeleteBranch(slug);
                   onClose();
                 }}
               >
@@ -304,32 +301,31 @@ const TableCrud = () => {
     });
   };
 
-  //delete waiter here
-  const handleDeleteWaiter = (slug) => {
+  //delete branch here
+  const handleDeleteBranch = (slug) => {
     setLoading(true);
-    const waiterUrl = BASE_URL + `/settings/delete-waiter/${slug}`;
+    const branchUrl = BASE_URL + `/settings/delete-table/${slug}`;
     return axios
-      .get(waiterUrl, {
+      .get(branchUrl, {
         headers: { Authorization: `Bearer ${getCookie()}` },
       })
       .then((res) => {
-        setNewWaiter({
+        setNewTable({
           name: "",
           phn_no: "",
-          image: null,
+          address: "",
           edit: false,
           editSlug: null,
-          editImage: null,
           uploading: false,
         });
-        setPermissionGroup(res.data[0]);
-        setPermissionGroupForSearch(res.data[1]);
-        setSearchedWaiter({
-          ...searchedWaiter,
+        setTableList(res.data[0]);
+        setTableforSearch(res.data[1]);
+        setSearchedBranch({
+          ...searchedBranch,
           list: res.data[1],
         });
         setLoading(false);
-        toast.success(`${_t(t("Waiter has been deleted successfully"))}`, {
+        toast.success(`${_t(t("table has been deleted successfully"))}`, {
           position: "bottom-center",
           autoClose: 10000,
           hideProgressBar: false,
@@ -358,15 +354,15 @@ const TableCrud = () => {
       </Helmet>
 
       {/* Add group modal */}
-      <div className="modal fade" id="addWaiter" aria-hidden="true">
+      <div className="modal fade" id="addTable" aria-hidden="true">
         <div className="modal-dialog modal-lg">
           <div className="modal-content">
             <div className="modal-header align-items-center">
               <div className="fk-sm-card__content">
                 <h5 className="text-capitalize fk-sm-card__title">
-                  {!newWaiter.edit
-                    ? _t(t("Add new waiter"))
-                    : _t(t("Update waiter"))}
+                  {!newTable.edit
+                    ? _t(t("Add new table"))
+                    : _t(t("Update table"))}
                 </h5>
               </div>
               <button
@@ -378,11 +374,11 @@ const TableCrud = () => {
             </div>
             <div className="modal-body">
               {/* show form or show saving loading */}
-              {newWaiter.uploading === false ? (
-                <div key="fragment-permission-1">
+              {newTable.uploading === false ? (
+                <div key="fragment-table-1">
                   <form
                     onSubmit={
-                      !newWaiter.edit ? handleSaveNewWaiter : handleUpdateWaiter
+                      !newTable.edit ? handleSaveNewTable : handleUpdateTable
                     }
                   >
                     <div>
@@ -395,53 +391,62 @@ const TableCrud = () => {
                         className="form-control"
                         id="name"
                         name="name"
-                        placeholder="e.g. Mr. John"
-                        value={newWaiter.name || ""}
+                        placeholder="e.g. Table 01"
+                        value={newTable.name || ""}
                         required
-                        onChange={handleSetNewWaiter}
+                        onChange={handleSetNewTable}
                       />
                     </div>
 
                     <div className="mt-3">
-                      <label htmlFor="phn_no" className="form-label">
-                        {_t(t("Phone number"))}{" "}
-                        <small className="text-primary">*</small>
+                      <label className="form-label mb-0">
+                        {_t(t("Select a branch"))}{" "}
+                        {newTable.edit ? (
+                          <small className="text-primary">
+                            {"( "}
+                            {_t(
+                              t(
+                                "Leave empty if you do not want to change branch"
+                              )
+                            )}
+                            {" )"}
+                          </small>
+                        ) : (
+                          <small className="text-primary">*</small>
+                        )}
+                      </label>
+                      {newTable.edit && (
+                        <ul className="list-group list-group-horizontal-sm row col-12 mb-2 ml-md-1">
+                          <li className="list-group-item col-12 col-md-3 bg-success rounded-sm py-1 px-2 my-1 text-center">
+                            {newTable.selectedBranch.name}
+                          </li>
+                        </ul>
+                      )}
+                      <Select
+                        options={branchForSearch}
+                        components={makeAnimated()}
+                        getOptionLabel={(option) => option.name}
+                        getOptionValue={(option) => option.name}
+                        className="basic-multi-select"
+                        classNamePrefix="select"
+                        onChange={handleSetBranch}
+                        placeholder={_t(t("Please select a branch"))}
+                      />
+                    </div>
+
+                    <div className="mt-3">
+                      <label htmlFor="capacity" className="form-label">
+                        {_t(t("Guest capacity"))}
                       </label>
                       <input
-                        type="text"
+                        type="number"
                         className="form-control"
-                        id="phn_no"
-                        name="phn_no"
-                        placeholder="e.g. 01xxx xxx xxx"
-                        value={newWaiter.phn_no || ""}
-                        required
-                        onChange={handleSetNewWaiter}
-                      />
-                    </div>
-
-                    <div className="mt-3">
-                      <div className="d-flex align-items-center mb-1">
-                        <label htmlFor="image" className="form-label mb-0 mr-3">
-                          {_t(t("Image"))}{" "}
-                          <small className="text-secondary">
-                            ({_t(t("Square Image Preferable"))})
-                          </small>
-                        </label>
-                        {newWaiter.edit && (
-                          <div
-                            className="fk-language__flag"
-                            style={{
-                              backgroundImage: `url(${newWaiter.editImage})`,
-                            }}
-                          ></div>
-                        )}
-                      </div>
-                      <input
-                        type="file"
-                        className="form-control"
-                        id="image"
-                        name="image"
-                        onChange={handleWaiterImage}
+                        id="capacity"
+                        name="capacity"
+                        placeholder="e.g. 05"
+                        min="1"
+                        value={newTable.capacity || ""}
+                        onChange={handleSetNewTable}
                       />
                     </div>
 
@@ -452,7 +457,7 @@ const TableCrud = () => {
                             type="submit"
                             className="btn btn-success text-dark w-100 xsm-text text-uppercase t-width-max"
                           >
-                            {!newWaiter.edit ? _t(t("Save")) : _t(t("Update"))}
+                            {!newTable.edit ? _t(t("Save")) : _t(t("Update"))}
                           </button>
                         </div>
                         <div className="col-6">
@@ -484,7 +489,7 @@ const TableCrud = () => {
                             e.preventDefault();
                           }}
                         >
-                          {!newWaiter.edit ? _t(t("Save")) : _t(t("Update"))}
+                          {!newTable.edit ? _t(t("Save")) : _t(t("Update"))}
                         </button>
                       </div>
                       <div className="col-6">
@@ -525,7 +530,7 @@ const TableCrud = () => {
                 <div className="fk-scroll--pos-menu" data-simplebar>
                   <div className="t-pl-15 t-pr-15">
                     {/* Loading effect */}
-                    {newWaiter.uploading === true || loading === true ? (
+                    {newTable.uploading === true || loading === true ? (
                       tableLoading()
                     ) : (
                       <div key="fragment3">
@@ -538,8 +543,8 @@ const TableCrud = () => {
                             <ul className="t-list fk-breadcrumb">
                               <li className="fk-breadcrumb__list">
                                 <span className="t-link fk-breadcrumb__link text-capitalize">
-                                  {!searchedWaiter.searched
-                                    ? _t(t("Waiter List"))
+                                  {!searchedBranch.searched
+                                    ? _t(t("Table List"))
                                     : _t(t("Search Result"))}
                                 </span>
                               </li>
@@ -576,10 +581,10 @@ const TableCrud = () => {
                                   type="button"
                                   className="btn btn-primary xsm-text text-uppercase btn-lg btn-block"
                                   data-toggle="modal"
-                                  data-target="#addWaiter"
+                                  data-target="#addTable"
                                   onClick={() => {
-                                    setNewWaiter({
-                                      ...newWaiter,
+                                    setNewTable({
+                                      ...newTable,
                                       edit: false,
                                       uploading: false,
                                     });
@@ -607,13 +612,14 @@ const TableCrud = () => {
                                   scope="col"
                                   className="sm-text text-capitalize align-middle text-center border-1 border"
                                 >
-                                  {_t(t("Image"))}
+                                  {_t(t("Name"))}
                                 </th>
+
                                 <th
                                   scope="col"
                                   className="sm-text text-capitalize align-middle text-center border-1 border"
                                 >
-                                  {_t(t("Name"))}
+                                  {_t(t("Address"))}
                                 </th>
                                 <th
                                   scope="col"
@@ -632,10 +638,10 @@ const TableCrud = () => {
                             </thead>
                             <tbody className="align-middle">
                               {/* loop here, logic === !search && haveData && haveDataLegnth > 0*/}
-                              {!searchedWaiter.searched
+                              {!searchedBranch.searched
                                 ? [
-                                    waiterList && [
-                                      waiterList.data.length === 0 ? (
+                                    tableList && [
+                                      tableList.data.length === 0 ? (
                                         <tr className="align-middle">
                                           <td
                                             scope="row"
@@ -646,7 +652,7 @@ const TableCrud = () => {
                                           </td>
                                         </tr>
                                       ) : (
-                                        waiterList.data.map((item, index) => {
+                                        tableList.data.map((item, index) => {
                                           return (
                                             <tr
                                               className="align-middle"
@@ -658,33 +664,29 @@ const TableCrud = () => {
                                               >
                                                 {index +
                                                   1 +
-                                                  (waiterList.current_page -
-                                                    1) *
-                                                    waiterList.per_page}
+                                                  (tableList.current_page - 1) *
+                                                    tableList.per_page}
                                               </th>
 
-                                              <td className="xsm-text align-middle d-flex justify-content-center">
-                                                <div
-                                                  className="table-img-large"
-                                                  style={{
-                                                    backgroundImage: `url(${
-                                                      item.image !== null
-                                                        ? item.image
-                                                        : "/assets/img/waiter.jpg"
-                                                    })`,
-                                                  }}
-                                                ></div>
-                                              </td>
                                               <td className="xsm-text text-capitalize align-middle text-center">
                                                 {item.name}
                                               </td>
+
                                               <td className="xsm-text text-capitalize align-middle text-center">
-                                                <a
-                                                  href={`tel:${item.phn_no}`}
-                                                  rel="noopener noreferrer"
-                                                >
-                                                  {item.phn_no}
-                                                </a>
+                                                {item.address || "-"}
+                                              </td>
+
+                                              <td className="xsm-text align-middle text-center">
+                                                {item.phn_no ? (
+                                                  <a
+                                                    href={`tel:${item.phn_no}`}
+                                                    rel="noopener noreferrer"
+                                                  >
+                                                    {item.phn_no}
+                                                  </a>
+                                                ) : (
+                                                  "-"
+                                                )}
                                               </td>
 
                                               <td className="xsm-text text-capitalize align-middle text-center">
@@ -703,7 +705,7 @@ const TableCrud = () => {
                                                         handleSetEdit(item.slug)
                                                       }
                                                       data-toggle="modal"
-                                                      data-target="#addWaiter"
+                                                      data-target="#addTable"
                                                     >
                                                       <span className="t-mr-8">
                                                         <i className="fa fa-pencil"></i>
@@ -735,8 +737,8 @@ const TableCrud = () => {
                                   ]
                                 : [
                                     /* searched data, logic === haveData*/
-                                    searchedWaiter && [
-                                      searchedWaiter.list.length === 0 ? (
+                                    searchedBranch && [
+                                      searchedBranch.list.length === 0 ? (
                                         <tr className="align-middle">
                                           <td
                                             scope="row"
@@ -747,7 +749,7 @@ const TableCrud = () => {
                                           </td>
                                         </tr>
                                       ) : (
-                                        searchedWaiter.list.map(
+                                        searchedBranch.list.map(
                                           (item, index) => {
                                             return (
                                               <tr
@@ -760,33 +762,30 @@ const TableCrud = () => {
                                                 >
                                                   {index +
                                                     1 +
-                                                    (waiterList.current_page -
+                                                    (tableList.current_page -
                                                       1) *
-                                                      waiterList.per_page}
+                                                      tableList.per_page}
                                                 </th>
 
-                                                <td className="xsm-text align-middle d-flex justify-content-center">
-                                                  <div
-                                                    className="table-img-large"
-                                                    style={{
-                                                      backgroundImage: `url(${
-                                                        item.image !== null
-                                                          ? item.image
-                                                          : "/assets/img/waiter.jpg"
-                                                      })`,
-                                                    }}
-                                                  ></div>
-                                                </td>
                                                 <td className="xsm-text text-capitalize align-middle text-center">
                                                   {item.name}
                                                 </td>
+
                                                 <td className="xsm-text text-capitalize align-middle text-center">
-                                                  <a
-                                                    href={`tel:${item.phn_no}`}
-                                                    rel="noopener noreferrer"
-                                                  >
-                                                    {item.phn_no}
-                                                  </a>
+                                                  {item.address || "-"}
+                                                </td>
+
+                                                <td className="xsm-text align-middle text-center">
+                                                  {item.phn_no ? (
+                                                    <a
+                                                      href={`tel:${item.phn_no}`}
+                                                      rel="noopener noreferrer"
+                                                    >
+                                                      {item.phn_no}
+                                                    </a>
+                                                  ) : (
+                                                    "-"
+                                                  )}
                                                 </td>
 
                                                 <td className="xsm-text text-capitalize align-middle text-center">
@@ -807,7 +806,7 @@ const TableCrud = () => {
                                                           )
                                                         }
                                                         data-toggle="modal"
-                                                        data-target="#addWaiter"
+                                                        data-target="#addTable"
                                                       >
                                                         <span className="t-mr-8">
                                                           <i className="fa fa-pencil"></i>
@@ -848,23 +847,23 @@ const TableCrud = () => {
               </div>
 
               {/* pagination loading effect */}
-              {newWaiter.uploading === true || loading === true
+              {newTable.uploading === true || loading === true
                 ? paginationLoading()
                 : [
                     // logic === !searched
-                    !searchedWaiter.searched ? (
+                    !searchedBranch.searched ? (
                       <div key="fragment4">
                         <div className="t-bg-white mt-1 t-pt-5 t-pb-5">
                           <div className="row align-items-center t-pl-15 t-pr-15">
                             <div className="col-md-7 t-mb-15 mb-md-0">
                               {/* pagination function */}
-                              {pagination(waiterList, setPaginatedWaiter)}
+                              {pagination(tableList, setPaginatedTable)}
                             </div>
                             <div className="col-md-5">
                               <ul className="t-list d-flex justify-content-md-end align-items-center">
                                 <li className="t-list__item">
                                   <span className="d-inline-block sm-text">
-                                    {showingData(waiterList)}
+                                    {showingData(tableList)}
                                   </span>
                                 </li>
                               </ul>
@@ -882,8 +881,8 @@ const TableCrud = () => {
                                 <button
                                   className="btn btn-primary btn-sm"
                                   onClick={() =>
-                                    setSearchedWaiter({
-                                      ...searchedWaiter,
+                                    setSearchedBranch({
+                                      ...searchedBranch,
                                       searched: false,
                                     })
                                   }
@@ -898,8 +897,8 @@ const TableCrud = () => {
                               <li className="t-list__item">
                                 <span className="d-inline-block sm-text">
                                   {searchedShowingData(
-                                    searchedWaiter,
-                                    waiterForSearch
+                                    searchedBranch,
+                                    tableForSearch
                                   )}
                                 </span>
                               </li>
