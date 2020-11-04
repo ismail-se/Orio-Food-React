@@ -44,10 +44,7 @@ const Waiter = () => {
 
     //group
     setPermissionGroup,
-    permissionGroupForSearch,
     setPermissionGroupForSearch,
-    //permissions
-    permissions,
   } = useContext(SettingsContext);
 
   let {
@@ -112,13 +109,13 @@ const Waiter = () => {
       ...newWaiter,
       uploading: true,
     });
-    const groupUrl = BASE_URL + `/settings/new-waiter`;
+    const waiterUrl = BASE_URL + `/settings/new-waiter`;
     let formData = new FormData();
     formData.append("name", newWaiter.name);
     formData.append("phn_no", newWaiter.phn_no);
     formData.append("image", newWaiter.image);
     return axios
-      .post(groupUrl, formData, {
+      .post(waiterUrl, formData, {
         headers: { Authorization: `Bearer ${getCookie()}` },
       })
       .then((res) => {
@@ -172,12 +169,92 @@ const Waiter = () => {
   };
 
   //set edit true & values
-  const handleSetEdit = (id) => {};
+  const handleSetEdit = (slug) => {
+    let waiter = waiterForSearch.filter((item) => {
+      return item.slug === slug;
+    });
+    setNewWaiter({
+      ...newWaiter,
+      name: waiter[0].name,
+      phn_no: waiter[0].phn_no,
+      editSlug: waiter[0].slug,
+      editImage: waiter[0].image,
+      edit: true,
+    });
+  };
 
   //update Group
-  const handleUpdateWaiter = (e) => {};
+  const handleUpdateWaiter = (e) => {
+    e.preventDefault();
+    setNewWaiter({
+      ...newWaiter,
+      uploading: true,
+    });
+    const waiterUrl = BASE_URL + `/settings/update-waiter`;
+    let formData = new FormData();
+    formData.append("name", newWaiter.name);
+    formData.append("phn_no", newWaiter.phn_no);
+    formData.append("image", newWaiter.image);
+    formData.append("editSlug", newWaiter.editSlug);
+    return axios
+      .post(waiterUrl, formData, {
+        headers: { Authorization: `Bearer ${getCookie()}` },
+      })
+      .then((res) => {
+        setNewWaiter({
+          name: "",
+          phn_no: "",
+          image: null,
+          edit: false,
+          editSlug: null,
+          editImage: null,
+          uploading: false,
+        });
+        setWaiterList(res.data[0]);
+        setWaiterforSearch(res.data[1]);
+        setSearchedWaiter({
+          ...searchedWaiter,
+          list: res.data[1],
+        });
+        setLoading(false);
+        toast.success(`${_t(t("Waiter has been updated"))}`, {
+          position: "bottom-center",
+          autoClose: 10000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          className: "text-center toast-notification",
+        });
+      })
+      .catch((error) => {
+        setLoading(false);
+        setNewWaiter({
+          ...newWaiter,
+          uploading: false,
+        });
+        if (error && error.response.data.errors) {
+          if (error.response.data.errors.phn_no) {
+            error.response.data.errors.phn_no.forEach((item) => {
+              if (item === "A waiter exist with this phone number") {
+                toast.error(
+                  `${_t(t("A waiter exist with this phone number"))}`,
+                  {
+                    position: "bottom-center",
+                    autoClose: 10000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    className: "text-center toast-notification",
+                  }
+                );
+              }
+            });
+          }
+        }
+      });
+  };
 
-  //search groups here
+  //search waiters here
   const handleSearch = (e) => {
     let searchInput = e.target.value.toLowerCase();
     if (searchInput.length === 0) {
@@ -199,7 +276,7 @@ const Waiter = () => {
     }
   };
 
-  //delete confirmation modal of group
+  //delete confirmation modal of waiter
   const handleDeleteConfirmation = (slug) => {
     confirmAlert({
       customUI: ({ onClose }) => {
@@ -211,7 +288,7 @@ const Waiter = () => {
               <button
                 className="btn btn-primary"
                 onClick={() => {
-                  handleDeleteGroup(slug);
+                  handleDeleteWaiter(slug);
                   onClose();
                 }}
               >
@@ -227,86 +304,51 @@ const Waiter = () => {
     });
   };
 
-  //delete group here
-  const handleDeleteGroup = (slug) => {
+  //delete waiter here
+  const handleDeleteWaiter = (slug) => {
     setLoading(true);
-    //todo:: add superAdmin when it will be SaaS
-    if (slug !== "admin" || slug !== "customer") {
-      const groupUrl = BASE_URL + `/settings/delete-permission-group/${slug}`;
-      return axios
-        .get(groupUrl, {
-          headers: { Authorization: `Bearer ${getCookie()}` },
-        })
-        .then((res) => {
-          if (res.data === "Please remove this group from users first") {
-            setLoading(false);
-            toast.error(
-              `${_t(t("Please remove this group from users first!"))}`,
-              {
-                position: "bottom-center",
-                autoClose: 10000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                className: "text-center toast-notification",
-              }
-            );
-          } else if (res.data === "This group can not be deleted") {
-            setLoading(false);
-            toast.error(
-              `${_t(t("Please remove this group from users first!"))}`,
-              {
-                position: "bottom-center",
-                autoClose: 10000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                className: "text-center toast-notification",
-              }
-            );
-          } else {
-            setNewWaiter({
-              name: null,
-              permission_ids: null,
-              edit: false,
-              editSlug: null,
-              uploading: false,
-            });
-            setPermissionGroup(res.data[0]);
-            setPermissionGroupForSearch(res.data[1]);
-            setLoading(false);
-            toast.success(`${_t(t("Group has been deleted successfully"))}`, {
-              position: "bottom-center",
-              autoClose: 10000,
-              hideProgressBar: false,
-              closeOnClick: true,
-              pauseOnHover: true,
-              className: "text-center toast-notification",
-            });
-          }
-        })
-        .catch(() => {
-          setLoading(false);
-          toast.error(`${_t(t("Please try again."))}`, {
-            position: "bottom-center",
-            autoClose: 10000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            className: "text-center toast-notification",
-          });
+    const waiterUrl = BASE_URL + `/settings/delete-waiter/${slug}`;
+    return axios
+      .get(waiterUrl, {
+        headers: { Authorization: `Bearer ${getCookie()}` },
+      })
+      .then((res) => {
+        setNewWaiter({
+          name: "",
+          phn_no: "",
+          image: null,
+          edit: false,
+          editSlug: null,
+          editImage: null,
+          uploading: false,
         });
-    } else {
-      setLoading(false);
-      toast.error(`${_t(t("This group can not be deleted!"))}`, {
-        position: "bottom-center",
-        autoClose: 10000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        className: "text-center toast-notification",
+        setPermissionGroup(res.data[0]);
+        setPermissionGroupForSearch(res.data[1]);
+        setSearchedWaiter({
+          ...searchedWaiter,
+          list: res.data[1],
+        });
+        setLoading(false);
+        toast.success(`${_t(t("Waiter has been deleted successfully"))}`, {
+          position: "bottom-center",
+          autoClose: 10000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          className: "text-center toast-notification",
+        });
+      })
+      .catch(() => {
+        setLoading(false);
+        toast.error(`${_t(t("Please try again."))}`, {
+          position: "bottom-center",
+          autoClose: 10000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          className: "text-center toast-notification",
+        });
       });
-    }
   };
 
   return (
@@ -658,10 +700,10 @@ const Waiter = () => {
                                                     <button
                                                       className="dropdown-item sm-text text-capitalize"
                                                       onClick={() =>
-                                                        handleSetEdit(item.id)
+                                                        handleSetEdit(item.slug)
                                                       }
                                                       data-toggle="modal"
-                                                      data-target="#addLang"
+                                                      data-target="#addWaiter"
                                                     >
                                                       <span className="t-mr-8">
                                                         <i className="fa fa-pencil"></i>
@@ -673,7 +715,7 @@ const Waiter = () => {
                                                       className="dropdown-item sm-text text-capitalize"
                                                       onClick={() => {
                                                         handleDeleteConfirmation(
-                                                          item.code
+                                                          item.slug
                                                         );
                                                       }}
                                                     >
@@ -760,10 +802,12 @@ const Waiter = () => {
                                                       <button
                                                         className="dropdown-item sm-text text-capitalize"
                                                         onClick={() =>
-                                                          handleSetEdit(item.id)
+                                                          handleSetEdit(
+                                                            item.slug
+                                                          )
                                                         }
                                                         data-toggle="modal"
-                                                        data-target="#addLang"
+                                                        data-target="#addWaiter"
                                                       >
                                                         <span className="t-mr-8">
                                                           <i className="fa fa-pencil"></i>
@@ -775,7 +819,7 @@ const Waiter = () => {
                                                         className="dropdown-item sm-text text-capitalize"
                                                         onClick={() => {
                                                           handleDeleteConfirmation(
-                                                            item.code
+                                                            item.slug
                                                           );
                                                         }}
                                                       >
