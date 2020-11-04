@@ -110,6 +110,33 @@ const ManageSidebar = () => {
                 )}
               </ul>
             </li>
+
+            <li
+              className={`fk-pos-nav__list fk-pos-nav__list-has-sub 
+              ${
+                window.location.pathname.includes("/restaurant") ? "active" : ""
+              }`}
+            >
+              <a
+                className="w-100 t-text-dark t-heading-font btn btn-outline-danger font-weight-bold text-uppercase rounded-0 text-left"
+                rel="noopener noreferrer"
+                href="#"
+              >
+                {_t(t("Restaurant"))}
+              </a>
+              <ul className="t-list fk-pos-nav__sub t-bg-white list-group">
+                {managePageHrefLink(
+                  "/dashboard/manage/restaurant/branches",
+                  _t(t("Branches"))
+                )}
+
+                {managePageHrefLink(
+                  "/dashboard/manage/restaurant/tables",
+                  _t(t("Table"))
+                )}
+              </ul>
+            </li>
+
             <li
               className={`fk-pos-nav__list fk-pos-nav__list-has-sub ${
                 window.location.pathname.includes("/languages") ||

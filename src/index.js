@@ -8,12 +8,15 @@ import "./i18next";
 //importing context provider here
 import { UserProvider } from "./contexts/User";
 import { SettingsProvider } from "./contexts/Settings";
+import { RestaurantProvider } from "./contexts/Restaurant";
 
 ReactDOM.render(
   <React.StrictMode>
     <UserProvider>
       <SettingsProvider>
-        <App />
+        <RestaurantProvider>
+          <App />
+        </RestaurantProvider>
       </SettingsProvider>
     </UserProvider>
   </React.StrictMode>,

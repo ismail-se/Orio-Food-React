@@ -22,6 +22,9 @@ import Smtp from "../resources/restaurant/auth/manage/settings/Smtp";
 //-users
 import Permissions from "../resources/restaurant/auth/manage/user/Permissions";
 import Waiter from "../resources/restaurant/auth/manage/user/Waiter";
+//-restairantDetails
+import BranchCrud from "../resources/restaurant/auth/manage/restaurantDetails/BranchCrud";
+import TableCrud from "../resources/restaurant/auth/manage/restaurantDetails/TableCrud";
 
 export {
   //landing
@@ -45,4 +48,7 @@ export {
   //manage->users
   Waiter,
   Permissions,
+  //manage->branchCrud
+  BranchCrud,
+  TableCrud,
 };
