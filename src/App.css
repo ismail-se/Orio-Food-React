@@ -74,3 +74,8 @@ html {
   background-repeat: no-repeat;
   background-image: url("/assets/img/waiter.jpg");
 }
+
+/* manage page border-right show */
+.simplebar-content {
+  margin-right: -16px !important;
+}

@@ -78,6 +78,44 @@ const ManageSidebar = () => {
       <div className="d-none d-lg-block">
         <div className="fk-scroll--pos-menu" data-simplebar>
           <ul className="t-list fk-pos-nav">
+            {/* Foods */}
+            {/* <li className={`fk-pos-nav__list fk-pos-nav__list-has-sub`}>
+              <a
+                className="w-100 t-text-dark t-heading-font btn btn-outline-danger font-weight-bold text-uppercase rounded-0 text-left"
+                rel="noopener noreferrer"
+                href="#"
+              >
+                {_t(t("Foods"))}
+              </a>
+              <ul className="t-list fk-pos-nav__sub t-bg-white list-group">
+                {managePageHrefLink(
+                  "/dashboard/manage/user/admin-staff-user",
+                  _t(t("All Items"))
+                )}
+
+                {managePageHrefLink(
+                  "/dashboard/manage/user/waiter",
+                  _t(t("Groups"))
+                )}
+
+                {managePageHrefLink(
+                  "/dashboard/manage/roles-and-permissions",
+                  _t(t("Variations"))
+                )}
+
+                {managePageHrefLink(
+                  "/dashboard/manage/roles-and-permissions",
+                  _t(t("Properties"))
+                )}
+
+                {managePageHrefLink(
+                  "/dashboard/manage/roles-and-permissions",
+                  _t(t("Add new item"))
+                )}
+              </ul>
+            </li> */}
+
+            {/* User Management */}
             <li
               className={`fk-pos-nav__list fk-pos-nav__list-has-sub ${
                 window.location.pathname.includes("/roles") ||
@@ -94,10 +132,15 @@ const ManageSidebar = () => {
                 {_t(t("User Management"))}
               </a>
               <ul className="t-list fk-pos-nav__sub t-bg-white list-group">
-                {managePageHrefLink(
+                {/* {managePageHrefLink(
                   "/dashboard/manage/user/admin-staff-user",
                   _t(t("Admin / Staff"))
                 )}
+
+                {managePageHrefLink(
+                  "/dashboard/manage/user/customers",
+                  _t(t("Customer"))
+                )} */}
 
                 {managePageHrefLink(
                   "/dashboard/manage/user/waiter",
@@ -111,6 +154,7 @@ const ManageSidebar = () => {
               </ul>
             </li>
 
+            {/* Restaurant */}
             <li
               className={`fk-pos-nav__list fk-pos-nav__list-has-sub 
               ${
@@ -134,9 +178,20 @@ const ManageSidebar = () => {
                   "/dashboard/manage/restaurant/tables",
                   _t(t("Tables"))
                 )}
+
+                {/* {managePageHrefLink(
+                  "/dashboard/manage/restaurant/dept-tag",
+                  _t(t("Dept. Tag"))
+                )}
+
+                {managePageHrefLink(
+                  "/dashboard/manage/restaurant/dept-tag",
+                  _t(t("Payment Type"))
+                )} */}
               </ul>
             </li>
 
+            {/* Settings */}
             <li
               className={`fk-pos-nav__list fk-pos-nav__list-has-sub ${
                 window.location.pathname.includes("/languages") ||
@@ -153,6 +208,11 @@ const ManageSidebar = () => {
                 {_t(t("Settings"))}
               </a>
               <ul className="t-list fk-pos-nav__sub t-bg-white list-group">
+                {/* {managePageHrefLink(
+                  "/dashboard/manage/settings/currencies",
+                  _t(t("Currencies"))
+                )} */}
+
                 {managePageHrefLink(
                   "/dashboard/manage/settings/languages",
                   _t(t("Languages"))
@@ -162,6 +222,11 @@ const ManageSidebar = () => {
                   "/dashboard/manage/settings/smtp-settings",
                   _t(t("Email / Smtp"))
                 )}
+
+                {/* {managePageHrefLink(
+                  "/dashboard/manage/settings/smtp-settings",
+                  _t(t("General Settings"))
+                )} */}
               </ul>
             </li>
           </ul>
