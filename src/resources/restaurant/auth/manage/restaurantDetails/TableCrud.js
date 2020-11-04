@@ -84,7 +84,7 @@ const TableCrud = () => {
   };
 
   //search result
-  let [searchedBranch, setSearchedBranch] = useState({
+  let [searchedTable, setSearchedTable] = useState({
     list: null,
     searched: false,
   });
@@ -132,6 +132,10 @@ const TableCrud = () => {
           });
           setTableList(res.data[0]);
           setTableforSearch(res.data[1]);
+          setSearchedTable({
+            ...searchedTable,
+            list: res.data[1],
+          });
           setLoading(false);
           toast.success(`${_t(t("Table has been added"))}`, {
             position: "bottom-center",
@@ -220,6 +224,10 @@ const TableCrud = () => {
         });
         setTableList(res.data[0]);
         setTableforSearch(res.data[1]);
+        setSearchedTable({
+          ...searchedTable,
+          list: res.data[1],
+        });
         setLoading(false);
         toast.success(`${_t(t("Table has been updated"))}`, {
           position: "bottom-center",
@@ -247,33 +255,34 @@ const TableCrud = () => {
       });
   };
 
-  //search branch here
+  //search table here
   const handleSearch = (e) => {
     let searchInput = e.target.value.toLowerCase();
     if (searchInput.length === 0) {
-      setSearchedBranch({ ...searchedBranch, searched: false });
+      setSearchedTable({ ...searchedTable, searched: false });
     } else {
       let searchedList = tableForSearch.filter((item) => {
         let lowerCaseItemName = item.name.toLowerCase();
-        let lowerCaseItemPhnNo =
-          item.phn_no !== null && item.phn_no.toLowerCase();
-        let lowerCaseItemAddress =
-          item.address !== null && item.address.toLowerCase();
+        let lowerCaseItemCapacity =
+          item.capacity !== null && item.capacity.toLowerCase();
+        let lowerCaseItemBranch =
+          item.branch_name !== null && item.branch_name.toLowerCase();
         return (
           lowerCaseItemName.includes(searchInput) ||
-          (lowerCaseItemPhnNo && lowerCaseItemPhnNo.includes(searchInput)) ||
-          (lowerCaseItemAddress && lowerCaseItemAddress.includes(searchInput))
+          (lowerCaseItemCapacity &&
+            lowerCaseItemCapacity.includes(searchInput)) ||
+          (lowerCaseItemBranch && lowerCaseItemBranch.includes(searchInput))
         );
       });
-      setSearchedBranch({
-        ...searchedBranch,
+      setSearchedTable({
+        ...searchedTable,
         list: searchedList,
         searched: true,
       });
     }
   };
 
-  //delete confirmation modal of branch
+  //delete confirmation modal of table
   const handleDeleteConfirmation = (slug) => {
     confirmAlert({
       customUI: ({ onClose }) => {
@@ -285,7 +294,7 @@ const TableCrud = () => {
               <button
                 className="btn btn-primary"
                 onClick={() => {
-                  handleDeleteBranch(slug);
+                  handleDeleteTable(slug);
                   onClose();
                 }}
               >
@@ -301,8 +310,8 @@ const TableCrud = () => {
     });
   };
 
-  //delete branch here
-  const handleDeleteBranch = (slug) => {
+  //delete table here
+  const handleDeleteTable = (slug) => {
     setLoading(true);
     const branchUrl = BASE_URL + `/settings/delete-table/${slug}`;
     return axios
@@ -310,22 +319,14 @@ const TableCrud = () => {
         headers: { Authorization: `Bearer ${getCookie()}` },
       })
       .then((res) => {
-        setNewTable({
-          name: "",
-          phn_no: "",
-          address: "",
-          edit: false,
-          editSlug: null,
-          uploading: false,
-        });
         setTableList(res.data[0]);
         setTableforSearch(res.data[1]);
-        setSearchedBranch({
-          ...searchedBranch,
+        setSearchedTable({
+          ...searchedTable,
           list: res.data[1],
         });
         setLoading(false);
-        toast.success(`${_t(t("table has been deleted successfully"))}`, {
+        toast.success(`${_t(t("Table has been deleted successfully"))}`, {
           position: "bottom-center",
           autoClose: 10000,
           hideProgressBar: false,
@@ -353,7 +354,7 @@ const TableCrud = () => {
         <title>{_t(t("Tables"))}</title>
       </Helmet>
 
-      {/* Add group modal */}
+      {/* Add modal */}
       <div className="modal fade" id="addTable" aria-hidden="true">
         <div className="modal-dialog modal-lg">
           <div className="modal-content">
@@ -509,10 +510,7 @@ const TableCrud = () => {
           </div>
         </div>
       </div>
-      {/* Add group modal Ends*/}
-
-      {/* Edit group Modal */}
-      {/* Edit group Modal Ends */}
+      {/* Add modal Ends*/}
 
       {/* main body */}
       <main id="main" data-simplebar>
@@ -543,7 +541,7 @@ const TableCrud = () => {
                             <ul className="t-list fk-breadcrumb">
                               <li className="fk-breadcrumb__list">
                                 <span className="t-link fk-breadcrumb__link text-capitalize">
-                                  {!searchedBranch.searched
+                                  {!searchedTable.searched
                                     ? _t(t("Table List"))
                                     : _t(t("Search Result"))}
                                 </span>
@@ -619,13 +617,13 @@ const TableCrud = () => {
                                   scope="col"
                                   className="sm-text text-capitalize align-middle text-center border-1 border"
                                 >
-                                  {_t(t("Address"))}
+                                  {_t(t("Capacity"))}
                                 </th>
                                 <th
                                   scope="col"
                                   className="sm-text text-capitalize align-middle text-center border-1 border"
                                 >
-                                  {_t(t("phn no."))}
+                                  {_t(t("Branch"))}
                                 </th>
 
                                 <th
@@ -638,7 +636,7 @@ const TableCrud = () => {
                             </thead>
                             <tbody className="align-middle">
                               {/* loop here, logic === !search && haveData && haveDataLegnth > 0*/}
-                              {!searchedBranch.searched
+                              {!searchedTable.searched
                                 ? [
                                     tableList && [
                                       tableList.data.length === 0 ? (
@@ -673,20 +671,11 @@ const TableCrud = () => {
                                               </td>
 
                                               <td className="xsm-text text-capitalize align-middle text-center">
-                                                {item.address || "-"}
+                                                {item.capacity || "-"}
                                               </td>
 
                                               <td className="xsm-text align-middle text-center">
-                                                {item.phn_no ? (
-                                                  <a
-                                                    href={`tel:${item.phn_no}`}
-                                                    rel="noopener noreferrer"
-                                                  >
-                                                    {item.phn_no}
-                                                  </a>
-                                                ) : (
-                                                  "-"
-                                                )}
+                                                {item.branch_name || "-"}
                                               </td>
 
                                               <td className="xsm-text text-capitalize align-middle text-center">
@@ -737,8 +726,8 @@ const TableCrud = () => {
                                   ]
                                 : [
                                     /* searched data, logic === haveData*/
-                                    searchedBranch && [
-                                      searchedBranch.list.length === 0 ? (
+                                    searchedTable && [
+                                      searchedTable.list.length === 0 ? (
                                         <tr className="align-middle">
                                           <td
                                             scope="row"
@@ -749,7 +738,7 @@ const TableCrud = () => {
                                           </td>
                                         </tr>
                                       ) : (
-                                        searchedBranch.list.map(
+                                        searchedTable.list.map(
                                           (item, index) => {
                                             return (
                                               <tr
@@ -772,20 +761,11 @@ const TableCrud = () => {
                                                 </td>
 
                                                 <td className="xsm-text text-capitalize align-middle text-center">
-                                                  {item.address || "-"}
+                                                  {item.capacity || "-"}
                                                 </td>
 
                                                 <td className="xsm-text align-middle text-center">
-                                                  {item.phn_no ? (
-                                                    <a
-                                                      href={`tel:${item.phn_no}`}
-                                                      rel="noopener noreferrer"
-                                                    >
-                                                      {item.phn_no}
-                                                    </a>
-                                                  ) : (
-                                                    "-"
-                                                  )}
+                                                  {item.branch_name || "-"}
                                                 </td>
 
                                                 <td className="xsm-text text-capitalize align-middle text-center">
@@ -851,7 +831,7 @@ const TableCrud = () => {
                 ? paginationLoading()
                 : [
                     // logic === !searched
-                    !searchedBranch.searched ? (
+                    !searchedTable.searched ? (
                       <div key="fragment4">
                         <div className="t-bg-white mt-1 t-pt-5 t-pb-5">
                           <div className="row align-items-center t-pl-15 t-pr-15">
@@ -881,8 +861,8 @@ const TableCrud = () => {
                                 <button
                                   className="btn btn-primary btn-sm"
                                   onClick={() =>
-                                    setSearchedBranch({
-                                      ...searchedBranch,
+                                    setSearchedTable({
+                                      ...searchedTable,
                                       searched: false,
                                     })
                                   }
@@ -897,7 +877,7 @@ const TableCrud = () => {
                               <li className="t-list__item">
                                 <span className="d-inline-block sm-text">
                                   {searchedShowingData(
-                                    searchedBranch,
+                                    searchedTable,
                                     tableForSearch
                                   )}
                                 </span>

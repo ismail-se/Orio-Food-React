@@ -342,13 +342,6 @@ const Permissions = () => {
               }
             );
           } else {
-            setNewGroup({
-              name: null,
-              permission_ids: null,
-              edit: false,
-              editSlug: null,
-              uploading: false,
-            });
             setPermissionGroup(res.data[0]);
             setPermissionGroupForSearch(res.data[1]);
             setLoading(false);
@@ -536,9 +529,6 @@ const Permissions = () => {
         </div>
       </div>
       {/* Add group modal Ends*/}
-
-      {/* Edit group Modal */}
-      {/* Edit group Modal Ends */}
 
       {/* main body */}
       <main id="main" data-simplebar>

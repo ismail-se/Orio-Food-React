@@ -313,15 +313,6 @@ const Waiter = () => {
         headers: { Authorization: `Bearer ${getCookie()}` },
       })
       .then((res) => {
-        setNewWaiter({
-          name: "",
-          phn_no: "",
-          image: null,
-          edit: false,
-          editSlug: null,
-          editImage: null,
-          uploading: false,
-        });
         setPermissionGroup(res.data[0]);
         setPermissionGroupForSearch(res.data[1]);
         setSearchedWaiter({
@@ -357,7 +348,7 @@ const Waiter = () => {
         <title>{_t(t("Waiter"))}</title>
       </Helmet>
 
-      {/* Add group modal */}
+      {/* Add modal */}
       <div className="modal fade" id="addWaiter" aria-hidden="true">
         <div className="modal-dialog modal-lg">
           <div className="modal-content">
@@ -504,10 +495,7 @@ const Waiter = () => {
           </div>
         </div>
       </div>
-      {/* Add group modal Ends*/}
-
-      {/* Edit group Modal */}
-      {/* Edit group Modal Ends */}
+      {/* Add modal Ends*/}
 
       {/* main body */}
       <main id="main" data-simplebar>

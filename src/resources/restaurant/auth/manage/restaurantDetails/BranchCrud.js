@@ -119,6 +119,10 @@ const BranchCrud = () => {
         });
         setBranchList(res.data[0]);
         setBranchforSearch(res.data[1]);
+        setSearchedBranch({
+          ...searchedBranch,
+          list: res.data[1],
+        });
         setLoading(false);
         toast.success(`${_t(t("Branch has been added"))}`, {
           position: "bottom-center",
@@ -283,14 +287,6 @@ const BranchCrud = () => {
         headers: { Authorization: `Bearer ${getCookie()}` },
       })
       .then((res) => {
-        setNewBranch({
-          name: "",
-          phn_no: "",
-          address: "",
-          edit: false,
-          editSlug: null,
-          uploading: false,
-        });
         setBranchList(res.data[0]);
         setBranchforSearch(res.data[1]);
         setSearchedBranch({
@@ -326,7 +322,7 @@ const BranchCrud = () => {
         <title>{_t(t("Branches"))}</title>
       </Helmet>
 
-      {/* Add group modal */}
+      {/* Add modal */}
       <div className="modal fade" id="addBranch" aria-hidden="true">
         <div className="modal-dialog modal-lg">
           <div className="modal-content">
@@ -460,10 +456,7 @@ const BranchCrud = () => {
           </div>
         </div>
       </div>
-      {/* Add group modal Ends*/}
-
-      {/* Edit group Modal */}
-      {/* Edit group Modal Ends */}
+      {/* Add modal Ends*/}
 
       {/* main body */}
       <main id="main" data-simplebar>

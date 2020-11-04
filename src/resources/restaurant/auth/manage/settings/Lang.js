@@ -613,9 +613,6 @@ const Lang = () => {
       </div>
       {/* Add language modal Ends*/}
 
-      {/* Edit Language Modal */}
-      {/* Edit Language Modal Ends */}
-
       {/* main body */}
       <main id="main" data-simplebar>
         <div className="container">
