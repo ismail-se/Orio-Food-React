@@ -44,10 +44,6 @@ const CustomerCrud = () => {
     //common
     loading,
     setLoading,
-
-    //customer
-    setPermissioncustomer,
-    setPermissioncustomerForSearch,
   } = useContext(SettingsContext);
 
   let {
