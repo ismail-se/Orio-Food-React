@@ -33,9 +33,10 @@ import {
   //manage->settings
   Waiter,
   Permissions,
-  //manage->settings
+  //manage->restaurantDetails
   BranchCrud,
   TableCrud,
+  PaymentTypeCrud,
 } from "./imports/Pages";
 import { Navbar, Footer } from "./imports/Components";
 
@@ -103,13 +104,19 @@ function App() {
             <Permissions />
           </RestaurantRoute>
 
-          {/* Restairant */}
+          {/* Restaurant */}
           <RestaurantRoute path="/dashboard/manage/restaurant/branches" exact>
             <BranchCrud />
           </RestaurantRoute>
 
           <RestaurantRoute path="/dashboard/manage/restaurant/tables" exact>
             <TableCrud />
+          </RestaurantRoute>
+          <RestaurantRoute
+            path="/dashboard/manage/restaurant/payment-type"
+            exact
+          >
+            <PaymentTypeCrud />
           </RestaurantRoute>
 
           {/* Settings */}

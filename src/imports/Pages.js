@@ -25,6 +25,7 @@ import Waiter from "../resources/restaurant/auth/manage/user/Waiter";
 //-restairantDetails
 import BranchCrud from "../resources/restaurant/auth/manage/restaurantDetails/BranchCrud";
 import TableCrud from "../resources/restaurant/auth/manage/restaurantDetails/TableCrud";
+import PaymentTypeCrud from "../resources/restaurant/auth/manage/restaurantDetails/PaymentTypeCrud";
 
 export {
   //landing
@@ -48,7 +49,8 @@ export {
   //manage->users
   Waiter,
   Permissions,
-  //manage->branchCrud
+  //manage->restaurantDetails
   BranchCrud,
   TableCrud,
+  PaymentTypeCrud,
 };
