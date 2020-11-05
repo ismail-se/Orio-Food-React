@@ -36,7 +36,7 @@ import { SettingsContext } from "../../../../../contexts/Settings";
 import { UserContext } from "../../../../../contexts/User";
 import { RestaurantContext } from "../../../../../contexts/Restaurant";
 
-const TableCrud = () => {
+const CustomerCrud = () => {
   const { t } = useTranslation();
   const history = useHistory();
   //getting context values here
@@ -44,33 +44,40 @@ const TableCrud = () => {
     //common
     loading,
     setLoading,
+
+    //customer
+    setPermissioncustomer,
+    setPermissioncustomerForSearch,
   } = useContext(SettingsContext);
 
   let {
     //auth user
     authUserInfo,
+
+    //customer
+    getCustomer,
+    customerList,
+    setCustomerList,
+    setPaginatedCustomer,
+    customerForSearch,
+    setCustomerforSearch,
+
+    //pagination
+    dataPaginating,
   } = useContext(UserContext);
 
   let {
     //branch
     branchForSearch,
-
-    //tables
-    tableList,
-    setTableList,
-    setPaginatedTable,
-    setTableforSearch,
-    tableForSearch,
-
-    //pagination
-    dataPaginating,
   } = useContext(RestaurantContext);
 
   // States hook here
-  //new group
-  let [newTable, setNewTable] = useState({
+  //new customer
+  let [newCustomer, setNewCustomer] = useState({
     name: "",
-    capacity: "",
+    email: "",
+    phn_no: "",
+    address: "",
     branch: null,
     selectedBranch: null,
     edit: false,
@@ -79,7 +86,7 @@ const TableCrud = () => {
   });
 
   //search result
-  let [searchedTable, setSearchedTable] = useState({
+  let [searchedCustomer, setSearchedCustomer] = useState({
     list: null,
     searched: false,
   });
@@ -93,51 +100,51 @@ const TableCrud = () => {
     }
   }, [authUserInfo]);
 
-  //set name, capacity hook
-  const handleSetNewTable = (e) => {
-    setNewTable({ ...newTable, [e.target.name]: e.target.value });
+  //set name, phn no hook
+  const handleSetNewCustomer = (e) => {
+    setNewCustomer({ ...newCustomer, [e.target.name]: e.target.value });
   };
 
   //set branch hook
   const handleSetBranch = (branch) => {
-    setNewTable({ ...newTable, branch });
+    setNewCustomer({ ...newCustomer, branch });
   };
 
-  //Save New table
-  const handleSaveNewTable = (e) => {
+  //Save New customer
+  const handleSaveNewCustomer = (e) => {
     e.preventDefault();
-    if (newTable.branch !== null) {
-      setNewTable({
-        ...newTable,
+    if (newCustomer.branch !== null) {
+      setNewCustomer({
+        ...newCustomer,
         uploading: true,
       });
-      const branchUrl = BASE_URL + `/settings/new-table`;
+      const customerUrl = BASE_URL + `/settings/new-customer`;
       let formData = new FormData();
-      formData.append("name", newTable.name);
-      formData.append("capacity", newTable.capacity);
-      formData.append("branch_id", newTable.branch.id);
+      formData.append("name", newCustomer.name);
+      formData.append("phn_no", newCustomer.phn_no);
+      formData.append("email", newCustomer.email);
+      formData.append("address", newCustomer.address);
+      formData.append("branch_id", newCustomer.branch.id);
       return axios
-        .post(branchUrl, formData, {
+        .post(customerUrl, formData, {
           headers: { Authorization: `Bearer ${getCookie()}` },
         })
         .then((res) => {
-          setNewTable({
+          setNewCustomer({
             name: "",
-            capacity: "",
+            email: "",
+            phn_no: "",
+            address: "",
             branch: null,
             selectedBranch: null,
             edit: false,
             editSlug: null,
             uploading: false,
           });
-          setTableList(res.data[0]);
-          setTableforSearch(res.data[1]);
-          setSearchedTable({
-            ...searchedTable,
-            list: res.data[1],
-          });
+          setCustomerList(res.data[0]);
+          setCustomerforSearch(res.data[1]);
           setLoading(false);
-          toast.success(`${_t(t("Table has been added"))}`, {
+          toast.success(`${_t(t("Customer has been added"))}`, {
             position: "bottom-center",
             autoClose: 10000,
             hideProgressBar: false,
@@ -147,20 +154,30 @@ const TableCrud = () => {
           });
         })
         .catch((error) => {
-          console.log(error);
           setLoading(false);
-          setNewTable({
-            ...newTable,
+          setNewCustomer({
+            ...newCustomer,
             uploading: false,
           });
-          toast.error(`${_t(t("Please try again."))}`, {
-            position: "bottom-center",
-            autoClose: 10000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            className: "text-center toast-notification",
-          });
+          if (error && error.response.data.errors) {
+            if (error.response.data.errors.phn_no) {
+              error.response.data.errors.phn_no.forEach((item) => {
+                if (item === "A customer exists with this phone number") {
+                  toast.error(
+                    `${_t(t("A customer exists with this phone number"))}`,
+                    {
+                      position: "bottom-center",
+                      autoClose: 10000,
+                      hideProgressBar: false,
+                      closeOnClick: true,
+                      pauseOnHover: true,
+                      className: "text-center toast-notification",
+                    }
+                  );
+                }
+              });
+            }
+          }
         });
     } else {
       toast.error(`${_t(t("Please select a branch"))}`, {
@@ -176,63 +193,68 @@ const TableCrud = () => {
 
   //set edit true & values
   const handleSetEdit = (slug) => {
-    let table = tableForSearch.filter((item) => {
+    let customer = customerForSearch.filter((item) => {
       return item.slug === slug;
     });
     let selectedOptionForBranch = null;
-    if (table[0].branch_id) {
+    if (customer[0].branch_id) {
       selectedOptionForBranch = branchForSearch.filter((branchItem) => {
-        return branchItem.id === table[0].branch_id;
+        return branchItem.id === customer[0].branch_id;
       });
     }
-    setNewTable({
-      ...newTable,
-      name: table[0].name,
-      capacity: table[0].capacity,
+    setNewCustomer({
+      ...newCustomer,
+      name: customer[0].name,
+      email: customer[0].email,
+      phn_no: customer[0].phn_no,
+      address: customer[0].address,
       selectedBranch: selectedOptionForBranch[0] || null,
-      editSlug: table[0].slug,
+      editSlug: customer[0].slug,
       edit: true,
     });
   };
 
-  //update table
-  const handleUpdateTable = (e) => {
+  //update customer
+  const handleUpdateCustomer = (e) => {
     e.preventDefault();
-    setNewTable({
-      ...newTable,
+    setNewCustomer({
+      ...newCustomer,
       uploading: true,
     });
-    const branchUrl = BASE_URL + `/settings/update-table`;
+    const customerUrl = BASE_URL + `/settings/update-customer`;
     let formData = new FormData();
-    formData.append("name", newTable.name);
-    formData.append("capacity", newTable.capacity);
-
-    if (newTable.branch !== null) {
-      formData.append("branch_id", newTable.branch.id);
+    formData.append("name", newCustomer.name);
+    formData.append("phn_no", newCustomer.phn_no);
+    formData.append("email", newCustomer.email);
+    formData.append("address", newCustomer.address);
+    if (newCustomer.branch !== null) {
+      formData.append("branch_id", newCustomer.branch.id);
     }
-    formData.append("editSlug", newTable.editSlug);
+    formData.append("editSlug", newCustomer.editSlug);
     return axios
-      .post(branchUrl, formData, {
+      .post(customerUrl, formData, {
         headers: { Authorization: `Bearer ${getCookie()}` },
       })
       .then((res) => {
-        setNewTable({
+        setNewCustomer({
           name: "",
-          capacity: "",
+          email: "",
+          phn_no: "",
+          address: "",
           branch: null,
           selectedBranch: null,
           edit: false,
           editSlug: null,
           uploading: false,
         });
-        setTableList(res.data[0]);
-        setTableforSearch(res.data[1]);
-        setSearchedTable({
-          ...searchedTable,
+        setCustomerList(res.data[0]);
+        setCustomerforSearch(res.data[1]);
+        setSearchedCustomer({
+          ...searchedCustomer,
           list: res.data[1],
         });
         setLoading(false);
-        toast.success(`${_t(t("Table has been updated"))}`, {
+        toast.success(`${_t(t("Customer has been updated"))}`, {
           position: "bottom-center",
           autoClose: 10000,
           hideProgressBar: false,
@@ -241,51 +263,77 @@ const TableCrud = () => {
           className: "text-center toast-notification",
         });
       })
-      .catch(() => {
+      .catch((error) => {
         setLoading(false);
-        setNewTable({
-          ...newTable,
+        setNewCustomer({
+          ...newCustomer,
           uploading: false,
         });
-        toast.error(`${_t(t("Please try again."))}`, {
-          position: "bottom-center",
-          autoClose: 10000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          className: "text-center toast-notification",
-        });
+        if (error && error.response.data.errors) {
+          if (error.response.data.errors.phn_no) {
+            error.response.data.errors.phn_no.forEach((item) => {
+              if (item === "A customer exists with this phone number") {
+                toast.error(
+                  `${_t(t("A customer exists with this phone number"))}`,
+                  {
+                    position: "bottom-center",
+                    autoClose: 10000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    className: "text-center toast-notification",
+                  }
+                );
+              }
+            });
+          }
+        }
       });
   };
 
-  //search table here
+  //search customers here
   const handleSearch = (e) => {
     let searchInput = e.target.value.toLowerCase();
     if (searchInput.length === 0) {
-      setSearchedTable({ ...searchedTable, searched: false });
+      setSearchedCustomer({ ...searchedCustomer, searched: false });
     } else {
-      let searchedList = tableForSearch.filter((item) => {
+      let searchedList = customerForSearch.filter((item) => {
+        //name
         let lowerCaseItemName = item.name.toLowerCase();
-        let lowerCaseItemCapacity =
-          item.capacity !== null && item.capacity.toLowerCase();
+
+        //email
+        let lowerCaseItemEmail =
+          item.email !== null && item.email.toLowerCase();
+
+        //phn no
+        let lowerCaseItemPhnNo =
+          item.phn_no !== null && item.phn_no.toLowerCase();
+
+        //address
+        let lowerCaseItemAddress =
+          item.address !== null && item.address.toLowerCase();
+
+        //branch
         let lowerCaseItemBranch =
           item.branch_name !== null && item.branch_name.toLowerCase();
         return (
           lowerCaseItemName.includes(searchInput) ||
-          (lowerCaseItemCapacity &&
-            lowerCaseItemCapacity.includes(searchInput)) ||
+          (lowerCaseItemEmail && lowerCaseItemEmail.includes(searchInput)) ||
+          (lowerCaseItemPhnNo && lowerCaseItemPhnNo.includes(searchInput)) ||
+          (lowerCaseItemAddress &&
+            lowerCaseItemAddress.includes(searchInput)) ||
           (lowerCaseItemBranch && lowerCaseItemBranch.includes(searchInput))
         );
       });
-      setSearchedTable({
-        ...searchedTable,
+      setSearchedCustomer({
+        ...searchedCustomer,
         list: searchedList,
         searched: true,
       });
     }
   };
 
-  //delete confirmation modal of table
+  //delete confirmation modal of waiter
   const handleDeleteConfirmation = (slug) => {
     confirmAlert({
       customUI: ({ onClose }) => {
@@ -297,7 +345,7 @@ const TableCrud = () => {
               <button
                 className="btn btn-primary"
                 onClick={() => {
-                  handleDeleteTable(slug);
+                  handleDeleteCustomer(slug);
                   onClose();
                 }}
               >
@@ -313,23 +361,23 @@ const TableCrud = () => {
     });
   };
 
-  //delete table here
-  const handleDeleteTable = (slug) => {
+  //delete waiter here
+  const handleDeleteCustomer = (slug) => {
     setLoading(true);
-    const branchUrl = BASE_URL + `/settings/delete-table/${slug}`;
+    const customerUrl = BASE_URL + `/settings/delete-customer/${slug}`;
     return axios
-      .get(branchUrl, {
+      .get(customerUrl, {
         headers: { Authorization: `Bearer ${getCookie()}` },
       })
       .then((res) => {
-        setTableList(res.data[0]);
-        setTableforSearch(res.data[1]);
-        setSearchedTable({
-          ...searchedTable,
+        setCustomerList(res.data[0]);
+        setCustomerforSearch(res.data[1]);
+        setSearchedCustomer({
+          ...searchedCustomer,
           list: res.data[1],
         });
         setLoading(false);
-        toast.success(`${_t(t("Table has been deleted successfully"))}`, {
+        toast.success(`${_t(t("Customer has been deleted successfully"))}`, {
           position: "bottom-center",
           autoClose: 10000,
           hideProgressBar: false,
@@ -354,19 +402,19 @@ const TableCrud = () => {
   return (
     <>
       <Helmet>
-        <title>{_t(t("Tables"))}</title>
+        <title>{_t(t("Customers"))}</title>
       </Helmet>
 
       {/* Add modal */}
-      <div className="modal fade" id="addTable" aria-hidden="true">
+      <div className="modal fade" id="addCustomer" aria-hidden="true">
         <div className="modal-dialog modal-lg">
           <div className="modal-content">
             <div className="modal-header align-items-center">
               <div className="fk-sm-card__content">
                 <h5 className="text-capitalize fk-sm-card__title">
-                  {!newTable.edit
-                    ? _t(t("Add new table"))
-                    : _t(t("Update table"))}
+                  {!newCustomer.edit
+                    ? _t(t("Add new customer"))
+                    : _t(t("Update waiter"))}
                 </h5>
               </div>
               <button
@@ -378,11 +426,13 @@ const TableCrud = () => {
             </div>
             <div className="modal-body">
               {/* show form or show saving loading */}
-              {newTable.uploading === false ? (
-                <div key="fragment-table-1">
+              {newCustomer.uploading === false ? (
+                <div key="fragment-customer-1">
                   <form
                     onSubmit={
-                      !newTable.edit ? handleSaveNewTable : handleUpdateTable
+                      !newCustomer.edit
+                        ? handleSaveNewCustomer
+                        : handleUpdateCustomer
                     }
                   >
                     <div>
@@ -395,17 +445,17 @@ const TableCrud = () => {
                         className="form-control"
                         id="name"
                         name="name"
-                        placeholder="e.g. Table 01"
-                        value={newTable.name || ""}
+                        placeholder="e.g. Mr. John"
+                        value={newCustomer.name || ""}
                         required
-                        onChange={handleSetNewTable}
+                        onChange={handleSetNewCustomer}
                       />
                     </div>
 
                     <div className="mt-3">
                       <label className="form-label mb-0">
                         {_t(t("Select a branch"))}{" "}
-                        {newTable.edit ? (
+                        {newCustomer.edit ? (
                           <small className="text-primary">
                             {"( "}
                             {_t(
@@ -419,10 +469,10 @@ const TableCrud = () => {
                           <small className="text-primary">*</small>
                         )}
                       </label>
-                      {newTable.edit && newTable.selectedBranch !== null && (
+                      {newCustomer.edit && newCustomer.selectedBranch !== null && (
                         <ul className="list-group list-group-horizontal-sm row col-12 mb-2 ml-md-1">
                           <li className="list-group-item col-12 col-md-3 bg-success rounded-sm py-1 px-2 my-1 text-center">
-                            {newTable.selectedBranch.name}
+                            {newCustomer.selectedBranch.name}
                           </li>
                         </ul>
                       )}
@@ -439,18 +489,47 @@ const TableCrud = () => {
                     </div>
 
                     <div className="mt-3">
-                      <label htmlFor="capacity" className="form-label">
-                        {_t(t("Guest capacity"))}
+                      <label htmlFor="email" className="form-label">
+                        {_t(t("Email"))}
                       </label>
                       <input
-                        type="number"
+                        type="email"
                         className="form-control"
-                        id="capacity"
-                        name="capacity"
-                        placeholder="e.g. 05"
-                        min="1"
-                        value={newTable.capacity || ""}
-                        onChange={handleSetNewTable}
+                        id="email"
+                        name="email"
+                        placeholder="e.g. customer@example.com"
+                        value={newCustomer.email || ""}
+                        onChange={handleSetNewCustomer}
+                      />
+                    </div>
+
+                    <div className="mt-3">
+                      <label htmlFor="phn_no" className="form-label">
+                        {_t(t("Phone number"))}
+                      </label>
+                      <input
+                        type="text"
+                        className="form-control"
+                        id="phn_no"
+                        name="phn_no"
+                        placeholder="e.g. 01xxx xxx xxx"
+                        value={newCustomer.phn_no || ""}
+                        onChange={handleSetNewCustomer}
+                      />
+                    </div>
+
+                    <div className="mt-3">
+                      <label htmlFor="address" className="form-label">
+                        {_t(t("Address"))}
+                      </label>
+                      <textarea
+                        type="text"
+                        className="form-control"
+                        id="address"
+                        name="address"
+                        placeholder="Type customer address"
+                        value={newCustomer.address || ""}
+                        onChange={handleSetNewCustomer}
                       />
                     </div>
 
@@ -461,7 +540,9 @@ const TableCrud = () => {
                             type="submit"
                             className="btn btn-success text-dark w-100 xsm-text text-uppercase t-width-max"
                           >
-                            {!newTable.edit ? _t(t("Save")) : _t(t("Update"))}
+                            {!newCustomer.edit
+                              ? _t(t("Save"))
+                              : _t(t("Update"))}
                           </button>
                         </div>
                         <div className="col-6">
@@ -493,7 +574,7 @@ const TableCrud = () => {
                             e.preventDefault();
                           }}
                         >
-                          {!newTable.edit ? _t(t("Save")) : _t(t("Update"))}
+                          {!newCustomer.edit ? _t(t("Save")) : _t(t("Update"))}
                         </button>
                       </div>
                       <div className="col-6">
@@ -531,7 +612,7 @@ const TableCrud = () => {
                 <div className="fk-scroll--pos-menu" data-simplebar>
                   <div className="t-pl-15 t-pr-15">
                     {/* Loading effect */}
-                    {newTable.uploading === true || loading === true ? (
+                    {newCustomer.uploading === true || loading === true ? (
                       tableLoading()
                     ) : (
                       <div key="fragment3">
@@ -544,8 +625,8 @@ const TableCrud = () => {
                             <ul className="t-list fk-breadcrumb">
                               <li className="fk-breadcrumb__list">
                                 <span className="t-link fk-breadcrumb__link text-capitalize">
-                                  {!searchedTable.searched
-                                    ? _t(t("Table List"))
+                                  {!searchedCustomer.searched
+                                    ? _t(t("Customer List"))
                                     : _t(t("Search Result"))}
                                 </span>
                               </li>
@@ -553,7 +634,7 @@ const TableCrud = () => {
                           </div>
                           <div className="col-md-6 col-lg-7">
                             <div className="row gx-3 align-items-center">
-                              {/* Search group */}
+                              {/* Search customer */}
                               <div className="col-md-9 t-mb-15 mb-md-0">
                                 <div className="input-group">
                                   <div className="form-file">
@@ -576,16 +657,16 @@ const TableCrud = () => {
                                 </div>
                               </div>
 
-                              {/* Add group modal trigger button */}
+                              {/* Add customer modal trigger button */}
                               <div className="col-md-3 text-md-right">
                                 <button
                                   type="button"
                                   className="btn btn-primary xsm-text text-uppercase btn-lg btn-block"
                                   data-toggle="modal"
-                                  data-target="#addTable"
+                                  data-target="#addCustomer"
                                   onClick={() => {
-                                    setNewTable({
-                                      ...newTable,
+                                    setNewCustomer({
+                                      ...newCustomer,
                                       branch: null,
                                       edit: false,
                                       uploading: false,
@@ -616,13 +697,25 @@ const TableCrud = () => {
                                 >
                                   {_t(t("Name"))}
                                 </th>
-
                                 <th
                                   scope="col"
                                   className="sm-text text-capitalize align-middle text-center border-1 border"
                                 >
-                                  {_t(t("Capacity"))}
+                                  {_t(t("email"))}
                                 </th>
+                                <th
+                                  scope="col"
+                                  className="sm-text text-capitalize align-middle text-center border-1 border"
+                                >
+                                  {_t(t("phn no."))}
+                                </th>
+                                <th
+                                  scope="col"
+                                  className="sm-text text-capitalize align-middle text-center border-1 border"
+                                >
+                                  {_t(t("Address"))}
+                                </th>
+
                                 <th
                                   scope="col"
                                   className="sm-text text-capitalize align-middle text-center border-1 border"
@@ -640,21 +733,21 @@ const TableCrud = () => {
                             </thead>
                             <tbody className="align-middle">
                               {/* loop here, logic === !search && haveData && haveDataLegnth > 0*/}
-                              {!searchedTable.searched
+                              {!searchedCustomer.searched
                                 ? [
-                                    tableList && [
-                                      tableList.data.length === 0 ? (
+                                    customerList && [
+                                      customerList.data.length === 0 ? (
                                         <tr className="align-middle">
                                           <td
                                             scope="row"
-                                            colSpan="6"
+                                            colSpan="7"
                                             className="xsm-text align-middle text-center"
                                           >
                                             {_t(t("No data available"))}
                                           </td>
                                         </tr>
                                       ) : (
-                                        tableList.data.map((item, index) => {
+                                        customerList.data.map((item, index) => {
                                           return (
                                             <tr
                                               className="align-middle"
@@ -666,16 +759,33 @@ const TableCrud = () => {
                                               >
                                                 {index +
                                                   1 +
-                                                  (tableList.current_page - 1) *
-                                                    tableList.per_page}
+                                                  (customerList.current_page -
+                                                    1) *
+                                                    customerList.per_page}
                                               </th>
 
                                               <td className="xsm-text text-capitalize align-middle text-center">
                                                 {item.name}
                                               </td>
 
+                                              <td className="xsm-text align-middle text-center">
+                                                {item.email || "-"}
+                                              </td>
+
                                               <td className="xsm-text text-capitalize align-middle text-center">
-                                                {item.capacity || "-"}
+                                                {item.phn_no ? (
+                                                  <a
+                                                    href={`tel:${item.phn_no}`}
+                                                    rel="noopener noreferrer"
+                                                  >
+                                                    {item.phn_no}
+                                                  </a>
+                                                ) : (
+                                                  "-"
+                                                )}
+                                              </td>
+                                              <td className="xsm-text text-capitalize align-middle text-center">
+                                                {item.address || "-"}
                                               </td>
 
                                               <td className="xsm-text align-middle text-center">
@@ -695,8 +805,8 @@ const TableCrud = () => {
                                                     <button
                                                       className="dropdown-item sm-text text-capitalize"
                                                       onClick={() => {
-                                                        setNewTable({
-                                                          ...newTable,
+                                                        setNewCustomer({
+                                                          ...newCustomer,
                                                           branch: null,
                                                         });
                                                         handleSetEdit(
@@ -704,7 +814,7 @@ const TableCrud = () => {
                                                         );
                                                       }}
                                                       data-toggle="modal"
-                                                      data-target="#addTable"
+                                                      data-target="#addCustomer"
                                                     >
                                                       <span className="t-mr-8">
                                                         <i className="fa fa-pencil"></i>
@@ -736,19 +846,19 @@ const TableCrud = () => {
                                   ]
                                 : [
                                     /* searched data, logic === haveData*/
-                                    searchedTable && [
-                                      searchedTable.list.length === 0 ? (
+                                    searchedCustomer && [
+                                      searchedCustomer.list.length === 0 ? (
                                         <tr className="align-middle">
                                           <td
                                             scope="row"
-                                            colSpan="6"
+                                            colSpan="7"
                                             className="xsm-text align-middle text-center"
                                           >
                                             {_t(t("No data available"))}
                                           </td>
                                         </tr>
                                       ) : (
-                                        searchedTable.list.map(
+                                        searchedCustomer.list.map(
                                           (item, index) => {
                                             return (
                                               <tr
@@ -761,17 +871,33 @@ const TableCrud = () => {
                                                 >
                                                   {index +
                                                     1 +
-                                                    (tableList.current_page -
+                                                    (customerList.current_page -
                                                       1) *
-                                                      tableList.per_page}
+                                                      customerList.per_page}
                                                 </th>
 
                                                 <td className="xsm-text text-capitalize align-middle text-center">
                                                   {item.name}
                                                 </td>
 
+                                                <td className="xsm-text align-middle text-center">
+                                                  {item.email || "-"}
+                                                </td>
+
                                                 <td className="xsm-text text-capitalize align-middle text-center">
-                                                  {item.capacity || "-"}
+                                                  {item.phn_no ? (
+                                                    <a
+                                                      href={`tel:${item.phn_no}`}
+                                                      rel="noopener noreferrer"
+                                                    >
+                                                      {item.phn_no}
+                                                    </a>
+                                                  ) : (
+                                                    "-"
+                                                  )}
+                                                </td>
+                                                <td className="xsm-text align-middle text-center">
+                                                  {item.address || "-"}
                                                 </td>
 
                                                 <td className="xsm-text align-middle text-center">
@@ -791,8 +917,8 @@ const TableCrud = () => {
                                                       <button
                                                         className="dropdown-item sm-text text-capitalize"
                                                         onClick={() => {
-                                                          setNewTable({
-                                                            ...newTable,
+                                                          setNewCustomer({
+                                                            ...newCustomer,
                                                             branch: null,
                                                           });
                                                           handleSetEdit(
@@ -800,7 +926,7 @@ const TableCrud = () => {
                                                           );
                                                         }}
                                                         data-toggle="modal"
-                                                        data-target="#addTable"
+                                                        data-target="#addCustomer"
                                                       >
                                                         <span className="t-mr-8">
                                                           <i className="fa fa-pencil"></i>
@@ -841,23 +967,23 @@ const TableCrud = () => {
               </div>
 
               {/* pagination loading effect */}
-              {newTable.uploading === true || loading === true
+              {newCustomer.uploading === true || loading === true
                 ? paginationLoading()
                 : [
                     // logic === !searched
-                    !searchedTable.searched ? (
+                    !searchedCustomer.searched ? (
                       <div key="fragment4">
                         <div className="t-bg-white mt-1 t-pt-5 t-pb-5">
                           <div className="row align-items-center t-pl-15 t-pr-15">
                             <div className="col-md-7 t-mb-15 mb-md-0">
                               {/* pagination function */}
-                              {pagination(tableList, setPaginatedTable)}
+                              {pagination(customerList, setPaginatedCustomer)}
                             </div>
                             <div className="col-md-5">
                               <ul className="t-list d-flex justify-content-md-end align-items-center">
                                 <li className="t-list__item">
                                   <span className="d-inline-block sm-text">
-                                    {showingData(tableList)}
+                                    {showingData(customerList)}
                                   </span>
                                 </li>
                               </ul>
@@ -875,8 +1001,8 @@ const TableCrud = () => {
                                 <button
                                   className="btn btn-primary btn-sm"
                                   onClick={() =>
-                                    setSearchedTable({
-                                      ...searchedTable,
+                                    setSearchedCustomer({
+                                      ...searchedCustomer,
                                       searched: false,
                                     })
                                   }
@@ -891,8 +1017,8 @@ const TableCrud = () => {
                               <li className="t-list__item">
                                 <span className="d-inline-block sm-text">
                                   {searchedShowingData(
-                                    searchedTable,
-                                    tableForSearch
+                                    searchedCustomer,
+                                    customerForSearch
                                   )}
                                 </span>
                               </li>
@@ -912,4 +1038,4 @@ const TableCrud = () => {
   );
 };
 
-export default TableCrud;
+export default CustomerCrud;

@@ -70,7 +70,7 @@ const Waiter = () => {
   } = useContext(RestaurantContext);
 
   // States hook here
-  //new group
+  //new waiter
   let [newWaiter, setNewWaiter] = useState({
     name: "",
     phn_no: "",
@@ -167,9 +167,9 @@ const Waiter = () => {
           if (error && error.response.data.errors) {
             if (error.response.data.errors.phn_no) {
               error.response.data.errors.phn_no.forEach((item) => {
-                if (item === "A waiter exist with this phone number") {
+                if (item === "A waiter exists with this phone number") {
                   toast.error(
-                    `${_t(t("A waiter exist with this phone number"))}`,
+                    `${_t(t("A waiter exists with this phone number"))}`,
                     {
                       position: "bottom-center",
                       autoClose: 10000,
@@ -275,9 +275,9 @@ const Waiter = () => {
         if (error && error.response.data.errors) {
           if (error.response.data.errors.phn_no) {
             error.response.data.errors.phn_no.forEach((item) => {
-              if (item === "A waiter exist with this phone number") {
+              if (item === "A waiter exists with this phone number") {
                 toast.error(
-                  `${_t(t("A waiter exist with this phone number"))}`,
+                  `${_t(t("A waiter exists with this phone number"))}`,
                   {
                     position: "bottom-center",
                     autoClose: 10000,
@@ -388,7 +388,7 @@ const Waiter = () => {
   return (
     <>
       <Helmet>
-        <title>{_t(t("Waiter"))}</title>
+        <title>{_t(t("Waiters"))}</title>
       </Helmet>
 
       {/* Add modal */}
@@ -647,6 +647,7 @@ const Waiter = () => {
                                   onClick={() => {
                                     setNewWaiter({
                                       ...newWaiter,
+                                      branch: null,
                                       edit: false,
                                       uploading: false,
                                     });
@@ -777,9 +778,15 @@ const Waiter = () => {
                                                   <div className="dropdown-menu">
                                                     <button
                                                       className="dropdown-item sm-text text-capitalize"
-                                                      onClick={() =>
-                                                        handleSetEdit(item.slug)
-                                                      }
+                                                      onClick={() => {
+                                                        setNewWaiter({
+                                                          ...newWaiter,
+                                                          branch: null,
+                                                        });
+                                                        handleSetEdit(
+                                                          item.slug
+                                                        );
+                                                      }}
                                                       data-toggle="modal"
                                                       data-target="#addWaiter"
                                                     >
@@ -883,11 +890,15 @@ const Waiter = () => {
                                                     <div className="dropdown-menu">
                                                       <button
                                                         className="dropdown-item sm-text text-capitalize"
-                                                        onClick={() =>
+                                                        onClick={() => {
+                                                          setNewWaiter({
+                                                            ...newWaiter,
+                                                            branch: null,
+                                                          });
                                                           handleSetEdit(
                                                             item.slug
-                                                          )
-                                                        }
+                                                          );
+                                                        }}
                                                         data-toggle="modal"
                                                         data-target="#addWaiter"
                                                       >

@@ -26,6 +26,8 @@ import {
   Kitchen,
   Branch,
   Reports,
+  //manage->food
+  GroupCrud,
   //manage->settings
   Lang,
   Translation,
@@ -33,6 +35,7 @@ import {
   //manage->settings
   Waiter,
   Permissions,
+  CustomerCrud,
   //manage->restaurantDetails
   BranchCrud,
   TableCrud,
@@ -95,8 +98,22 @@ function App() {
 
           {/* Manage menu routes */}
 
+          {/* food */}
+          <RestaurantRoute path="/dashboard/manage/food/groups" exact>
+            <GroupCrud />
+          </RestaurantRoute>
+
+          <RestaurantRoute path="/dashboard/manage/roles-and-permissions" exact>
+            <Permissions />
+          </RestaurantRoute>
+
           {/* Users */}
-          <RestaurantRoute path="/dashboard/manage/user/waiter" exact>
+
+          <RestaurantRoute path="/dashboard/manage/user/customers" exact>
+            <CustomerCrud />
+          </RestaurantRoute>
+
+          <RestaurantRoute path="/dashboard/manage/user/waiters" exact>
             <Waiter />
           </RestaurantRoute>
 

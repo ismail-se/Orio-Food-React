@@ -142,9 +142,9 @@ const Lang = () => {
         if (error.response.data.errors) {
           if (error.response.data.errors.name) {
             error.response.data.errors.name.forEach((item) => {
-              if (item === "A language already exist with this name") {
+              if (item === "A language already exists with this name") {
                 toast.error(
-                  `${_t(t("A language already exist with this name"))}`,
+                  `${_t(t("A language already exists with this name"))}`,
                   {
                     position: "bottom-center",
                     autoClose: 10000,
@@ -160,9 +160,9 @@ const Lang = () => {
 
           if (error.response.data.errors.code) {
             error.response.data.errors.code.forEach((item) => {
-              if (item === "A language already exist with this code") {
+              if (item === "A language already exists with this code") {
                 toast.error(
-                  `${_t(t("A language already exist with this code"))}`,
+                  `${_t(t("A language already exists with this code"))}`,
                   {
                     position: "bottom-center",
                     autoClose: 10000,
@@ -269,9 +269,9 @@ const Lang = () => {
         if (error.response.data.errors) {
           if (error.response.data.errors.name) {
             error.response.data.errors.name.forEach((item) => {
-              if (item === "A language already exist with this name") {
+              if (item === "A language already exists with this name") {
                 toast.error(
-                  `${_t(t("A language already exist with this name"))}`,
+                  `${_t(t("A language already exists with this name"))}`,
                   {
                     position: "bottom-center",
                     autoClose: 10000,

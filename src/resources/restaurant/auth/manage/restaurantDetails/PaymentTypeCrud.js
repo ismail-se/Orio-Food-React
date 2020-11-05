@@ -107,7 +107,7 @@ const PaymentTypeCrud = () => {
         headers: { Authorization: `Bearer ${getCookie()}` },
       })
       .then((res) => {
-        if (res.data !== "A payment type already exist with this key") {
+        if (res.data !== "A payment type already exists with this key") {
           setNewPaymentType({
             name: "",
             input_key: "",
@@ -137,7 +137,7 @@ const PaymentTypeCrud = () => {
             uploading: false,
           });
           toast.error(
-            `${_t(t("A payment type already exist with this key"))}`,
+            `${_t(t("A payment type already exists with this key"))}`,
             {
               position: "bottom-center",
               autoClose: 10000,

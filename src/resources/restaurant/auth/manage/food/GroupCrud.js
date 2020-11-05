@@ -28,15 +28,13 @@ import { confirmAlert } from "react-confirm-alert";
 import "react-confirm-alert/src/react-confirm-alert.css";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import Select from "react-select";
-import makeAnimated from "react-select/animated";
 
 //context consumer
 import { SettingsContext } from "../../../../../contexts/Settings";
 import { UserContext } from "../../../../../contexts/User";
-import { RestaurantContext } from "../../../../../contexts/Restaurant";
+import { FoodContext } from "../../../../../contexts/Food";
 
-const TableCrud = () => {
+const GroupCrud = () => {
   const { t } = useTranslation();
   const history = useHistory();
   //getting context values here
@@ -52,34 +50,29 @@ const TableCrud = () => {
   } = useContext(UserContext);
 
   let {
-    //branch
-    branchForSearch,
-
-    //tables
-    tableList,
-    setTableList,
-    setPaginatedTable,
-    setTableforSearch,
-    tableForSearch,
+    //food group
+    getFoodGroup,
+    foodGroupList,
+    setFoodGroupList,
+    setPaginatedFoodGroup,
+    foodGroupForSearch,
+    setFoodGroupforSearch,
 
     //pagination
     dataPaginating,
-  } = useContext(RestaurantContext);
+  } = useContext(FoodContext);
 
   // States hook here
   //new group
-  let [newTable, setNewTable] = useState({
+  let [newFoodGroup, setNewFoodGroup] = useState({
     name: "",
-    capacity: "",
-    branch: null,
-    selectedBranch: null,
     edit: false,
     editSlug: null,
     uploading: false,
   });
 
   //search result
-  let [searchedTable, setSearchedTable] = useState({
+  let [searchedFoodGroup, setSearchedFoodGroup] = useState({
     list: null,
     searched: false,
   });
@@ -93,146 +86,40 @@ const TableCrud = () => {
     }
   }, [authUserInfo]);
 
-  //set name, capacity hook
-  const handleSetNewTable = (e) => {
-    setNewTable({ ...newTable, [e.target.name]: e.target.value });
+  //set name hook
+  const handleSetNewFoodGroup = (e) => {
+    setNewFoodGroup({ ...newFoodGroup, [e.target.name]: e.target.value });
   };
 
-  //set branch hook
-  const handleSetBranch = (branch) => {
-    setNewTable({ ...newTable, branch });
-  };
-
-  //Save New table
-  const handleSaveNewTable = (e) => {
+  //Save New paymentType
+  const handleSaveNewFoodGroup = (e) => {
     e.preventDefault();
-    if (newTable.branch !== null) {
-      setNewTable({
-        ...newTable,
-        uploading: true,
-      });
-      const branchUrl = BASE_URL + `/settings/new-table`;
-      let formData = new FormData();
-      formData.append("name", newTable.name);
-      formData.append("capacity", newTable.capacity);
-      formData.append("branch_id", newTable.branch.id);
-      return axios
-        .post(branchUrl, formData, {
-          headers: { Authorization: `Bearer ${getCookie()}` },
-        })
-        .then((res) => {
-          setNewTable({
-            name: "",
-            capacity: "",
-            branch: null,
-            selectedBranch: null,
-            edit: false,
-            editSlug: null,
-            uploading: false,
-          });
-          setTableList(res.data[0]);
-          setTableforSearch(res.data[1]);
-          setSearchedTable({
-            ...searchedTable,
-            list: res.data[1],
-          });
-          setLoading(false);
-          toast.success(`${_t(t("Table has been added"))}`, {
-            position: "bottom-center",
-            autoClose: 10000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            className: "text-center toast-notification",
-          });
-        })
-        .catch((error) => {
-          console.log(error);
-          setLoading(false);
-          setNewTable({
-            ...newTable,
-            uploading: false,
-          });
-          toast.error(`${_t(t("Please try again."))}`, {
-            position: "bottom-center",
-            autoClose: 10000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            className: "text-center toast-notification",
-          });
-        });
-    } else {
-      toast.error(`${_t(t("Please select a branch"))}`, {
-        position: "bottom-center",
-        autoClose: 10000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        className: "text-center toast-notification",
-      });
-    }
-  };
-
-  //set edit true & values
-  const handleSetEdit = (slug) => {
-    let table = tableForSearch.filter((item) => {
-      return item.slug === slug;
-    });
-    let selectedOptionForBranch = null;
-    if (table[0].branch_id) {
-      selectedOptionForBranch = branchForSearch.filter((branchItem) => {
-        return branchItem.id === table[0].branch_id;
-      });
-    }
-    setNewTable({
-      ...newTable,
-      name: table[0].name,
-      capacity: table[0].capacity,
-      selectedBranch: selectedOptionForBranch[0] || null,
-      editSlug: table[0].slug,
-      edit: true,
-    });
-  };
-
-  //update table
-  const handleUpdateTable = (e) => {
-    e.preventDefault();
-    setNewTable({
-      ...newTable,
+    setNewFoodGroup({
+      ...newFoodGroup,
       uploading: true,
     });
-    const branchUrl = BASE_URL + `/settings/update-table`;
+    const foodGroupUrl = BASE_URL + `/settings/new-food-group`;
     let formData = new FormData();
-    formData.append("name", newTable.name);
-    formData.append("capacity", newTable.capacity);
-
-    if (newTable.branch !== null) {
-      formData.append("branch_id", newTable.branch.id);
-    }
-    formData.append("editSlug", newTable.editSlug);
+    formData.append("name", newFoodGroup.name);
     return axios
-      .post(branchUrl, formData, {
+      .post(foodGroupUrl, formData, {
         headers: { Authorization: `Bearer ${getCookie()}` },
       })
       .then((res) => {
-        setNewTable({
+        setNewFoodGroup({
           name: "",
-          capacity: "",
-          branch: null,
-          selectedBranch: null,
           edit: false,
           editSlug: null,
           uploading: false,
         });
-        setTableList(res.data[0]);
-        setTableforSearch(res.data[1]);
-        setSearchedTable({
-          ...searchedTable,
+        setFoodGroupList(res.data[0]);
+        setFoodGroupforSearch(res.data[1]);
+        setSearchedFoodGroup({
+          ...searchedFoodGroup,
           list: res.data[1],
         });
         setLoading(false);
-        toast.success(`${_t(t("Table has been updated"))}`, {
+        toast.success(`${_t(t("Food group has been added"))}`, {
           position: "bottom-center",
           autoClose: 10000,
           hideProgressBar: false,
@@ -241,13 +128,87 @@ const TableCrud = () => {
           className: "text-center toast-notification",
         });
       })
-      .catch(() => {
+      .catch((error) => {
         setLoading(false);
-        setNewTable({
-          ...newTable,
+        setNewFoodGroup({
+          ...newFoodGroup,
           uploading: false,
         });
-        toast.error(`${_t(t("Please try again."))}`, {
+        if (error.response.data.errors) {
+          if (error.response.data.errors.name) {
+            error.response.data.errors.name.forEach((item) => {
+              if (item === "A food group already exists with this name") {
+                toast.error(
+                  `${_t(t("A food group already exists with this name"))}`,
+                  {
+                    position: "bottom-center",
+                    autoClose: 10000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    className: "text-center toast-notification",
+                  }
+                );
+              }
+            });
+          } else {
+            toast.error(`${_t(t("Please try again."))}`, {
+              position: "bottom-center",
+              autoClose: 10000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              className: "text-center toast-notification",
+            });
+          }
+        }
+      });
+  };
+
+  //set edit true & values
+  const handleSetEdit = (slug) => {
+    let paymentType = foodGroupForSearch.filter((item) => {
+      return item.slug === slug;
+    });
+    setNewFoodGroup({
+      ...newFoodGroup,
+      name: paymentType[0].name,
+      input_key: paymentType[0].input_key,
+      editSlug: paymentType[0].slug,
+      edit: true,
+    });
+  };
+
+  //update food group
+  const handleUpdateFoodGroup = (e) => {
+    e.preventDefault();
+    setNewFoodGroup({
+      ...newFoodGroup,
+      uploading: true,
+    });
+    const foodGroupUrl = BASE_URL + `/settings/update-food-group`;
+    let formData = new FormData();
+    formData.append("name", newFoodGroup.name);
+    formData.append("editSlug", newFoodGroup.editSlug);
+    return axios
+      .post(foodGroupUrl, formData, {
+        headers: { Authorization: `Bearer ${getCookie()}` },
+      })
+      .then((res) => {
+        setNewFoodGroup({
+          name: "",
+          edit: false,
+          editSlug: null,
+          uploading: false,
+        });
+        setFoodGroupList(res.data[0]);
+        setFoodGroupforSearch(res.data[1]);
+        setSearchedFoodGroup({
+          ...searchedFoodGroup,
+          list: res.data[1],
+        });
+        setLoading(false);
+        toast.success(`${_t(t("Food group has been updated"))}`, {
           position: "bottom-center",
           autoClose: 10000,
           hideProgressBar: false,
@@ -255,37 +216,63 @@ const TableCrud = () => {
           pauseOnHover: true,
           className: "text-center toast-notification",
         });
+      })
+      .catch((error) => {
+        setLoading(false);
+        setNewFoodGroup({
+          ...newFoodGroup,
+          uploading: false,
+        });
+        if (error.response.data.errors) {
+          if (error.response.data.errors.name) {
+            error.response.data.errors.name.forEach((item) => {
+              if (item === "A food group already exists with this name") {
+                toast.error(
+                  `${_t(t("A food group already exists with this name"))}`,
+                  {
+                    position: "bottom-center",
+                    autoClose: 10000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    className: "text-center toast-notification",
+                  }
+                );
+              }
+            });
+          } else {
+            toast.error(`${_t(t("Please try again."))}`, {
+              position: "bottom-center",
+              autoClose: 10000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              className: "text-center toast-notification",
+            });
+          }
+        }
       });
   };
 
-  //search table here
+  //search food group here
   const handleSearch = (e) => {
     let searchInput = e.target.value.toLowerCase();
     if (searchInput.length === 0) {
-      setSearchedTable({ ...searchedTable, searched: false });
+      setSearchedFoodGroup({ ...searchedFoodGroup, searched: false });
     } else {
-      let searchedList = tableForSearch.filter((item) => {
+      let searchedList = foodGroupForSearch.filter((item) => {
         let lowerCaseItemName = item.name.toLowerCase();
-        let lowerCaseItemCapacity =
-          item.capacity !== null && item.capacity.toLowerCase();
-        let lowerCaseItemBranch =
-          item.branch_name !== null && item.branch_name.toLowerCase();
-        return (
-          lowerCaseItemName.includes(searchInput) ||
-          (lowerCaseItemCapacity &&
-            lowerCaseItemCapacity.includes(searchInput)) ||
-          (lowerCaseItemBranch && lowerCaseItemBranch.includes(searchInput))
-        );
+        return lowerCaseItemName.includes(searchInput);
       });
-      setSearchedTable({
-        ...searchedTable,
+      setSearchedFoodGroup({
+        ...searchedFoodGroup,
         list: searchedList,
         searched: true,
       });
     }
   };
 
-  //delete confirmation modal of table
+  //delete confirmation modal of paymentType
   const handleDeleteConfirmation = (slug) => {
     confirmAlert({
       customUI: ({ onClose }) => {
@@ -297,7 +284,7 @@ const TableCrud = () => {
               <button
                 className="btn btn-primary"
                 onClick={() => {
-                  handleDeleteTable(slug);
+                  handleDeleteFoodGroup(slug);
                   onClose();
                 }}
               >
@@ -313,23 +300,23 @@ const TableCrud = () => {
     });
   };
 
-  //delete table here
-  const handleDeleteTable = (slug) => {
+  //delete paymentType here
+  const handleDeleteFoodGroup = (slug) => {
     setLoading(true);
-    const branchUrl = BASE_URL + `/settings/delete-table/${slug}`;
+    const foodGroupUrl = BASE_URL + `/settings/delete-food-group/${slug}`;
     return axios
-      .get(branchUrl, {
+      .get(foodGroupUrl, {
         headers: { Authorization: `Bearer ${getCookie()}` },
       })
       .then((res) => {
-        setTableList(res.data[0]);
-        setTableforSearch(res.data[1]);
-        setSearchedTable({
-          ...searchedTable,
+        setFoodGroupList(res.data[0]);
+        setFoodGroupforSearch(res.data[1]);
+        setSearchedFoodGroup({
+          ...searchedFoodGroup,
           list: res.data[1],
         });
         setLoading(false);
-        toast.success(`${_t(t("Table has been deleted successfully"))}`, {
+        toast.success(`${_t(t("Food group has been deleted successfully"))}`, {
           position: "bottom-center",
           autoClose: 10000,
           hideProgressBar: false,
@@ -354,19 +341,19 @@ const TableCrud = () => {
   return (
     <>
       <Helmet>
-        <title>{_t(t("Tables"))}</title>
+        <title>{_t(t("Food Groups"))}</title>
       </Helmet>
 
       {/* Add modal */}
-      <div className="modal fade" id="addTable" aria-hidden="true">
+      <div className="modal fade" id="addPaymentType" aria-hidden="true">
         <div className="modal-dialog modal-lg">
           <div className="modal-content">
             <div className="modal-header align-items-center">
               <div className="fk-sm-card__content">
                 <h5 className="text-capitalize fk-sm-card__title">
-                  {!newTable.edit
-                    ? _t(t("Add new table"))
-                    : _t(t("Update table"))}
+                  {!newFoodGroup.edit
+                    ? _t(t("Add new food group"))
+                    : _t(t("Update food group"))}
                 </h5>
               </div>
               <button
@@ -378,11 +365,13 @@ const TableCrud = () => {
             </div>
             <div className="modal-body">
               {/* show form or show saving loading */}
-              {newTable.uploading === false ? (
-                <div key="fragment-table-1">
+              {newFoodGroup.uploading === false ? (
+                <div key="fragment-food-group-1">
                   <form
                     onSubmit={
-                      !newTable.edit ? handleSaveNewTable : handleUpdateTable
+                      !newFoodGroup.edit
+                        ? handleSaveNewFoodGroup
+                        : handleUpdateFoodGroup
                     }
                   >
                     <div>
@@ -395,62 +384,10 @@ const TableCrud = () => {
                         className="form-control"
                         id="name"
                         name="name"
-                        placeholder="e.g. Table 01"
-                        value={newTable.name || ""}
+                        placeholder="e.g. Burger, Chicken"
+                        value={newFoodGroup.name || ""}
                         required
-                        onChange={handleSetNewTable}
-                      />
-                    </div>
-
-                    <div className="mt-3">
-                      <label className="form-label mb-0">
-                        {_t(t("Select a branch"))}{" "}
-                        {newTable.edit ? (
-                          <small className="text-primary">
-                            {"( "}
-                            {_t(
-                              t(
-                                "Leave empty if you do not want to change branch"
-                              )
-                            )}
-                            {" )"}
-                          </small>
-                        ) : (
-                          <small className="text-primary">*</small>
-                        )}
-                      </label>
-                      {newTable.edit && newTable.selectedBranch !== null && (
-                        <ul className="list-group list-group-horizontal-sm row col-12 mb-2 ml-md-1">
-                          <li className="list-group-item col-12 col-md-3 bg-success rounded-sm py-1 px-2 my-1 text-center">
-                            {newTable.selectedBranch.name}
-                          </li>
-                        </ul>
-                      )}
-                      <Select
-                        options={branchForSearch}
-                        components={makeAnimated()}
-                        getOptionLabel={(option) => option.name}
-                        getOptionValue={(option) => option.name}
-                        className="basic-multi-select"
-                        classNamePrefix="select"
-                        onChange={handleSetBranch}
-                        placeholder={_t(t("Please select a branch"))}
-                      />
-                    </div>
-
-                    <div className="mt-3">
-                      <label htmlFor="capacity" className="form-label">
-                        {_t(t("Guest capacity"))}
-                      </label>
-                      <input
-                        type="number"
-                        className="form-control"
-                        id="capacity"
-                        name="capacity"
-                        placeholder="e.g. 05"
-                        min="1"
-                        value={newTable.capacity || ""}
-                        onChange={handleSetNewTable}
+                        onChange={handleSetNewFoodGroup}
                       />
                     </div>
 
@@ -461,7 +398,9 @@ const TableCrud = () => {
                             type="submit"
                             className="btn btn-success text-dark w-100 xsm-text text-uppercase t-width-max"
                           >
-                            {!newTable.edit ? _t(t("Save")) : _t(t("Update"))}
+                            {!newFoodGroup.edit
+                              ? _t(t("Save"))
+                              : _t(t("Update"))}
                           </button>
                         </div>
                         <div className="col-6">
@@ -493,7 +432,7 @@ const TableCrud = () => {
                             e.preventDefault();
                           }}
                         >
-                          {!newTable.edit ? _t(t("Save")) : _t(t("Update"))}
+                          {!newFoodGroup.edit ? _t(t("Save")) : _t(t("Update"))}
                         </button>
                       </div>
                       <div className="col-6">
@@ -531,7 +470,7 @@ const TableCrud = () => {
                 <div className="fk-scroll--pos-menu" data-simplebar>
                   <div className="t-pl-15 t-pr-15">
                     {/* Loading effect */}
-                    {newTable.uploading === true || loading === true ? (
+                    {newFoodGroup.uploading === true || loading === true ? (
                       tableLoading()
                     ) : (
                       <div key="fragment3">
@@ -544,8 +483,8 @@ const TableCrud = () => {
                             <ul className="t-list fk-breadcrumb">
                               <li className="fk-breadcrumb__list">
                                 <span className="t-link fk-breadcrumb__link text-capitalize">
-                                  {!searchedTable.searched
-                                    ? _t(t("Table List"))
+                                  {!searchedFoodGroup.searched
+                                    ? _t(t("Food Group List"))
                                     : _t(t("Search Result"))}
                                 </span>
                               </li>
@@ -582,11 +521,10 @@ const TableCrud = () => {
                                   type="button"
                                   className="btn btn-primary xsm-text text-uppercase btn-lg btn-block"
                                   data-toggle="modal"
-                                  data-target="#addTable"
+                                  data-target="#addPaymentType"
                                   onClick={() => {
-                                    setNewTable({
-                                      ...newTable,
-                                      branch: null,
+                                    setNewFoodGroup({
+                                      ...newFoodGroup,
                                       edit: false,
                                       uploading: false,
                                     });
@@ -621,29 +559,16 @@ const TableCrud = () => {
                                   scope="col"
                                   className="sm-text text-capitalize align-middle text-center border-1 border"
                                 >
-                                  {_t(t("Capacity"))}
-                                </th>
-                                <th
-                                  scope="col"
-                                  className="sm-text text-capitalize align-middle text-center border-1 border"
-                                >
-                                  {_t(t("Branch"))}
-                                </th>
-
-                                <th
-                                  scope="col"
-                                  className="sm-text text-capitalize align-middle text-center border-1 border"
-                                >
                                   {_t(t("Action"))}
                                 </th>
                               </tr>
                             </thead>
                             <tbody className="align-middle">
                               {/* loop here, logic === !search && haveData && haveDataLegnth > 0*/}
-                              {!searchedTable.searched
+                              {!searchedFoodGroup.searched
                                 ? [
-                                    tableList && [
-                                      tableList.data.length === 0 ? (
+                                    foodGroupList && [
+                                      foodGroupList.data.length === 0 ? (
                                         <tr className="align-middle">
                                           <td
                                             scope="row"
@@ -654,101 +579,7 @@ const TableCrud = () => {
                                           </td>
                                         </tr>
                                       ) : (
-                                        tableList.data.map((item, index) => {
-                                          return (
-                                            <tr
-                                              className="align-middle"
-                                              key={index}
-                                            >
-                                              <th
-                                                scope="row"
-                                                className="xsm-text text-capitalize align-middle text-center"
-                                              >
-                                                {index +
-                                                  1 +
-                                                  (tableList.current_page - 1) *
-                                                    tableList.per_page}
-                                              </th>
-
-                                              <td className="xsm-text text-capitalize align-middle text-center">
-                                                {item.name}
-                                              </td>
-
-                                              <td className="xsm-text text-capitalize align-middle text-center">
-                                                {item.capacity || "-"}
-                                              </td>
-
-                                              <td className="xsm-text align-middle text-center">
-                                                {item.branch_name || "-"}
-                                              </td>
-
-                                              <td className="xsm-text text-capitalize align-middle text-center">
-                                                <div className="dropdown">
-                                                  <button
-                                                    className="btn t-bg-clear t-text-dark--light-40"
-                                                    type="button"
-                                                    data-toggle="dropdown"
-                                                  >
-                                                    <i className="fa fa-ellipsis-h"></i>
-                                                  </button>
-                                                  <div className="dropdown-menu">
-                                                    <button
-                                                      className="dropdown-item sm-text text-capitalize"
-                                                      onClick={() => {
-                                                        setNewTable({
-                                                          ...newTable,
-                                                          branch: null,
-                                                        });
-                                                        handleSetEdit(
-                                                          item.slug
-                                                        );
-                                                      }}
-                                                      data-toggle="modal"
-                                                      data-target="#addTable"
-                                                    >
-                                                      <span className="t-mr-8">
-                                                        <i className="fa fa-pencil"></i>
-                                                      </span>
-                                                      {_t(t("Edit"))}
-                                                    </button>
-
-                                                    <button
-                                                      className="dropdown-item sm-text text-capitalize"
-                                                      onClick={() => {
-                                                        handleDeleteConfirmation(
-                                                          item.slug
-                                                        );
-                                                      }}
-                                                    >
-                                                      <span className="t-mr-8">
-                                                        <i className="fa fa-trash"></i>
-                                                      </span>
-                                                      {_t(t("Delete"))}
-                                                    </button>
-                                                  </div>
-                                                </div>
-                                              </td>
-                                            </tr>
-                                          );
-                                        })
-                                      ),
-                                    ],
-                                  ]
-                                : [
-                                    /* searched data, logic === haveData*/
-                                    searchedTable && [
-                                      searchedTable.list.length === 0 ? (
-                                        <tr className="align-middle">
-                                          <td
-                                            scope="row"
-                                            colSpan="6"
-                                            className="xsm-text align-middle text-center"
-                                          >
-                                            {_t(t("No data available"))}
-                                          </td>
-                                        </tr>
-                                      ) : (
-                                        searchedTable.list.map(
+                                        foodGroupList.data.map(
                                           (item, index) => {
                                             return (
                                               <tr
@@ -761,21 +592,13 @@ const TableCrud = () => {
                                                 >
                                                   {index +
                                                     1 +
-                                                    (tableList.current_page -
+                                                    (foodGroupList.current_page -
                                                       1) *
-                                                      tableList.per_page}
+                                                      foodGroupList.per_page}
                                                 </th>
 
                                                 <td className="xsm-text text-capitalize align-middle text-center">
                                                   {item.name}
-                                                </td>
-
-                                                <td className="xsm-text text-capitalize align-middle text-center">
-                                                  {item.capacity || "-"}
-                                                </td>
-
-                                                <td className="xsm-text align-middle text-center">
-                                                  {item.branch_name || "-"}
                                                 </td>
 
                                                 <td className="xsm-text text-capitalize align-middle text-center">
@@ -790,17 +613,98 @@ const TableCrud = () => {
                                                     <div className="dropdown-menu">
                                                       <button
                                                         className="dropdown-item sm-text text-capitalize"
-                                                        onClick={() => {
-                                                          setNewTable({
-                                                            ...newTable,
-                                                            branch: null,
-                                                          });
+                                                        onClick={() =>
                                                           handleSetEdit(
+                                                            item.slug
+                                                          )
+                                                        }
+                                                        data-toggle="modal"
+                                                        data-target="#addPaymentType"
+                                                      >
+                                                        <span className="t-mr-8">
+                                                          <i className="fa fa-pencil"></i>
+                                                        </span>
+                                                        {_t(t("Edit"))}
+                                                      </button>
+
+                                                      <button
+                                                        className="dropdown-item sm-text text-capitalize"
+                                                        onClick={() => {
+                                                          handleDeleteConfirmation(
                                                             item.slug
                                                           );
                                                         }}
+                                                      >
+                                                        <span className="t-mr-8">
+                                                          <i className="fa fa-trash"></i>
+                                                        </span>
+                                                        {_t(t("Delete"))}
+                                                      </button>
+                                                    </div>
+                                                  </div>
+                                                </td>
+                                              </tr>
+                                            );
+                                          }
+                                        )
+                                      ),
+                                    ],
+                                  ]
+                                : [
+                                    /* searched data, logic === haveData*/
+                                    searchedFoodGroup && [
+                                      searchedFoodGroup.list.length === 0 ? (
+                                        <tr className="align-middle">
+                                          <td
+                                            scope="row"
+                                            colSpan="6"
+                                            className="xsm-text align-middle text-center"
+                                          >
+                                            {_t(t("No data available"))}
+                                          </td>
+                                        </tr>
+                                      ) : (
+                                        searchedFoodGroup.list.map(
+                                          (item, index) => {
+                                            return (
+                                              <tr
+                                                className="align-middle"
+                                                key={index}
+                                              >
+                                                <th
+                                                  scope="row"
+                                                  className="xsm-text text-capitalize align-middle text-center"
+                                                >
+                                                  {index +
+                                                    1 +
+                                                    (foodGroupList.current_page -
+                                                      1) *
+                                                      foodGroupList.per_page}
+                                                </th>
+
+                                                <td className="xsm-text text-capitalize align-middle text-center">
+                                                  {item.name}
+                                                </td>
+
+                                                <td className="xsm-text text-capitalize align-middle text-center">
+                                                  <div className="dropdown">
+                                                    <button
+                                                      className="btn t-bg-clear t-text-dark--light-40"
+                                                      type="button"
+                                                      data-toggle="dropdown"
+                                                    >
+                                                      <i className="fa fa-ellipsis-h"></i>
+                                                    </button>
+                                                    <div className="dropdown-menu">
+                                                      <button
+                                                        className="dropdown-item sm-text text-capitalize"
+                                                        onClick={() =>
+                                                          handleSetEdit(
+                                                            item.slug
+                                                          )
+                                                        }
                                                         data-toggle="modal"
-                                                        data-target="#addTable"
+                                                        data-target="#addPaymentType"
                                                       >
                                                         <span className="t-mr-8">
                                                           <i className="fa fa-pencil"></i>
@@ -841,23 +745,23 @@ const TableCrud = () => {
               </div>
 
               {/* pagination loading effect */}
-              {newTable.uploading === true || loading === true
+              {newFoodGroup.uploading === true || loading === true
                 ? paginationLoading()
                 : [
                     // logic === !searched
-                    !searchedTable.searched ? (
+                    !searchedFoodGroup.searched ? (
                       <div key="fragment4">
                         <div className="t-bg-white mt-1 t-pt-5 t-pb-5">
                           <div className="row align-items-center t-pl-15 t-pr-15">
                             <div className="col-md-7 t-mb-15 mb-md-0">
                               {/* pagination function */}
-                              {pagination(tableList, setPaginatedTable)}
+                              {pagination(foodGroupList, setPaginatedFoodGroup)}
                             </div>
                             <div className="col-md-5">
                               <ul className="t-list d-flex justify-content-md-end align-items-center">
                                 <li className="t-list__item">
                                   <span className="d-inline-block sm-text">
-                                    {showingData(tableList)}
+                                    {showingData(foodGroupList)}
                                   </span>
                                 </li>
                               </ul>
@@ -875,8 +779,8 @@ const TableCrud = () => {
                                 <button
                                   className="btn btn-primary btn-sm"
                                   onClick={() =>
-                                    setSearchedTable({
-                                      ...searchedTable,
+                                    setSearchedFoodGroup({
+                                      ...searchedFoodGroup,
                                       searched: false,
                                     })
                                   }
@@ -891,8 +795,8 @@ const TableCrud = () => {
                               <li className="t-list__item">
                                 <span className="d-inline-block sm-text">
                                   {searchedShowingData(
-                                    searchedTable,
-                                    tableForSearch
+                                    searchedFoodGroup,
+                                    foodGroupForSearch
                                   )}
                                 </span>
                               </li>
@@ -912,4 +816,4 @@ const TableCrud = () => {
   );
 };
 
-export default TableCrud;
+export default GroupCrud;

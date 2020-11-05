@@ -79,7 +79,11 @@ const ManageSidebar = () => {
         <div className="fk-scroll--pos-menu" data-simplebar>
           <ul className="t-list fk-pos-nav">
             {/* Foods */}
-            {/* <li className={`fk-pos-nav__list fk-pos-nav__list-has-sub`}>
+            <li
+              className={`fk-pos-nav__list fk-pos-nav__list-has-sub ${
+                window.location.pathname.includes("/food") ? "active" : ""
+              }`}
+            >
               <a
                 className="w-100 t-text-dark t-heading-font btn btn-outline-danger font-weight-bold text-uppercase rounded-0 text-left"
                 rel="noopener noreferrer"
@@ -88,16 +92,22 @@ const ManageSidebar = () => {
                 {_t(t("Foods"))}
               </a>
               <ul className="t-list fk-pos-nav__sub t-bg-white list-group">
-                {managePageHrefLink(
+                {/* {managePageHrefLink(
                   "/dashboard/manage/user/admin-staff-user",
                   _t(t("All Items"))
-                )}
+                )} */}
 
                 {managePageHrefLink(
-                  "/dashboard/manage/user/waiter",
+                  "/dashboard/manage/food/groups",
                   _t(t("Groups"))
                 )}
 
+                {/* 
+                {managePageHrefLink(
+                  "/dashboard/manage/roles-and-permissions",
+                  _t(t("Units"))
+                )}
+                
                 {managePageHrefLink(
                   "/dashboard/manage/roles-and-permissions",
                   _t(t("Variations"))
@@ -112,8 +122,9 @@ const ManageSidebar = () => {
                   "/dashboard/manage/roles-and-permissions",
                   _t(t("Add new item"))
                 )}
+                */}
               </ul>
-            </li> */}
+            </li>
 
             {/* User Management */}
             <li
@@ -135,21 +146,21 @@ const ManageSidebar = () => {
                 {/* {managePageHrefLink(
                   "/dashboard/manage/user/admin-staff-user",
                   _t(t("Admin / Staff"))
-                )}
-
-                {managePageHrefLink(
-                  "/dashboard/manage/user/customers",
-                  _t(t("Customer"))
                 )} */}
 
                 {managePageHrefLink(
-                  "/dashboard/manage/user/waiter",
-                  _t(t("Waiter"))
+                  "/dashboard/manage/user/customers",
+                  _t(t("Customers"))
+                )}
+
+                {managePageHrefLink(
+                  "/dashboard/manage/user/waiters",
+                  _t(t("Waiters"))
                 )}
 
                 {managePageHrefLink(
                   "/dashboard/manage/roles-and-permissions",
-                  _t(t("Role Group"))
+                  _t(t("Role Groups"))
                 )}
               </ul>
             </li>
@@ -186,7 +197,7 @@ const ManageSidebar = () => {
 
                 {managePageHrefLink(
                   "/dashboard/manage/restaurant/payment-type",
-                  _t(t("Payment Type"))
+                  _t(t("Payment Types"))
                 )}
               </ul>
             </li>

@@ -15,6 +15,9 @@ import Kitchen from "../resources/restaurant/auth/Kitchen";
 import Branch from "../resources/restaurant/auth/Branch";
 import Reports from "../resources/restaurant/auth/Reports";
 //from restaurant-auth-manage
+//-food
+import GroupCrud from "../resources/restaurant/auth/manage/food/GroupCrud";
+
 //-settings
 import Lang from "../resources/restaurant/auth/manage/settings/Lang";
 import Translation from "../resources/restaurant/auth/manage/settings/Translation";
@@ -22,6 +25,8 @@ import Smtp from "../resources/restaurant/auth/manage/settings/Smtp";
 //-users
 import Permissions from "../resources/restaurant/auth/manage/user/Permissions";
 import Waiter from "../resources/restaurant/auth/manage/user/Waiter";
+import CustomerCrud from "../resources/restaurant/auth/manage/user/CustomerCrud";
+
 //-restairantDetails
 import BranchCrud from "../resources/restaurant/auth/manage/restaurantDetails/BranchCrud";
 import TableCrud from "../resources/restaurant/auth/manage/restaurantDetails/TableCrud";
@@ -42,6 +47,8 @@ export {
   Kitchen,
   Branch,
   Reports,
+  //manage->food
+  GroupCrud,
   //manage->settings
   Lang,
   Translation,
@@ -49,6 +56,7 @@ export {
   //manage->users
   Waiter,
   Permissions,
+  CustomerCrud,
   //manage->restaurantDetails
   BranchCrud,
   TableCrud,

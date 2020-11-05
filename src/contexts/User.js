@@ -28,6 +28,10 @@ const UserProvider = ({ children }) => {
   const [waiterList, setWaiterList] = useState(null);
   const [waiterForSearch, setWaiterforSearch] = useState(null);
 
+  //customer
+  const [customerList, setCustomerList] = useState(null);
+  const [customerForSearch, setCustomerforSearch] = useState(null);
+
   //useEffect- to get data on render
   useEffect(() => {
     //call- unauthenticated
@@ -36,6 +40,7 @@ const UserProvider = ({ children }) => {
     if (getCookie() !== undefined) {
       getAuthUser();
       getWaiter();
+      getCustomer();
     }
   }, []);
 
@@ -89,6 +94,37 @@ const UserProvider = ({ children }) => {
       .catch(() => {});
   };
 
+  //get customer
+  const getCustomer = () => {
+    setLoading(true);
+    const customerUrl = BASE_URL + "/settings/get-customer";
+    return axios
+      .get(customerUrl, {
+        headers: { Authorization: `Bearer ${getCookie()}` },
+      })
+      .then((res) => {
+        setCustomerList(res.data[0]);
+        setCustomerforSearch(res.data[1]);
+        setLoading(false);
+      });
+  };
+
+  // get paginated customer
+  const setPaginatedCustomer = (pageNo) => {
+    setDataPaginating(true);
+    const url = BASE_URL + "/settings/get-customer?page=" + pageNo;
+    return axios
+      .get(url, {
+        headers: { Authorization: `Bearer ${getCookie()}` },
+      })
+      .then((res) => {
+        setCustomerList(res.data[0]);
+        setCustomerforSearch(res.data[1]);
+        setDataPaginating(false);
+      })
+      .catch(() => {});
+  };
+
   return (
     <UserContext.Provider
       value={{
@@ -104,6 +140,14 @@ const UserProvider = ({ children }) => {
         setPaginatedWaiter,
         waiterForSearch,
         setWaiterforSearch,
+
+        //customer
+        getCustomer,
+        customerList,
+        setCustomerList,
+        setPaginatedCustomer,
+        customerForSearch,
+        setCustomerforSearch,
 
         //pagination
         dataPaginating,

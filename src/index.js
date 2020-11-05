@@ -9,13 +9,16 @@ import "./i18next";
 import { UserProvider } from "./contexts/User";
 import { SettingsProvider } from "./contexts/Settings";
 import { RestaurantProvider } from "./contexts/Restaurant";
+import { FoodProvider } from "./contexts/Food";
 
 ReactDOM.render(
   <React.StrictMode>
     <UserProvider>
       <SettingsProvider>
         <RestaurantProvider>
-          <App />
+          <FoodProvider>
+            <App />
+          </FoodProvider>
         </RestaurantProvider>
       </SettingsProvider>
     </UserProvider>

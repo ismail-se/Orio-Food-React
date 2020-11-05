@@ -142,9 +142,9 @@ const Permissions = () => {
           if (error && error.response.data.errors) {
             if (error.response.data.errors.name) {
               error.response.data.errors.name.forEach((item) => {
-                if (item === "A group already exist with this name") {
+                if (item === "A group already exists with this name") {
                   toast.error(
-                    `${_t(t("A group already exist with this name"))}`,
+                    `${_t(t("A group already exists with this name"))}`,
                     {
                       position: "bottom-center",
                       autoClose: 10000,
@@ -239,9 +239,9 @@ const Permissions = () => {
         if (error && error.response.data.errors) {
           if (error.response.data.errors.name) {
             error.response.data.errors.name.forEach((item) => {
-              if (item === "A group already exist with this name") {
+              if (item === "A group already exists with this name") {
                 toast.error(
-                  `${_t(t("A group already exist with this name"))}`,
+                  `${_t(t("A group already exists with this name"))}`,
                   {
                     position: "bottom-center",
                     autoClose: 10000,
@@ -603,6 +603,7 @@ const Permissions = () => {
                                   onClick={() => {
                                     setNewGroup({
                                       ...newGroup,
+                                      permission_ids: null,
                                       edit: false,
                                       uploading: false,
                                     });
@@ -738,11 +739,15 @@ const Permissions = () => {
                                                       <div className="dropdown-menu">
                                                         <button
                                                           className="dropdown-item sm-text text-capitalize"
-                                                          onClick={() =>
+                                                          onClick={() => {
+                                                            setNewGroup({
+                                                              ...newGroup,
+                                                              permission_ids: null,
+                                                            });
                                                             handleSetEdit(
                                                               item.id
-                                                            )
-                                                          }
+                                                            );
+                                                          }}
                                                           data-toggle="modal"
                                                           data-target="#addGroup"
                                                         >
@@ -877,11 +882,15 @@ const Permissions = () => {
                                                       <div className="dropdown-menu">
                                                         <button
                                                           className="dropdown-item sm-text text-capitalize"
-                                                          onClick={() =>
+                                                          onClick={() => {
+                                                            setNewGroup({
+                                                              ...newGroup,
+                                                              permission_ids: null,
+                                                            });
                                                             handleSetEdit(
                                                               item.id
-                                                            )
-                                                          }
+                                                            );
+                                                          }}
                                                           data-toggle="modal"
                                                           data-target="#addGroup"
                                                         >
