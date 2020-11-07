@@ -28,7 +28,11 @@ const FoodProvider = ({ children }) => {
 
   //variation
   const [variationList, setVariationList] = useState(null);
-  const [variationForSearch, setVariationforSearch] = useState(null);
+  const [variationForSearch, setVariationForSearch] = useState(null);
+
+  //property Group
+  const [propertyGroupList, setPropertyGroupList] = useState(null);
+  const [propertyGroupForSearch, setPropertyGroupForSearch] = useState(null);
 
   //useEffect- to get data on render
   useEffect(() => {
@@ -38,6 +42,8 @@ const FoodProvider = ({ children }) => {
     if (getCookie() !== undefined) {
       getFoodGroup();
       getFoodUnit();
+      getVariation();
+      getPropertyGroup();
     }
   }, []);
 
@@ -113,7 +119,7 @@ const FoodProvider = ({ children }) => {
       })
       .then((res) => {
         setVariationList(res.data[0]);
-        setVariationforSearch(res.data[1]);
+        setVariationForSearch(res.data[1]);
         setLoading(false);
       });
   };
@@ -128,7 +134,38 @@ const FoodProvider = ({ children }) => {
       })
       .then((res) => {
         setVariationList(res.data[0]);
-        setVariationforSearch(res.data[1]);
+        setVariationForSearch(res.data[1]);
+        setDataPaginating(false);
+      })
+      .catch(() => {});
+  };
+
+  //get property group
+  const getPropertyGroup = () => {
+    setLoading(true);
+    const propertyGroupUrl = BASE_URL + "/settings/get-property-group";
+    return axios
+      .get(propertyGroupUrl, {
+        headers: { Authorization: `Bearer ${getCookie()}` },
+      })
+      .then((res) => {
+        setPropertyGroupList(res.data[0]);
+        setPropertyGroupForSearch(res.data[1]);
+        setLoading(false);
+      });
+  };
+
+  // get paginated property group
+  const setPaginatedPropertyGroup = (pageNo) => {
+    setDataPaginating(true);
+    const url = BASE_URL + "/settings/get-property-group?page=" + pageNo;
+    return axios
+      .get(url, {
+        headers: { Authorization: `Bearer ${getCookie()}` },
+      })
+      .then((res) => {
+        setPropertyGroupList(res.data[0]);
+        setPropertyGroupForSearch(res.data[1]);
         setDataPaginating(false);
       })
       .catch(() => {});
@@ -159,7 +196,15 @@ const FoodProvider = ({ children }) => {
         setVariationList,
         setPaginatedVariation,
         variationForSearch,
-        setVariationforSearch,
+        setVariationForSearch,
+
+        //property group
+        getPropertyGroup,
+        propertyGroupList,
+        setPropertyGroupList,
+        setPaginatedPropertyGroup,
+        propertyGroupForSearch,
+        setPropertyGroupForSearch,
 
         //pagination
         dataPaginating,

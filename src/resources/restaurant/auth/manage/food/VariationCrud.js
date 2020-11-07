@@ -56,7 +56,7 @@ const VariationCrud = () => {
     setVariationList,
     setPaginatedVariation,
     variationForSearch,
-    setVariationforSearch,
+    setVariationForSearch,
 
     //pagination
     dataPaginating,
@@ -113,7 +113,7 @@ const VariationCrud = () => {
           uploading: false,
         });
         setVariationList(res.data[0]);
-        setVariationforSearch(res.data[1]);
+        setVariationForSearch(res.data[1]);
         setSearchedVariation({
           ...searchedVariation,
           list: res.data[1],
@@ -201,7 +201,7 @@ const VariationCrud = () => {
           uploading: false,
         });
         setVariationList(res.data[0]);
-        setVariationforSearch(res.data[1]);
+        setVariationForSearch(res.data[1]);
         setSearchedVariation({
           ...searchedVariation,
           list: res.data[1],
@@ -309,7 +309,7 @@ const VariationCrud = () => {
       })
       .then((res) => {
         setVariationList(res.data[0]);
-        setVariationforSearch(res.data[1]);
+        setVariationForSearch(res.data[1]);
         setSearchedVariation({
           ...searchedVariation,
           list: res.data[1],

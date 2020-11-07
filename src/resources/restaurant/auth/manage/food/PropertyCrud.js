@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect } from "react";
-import { useHistory } from "react-router-dom";
+import { NavLink, useHistory } from "react-router-dom";
 
 //pages & includes
 import ManageSidebar from "../ManageSidebar";
@@ -50,21 +50,21 @@ const PropertyCrud = () => {
   } = useContext(UserContext);
 
   let {
-    //variation
-    getVariation,
-    variationList,
-    setVariationList,
-    setPaginatedVariation,
-    variationForSearch,
-    setVariationforSearch,
+    //property group
+    getPropertyGroup,
+    propertyGroupList,
+    setPropertyGroupList,
+    setPaginatedPropertyGroup,
+    propertyGroupForSearch,
+    setPropertyGroupForSearch,
 
     //pagination
     dataPaginating,
   } = useContext(FoodContext);
 
   // States hook here
-  //new variation
-  let [newVariation, setNewVariation] = useState({
+  //new property group
+  let [newPropertyGroup, setNewPropertyGroup] = useState({
     name: "",
     edit: false,
     editSlug: null,
@@ -72,7 +72,7 @@ const PropertyCrud = () => {
   });
 
   //search result
-  let [searchedVariation, setSearchedVariation] = useState({
+  let [searchedPropertyGroup, setSearchedPropertyGroup] = useState({
     list: null,
     searched: false,
   });
@@ -87,39 +87,42 @@ const PropertyCrud = () => {
   }, [authUserInfo]);
 
   //set name hook
-  const handleSetNewVariation = (e) => {
-    setNewVariation({ ...newVariation, [e.target.name]: e.target.value });
+  const handleSetNewPropertyGroup = (e) => {
+    setNewPropertyGroup({
+      ...newPropertyGroup,
+      [e.target.name]: e.target.value,
+    });
   };
 
   //Save New variation
-  const handleSaveNewVariation = (e) => {
+  const handleSaveNewPropertyGroup = (e) => {
     e.preventDefault();
-    setNewVariation({
-      ...newVariation,
+    setNewPropertyGroup({
+      ...newPropertyGroup,
       uploading: true,
     });
-    const variationUrl = BASE_URL + `/settings/new-variation`;
+    const propertyGroupUrl = BASE_URL + `/settings/new-property-group`;
     let formData = new FormData();
-    formData.append("name", newVariation.name);
+    formData.append("name", newPropertyGroup.name);
     return axios
-      .post(variationUrl, formData, {
+      .post(propertyGroupUrl, formData, {
         headers: { Authorization: `Bearer ${getCookie()}` },
       })
       .then((res) => {
-        setNewVariation({
+        setNewPropertyGroup({
           name: "",
           edit: false,
           editSlug: null,
           uploading: false,
         });
-        setVariationList(res.data[0]);
-        setVariationforSearch(res.data[1]);
-        setSearchedVariation({
-          ...searchedVariation,
+        setPropertyGroupList(res.data[0]);
+        setPropertyGroupForSearch(res.data[1]);
+        setSearchedPropertyGroup({
+          ...searchedPropertyGroup,
           list: res.data[1],
         });
         setLoading(false);
-        toast.success(`${_t(t("Variation has been added"))}`, {
+        toast.success(`${_t(t("Property group has been added"))}`, {
           position: "bottom-center",
           autoClose: 10000,
           hideProgressBar: false,
@@ -130,16 +133,16 @@ const PropertyCrud = () => {
       })
       .catch((error) => {
         setLoading(false);
-        setNewVariation({
-          ...newVariation,
+        setNewPropertyGroup({
+          ...newPropertyGroup,
           uploading: false,
         });
         if (error.response.data.errors) {
           if (error.response.data.errors.name) {
             error.response.data.errors.name.forEach((item) => {
-              if (item === "A variation already exists with this name") {
+              if (item === "A property group already exists with this name") {
                 toast.error(
-                  `${_t(t("A variation already exists with this name"))}`,
+                  `${_t(t("A property group already exists with this name"))}`,
                   {
                     position: "bottom-center",
                     autoClose: 10000,
@@ -167,47 +170,47 @@ const PropertyCrud = () => {
 
   //set edit true & values
   const handleSetEdit = (slug) => {
-    let variation = variationForSearch.filter((item) => {
+    let variation = propertyGroupForSearch.filter((item) => {
       return item.slug === slug;
     });
-    setNewVariation({
-      ...newVariation,
+    setNewPropertyGroup({
+      ...newPropertyGroup,
       name: variation[0].name,
       editSlug: variation[0].slug,
       edit: true,
     });
   };
 
-  //update Variation
-  const handleUpdateVariation = (e) => {
+  //update property group
+  const handleUpdatePropertyGroup = (e) => {
     e.preventDefault();
-    setNewVariation({
-      ...newVariation,
+    setNewPropertyGroup({
+      ...newPropertyGroup,
       uploading: true,
     });
-    const variationUrl = BASE_URL + `/settings/update-variation`;
+    const propertyGroupUrl = BASE_URL + `/settings/update-property-group`;
     let formData = new FormData();
-    formData.append("name", newVariation.name);
-    formData.append("editSlug", newVariation.editSlug);
+    formData.append("name", newPropertyGroup.name);
+    formData.append("editSlug", newPropertyGroup.editSlug);
     return axios
-      .post(variationUrl, formData, {
+      .post(propertyGroupUrl, formData, {
         headers: { Authorization: `Bearer ${getCookie()}` },
       })
       .then((res) => {
-        setNewVariation({
+        setNewPropertyGroup({
           name: "",
           edit: false,
           editSlug: null,
           uploading: false,
         });
-        setVariationList(res.data[0]);
-        setVariationforSearch(res.data[1]);
-        setSearchedVariation({
-          ...searchedVariation,
+        setPropertyGroupList(res.data[0]);
+        setPropertyGroupForSearch(res.data[1]);
+        setSearchedPropertyGroup({
+          ...searchedPropertyGroup,
           list: res.data[1],
         });
         setLoading(false);
-        toast.success(`${_t(t("Variation has been updated"))}`, {
+        toast.success(`${_t(t("Property group has been updated"))}`, {
           position: "bottom-center",
           autoClose: 10000,
           hideProgressBar: false,
@@ -218,16 +221,16 @@ const PropertyCrud = () => {
       })
       .catch((error) => {
         setLoading(false);
-        setNewVariation({
-          ...newVariation,
+        setNewPropertyGroup({
+          ...newPropertyGroup,
           uploading: false,
         });
         if (error.response.data.errors) {
           if (error.response.data.errors.name) {
             error.response.data.errors.name.forEach((item) => {
-              if (item === "A variation already exists with this name") {
+              if (item === "A property group already exists with this name") {
                 toast.error(
-                  `${_t(t("A variation already exists with this name"))}`,
+                  `${_t(t("A property group already exists with this name"))}`,
                   {
                     position: "bottom-center",
                     autoClose: 10000,
@@ -253,25 +256,25 @@ const PropertyCrud = () => {
       });
   };
 
-  //search Variation here
+  //search property group here
   const handleSearch = (e) => {
     let searchInput = e.target.value.toLowerCase();
     if (searchInput.length === 0) {
-      setSearchedVariation({ ...searchedVariation, searched: false });
+      setSearchedPropertyGroup({ ...searchedPropertyGroup, searched: false });
     } else {
-      let searchedList = variationForSearch.filter((item) => {
+      let searchedList = propertyGroupForSearch.filter((item) => {
         let lowerCaseItemName = item.name.toLowerCase();
         return lowerCaseItemName.includes(searchInput);
       });
-      setSearchedVariation({
-        ...searchedVariation,
+      setSearchedPropertyGroup({
+        ...searchedPropertyGroup,
         list: searchedList,
         searched: true,
       });
     }
   };
 
-  //delete confirmation modal of variation
+  //delete confirmation modal of property group
   const handleDeleteConfirmation = (slug) => {
     confirmAlert({
       customUI: ({ onClose }) => {
@@ -283,7 +286,7 @@ const PropertyCrud = () => {
               <button
                 className="btn btn-primary"
                 onClick={() => {
-                  handleDeleteVariation(slug);
+                  handleDeletePropertyGroup(slug);
                   onClose();
                 }}
               >
@@ -300,29 +303,33 @@ const PropertyCrud = () => {
   };
 
   //delete variation here
-  const handleDeleteVariation = (slug) => {
+  const handleDeletePropertyGroup = (slug) => {
     setLoading(true);
-    const variationUrl = BASE_URL + `/settings/delete-variation/${slug}`;
+    const propertyGroupUrl =
+      BASE_URL + `/settings/delete-property-group/${slug}`;
     return axios
-      .get(variationUrl, {
+      .get(propertyGroupUrl, {
         headers: { Authorization: `Bearer ${getCookie()}` },
       })
       .then((res) => {
-        setVariationList(res.data[0]);
-        setVariationforSearch(res.data[1]);
-        setSearchedVariation({
-          ...searchedVariation,
+        setPropertyGroupList(res.data[0]);
+        setPropertyGroupForSearch(res.data[1]);
+        setSearchedPropertyGroup({
+          ...searchedPropertyGroup,
           list: res.data[1],
         });
         setLoading(false);
-        toast.success(`${_t(t("Variation has been deleted successfully"))}`, {
-          position: "bottom-center",
-          autoClose: 10000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          className: "text-center toast-notification",
-        });
+        toast.success(
+          `${_t(t("Property group has been deleted successfully"))}`,
+          {
+            position: "bottom-center",
+            autoClose: 10000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            className: "text-center toast-notification",
+          }
+        );
       })
       .catch(() => {
         setLoading(false);
@@ -340,7 +347,7 @@ const PropertyCrud = () => {
   return (
     <>
       <Helmet>
-        <title>{_t(t("Variations"))}</title>
+        <title>{_t(t("Property groups"))}</title>
       </Helmet>
 
       {/* Add modal */}
@@ -350,9 +357,9 @@ const PropertyCrud = () => {
             <div className="modal-header align-items-center">
               <div className="fk-sm-card__content">
                 <h5 className="text-capitalize fk-sm-card__title">
-                  {!newVariation.edit
-                    ? _t(t("Add new variation"))
-                    : _t(t("Update variation"))}
+                  {!newPropertyGroup.edit
+                    ? _t(t("Add new property group"))
+                    : _t(t("Update property group"))}
                 </h5>
               </div>
               <button
@@ -364,13 +371,13 @@ const PropertyCrud = () => {
             </div>
             <div className="modal-body">
               {/* show form or show saving loading */}
-              {newVariation.uploading === false ? (
-                <div key="fragment-variation-1">
+              {newPropertyGroup.uploading === false ? (
+                <div key="fragment-property-group-1">
                   <form
                     onSubmit={
-                      !newVariation.edit
-                        ? handleSaveNewVariation
-                        : handleUpdateVariation
+                      !newPropertyGroup.edit
+                        ? handleSaveNewPropertyGroup
+                        : handleUpdatePropertyGroup
                     }
                   >
                     <div>
@@ -383,10 +390,10 @@ const PropertyCrud = () => {
                         className="form-control"
                         id="name"
                         name="name"
-                        placeholder="e.g. small, medium, large, half, full, 1ltr, 500ml"
-                        value={newVariation.name || ""}
+                        placeholder="e.g. Addon, spice level, sauce level"
+                        value={newPropertyGroup.name || ""}
                         required
-                        onChange={handleSetNewVariation}
+                        onChange={handleSetNewPropertyGroup}
                       />
                     </div>
 
@@ -397,7 +404,7 @@ const PropertyCrud = () => {
                             type="submit"
                             className="btn btn-success text-dark w-100 xsm-text text-uppercase t-width-max"
                           >
-                            {!newVariation.edit
+                            {!newPropertyGroup.edit
                               ? _t(t("Save"))
                               : _t(t("Update"))}
                           </button>
@@ -431,7 +438,9 @@ const PropertyCrud = () => {
                             e.preventDefault();
                           }}
                         >
-                          {!newVariation.edit ? _t(t("Save")) : _t(t("Update"))}
+                          {!newPropertyGroup.edit
+                            ? _t(t("Save"))
+                            : _t(t("Update"))}
                         </button>
                       </div>
                       <div className="col-6">
@@ -469,7 +478,7 @@ const PropertyCrud = () => {
                 <div className="fk-scroll--pos-menu" data-simplebar>
                   <div className="t-pl-15 t-pr-15">
                     {/* Loading effect */}
-                    {newVariation.uploading === true || loading === true ? (
+                    {newPropertyGroup.uploading === true || loading === true ? (
                       tableLoading()
                     ) : (
                       <div key="fragment3">
@@ -482,8 +491,8 @@ const PropertyCrud = () => {
                             <ul className="t-list fk-breadcrumb">
                               <li className="fk-breadcrumb__list">
                                 <span className="t-link fk-breadcrumb__link text-capitalize">
-                                  {!searchedVariation.searched
-                                    ? _t(t("Variation List"))
+                                  {!searchedPropertyGroup.searched
+                                    ? _t(t("Property Group List"))
                                     : _t(t("Search Result"))}
                                 </span>
                               </li>
@@ -522,8 +531,8 @@ const PropertyCrud = () => {
                                   data-toggle="modal"
                                   data-target="#addvariation"
                                   onClick={() => {
-                                    setNewVariation({
-                                      ...newVariation,
+                                    setNewPropertyGroup({
+                                      ...newPropertyGroup,
                                       edit: false,
                                       uploading: false,
                                     });
@@ -564,10 +573,10 @@ const PropertyCrud = () => {
                             </thead>
                             <tbody className="align-middle">
                               {/* loop here, logic === !search && haveData && haveDataLegnth > 0*/}
-                              {!searchedVariation.searched
+                              {!searchedPropertyGroup.searched
                                 ? [
-                                    variationList && [
-                                      variationList.data.length === 0 ? (
+                                    propertyGroupList && [
+                                      propertyGroupList.data.length === 0 ? (
                                         <tr className="align-middle">
                                           <td
                                             scope="row"
@@ -578,7 +587,7 @@ const PropertyCrud = () => {
                                           </td>
                                         </tr>
                                       ) : (
-                                        variationList.data.map(
+                                        propertyGroupList.data.map(
                                           (item, index) => {
                                             return (
                                               <tr
@@ -591,12 +600,12 @@ const PropertyCrud = () => {
                                                 >
                                                   {index +
                                                     1 +
-                                                    (variationList.current_page -
+                                                    (propertyGroupList.current_page -
                                                       1) *
-                                                      variationList.per_page}
+                                                      propertyGroupList.per_page}
                                                 </th>
 
-                                                <td className="xsm-text text-capitalize align-middle text-center">
+                                                <td className="xsm-text align-middle text-center">
                                                   {item.name}
                                                 </td>
 
@@ -610,6 +619,15 @@ const PropertyCrud = () => {
                                                       <i className="fa fa-ellipsis-h"></i>
                                                     </button>
                                                     <div className="dropdown-menu">
+                                                      <NavLink
+                                                        to={`/dashboard/manage/food/properties/${item.slug}`}
+                                                        className="dropdown-item sm-text text-capitalize"
+                                                      >
+                                                        <span className="t-mr-8">
+                                                          <i className="fa fa-plus"></i>
+                                                        </span>
+                                                        {_t(t("Items"))}
+                                                      </NavLink>
                                                       <button
                                                         className="dropdown-item sm-text text-capitalize"
                                                         onClick={() =>
@@ -651,8 +669,9 @@ const PropertyCrud = () => {
                                   ]
                                 : [
                                     /* searched data, logic === haveData*/
-                                    searchedVariation && [
-                                      searchedVariation.list.length === 0 ? (
+                                    searchedPropertyGroup && [
+                                      searchedPropertyGroup.list.length ===
+                                      0 ? (
                                         <tr className="align-middle">
                                           <td
                                             scope="row"
@@ -663,7 +682,7 @@ const PropertyCrud = () => {
                                           </td>
                                         </tr>
                                       ) : (
-                                        searchedVariation.list.map(
+                                        searchedPropertyGroup.list.map(
                                           (item, index) => {
                                             return (
                                               <tr
@@ -676,9 +695,9 @@ const PropertyCrud = () => {
                                                 >
                                                   {index +
                                                     1 +
-                                                    (variationList.current_page -
+                                                    (propertyGroupList.current_page -
                                                       1) *
-                                                      variationList.per_page}
+                                                      propertyGroupList.per_page}
                                                 </th>
 
                                                 <td className="xsm-text align-middle text-center">
@@ -695,6 +714,15 @@ const PropertyCrud = () => {
                                                       <i className="fa fa-ellipsis-h"></i>
                                                     </button>
                                                     <div className="dropdown-menu">
+                                                      <NavLink
+                                                        to={`/dashboard/manage/food/properties/${item.slug}`}
+                                                        className="dropdown-item sm-text text-capitalize"
+                                                      >
+                                                        <span className="t-mr-8">
+                                                          <i className="fa fa-plus"></i>
+                                                        </span>
+                                                        {_t(t("Items"))}
+                                                      </NavLink>
                                                       <button
                                                         className="dropdown-item sm-text text-capitalize"
                                                         onClick={() =>
@@ -744,23 +772,26 @@ const PropertyCrud = () => {
               </div>
 
               {/* pagination loading effect */}
-              {newVariation.uploading === true || loading === true
+              {newPropertyGroup.uploading === true || loading === true
                 ? paginationLoading()
                 : [
                     // logic === !searched
-                    !searchedVariation.searched ? (
+                    !searchedPropertyGroup.searched ? (
                       <div key="fragment4">
                         <div className="t-bg-white mt-1 t-pt-5 t-pb-5">
                           <div className="row align-items-center t-pl-15 t-pr-15">
                             <div className="col-md-7 t-mb-15 mb-md-0">
                               {/* pagination function */}
-                              {pagination(variationList, setPaginatedVariation)}
+                              {pagination(
+                                propertyGroupList,
+                                setPaginatedPropertyGroup
+                              )}
                             </div>
                             <div className="col-md-5">
                               <ul className="t-list d-flex justify-content-md-end align-items-center">
                                 <li className="t-list__item">
                                   <span className="d-inline-block sm-text">
-                                    {showingData(variationList)}
+                                    {showingData(propertyGroupList)}
                                   </span>
                                 </li>
                               </ul>
@@ -778,8 +809,8 @@ const PropertyCrud = () => {
                                 <button
                                   className="btn btn-primary btn-sm"
                                   onClick={() =>
-                                    setSearchedVariation({
-                                      ...searchedVariation,
+                                    setSearchedPropertyGroup({
+                                      ...searchedPropertyGroup,
                                       searched: false,
                                     })
                                   }
@@ -794,8 +825,8 @@ const PropertyCrud = () => {
                               <li className="t-list__item">
                                 <span className="d-inline-block sm-text">
                                   {searchedShowingData(
-                                    searchedVariation,
-                                    variationForSearch
+                                    searchedPropertyGroup,
+                                    propertyGroupForSearch
                                   )}
                                 </span>
                               </li>
