@@ -69,6 +69,7 @@ const Translation = () => {
         pauseOnHover: true,
         className: "text-center toast-notification",
       });
+      history.replace("/dashboard/manage/settings/languages/" + code);
     }
   };
 
