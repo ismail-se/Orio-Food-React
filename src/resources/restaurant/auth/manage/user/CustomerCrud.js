@@ -703,7 +703,7 @@ const CustomerCrud = () => {
                                   scope="col"
                                   className="sm-text text-capitalize align-middle text-center border-1 border"
                                 >
-                                  {_t(t("phn no."))}
+                                  {_t(t("Phn no"))}
                                 </th>
                                 <th
                                   scope="col"

@@ -187,7 +187,7 @@ const ManageSidebar = () => {
 
                 {managePageHrefLink(
                   "/dashboard/manage/restaurant/dept-tags",
-                  _t(t("Dept. Tags"))
+                  _t(t("Dept Tags"))
                 )}
 
                 {managePageHrefLink(

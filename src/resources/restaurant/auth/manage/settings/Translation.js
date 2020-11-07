@@ -213,18 +213,18 @@ const Translation = () => {
                           <p className="text-muted text-center">
                             {_t(
                               t(
-                                "You can update the translation in a very easy way."
+                                "You can update the translation in a very easy way"
                               )
                             )}
                             <br />{" "}
                             {_t(
                               t(
-                                "Install any google translation extention in your browser, translate the whole page."
+                                "Install any google translation extention in your browser, translate the whole page"
                               )
                             )}
-                            <br /> {_t(t("Click Copy Translation button."))}
+                            <br /> {_t(t("Click Copy Translation button"))}
                             <br />
-                            {_t(t("Click save."))}
+                            {_t(t("Click save"))}
                           </p>
                         </div>
                         <div className="card-body">

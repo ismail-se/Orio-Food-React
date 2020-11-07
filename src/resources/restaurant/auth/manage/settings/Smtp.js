@@ -173,7 +173,7 @@ const Smtp = () => {
                           <p className="text-muted text-center">
                             {_t(
                               t(
-                                "Please be carefull when you are configuring SMTP. For incorrect configuration you may get error in few features."
+                                "Please be carefull when you are configuring SMTP, For incorrect configuration you may get error in few features"
                               )
                             )}
                           </p>
