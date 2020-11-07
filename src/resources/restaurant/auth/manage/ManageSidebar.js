@@ -102,12 +102,12 @@ const ManageSidebar = () => {
                   _t(t("Groups"))
                 )}
 
-                {/* 
                 {managePageHrefLink(
-                  "/dashboard/manage/roles-and-permissions",
+                  "/dashboard/manage/food/units",
                   _t(t("Units"))
                 )}
-                
+
+                {/*
                 {managePageHrefLink(
                   "/dashboard/manage/roles-and-permissions",
                   _t(t("Variations"))

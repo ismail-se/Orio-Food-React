@@ -28,6 +28,7 @@ import {
   Reports,
   //manage->food
   GroupCrud,
+  UnitCrud,
   //manage->settings
   Lang,
   Translation,
@@ -104,8 +105,8 @@ function App() {
             <GroupCrud />
           </RestaurantRoute>
 
-          <RestaurantRoute path="/dashboard/manage/roles-and-permissions" exact>
-            <Permissions />
+          <RestaurantRoute path="/dashboard/manage/food/units" exact>
+            <UnitCrud />
           </RestaurantRoute>
 
           {/* Users */}

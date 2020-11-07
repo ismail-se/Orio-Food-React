@@ -17,6 +17,7 @@ import Reports from "../resources/restaurant/auth/Reports";
 //from restaurant-auth-manage
 //-food
 import GroupCrud from "../resources/restaurant/auth/manage/food/GroupCrud";
+import UnitCrud from "../resources/restaurant/auth/manage/food/UnitCrud";
 
 //-settings
 import Lang from "../resources/restaurant/auth/manage/settings/Lang";
@@ -50,6 +51,7 @@ export {
   Reports,
   //manage->food
   GroupCrud,
+  UnitCrud,
   //manage->settings
   Lang,
   Translation,
