@@ -173,7 +173,6 @@ const UnitCrud = () => {
     setNewFoodUnit({
       ...newFoodUnit,
       name: unit[0].name,
-      input_key: unit[0].input_key,
       editSlug: unit[0].slug,
       edit: true,
     });
@@ -538,7 +537,7 @@ const UnitCrud = () => {
                         </div>
                         {/* Table */}
                         <div className="table-responsive">
-                          <table className="table table-bordered min-table-height">
+                          <table className="table table-bordered table-striped min-table-height">
                             <thead className="align-middle">
                               <tr>
                                 <th

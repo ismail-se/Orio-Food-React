@@ -236,13 +236,13 @@ const Translation = () => {
                                 width="100%"
                                 id="tranlation-table"
                               >
-                                <tbody className="">
+                                <tbody>
                                   {toTranslate &&
                                     toTranslate.map((items, index) => {
                                       return (
                                         <tr className="text-center" key={index}>
                                           <td>{index + 1}</td>
-                                          <td className="key text-left">
+                                          <td className="key text-left translation-input">
                                             {items[0]}
                                           </td>
                                           <td>

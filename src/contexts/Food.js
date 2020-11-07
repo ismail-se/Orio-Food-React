@@ -26,6 +26,10 @@ const FoodProvider = ({ children }) => {
   const [foodUnitList, setFoodUnitList] = useState(null);
   const [foodUnitForSearch, setFoodUnitforSearch] = useState(null);
 
+  //variation
+  const [variationList, setVariationList] = useState(null);
+  const [variationForSearch, setVariationforSearch] = useState(null);
+
   //useEffect- to get data on render
   useEffect(() => {
     //call- unauthenticated
@@ -99,6 +103,37 @@ const FoodProvider = ({ children }) => {
       .catch(() => {});
   };
 
+  //get variations
+  const getVariation = () => {
+    setLoading(true);
+    const variationUrl = BASE_URL + "/settings/get-variation";
+    return axios
+      .get(variationUrl, {
+        headers: { Authorization: `Bearer ${getCookie()}` },
+      })
+      .then((res) => {
+        setVariationList(res.data[0]);
+        setVariationforSearch(res.data[1]);
+        setLoading(false);
+      });
+  };
+
+  // get paginated variations
+  const setPaginatedVariation = (pageNo) => {
+    setDataPaginating(true);
+    const url = BASE_URL + "/settings/get-variation?page=" + pageNo;
+    return axios
+      .get(url, {
+        headers: { Authorization: `Bearer ${getCookie()}` },
+      })
+      .then((res) => {
+        setVariationList(res.data[0]);
+        setVariationforSearch(res.data[1]);
+        setDataPaginating(false);
+      })
+      .catch(() => {});
+  };
+
   return (
     <FoodContext.Provider
       value={{
@@ -117,6 +152,14 @@ const FoodProvider = ({ children }) => {
         setPaginatedFoodUnit,
         foodUnitForSearch,
         setFoodUnitforSearch,
+
+        //variation
+        getVariation,
+        variationList,
+        setVariationList,
+        setPaginatedVariation,
+        variationForSearch,
+        setVariationforSearch,
 
         //pagination
         dataPaginating,

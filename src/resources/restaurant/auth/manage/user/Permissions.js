@@ -423,7 +423,7 @@ const Permissions = () => {
                         className="form-control"
                         id="name"
                         name="name"
-                        placeholder="e.g. Employee"
+                        placeholder="e.g. Staff"
                         value={newGroup.name || ""}
                         required
                         onChange={handleSetNewGroup}
@@ -617,7 +617,7 @@ const Permissions = () => {
                         </div>
                         {/* Table */}
                         <div className="table-responsive">
-                          <table className="table table-bordered min-table-height">
+                          <table className="table table-bordered table-striped min-table-height">
                             <thead className="align-middle">
                               <tr>
                                 <th

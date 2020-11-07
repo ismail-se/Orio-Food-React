@@ -538,7 +538,7 @@ const GroupCrud = () => {
                         </div>
                         {/* Table */}
                         <div className="table-responsive">
-                          <table className="table table-bordered min-table-height">
+                          <table className="table table-bordered table-striped min-table-height">
                             <thead className="align-middle">
                               <tr>
                                 <th

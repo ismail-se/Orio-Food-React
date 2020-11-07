@@ -32,9 +32,9 @@ import "react-toastify/dist/ReactToastify.css";
 //context consumer
 import { SettingsContext } from "../../../../../contexts/Settings";
 import { UserContext } from "../../../../../contexts/User";
-import { RestaurantContext } from "../../../../../contexts/Restaurant";
+import { FoodContext } from "../../../../../contexts/Food";
 
-const BranchCrud = () => {
+const VariationCrud = () => {
   const { t } = useTranslation();
   const history = useHistory();
   //getting context values here
@@ -50,30 +50,29 @@ const BranchCrud = () => {
   } = useContext(UserContext);
 
   let {
-    //branch
-    branchList,
-    setBranchList,
-    setPaginatedBranch,
-    branchForSearch,
-    setBranchforSearch,
+    //variation
+    getVariation,
+    variationList,
+    setVariationList,
+    setPaginatedVariation,
+    variationForSearch,
+    setVariationforSearch,
 
     //pagination
     dataPaginating,
-  } = useContext(RestaurantContext);
+  } = useContext(FoodContext);
 
   // States hook here
-  //new group
-  let [newBranch, setNewBranch] = useState({
+  //new variation
+  let [newVariation, setNewVariation] = useState({
     name: "",
-    phn_no: "",
-    address: "",
     edit: false,
     editSlug: null,
     uploading: false,
   });
 
   //search result
-  let [searchedBranch, setSearchedBranch] = useState({
+  let [searchedVariation, setSearchedVariation] = useState({
     list: null,
     searched: false,
   });
@@ -87,44 +86,40 @@ const BranchCrud = () => {
     }
   }, [authUserInfo]);
 
-  //set name, phn no, address hook
-  const handleSetNewBranch = (e) => {
-    setNewBranch({ ...newBranch, [e.target.name]: e.target.value });
+  //set name hook
+  const handleSetNewVariation = (e) => {
+    setNewVariation({ ...newVariation, [e.target.name]: e.target.value });
   };
 
-  //Save New branch
-  const handleSaveNewBranch = (e) => {
+  //Save New variation
+  const handleSaveNewVariation = (e) => {
     e.preventDefault();
-    setNewBranch({
-      ...newBranch,
+    setNewVariation({
+      ...newVariation,
       uploading: true,
     });
-    const branchUrl = BASE_URL + `/settings/new-branch`;
+    const variationUrl = BASE_URL + `/settings/new-variation`;
     let formData = new FormData();
-    formData.append("name", newBranch.name);
-    formData.append("phn_no", newBranch.phn_no);
-    formData.append("address", newBranch.address);
+    formData.append("name", newVariation.name);
     return axios
-      .post(branchUrl, formData, {
+      .post(variationUrl, formData, {
         headers: { Authorization: `Bearer ${getCookie()}` },
       })
       .then((res) => {
-        setNewBranch({
+        setNewVariation({
           name: "",
-          phn_no: "",
-          address: "",
           edit: false,
           editSlug: null,
           uploading: false,
         });
-        setBranchList(res.data[0]);
-        setBranchforSearch(res.data[1]);
-        setSearchedBranch({
-          ...searchedBranch,
+        setVariationList(res.data[0]);
+        setVariationforSearch(res.data[1]);
+        setSearchedVariation({
+          ...searchedVariation,
           list: res.data[1],
         });
         setLoading(false);
-        toast.success(`${_t(t("Branch has been added"))}`, {
+        toast.success(`${_t(t("Variation has been added"))}`, {
           position: "bottom-center",
           autoClose: 10000,
           hideProgressBar: false,
@@ -133,72 +128,86 @@ const BranchCrud = () => {
           className: "text-center toast-notification",
         });
       })
-      .catch(() => {
+      .catch((error) => {
         setLoading(false);
-        setNewBranch({
-          ...newBranch,
+        setNewVariation({
+          ...newVariation,
           uploading: false,
         });
-        toast.error(`${_t(t("Please try again."))}`, {
-          position: "bottom-center",
-          autoClose: 10000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          className: "text-center toast-notification",
-        });
+        if (error.response.data.errors) {
+          if (error.response.data.errors.name) {
+            error.response.data.errors.name.forEach((item) => {
+              if (item === "A variation already exists with this name") {
+                toast.error(
+                  `${_t(t("A variation already exists with this name"))}`,
+                  {
+                    position: "bottom-center",
+                    autoClose: 10000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    className: "text-center toast-notification",
+                  }
+                );
+              }
+            });
+          } else {
+            toast.error(`${_t(t("Please try again."))}`, {
+              position: "bottom-center",
+              autoClose: 10000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              className: "text-center toast-notification",
+            });
+          }
+        }
       });
   };
 
   //set edit true & values
   const handleSetEdit = (slug) => {
-    let branch = branchForSearch.filter((item) => {
+    let variation = variationForSearch.filter((item) => {
       return item.slug === slug;
     });
-    setNewBranch({
-      ...newBranch,
-      name: branch[0].name,
-      phn_no: branch[0].phn_no,
-      address: branch[0].address,
-      editSlug: branch[0].slug,
+    setNewVariation({
+      ...newVariation,
+      name: variation[0].name,
+      editSlug: variation[0].slug,
       edit: true,
     });
   };
 
-  //update branch
-  const handleUpdateBranch = (e) => {
+  //update Variation
+  const handleUpdateVariation = (e) => {
     e.preventDefault();
-    setNewBranch({
-      ...newBranch,
+    setNewVariation({
+      ...newVariation,
       uploading: true,
     });
-    const branchUrl = BASE_URL + `/settings/update-branch`;
+    const variationUrl = BASE_URL + `/settings/update-variation`;
     let formData = new FormData();
-    formData.append("name", newBranch.name);
-    formData.append("phn_no", newBranch.phn_no);
-    formData.append("address", newBranch.address);
-    formData.append("editSlug", newBranch.editSlug);
+    formData.append("name", newVariation.name);
+    formData.append("editSlug", newVariation.editSlug);
     return axios
-      .post(branchUrl, formData, {
+      .post(variationUrl, formData, {
         headers: { Authorization: `Bearer ${getCookie()}` },
       })
       .then((res) => {
-        setNewBranch({
+        setNewVariation({
           name: "",
-          phn_no: "",
-          address: "",
           edit: false,
           editSlug: null,
           uploading: false,
         });
-        setBranchList(res.data[0]);
-        setBranchforSearch(res.data[1]);
-        setSearchedBranch({
-          ...searchedBranch,
+        setVariationList(res.data[0]);
+        setVariationforSearch(res.data[1]);
+        setSearchedVariation({
+          ...searchedVariation,
           list: res.data[1],
         });
         setLoading(false);
-        toast.success(`${_t(t("Branch has been updated"))}`, {
+        toast.success(`${_t(t("Variation has been updated"))}`, {
           position: "bottom-center",
           autoClose: 10000,
           hideProgressBar: false,
@@ -207,50 +216,62 @@ const BranchCrud = () => {
           className: "text-center toast-notification",
         });
       })
-      .catch(() => {
+      .catch((error) => {
         setLoading(false);
-        setNewBranch({
-          ...newBranch,
+        setNewVariation({
+          ...newVariation,
           uploading: false,
         });
-        toast.error(`${_t(t("Please try again."))}`, {
-          position: "bottom-center",
-          autoClose: 10000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          className: "text-center toast-notification",
-        });
+        if (error.response.data.errors) {
+          if (error.response.data.errors.name) {
+            error.response.data.errors.name.forEach((item) => {
+              if (item === "A variation already exists with this name") {
+                toast.error(
+                  `${_t(t("A variation already exists with this name"))}`,
+                  {
+                    position: "bottom-center",
+                    autoClose: 10000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    className: "text-center toast-notification",
+                  }
+                );
+              }
+            });
+          } else {
+            toast.error(`${_t(t("Please try again."))}`, {
+              position: "bottom-center",
+              autoClose: 10000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              className: "text-center toast-notification",
+            });
+          }
+        }
       });
   };
 
-  //search branch here
+  //search Variation here
   const handleSearch = (e) => {
     let searchInput = e.target.value.toLowerCase();
     if (searchInput.length === 0) {
-      setSearchedBranch({ ...searchedBranch, searched: false });
+      setSearchedVariation({ ...searchedVariation, searched: false });
     } else {
-      let searchedList = branchForSearch.filter((item) => {
+      let searchedList = variationForSearch.filter((item) => {
         let lowerCaseItemName = item.name.toLowerCase();
-        let lowerCaseItemPhnNo =
-          item.phn_no !== null && item.phn_no.toLowerCase();
-        let lowerCaseItemAddress =
-          item.address !== null && item.address.toLowerCase();
-        return (
-          lowerCaseItemName.includes(searchInput) ||
-          (lowerCaseItemPhnNo && lowerCaseItemPhnNo.includes(searchInput)) ||
-          (lowerCaseItemAddress && lowerCaseItemAddress.includes(searchInput))
-        );
+        return lowerCaseItemName.includes(searchInput);
       });
-      setSearchedBranch({
-        ...searchedBranch,
+      setSearchedVariation({
+        ...searchedVariation,
         list: searchedList,
         searched: true,
       });
     }
   };
 
-  //delete confirmation modal of branch
+  //delete confirmation modal of variation
   const handleDeleteConfirmation = (slug) => {
     confirmAlert({
       customUI: ({ onClose }) => {
@@ -262,7 +283,7 @@ const BranchCrud = () => {
               <button
                 className="btn btn-primary"
                 onClick={() => {
-                  handleDeleteBranch(slug);
+                  handleDeleteVariation(slug);
                   onClose();
                 }}
               >
@@ -278,23 +299,23 @@ const BranchCrud = () => {
     });
   };
 
-  //delete branch here
-  const handleDeleteBranch = (slug) => {
+  //delete variation here
+  const handleDeleteVariation = (slug) => {
     setLoading(true);
-    const branchUrl = BASE_URL + `/settings/delete-branch/${slug}`;
+    const variationUrl = BASE_URL + `/settings/delete-variation/${slug}`;
     return axios
-      .get(branchUrl, {
+      .get(variationUrl, {
         headers: { Authorization: `Bearer ${getCookie()}` },
       })
       .then((res) => {
-        setBranchList(res.data[0]);
-        setBranchforSearch(res.data[1]);
-        setSearchedBranch({
-          ...searchedBranch,
+        setVariationList(res.data[0]);
+        setVariationforSearch(res.data[1]);
+        setSearchedVariation({
+          ...searchedVariation,
           list: res.data[1],
         });
         setLoading(false);
-        toast.success(`${_t(t("Branch has been deleted successfully"))}`, {
+        toast.success(`${_t(t("Variation has been deleted successfully"))}`, {
           position: "bottom-center",
           autoClose: 10000,
           hideProgressBar: false,
@@ -319,19 +340,19 @@ const BranchCrud = () => {
   return (
     <>
       <Helmet>
-        <title>{_t(t("Branches"))}</title>
+        <title>{_t(t("Variations"))}</title>
       </Helmet>
 
       {/* Add modal */}
-      <div className="modal fade" id="addBranch" aria-hidden="true">
+      <div className="modal fade" id="addvariation" aria-hidden="true">
         <div className="modal-dialog modal-lg">
           <div className="modal-content">
             <div className="modal-header align-items-center">
               <div className="fk-sm-card__content">
                 <h5 className="text-capitalize fk-sm-card__title">
-                  {!newBranch.edit
-                    ? _t(t("Add new branch"))
-                    : _t(t("Update branch"))}
+                  {!newVariation.edit
+                    ? _t(t("Add new variation"))
+                    : _t(t("Update variation"))}
                 </h5>
               </div>
               <button
@@ -343,11 +364,13 @@ const BranchCrud = () => {
             </div>
             <div className="modal-body">
               {/* show form or show saving loading */}
-              {newBranch.uploading === false ? (
-                <div key="fragment-branch-1">
+              {newVariation.uploading === false ? (
+                <div key="fragment-variation-1">
                   <form
                     onSubmit={
-                      !newBranch.edit ? handleSaveNewBranch : handleUpdateBranch
+                      !newVariation.edit
+                        ? handleSaveNewVariation
+                        : handleUpdateVariation
                     }
                   >
                     <div>
@@ -360,40 +383,10 @@ const BranchCrud = () => {
                         className="form-control"
                         id="name"
                         name="name"
-                        placeholder="e.g. Uttara Branch"
-                        value={newBranch.name || ""}
+                        placeholder="e.g. small, medium, large, half, full, 1ltr, 500ml"
+                        value={newVariation.name || ""}
                         required
-                        onChange={handleSetNewBranch}
-                      />
-                    </div>
-
-                    <div className="mt-3">
-                      <label htmlFor="phn_no" className="form-label">
-                        {_t(t("Phone number"))}
-                      </label>
-                      <input
-                        type="text"
-                        className="form-control"
-                        id="phn_no"
-                        name="phn_no"
-                        placeholder="e.g. 01xxx xxx xxx"
-                        value={newBranch.phn_no || ""}
-                        onChange={handleSetNewBranch}
-                      />
-                    </div>
-
-                    <div className="mt-3">
-                      <label htmlFor="address" className="form-label">
-                        {_t(t("Address"))}
-                      </label>
-                      <textarea
-                        type="text"
-                        className="form-control"
-                        id="address"
-                        name="address"
-                        placeholder="Type branch address"
-                        value={newBranch.address || ""}
-                        onChange={handleSetNewBranch}
+                        onChange={handleSetNewVariation}
                       />
                     </div>
 
@@ -404,7 +397,9 @@ const BranchCrud = () => {
                             type="submit"
                             className="btn btn-success text-dark w-100 xsm-text text-uppercase t-width-max"
                           >
-                            {!newBranch.edit ? _t(t("Save")) : _t(t("Update"))}
+                            {!newVariation.edit
+                              ? _t(t("Save"))
+                              : _t(t("Update"))}
                           </button>
                         </div>
                         <div className="col-6">
@@ -436,7 +431,7 @@ const BranchCrud = () => {
                             e.preventDefault();
                           }}
                         >
-                          {!newBranch.edit ? _t(t("Save")) : _t(t("Update"))}
+                          {!newVariation.edit ? _t(t("Save")) : _t(t("Update"))}
                         </button>
                       </div>
                       <div className="col-6">
@@ -474,7 +469,7 @@ const BranchCrud = () => {
                 <div className="fk-scroll--pos-menu" data-simplebar>
                   <div className="t-pl-15 t-pr-15">
                     {/* Loading effect */}
-                    {newBranch.uploading === true || loading === true ? (
+                    {newVariation.uploading === true || loading === true ? (
                       tableLoading()
                     ) : (
                       <div key="fragment3">
@@ -487,8 +482,8 @@ const BranchCrud = () => {
                             <ul className="t-list fk-breadcrumb">
                               <li className="fk-breadcrumb__list">
                                 <span className="t-link fk-breadcrumb__link text-capitalize">
-                                  {!searchedBranch.searched
-                                    ? _t(t("Branch List"))
+                                  {!searchedVariation.searched
+                                    ? _t(t("Variation List"))
                                     : _t(t("Search Result"))}
                                 </span>
                               </li>
@@ -525,10 +520,10 @@ const BranchCrud = () => {
                                   type="button"
                                   className="btn btn-primary xsm-text text-uppercase btn-lg btn-block"
                                   data-toggle="modal"
-                                  data-target="#addBranch"
+                                  data-target="#addvariation"
                                   onClick={() => {
-                                    setNewBranch({
-                                      ...newBranch,
+                                    setNewVariation({
+                                      ...newVariation,
                                       edit: false,
                                       uploading: false,
                                     });
@@ -563,29 +558,16 @@ const BranchCrud = () => {
                                   scope="col"
                                   className="sm-text text-capitalize align-middle text-center border-1 border"
                                 >
-                                  {_t(t("Address"))}
-                                </th>
-                                <th
-                                  scope="col"
-                                  className="sm-text text-capitalize align-middle text-center border-1 border"
-                                >
-                                  {_t(t("Phn no"))}
-                                </th>
-
-                                <th
-                                  scope="col"
-                                  className="sm-text text-capitalize align-middle text-center border-1 border"
-                                >
                                   {_t(t("Action"))}
                                 </th>
                               </tr>
                             </thead>
                             <tbody className="align-middle">
                               {/* loop here, logic === !search && haveData && haveDataLegnth > 0*/}
-                              {!searchedBranch.searched
+                              {!searchedVariation.searched
                                 ? [
-                                    branchList && [
-                                      branchList.data.length === 0 ? (
+                                    variationList && [
+                                      variationList.data.length === 0 ? (
                                         <tr className="align-middle">
                                           <td
                                             scope="row"
@@ -596,105 +578,7 @@ const BranchCrud = () => {
                                           </td>
                                         </tr>
                                       ) : (
-                                        branchList.data.map((item, index) => {
-                                          return (
-                                            <tr
-                                              className="align-middle"
-                                              key={index}
-                                            >
-                                              <th
-                                                scope="row"
-                                                className="xsm-text text-capitalize align-middle text-center"
-                                              >
-                                                {index +
-                                                  1 +
-                                                  (branchList.current_page -
-                                                    1) *
-                                                    branchList.per_page}
-                                              </th>
-
-                                              <td className="xsm-text text-capitalize align-middle text-center">
-                                                {item.name}
-                                              </td>
-
-                                              <td className="xsm-text text-capitalize align-middle text-center">
-                                                {item.address || "-"}
-                                              </td>
-
-                                              <td className="xsm-text align-middle text-center">
-                                                {item.phn_no ? (
-                                                  <a
-                                                    href={`tel:${item.phn_no}`}
-                                                    rel="noopener noreferrer"
-                                                  >
-                                                    {item.phn_no}
-                                                  </a>
-                                                ) : (
-                                                  "-"
-                                                )}
-                                              </td>
-
-                                              <td className="xsm-text text-capitalize align-middle text-center">
-                                                <div className="dropdown">
-                                                  <button
-                                                    className="btn t-bg-clear t-text-dark--light-40"
-                                                    type="button"
-                                                    data-toggle="dropdown"
-                                                  >
-                                                    <i className="fa fa-ellipsis-h"></i>
-                                                  </button>
-                                                  <div className="dropdown-menu">
-                                                    <button
-                                                      className="dropdown-item sm-text text-capitalize"
-                                                      onClick={() =>
-                                                        handleSetEdit(item.slug)
-                                                      }
-                                                      data-toggle="modal"
-                                                      data-target="#addBranch"
-                                                    >
-                                                      <span className="t-mr-8">
-                                                        <i className="fa fa-pencil"></i>
-                                                      </span>
-                                                      {_t(t("Edit"))}
-                                                    </button>
-
-                                                    <button
-                                                      className="dropdown-item sm-text text-capitalize"
-                                                      onClick={() => {
-                                                        handleDeleteConfirmation(
-                                                          item.slug
-                                                        );
-                                                      }}
-                                                    >
-                                                      <span className="t-mr-8">
-                                                        <i className="fa fa-trash"></i>
-                                                      </span>
-                                                      {_t(t("Delete"))}
-                                                    </button>
-                                                  </div>
-                                                </div>
-                                              </td>
-                                            </tr>
-                                          );
-                                        })
-                                      ),
-                                    ],
-                                  ]
-                                : [
-                                    /* searched data, logic === haveData*/
-                                    searchedBranch && [
-                                      searchedBranch.list.length === 0 ? (
-                                        <tr className="align-middle">
-                                          <td
-                                            scope="row"
-                                            colSpan="6"
-                                            className="xsm-text align-middle text-center"
-                                          >
-                                            {_t(t("No data available"))}
-                                          </td>
-                                        </tr>
-                                      ) : (
-                                        searchedBranch.list.map(
+                                        variationList.data.map(
                                           (item, index) => {
                                             return (
                                               <tr
@@ -707,30 +591,13 @@ const BranchCrud = () => {
                                                 >
                                                   {index +
                                                     1 +
-                                                    (branchList.current_page -
+                                                    (variationList.current_page -
                                                       1) *
-                                                      branchList.per_page}
+                                                      variationList.per_page}
                                                 </th>
 
                                                 <td className="xsm-text text-capitalize align-middle text-center">
                                                   {item.name}
-                                                </td>
-
-                                                <td className="xsm-text text-capitalize align-middle text-center">
-                                                  {item.address || "-"}
-                                                </td>
-
-                                                <td className="xsm-text align-middle text-center">
-                                                  {item.phn_no ? (
-                                                    <a
-                                                      href={`tel:${item.phn_no}`}
-                                                      rel="noopener noreferrer"
-                                                    >
-                                                      {item.phn_no}
-                                                    </a>
-                                                  ) : (
-                                                    "-"
-                                                  )}
                                                 </td>
 
                                                 <td className="xsm-text text-capitalize align-middle text-center">
@@ -751,7 +618,92 @@ const BranchCrud = () => {
                                                           )
                                                         }
                                                         data-toggle="modal"
-                                                        data-target="#addBranch"
+                                                        data-target="#addvariation"
+                                                      >
+                                                        <span className="t-mr-8">
+                                                          <i className="fa fa-pencil"></i>
+                                                        </span>
+                                                        {_t(t("Edit"))}
+                                                      </button>
+
+                                                      <button
+                                                        className="dropdown-item sm-text text-capitalize"
+                                                        onClick={() => {
+                                                          handleDeleteConfirmation(
+                                                            item.slug
+                                                          );
+                                                        }}
+                                                      >
+                                                        <span className="t-mr-8">
+                                                          <i className="fa fa-trash"></i>
+                                                        </span>
+                                                        {_t(t("Delete"))}
+                                                      </button>
+                                                    </div>
+                                                  </div>
+                                                </td>
+                                              </tr>
+                                            );
+                                          }
+                                        )
+                                      ),
+                                    ],
+                                  ]
+                                : [
+                                    /* searched data, logic === haveData*/
+                                    searchedVariation && [
+                                      searchedVariation.list.length === 0 ? (
+                                        <tr className="align-middle">
+                                          <td
+                                            scope="row"
+                                            colSpan="6"
+                                            className="xsm-text align-middle text-center"
+                                          >
+                                            {_t(t("No data available"))}
+                                          </td>
+                                        </tr>
+                                      ) : (
+                                        searchedVariation.list.map(
+                                          (item, index) => {
+                                            return (
+                                              <tr
+                                                className="align-middle"
+                                                key={index}
+                                              >
+                                                <th
+                                                  scope="row"
+                                                  className="xsm-text text-capitalize align-middle text-center"
+                                                >
+                                                  {index +
+                                                    1 +
+                                                    (variationList.current_page -
+                                                      1) *
+                                                      variationList.per_page}
+                                                </th>
+
+                                                <td className="xsm-text align-middle text-center">
+                                                  {item.name}
+                                                </td>
+
+                                                <td className="xsm-text text-capitalize align-middle text-center">
+                                                  <div className="dropdown">
+                                                    <button
+                                                      className="btn t-bg-clear t-text-dark--light-40"
+                                                      type="button"
+                                                      data-toggle="dropdown"
+                                                    >
+                                                      <i className="fa fa-ellipsis-h"></i>
+                                                    </button>
+                                                    <div className="dropdown-menu">
+                                                      <button
+                                                        className="dropdown-item sm-text text-capitalize"
+                                                        onClick={() =>
+                                                          handleSetEdit(
+                                                            item.slug
+                                                          )
+                                                        }
+                                                        data-toggle="modal"
+                                                        data-target="#addvariation"
                                                       >
                                                         <span className="t-mr-8">
                                                           <i className="fa fa-pencil"></i>
@@ -792,23 +744,23 @@ const BranchCrud = () => {
               </div>
 
               {/* pagination loading effect */}
-              {newBranch.uploading === true || loading === true
+              {newVariation.uploading === true || loading === true
                 ? paginationLoading()
                 : [
                     // logic === !searched
-                    !searchedBranch.searched ? (
+                    !searchedVariation.searched ? (
                       <div key="fragment4">
                         <div className="t-bg-white mt-1 t-pt-5 t-pb-5">
                           <div className="row align-items-center t-pl-15 t-pr-15">
                             <div className="col-md-7 t-mb-15 mb-md-0">
                               {/* pagination function */}
-                              {pagination(branchList, setPaginatedBranch)}
+                              {pagination(variationList, setPaginatedVariation)}
                             </div>
                             <div className="col-md-5">
                               <ul className="t-list d-flex justify-content-md-end align-items-center">
                                 <li className="t-list__item">
                                   <span className="d-inline-block sm-text">
-                                    {showingData(branchList)}
+                                    {showingData(variationList)}
                                   </span>
                                 </li>
                               </ul>
@@ -826,8 +778,8 @@ const BranchCrud = () => {
                                 <button
                                   className="btn btn-primary btn-sm"
                                   onClick={() =>
-                                    setSearchedBranch({
-                                      ...searchedBranch,
+                                    setSearchedVariation({
+                                      ...searchedVariation,
                                       searched: false,
                                     })
                                   }
@@ -842,8 +794,8 @@ const BranchCrud = () => {
                               <li className="t-list__item">
                                 <span className="d-inline-block sm-text">
                                   {searchedShowingData(
-                                    searchedBranch,
-                                    branchForSearch
+                                    searchedVariation,
+                                    variationForSearch
                                   )}
                                 </span>
                               </li>
@@ -863,4 +815,4 @@ const BranchCrud = () => {
   );
 };
 
-export default BranchCrud;
+export default VariationCrud;

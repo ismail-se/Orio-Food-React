@@ -29,6 +29,8 @@ import {
   //manage->food
   GroupCrud,
   UnitCrud,
+  VariationCrud,
+  PropertyCrud,
   //manage->settings
   Lang,
   Translation,
@@ -107,6 +109,14 @@ function App() {
 
           <RestaurantRoute path="/dashboard/manage/food/units" exact>
             <UnitCrud />
+          </RestaurantRoute>
+
+          <RestaurantRoute path="/dashboard/manage/food/variations" exact>
+            <VariationCrud />
+          </RestaurantRoute>
+
+          <RestaurantRoute path="/dashboard/manage/food/properties" exact>
+            <PropertyCrud />
           </RestaurantRoute>
 
           {/* Users */}

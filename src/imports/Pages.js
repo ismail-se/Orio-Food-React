@@ -18,6 +18,8 @@ import Reports from "../resources/restaurant/auth/Reports";
 //-food
 import GroupCrud from "../resources/restaurant/auth/manage/food/GroupCrud";
 import UnitCrud from "../resources/restaurant/auth/manage/food/UnitCrud";
+import VariationCrud from "../resources/restaurant/auth/manage/food/VariationCrud";
+import PropertyCrud from "../resources/restaurant/auth/manage/food/PropertyCrud";
 
 //-settings
 import Lang from "../resources/restaurant/auth/manage/settings/Lang";
@@ -52,6 +54,8 @@ export {
   //manage->food
   GroupCrud,
   UnitCrud,
+  VariationCrud,
+  PropertyCrud,
   //manage->settings
   Lang,
   Translation,

@@ -79,3 +79,8 @@ html {
 .simplebar-content {
   margin-right: -16px !important;
 }
+
+/* translation-input */
+.translation-input {
+  max-width: 150px;
+}

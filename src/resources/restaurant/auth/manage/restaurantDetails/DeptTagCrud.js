@@ -387,7 +387,7 @@ const DeptTagCrud = () => {
                         className="form-control"
                         id="name"
                         name="name"
-                        placeholder="e.g. Dyne in"
+                        placeholder="e.g. Dyne in, Take away, Online order"
                         value={newDeptTag.name || ""}
                         required
                         onChange={handleSetNewDeptTag}
@@ -539,7 +539,7 @@ const DeptTagCrud = () => {
                         </div>
                         {/* Table */}
                         <div className="table-responsive">
-                          <table className="table table-bordered min-table-height">
+                          <table className="table table-bordered table-striped min-table-height">
                             <thead className="align-middle">
                               <tr>
                                 <th
