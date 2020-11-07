@@ -18,9 +18,13 @@ const FoodProvider = ({ children }) => {
   const [loading, setLoading] = useState(false);
   const [dataPaginating, setDataPaginating] = useState(false);
 
-  //Payment Type
+  //food group
   const [foodGroupList, setFoodGroupList] = useState(null);
   const [foodGroupForSearch, setFoodGroupforSearch] = useState(null);
+
+  //food unit
+  const [foodUnitList, setFoodUnitList] = useState(null);
+  const [foodUnitForSearch, setFoodUnitforSearch] = useState(null);
 
   //useEffect- to get data on render
   useEffect(() => {
@@ -29,6 +33,7 @@ const FoodProvider = ({ children }) => {
     //call if authenticated
     if (getCookie() !== undefined) {
       getFoodGroup();
+      getFoodUnit();
     }
   }, []);
 
@@ -63,6 +68,37 @@ const FoodProvider = ({ children }) => {
       .catch(() => {});
   };
 
+  //get food units
+  const getFoodUnit = () => {
+    setLoading(true);
+    const foodUnitUrl = BASE_URL + "/settings/get-food-unit";
+    return axios
+      .get(foodUnitUrl, {
+        headers: { Authorization: `Bearer ${getCookie()}` },
+      })
+      .then((res) => {
+        setFoodUnitList(res.data[0]);
+        setFoodUnitforSearch(res.data[1]);
+        setLoading(false);
+      });
+  };
+
+  // get paginated food units
+  const setPaginatedFoodUnit = (pageNo) => {
+    setDataPaginating(true);
+    const url = BASE_URL + "/settings/get-food-unit?page=" + pageNo;
+    return axios
+      .get(url, {
+        headers: { Authorization: `Bearer ${getCookie()}` },
+      })
+      .then((res) => {
+        setFoodUnitList(res.data[0]);
+        setFoodUnitforSearch(res.data[1]);
+        setDataPaginating(false);
+      })
+      .catch(() => {});
+  };
+
   return (
     <FoodContext.Provider
       value={{
@@ -73,6 +109,14 @@ const FoodProvider = ({ children }) => {
         setPaginatedFoodGroup,
         foodGroupForSearch,
         setFoodGroupforSearch,
+
+        //food units
+        getFoodUnit,
+        foodUnitList,
+        setFoodUnitList,
+        setPaginatedFoodUnit,
+        foodUnitForSearch,
+        setFoodUnitforSearch,
 
         //pagination
         dataPaginating,

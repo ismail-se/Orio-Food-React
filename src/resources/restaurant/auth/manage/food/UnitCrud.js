@@ -50,21 +50,21 @@ const UnitCrud = () => {
   } = useContext(UserContext);
 
   let {
-    //food group
-    getFoodGroup,
-    foodGroupList,
-    setFoodGroupList,
-    setPaginatedFoodGroup,
-    foodGroupForSearch,
-    setFoodGroupforSearch,
+    //food units
+    getFoodUnit,
+    foodUnitList,
+    setFoodUnitList,
+    setPaginatedFoodUnit,
+    foodUnitForSearch,
+    setFoodUnitforSearch,
 
     //pagination
     dataPaginating,
   } = useContext(FoodContext);
 
   // States hook here
-  //new group
-  let [newFoodGroup, setNewFoodGroup] = useState({
+  //new unit
+  let [newFoodUnit, setNewFoodUnit] = useState({
     name: "",
     edit: false,
     editSlug: null,
@@ -72,7 +72,7 @@ const UnitCrud = () => {
   });
 
   //search result
-  let [searchedFoodGroup, setSearchedFoodGroup] = useState({
+  let [searchedFoodUnit, setSearchedFoodUnit] = useState({
     list: null,
     searched: false,
   });
@@ -87,39 +87,39 @@ const UnitCrud = () => {
   }, [authUserInfo]);
 
   //set name hook
-  const handleSetNewFoodGroup = (e) => {
-    setNewFoodGroup({ ...newFoodGroup, [e.target.name]: e.target.value });
+  const handleSetNewFoodUnit = (e) => {
+    setNewFoodUnit({ ...newFoodUnit, [e.target.name]: e.target.value });
   };
 
-  //Save New paymentType
-  const handleSaveNewFoodGroup = (e) => {
+  //Save New unit
+  const handleSaveNewFoodUnit = (e) => {
     e.preventDefault();
-    setNewFoodGroup({
-      ...newFoodGroup,
+    setNewFoodUnit({
+      ...newFoodUnit,
       uploading: true,
     });
-    const foodGroupUrl = BASE_URL + `/settings/new-food-group`;
+    const foodUnitUrl = BASE_URL + `/settings/new-food-unit`;
     let formData = new FormData();
-    formData.append("name", newFoodGroup.name);
+    formData.append("name", newFoodUnit.name);
     return axios
-      .post(foodGroupUrl, formData, {
+      .post(foodUnitUrl, formData, {
         headers: { Authorization: `Bearer ${getCookie()}` },
       })
       .then((res) => {
-        setNewFoodGroup({
+        setNewFoodUnit({
           name: "",
           edit: false,
           editSlug: null,
           uploading: false,
         });
-        setFoodGroupList(res.data[0]);
-        setFoodGroupforSearch(res.data[1]);
-        setSearchedFoodGroup({
-          ...searchedFoodGroup,
+        setFoodUnitList(res.data[0]);
+        setFoodUnitforSearch(res.data[1]);
+        setSearchedFoodUnit({
+          ...searchedFoodUnit,
           list: res.data[1],
         });
         setLoading(false);
-        toast.success(`${_t(t("Food group has been added"))}`, {
+        toast.success(`${_t(t("Food unit has been added"))}`, {
           position: "bottom-center",
           autoClose: 10000,
           hideProgressBar: false,
@@ -130,16 +130,16 @@ const UnitCrud = () => {
       })
       .catch((error) => {
         setLoading(false);
-        setNewFoodGroup({
-          ...newFoodGroup,
+        setNewFoodUnit({
+          ...newFoodUnit,
           uploading: false,
         });
         if (error.response.data.errors) {
           if (error.response.data.errors.name) {
             error.response.data.errors.name.forEach((item) => {
-              if (item === "A food group already exists with this name") {
+              if (item === "A food unit already exists with this name") {
                 toast.error(
-                  `${_t(t("A food group already exists with this name"))}`,
+                  `${_t(t("A food unit already exists with this name"))}`,
                   {
                     position: "bottom-center",
                     autoClose: 10000,
@@ -167,48 +167,48 @@ const UnitCrud = () => {
 
   //set edit true & values
   const handleSetEdit = (slug) => {
-    let paymentType = foodGroupForSearch.filter((item) => {
+    let unit = foodUnitForSearch.filter((item) => {
       return item.slug === slug;
     });
-    setNewFoodGroup({
-      ...newFoodGroup,
-      name: paymentType[0].name,
-      input_key: paymentType[0].input_key,
-      editSlug: paymentType[0].slug,
+    setNewFoodUnit({
+      ...newFoodUnit,
+      name: unit[0].name,
+      input_key: unit[0].input_key,
+      editSlug: unit[0].slug,
       edit: true,
     });
   };
 
-  //update food group
+  //update food unit
   const handleUpdateFoodGroup = (e) => {
     e.preventDefault();
-    setNewFoodGroup({
-      ...newFoodGroup,
+    setNewFoodUnit({
+      ...newFoodUnit,
       uploading: true,
     });
-    const foodGroupUrl = BASE_URL + `/settings/update-food-group`;
+    const foodUnitUrl = BASE_URL + `/settings/update-food-unit`;
     let formData = new FormData();
-    formData.append("name", newFoodGroup.name);
-    formData.append("editSlug", newFoodGroup.editSlug);
+    formData.append("name", newFoodUnit.name);
+    formData.append("editSlug", newFoodUnit.editSlug);
     return axios
-      .post(foodGroupUrl, formData, {
+      .post(foodUnitUrl, formData, {
         headers: { Authorization: `Bearer ${getCookie()}` },
       })
       .then((res) => {
-        setNewFoodGroup({
+        setNewFoodUnit({
           name: "",
           edit: false,
           editSlug: null,
           uploading: false,
         });
-        setFoodGroupList(res.data[0]);
-        setFoodGroupforSearch(res.data[1]);
-        setSearchedFoodGroup({
-          ...searchedFoodGroup,
+        setFoodUnitList(res.data[0]);
+        setFoodUnitforSearch(res.data[1]);
+        setSearchedFoodUnit({
+          ...searchedFoodUnit,
           list: res.data[1],
         });
         setLoading(false);
-        toast.success(`${_t(t("Food group has been updated"))}`, {
+        toast.success(`${_t(t("Food unit has been updated"))}`, {
           position: "bottom-center",
           autoClose: 10000,
           hideProgressBar: false,
@@ -219,16 +219,16 @@ const UnitCrud = () => {
       })
       .catch((error) => {
         setLoading(false);
-        setNewFoodGroup({
-          ...newFoodGroup,
+        setNewFoodUnit({
+          ...newFoodUnit,
           uploading: false,
         });
         if (error.response.data.errors) {
           if (error.response.data.errors.name) {
             error.response.data.errors.name.forEach((item) => {
-              if (item === "A food group already exists with this name") {
+              if (item === "A food unit already exists with this name") {
                 toast.error(
-                  `${_t(t("A food group already exists with this name"))}`,
+                  `${_t(t("A food unit already exists with this name"))}`,
                   {
                     position: "bottom-center",
                     autoClose: 10000,
@@ -254,25 +254,25 @@ const UnitCrud = () => {
       });
   };
 
-  //search food group here
+  //search food unit here
   const handleSearch = (e) => {
     let searchInput = e.target.value.toLowerCase();
     if (searchInput.length === 0) {
-      setSearchedFoodGroup({ ...searchedFoodGroup, searched: false });
+      setSearchedFoodUnit({ ...searchedFoodUnit, searched: false });
     } else {
-      let searchedList = foodGroupForSearch.filter((item) => {
+      let searchedList = foodUnitForSearch.filter((item) => {
         let lowerCaseItemName = item.name.toLowerCase();
         return lowerCaseItemName.includes(searchInput);
       });
-      setSearchedFoodGroup({
-        ...searchedFoodGroup,
+      setSearchedFoodUnit({
+        ...searchedFoodUnit,
         list: searchedList,
         searched: true,
       });
     }
   };
 
-  //delete confirmation modal of paymentType
+  //delete confirmation modal of unit
   const handleDeleteConfirmation = (slug) => {
     confirmAlert({
       customUI: ({ onClose }) => {
@@ -284,7 +284,7 @@ const UnitCrud = () => {
               <button
                 className="btn btn-primary"
                 onClick={() => {
-                  handleDeleteFoodGroup(slug);
+                  handleDeleteFoodUnit(slug);
                   onClose();
                 }}
               >
@@ -300,23 +300,23 @@ const UnitCrud = () => {
     });
   };
 
-  //delete paymentType here
-  const handleDeleteFoodGroup = (slug) => {
+  //delete unit here
+  const handleDeleteFoodUnit = (slug) => {
     setLoading(true);
-    const foodGroupUrl = BASE_URL + `/settings/delete-food-group/${slug}`;
+    const foodUnitUrl = BASE_URL + `/settings/delete-food-unit/${slug}`;
     return axios
-      .get(foodGroupUrl, {
+      .get(foodUnitUrl, {
         headers: { Authorization: `Bearer ${getCookie()}` },
       })
       .then((res) => {
-        setFoodGroupList(res.data[0]);
-        setFoodGroupforSearch(res.data[1]);
-        setSearchedFoodGroup({
-          ...searchedFoodGroup,
+        setFoodUnitList(res.data[0]);
+        setFoodUnitforSearch(res.data[1]);
+        setSearchedFoodUnit({
+          ...searchedFoodUnit,
           list: res.data[1],
         });
         setLoading(false);
-        toast.success(`${_t(t("Food group has been deleted successfully"))}`, {
+        toast.success(`${_t(t("Food unit has been deleted successfully"))}`, {
           position: "bottom-center",
           autoClose: 10000,
           hideProgressBar: false,
@@ -341,19 +341,19 @@ const UnitCrud = () => {
   return (
     <>
       <Helmet>
-        <title>{_t(t("Food Groups"))}</title>
+        <title>{_t(t("Food Units"))}</title>
       </Helmet>
 
       {/* Add modal */}
-      <div className="modal fade" id="addPaymentType" aria-hidden="true">
+      <div className="modal fade" id="addunit" aria-hidden="true">
         <div className="modal-dialog modal-lg">
           <div className="modal-content">
             <div className="modal-header align-items-center">
               <div className="fk-sm-card__content">
                 <h5 className="text-capitalize fk-sm-card__title">
-                  {!newFoodGroup.edit
-                    ? _t(t("Add new food group"))
-                    : _t(t("Update food group"))}
+                  {!newFoodUnit.edit
+                    ? _t(t("Add new food unit"))
+                    : _t(t("Update food unit"))}
                 </h5>
               </div>
               <button
@@ -365,12 +365,12 @@ const UnitCrud = () => {
             </div>
             <div className="modal-body">
               {/* show form or show saving loading */}
-              {newFoodGroup.uploading === false ? (
-                <div key="fragment-food-group-1">
+              {newFoodUnit.uploading === false ? (
+                <div key="fragment-food-unit-1">
                   <form
                     onSubmit={
-                      !newFoodGroup.edit
-                        ? handleSaveNewFoodGroup
+                      !newFoodUnit.edit
+                        ? handleSaveNewFoodUnit
                         : handleUpdateFoodGroup
                     }
                   >
@@ -384,10 +384,10 @@ const UnitCrud = () => {
                         className="form-control"
                         id="name"
                         name="name"
-                        placeholder="e.g. Burger, Chicken"
-                        value={newFoodGroup.name || ""}
+                        placeholder="e.g. kg, ltr"
+                        value={newFoodUnit.name || ""}
                         required
-                        onChange={handleSetNewFoodGroup}
+                        onChange={handleSetNewFoodUnit}
                       />
                     </div>
 
@@ -398,7 +398,7 @@ const UnitCrud = () => {
                             type="submit"
                             className="btn btn-success text-dark w-100 xsm-text text-uppercase t-width-max"
                           >
-                            {!newFoodGroup.edit
+                            {!newFoodUnit.edit
                               ? _t(t("Save"))
                               : _t(t("Update"))}
                           </button>
@@ -432,7 +432,7 @@ const UnitCrud = () => {
                             e.preventDefault();
                           }}
                         >
-                          {!newFoodGroup.edit ? _t(t("Save")) : _t(t("Update"))}
+                          {!newFoodUnit.edit ? _t(t("Save")) : _t(t("Update"))}
                         </button>
                       </div>
                       <div className="col-6">
@@ -470,7 +470,7 @@ const UnitCrud = () => {
                 <div className="fk-scroll--pos-menu" data-simplebar>
                   <div className="t-pl-15 t-pr-15">
                     {/* Loading effect */}
-                    {newFoodGroup.uploading === true || loading === true ? (
+                    {newFoodUnit.uploading === true || loading === true ? (
                       tableLoading()
                     ) : (
                       <div key="fragment3">
@@ -483,8 +483,8 @@ const UnitCrud = () => {
                             <ul className="t-list fk-breadcrumb">
                               <li className="fk-breadcrumb__list">
                                 <span className="t-link fk-breadcrumb__link text-capitalize">
-                                  {!searchedFoodGroup.searched
-                                    ? _t(t("Food Group List"))
+                                  {!searchedFoodUnit.searched
+                                    ? _t(t("Unit List"))
                                     : _t(t("Search Result"))}
                                 </span>
                               </li>
@@ -521,10 +521,10 @@ const UnitCrud = () => {
                                   type="button"
                                   className="btn btn-primary xsm-text text-uppercase btn-lg btn-block"
                                   data-toggle="modal"
-                                  data-target="#addPaymentType"
+                                  data-target="#addunit"
                                   onClick={() => {
-                                    setNewFoodGroup({
-                                      ...newFoodGroup,
+                                    setNewFoodUnit({
+                                      ...newFoodUnit,
                                       edit: false,
                                       uploading: false,
                                     });
@@ -565,10 +565,10 @@ const UnitCrud = () => {
                             </thead>
                             <tbody className="align-middle">
                               {/* loop here, logic === !search && haveData && haveDataLegnth > 0*/}
-                              {!searchedFoodGroup.searched
+                              {!searchedFoodUnit.searched
                                 ? [
-                                    foodGroupList && [
-                                      foodGroupList.data.length === 0 ? (
+                                    foodUnitList && [
+                                      foodUnitList.data.length === 0 ? (
                                         <tr className="align-middle">
                                           <td
                                             scope="row"
@@ -579,81 +579,77 @@ const UnitCrud = () => {
                                           </td>
                                         </tr>
                                       ) : (
-                                        foodGroupList.data.map(
-                                          (item, index) => {
-                                            return (
-                                              <tr
-                                                className="align-middle"
-                                                key={index}
+                                        foodUnitList.data.map((item, index) => {
+                                          return (
+                                            <tr
+                                              className="align-middle"
+                                              key={index}
+                                            >
+                                              <th
+                                                scope="row"
+                                                className="xsm-text text-capitalize align-middle text-center"
                                               >
-                                                <th
-                                                  scope="row"
-                                                  className="xsm-text text-capitalize align-middle text-center"
-                                                >
-                                                  {index +
-                                                    1 +
-                                                    (foodGroupList.current_page -
-                                                      1) *
-                                                      foodGroupList.per_page}
-                                                </th>
+                                                {index +
+                                                  1 +
+                                                  (foodUnitList.current_page -
+                                                    1) *
+                                                    foodUnitList.per_page}
+                                              </th>
 
-                                                <td className="xsm-text text-capitalize align-middle text-center">
-                                                  {item.name}
-                                                </td>
+                                              <td className="xsm-text align-middle text-center">
+                                                {item.name}
+                                              </td>
 
-                                                <td className="xsm-text text-capitalize align-middle text-center">
-                                                  <div className="dropdown">
+                                              <td className="xsm-text text-capitalize align-middle text-center">
+                                                <div className="dropdown">
+                                                  <button
+                                                    className="btn t-bg-clear t-text-dark--light-40"
+                                                    type="button"
+                                                    data-toggle="dropdown"
+                                                  >
+                                                    <i className="fa fa-ellipsis-h"></i>
+                                                  </button>
+                                                  <div className="dropdown-menu">
                                                     <button
-                                                      className="btn t-bg-clear t-text-dark--light-40"
-                                                      type="button"
-                                                      data-toggle="dropdown"
+                                                      className="dropdown-item sm-text text-capitalize"
+                                                      onClick={() =>
+                                                        handleSetEdit(item.slug)
+                                                      }
+                                                      data-toggle="modal"
+                                                      data-target="#addunit"
                                                     >
-                                                      <i className="fa fa-ellipsis-h"></i>
+                                                      <span className="t-mr-8">
+                                                        <i className="fa fa-pencil"></i>
+                                                      </span>
+                                                      {_t(t("Edit"))}
                                                     </button>
-                                                    <div className="dropdown-menu">
-                                                      <button
-                                                        className="dropdown-item sm-text text-capitalize"
-                                                        onClick={() =>
-                                                          handleSetEdit(
-                                                            item.slug
-                                                          )
-                                                        }
-                                                        data-toggle="modal"
-                                                        data-target="#addPaymentType"
-                                                      >
-                                                        <span className="t-mr-8">
-                                                          <i className="fa fa-pencil"></i>
-                                                        </span>
-                                                        {_t(t("Edit"))}
-                                                      </button>
 
-                                                      <button
-                                                        className="dropdown-item sm-text text-capitalize"
-                                                        onClick={() => {
-                                                          handleDeleteConfirmation(
-                                                            item.slug
-                                                          );
-                                                        }}
-                                                      >
-                                                        <span className="t-mr-8">
-                                                          <i className="fa fa-trash"></i>
-                                                        </span>
-                                                        {_t(t("Delete"))}
-                                                      </button>
-                                                    </div>
+                                                    <button
+                                                      className="dropdown-item sm-text text-capitalize"
+                                                      onClick={() => {
+                                                        handleDeleteConfirmation(
+                                                          item.slug
+                                                        );
+                                                      }}
+                                                    >
+                                                      <span className="t-mr-8">
+                                                        <i className="fa fa-trash"></i>
+                                                      </span>
+                                                      {_t(t("Delete"))}
+                                                    </button>
                                                   </div>
-                                                </td>
-                                              </tr>
-                                            );
-                                          }
-                                        )
+                                                </div>
+                                              </td>
+                                            </tr>
+                                          );
+                                        })
                                       ),
                                     ],
                                   ]
                                 : [
                                     /* searched data, logic === haveData*/
-                                    searchedFoodGroup && [
-                                      searchedFoodGroup.list.length === 0 ? (
+                                    searchedFoodUnit && [
+                                      searchedFoodUnit.list.length === 0 ? (
                                         <tr className="align-middle">
                                           <td
                                             scope="row"
@@ -664,7 +660,7 @@ const UnitCrud = () => {
                                           </td>
                                         </tr>
                                       ) : (
-                                        searchedFoodGroup.list.map(
+                                        searchedFoodUnit.list.map(
                                           (item, index) => {
                                             return (
                                               <tr
@@ -677,12 +673,12 @@ const UnitCrud = () => {
                                                 >
                                                   {index +
                                                     1 +
-                                                    (foodGroupList.current_page -
+                                                    (foodUnitList.current_page -
                                                       1) *
-                                                      foodGroupList.per_page}
+                                                      foodUnitList.per_page}
                                                 </th>
 
-                                                <td className="xsm-text text-capitalize align-middle text-center">
+                                                <td className="xsm-text align-middle text-center">
                                                   {item.name}
                                                 </td>
 
@@ -704,7 +700,7 @@ const UnitCrud = () => {
                                                           )
                                                         }
                                                         data-toggle="modal"
-                                                        data-target="#addPaymentType"
+                                                        data-target="#addunit"
                                                       >
                                                         <span className="t-mr-8">
                                                           <i className="fa fa-pencil"></i>
@@ -745,23 +741,23 @@ const UnitCrud = () => {
               </div>
 
               {/* pagination loading effect */}
-              {newFoodGroup.uploading === true || loading === true
+              {newFoodUnit.uploading === true || loading === true
                 ? paginationLoading()
                 : [
                     // logic === !searched
-                    !searchedFoodGroup.searched ? (
+                    !searchedFoodUnit.searched ? (
                       <div key="fragment4">
                         <div className="t-bg-white mt-1 t-pt-5 t-pb-5">
                           <div className="row align-items-center t-pl-15 t-pr-15">
                             <div className="col-md-7 t-mb-15 mb-md-0">
                               {/* pagination function */}
-                              {pagination(foodGroupList, setPaginatedFoodGroup)}
+                              {pagination(foodUnitList, setPaginatedFoodUnit)}
                             </div>
                             <div className="col-md-5">
                               <ul className="t-list d-flex justify-content-md-end align-items-center">
                                 <li className="t-list__item">
                                   <span className="d-inline-block sm-text">
-                                    {showingData(foodGroupList)}
+                                    {showingData(foodUnitList)}
                                   </span>
                                 </li>
                               </ul>
@@ -779,8 +775,8 @@ const UnitCrud = () => {
                                 <button
                                   className="btn btn-primary btn-sm"
                                   onClick={() =>
-                                    setSearchedFoodGroup({
-                                      ...searchedFoodGroup,
+                                    setSearchedFoodUnit({
+                                      ...searchedFoodUnit,
                                       searched: false,
                                     })
                                   }
@@ -795,8 +791,8 @@ const UnitCrud = () => {
                               <li className="t-list__item">
                                 <span className="d-inline-block sm-text">
                                   {searchedShowingData(
-                                    searchedFoodGroup,
-                                    foodGroupForSearch
+                                    searchedFoodUnit,
+                                    foodUnitForSearch
                                   )}
                                 </span>
                               </li>
