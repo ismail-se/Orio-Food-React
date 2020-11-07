@@ -39,6 +39,7 @@ import {
   //manage->restaurantDetails
   BranchCrud,
   TableCrud,
+  DeptTagCrud,
   PaymentTypeCrud,
 } from "./imports/Pages";
 import { Navbar, Footer } from "./imports/Components";
@@ -129,6 +130,10 @@ function App() {
           <RestaurantRoute path="/dashboard/manage/restaurant/tables" exact>
             <TableCrud />
           </RestaurantRoute>
+          <RestaurantRoute path="/dashboard/manage/restaurant/dept-tags" exact>
+            <DeptTagCrud />
+          </RestaurantRoute>
+
           <RestaurantRoute
             path="/dashboard/manage/restaurant/payment-type"
             exact

@@ -26,6 +26,10 @@ const RestaurantProvider = ({ children }) => {
   const [tableList, setTableList] = useState(null);
   const [tableForSearch, setTableforSearch] = useState(null);
 
+  //table
+  const [deptTagList, setDeptTagList] = useState(null);
+  const [deptTagForSearch, setDeptTagForSearch] = useState(null);
+
   //Payment Type
   const [paymentTypeList, setPaymentTypeList] = useState(null);
   const [paymentTypeForSearch, setPaymentTypeforSearch] = useState(null);
@@ -135,6 +139,37 @@ const RestaurantProvider = ({ children }) => {
       .catch(() => {});
   };
 
+  //get dept Tag
+  const getDeptTag = () => {
+    setLoading(true);
+    const deptTagUrl = BASE_URL + "/settings/get-dept-tag";
+    return axios
+      .get(deptTagUrl, {
+        headers: { Authorization: `Bearer ${getCookie()}` },
+      })
+      .then((res) => {
+        setDeptTagList(res.data[0]);
+        setDeptTagForSearch(res.data[1]);
+        setLoading(false);
+      });
+  };
+
+  // get paginated dept Tag
+  const setPaginatedDeptTag = (pageNo) => {
+    setDataPaginating(true);
+    const url = BASE_URL + "/settings/get-dept-tag?page=" + pageNo;
+    return axios
+      .get(url, {
+        headers: { Authorization: `Bearer ${getCookie()}` },
+      })
+      .then((res) => {
+        setDeptTagList(res.data[0]);
+        setDeptTagForSearch(res.data[1]);
+        setDataPaginating(false);
+      })
+      .catch(() => {});
+  };
+
   return (
     <RestaurantContext.Provider
       value={{
@@ -153,6 +188,14 @@ const RestaurantProvider = ({ children }) => {
         setPaginatedTable,
         tableForSearch,
         setTableforSearch,
+
+        //dept-tag
+        getDeptTag,
+        deptTagList,
+        setDeptTagList,
+        setPaginatedDeptTag,
+        deptTagForSearch,
+        setDeptTagForSearch,
 
         //payment types
         getPaymentType,

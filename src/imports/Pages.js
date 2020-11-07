@@ -30,6 +30,7 @@ import CustomerCrud from "../resources/restaurant/auth/manage/user/CustomerCrud"
 //-restairantDetails
 import BranchCrud from "../resources/restaurant/auth/manage/restaurantDetails/BranchCrud";
 import TableCrud from "../resources/restaurant/auth/manage/restaurantDetails/TableCrud";
+import DeptTagCrud from "../resources/restaurant/auth/manage/restaurantDetails/DeptTagCrud";
 import PaymentTypeCrud from "../resources/restaurant/auth/manage/restaurantDetails/PaymentTypeCrud";
 
 export {
@@ -60,5 +61,6 @@ export {
   //manage->restaurantDetails
   BranchCrud,
   TableCrud,
+  DeptTagCrud,
   PaymentTypeCrud,
 };
