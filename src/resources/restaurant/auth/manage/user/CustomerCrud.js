@@ -56,7 +56,7 @@ const CustomerCrud = () => {
     setCustomerList,
     setPaginatedCustomer,
     customerForSearch,
-    setCustomerforSearch,
+    setCustomerForSearch,
 
     //pagination
     dataPaginating,
@@ -138,7 +138,7 @@ const CustomerCrud = () => {
             uploading: false,
           });
           setCustomerList(res.data[0]);
-          setCustomerforSearch(res.data[1]);
+          setCustomerForSearch(res.data[1]);
           setLoading(false);
           toast.success(`${_t(t("Customer has been added"))}`, {
             position: "bottom-center",
@@ -244,7 +244,7 @@ const CustomerCrud = () => {
           uploading: false,
         });
         setCustomerList(res.data[0]);
-        setCustomerforSearch(res.data[1]);
+        setCustomerForSearch(res.data[1]);
         setSearchedCustomer({
           ...searchedCustomer,
           list: res.data[1],
@@ -367,7 +367,7 @@ const CustomerCrud = () => {
       })
       .then((res) => {
         setCustomerList(res.data[0]);
-        setCustomerforSearch(res.data[1]);
+        setCustomerForSearch(res.data[1]);
         setSearchedCustomer({
           ...searchedCustomer,
           list: res.data[1],

@@ -26,11 +26,15 @@ const UserProvider = ({ children }) => {
 
   //waiter
   const [waiterList, setWaiterList] = useState(null);
-  const [waiterForSearch, setWaiterforSearch] = useState(null);
+  const [waiterForSearch, setWaiterForSearch] = useState(null);
 
   //customer
   const [customerList, setCustomerList] = useState(null);
-  const [customerForSearch, setCustomerforSearch] = useState(null);
+  const [customerForSearch, setCustomerForSearch] = useState(null);
+
+  //adminStaff
+  const [adminStaffList, setAdminStaffList] = useState(null);
+  const [adminStaffForSearch, setAdminStaffListforSearch] = useState(null);
 
   //useEffect- to get data on render
   useEffect(() => {
@@ -73,7 +77,7 @@ const UserProvider = ({ children }) => {
       })
       .then((res) => {
         setWaiterList(res.data[0]);
-        setWaiterforSearch(res.data[1]);
+        setWaiterForSearch(res.data[1]);
         setLoading(false);
       });
   };
@@ -88,7 +92,7 @@ const UserProvider = ({ children }) => {
       })
       .then((res) => {
         setWaiterList(res.data[0]);
-        setWaiterforSearch(res.data[1]);
+        setWaiterForSearch(res.data[1]);
         setDataPaginating(false);
       })
       .catch(() => {});
@@ -104,7 +108,7 @@ const UserProvider = ({ children }) => {
       })
       .then((res) => {
         setCustomerList(res.data[0]);
-        setCustomerforSearch(res.data[1]);
+        setCustomerForSearch(res.data[1]);
         setLoading(false);
       });
   };
@@ -119,7 +123,38 @@ const UserProvider = ({ children }) => {
       })
       .then((res) => {
         setCustomerList(res.data[0]);
-        setCustomerforSearch(res.data[1]);
+        setCustomerForSearch(res.data[1]);
+        setDataPaginating(false);
+      })
+      .catch(() => {});
+  };
+
+  //get adminStaff
+  const getAdminStaff = () => {
+    setLoading(true);
+    const adminStaffUrl = BASE_URL + "/settings/get-admin-staff";
+    return axios
+      .get(adminStaffUrl, {
+        headers: { Authorization: `Bearer ${getCookie()}` },
+      })
+      .then((res) => {
+        setAdminStaffList(res.data[0]);
+        setAdminStaffListforSearch(res.data[1]);
+        setLoading(false);
+      });
+  };
+
+  // get paginated adminStaff
+  const setPaginatedAdminStaff = (pageNo) => {
+    setDataPaginating(true);
+    const url = BASE_URL + "/settings/get-admin-staff?page=" + pageNo;
+    return axios
+      .get(url, {
+        headers: { Authorization: `Bearer ${getCookie()}` },
+      })
+      .then((res) => {
+        setAdminStaffList(res.data[0]);
+        setAdminStaffListforSearch(res.data[1]);
         setDataPaginating(false);
       })
       .catch(() => {});
@@ -139,7 +174,7 @@ const UserProvider = ({ children }) => {
         setWaiterList,
         setPaginatedWaiter,
         waiterForSearch,
-        setWaiterforSearch,
+        setWaiterForSearch,
 
         //customer
         getCustomer,
@@ -147,7 +182,15 @@ const UserProvider = ({ children }) => {
         setCustomerList,
         setPaginatedCustomer,
         customerForSearch,
-        setCustomerforSearch,
+        setCustomerForSearch,
+
+        //adminStaff
+        getAdminStaff,
+        adminStaffList,
+        setAdminStaffList,
+        setPaginatedAdminStaff,
+        adminStaffForSearch,
+        setAdminStaffListforSearch,
 
         //pagination
         dataPaginating,

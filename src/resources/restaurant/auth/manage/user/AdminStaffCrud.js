@@ -45,20 +45,21 @@ const AdminStaffCrud = () => {
     loading,
     setLoading,
 
-    //group
-    setPermissionGroup,
-    setPermissionGroupForSearch,
+    //permission group
+    permissionGroupForSearch,
   } = useContext(SettingsContext);
 
   let {
     //auth user
     authUserInfo,
-    //waiter
-    waiterList,
-    setWaiterList,
-    setPaginatedWaiter,
-    waiterForSearch,
-    setWaiterforSearch,
+
+    //adminStaff
+    getAdminStaff,
+    adminStaffList,
+    setAdminStaffList,
+    setPaginatedAdminStaff,
+    adminStaffForSearch,
+    setAdminStaffListforSearch,
 
     //pagination
     dataPaginating,
@@ -70,12 +71,18 @@ const AdminStaffCrud = () => {
   } = useContext(RestaurantContext);
 
   // States hook here
-  //new waiter
-  let [newWaiter, setNewWaiter] = useState({
+  //new adminStaff
+  let [newAdminStaff, setAdminStaff] = useState({
+    user_type: "",
     name: "",
+    email: "",
     phn_no: "",
+    password: "",
+    password_confirmation: "",
     branch: null,
     selectedBranch: null,
+    selectPermissionGroup: null,
+    selectedPermissionGroup: null,
     image: null,
     edit: false,
     editSlug: null,
@@ -84,7 +91,7 @@ const AdminStaffCrud = () => {
   });
 
   //search result
-  let [searchedWaiter, setSearchedWaiter] = useState({
+  let [searchedAdminStaff, setSearchedAdminStaff] = useState({
     list: null,
     searched: false,
   });
@@ -99,57 +106,131 @@ const AdminStaffCrud = () => {
   }, [authUserInfo]);
 
   //set name, phn no hook
-  const handleSetNewWaiter = (e) => {
-    setNewWaiter({ ...newWaiter, [e.target.name]: e.target.value });
+  const handleSetNewAdminStaff = (e) => {
+    setAdminStaff({ ...newAdminStaff, [e.target.name]: e.target.value });
   };
 
   //set branch hook
   const handleSetBranch = (branch) => {
-    setNewWaiter({ ...newWaiter, branch });
+    setAdminStaff({ ...newAdminStaff, branch });
+  };
+
+  //set permission hook
+  const handleSetPermissionGroup = (selectPermissionGroup) => {
+    setAdminStaff({ ...newAdminStaff, selectPermissionGroup });
   };
 
   //set image hook
-  const handleWaiterImage = (e) => {
-    setNewWaiter({
-      ...newWaiter,
+  const handleAdminStaffImage = (e) => {
+    setAdminStaff({
+      ...newAdminStaff,
       [e.target.name]: e.target.files[0],
     });
   };
 
-  //Save New waiter
-  const handleSaveNewWaiter = (e) => {
+  //Save New adminStaff
+  const handleSaveNewAdminStaff = (e) => {
     e.preventDefault();
-    if (newWaiter.branch !== null) {
-      setNewWaiter({
-        ...newWaiter,
-        uploading: true,
-      });
-      const waiterUrl = BASE_URL + `/settings/new-waiter`;
-      let formData = new FormData();
-      formData.append("name", newWaiter.name);
-      formData.append("phn_no", newWaiter.phn_no);
-      formData.append("branch_id", newWaiter.branch.id);
-      formData.append("image", newWaiter.image);
-      return axios
-        .post(waiterUrl, formData, {
-          headers: { Authorization: `Bearer ${getCookie()}` },
-        })
-        .then((res) => {
-          setNewWaiter({
-            name: "",
-            phn_no: "",
-            branch: null,
-            selectedBranch: null,
-            image: null,
-            edit: false,
-            editSlug: null,
-            editImage: null,
-            uploading: false,
+    //url and form data
+    const adminStaffUrl = BASE_URL + `/settings/new-admin-staff`;
+    let formData = new FormData();
+    formData.append("user_type", newAdminStaff.user_type);
+    formData.append("name", newAdminStaff.name);
+    formData.append("email", newAdminStaff.email);
+    formData.append("phn_no", newAdminStaff.phn_no);
+    formData.append("password", newAdminStaff.password);
+    formData.append(
+      "password_confirmation",
+      newAdminStaff.password_confirmation
+    );
+    if (newAdminStaff.selectPermissionGroup !== null) {
+      formData.append(
+        "permission_group_id",
+        newAdminStaff.selectPermissionGroup.id
+      );
+    }
+    if (newAdminStaff.user_type !== "admin" && newAdminStaff.branch !== null) {
+      formData.append("branch_id", newAdminStaff.branch.id);
+    }
+    formData.append("image", newAdminStaff.image);
+
+    //check user type
+    if (newAdminStaff.user_type === "staff") {
+      //check if group || branch null
+      if (
+        newAdminStaff.branch !== null &&
+        newAdminStaff.selectPermissionGroup !== null
+      ) {
+        setAdminStaff({
+          ...newAdminStaff,
+          uploading: true,
+        });
+
+        return axios
+          .post(adminStaffUrl, formData, {
+            headers: { Authorization: `Bearer ${getCookie()}` },
+          })
+          .then((res) => {
+            setAdminStaff({
+              user_type: "",
+              name: "",
+              email: "",
+              phn_no: "",
+              password: "",
+              password_confirmation: "",
+              branch: null,
+              selectPermissionGroup: null,
+              selectedBranch: null,
+              selectedPermissionGroup: null,
+              image: null,
+              edit: false,
+              editSlug: null,
+              editImage: null,
+              uploading: false,
+            });
+            setAdminStaffList(res.data[0]);
+            setAdminStaffListforSearch(res.data[1]);
+            setLoading(false);
+            toast.success(`${_t(t("User has been added"))}`, {
+              position: "bottom-center",
+              autoClose: 10000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              className: "text-center toast-notification",
+            });
+          })
+          .catch((error) => {
+            setLoading(false);
+            setAdminStaff({
+              ...newAdminStaff,
+              branch: null,
+              selectPermissionGroup: null,
+              uploading: false,
+            });
+            if (error && error.response.data.errors) {
+              if (error.response.data.errors.phn_no) {
+                error.response.data.errors.phn_no.forEach((item) => {
+                  if (item === "An user exists with this phone number") {
+                    toast.error(
+                      `${_t(t("An user exists with this phone number"))}`,
+                      {
+                        position: "bottom-center",
+                        autoClose: 10000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        className: "text-center toast-notification",
+                      }
+                    );
+                  }
+                });
+              }
+            }
           });
-          setWaiterList(res.data[0]);
-          setWaiterforSearch(res.data[1]);
-          setLoading(false);
-          toast.success(`${_t(t("Waiter has been added"))}`, {
+      } else {
+        if (newAdminStaff.branch === null) {
+          toast.error(`${_t(t("Please select a branch"))}`, {
             position: "bottom-center",
             autoClose: 10000,
             hideProgressBar: false,
@@ -157,107 +238,89 @@ const AdminStaffCrud = () => {
             pauseOnHover: true,
             className: "text-center toast-notification",
           });
-        })
-        .catch((error) => {
-          setLoading(false);
-          setNewWaiter({
-            ...newWaiter,
-            uploading: false,
+        }
+        if (newAdminStaff.selectPermissionGroup === null) {
+          toast.error(`${_t(t("Please select a permission group"))}`, {
+            position: "bottom-center",
+            autoClose: 10000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            className: "text-center toast-notification",
           });
-          if (error && error.response.data.errors) {
-            if (error.response.data.errors.phn_no) {
-              error.response.data.errors.phn_no.forEach((item) => {
-                if (item === "A waiter exists with this phone number") {
-                  toast.error(
-                    `${_t(t("A waiter exists with this phone number"))}`,
-                    {
-                      position: "bottom-center",
-                      autoClose: 10000,
-                      hideProgressBar: false,
-                      closeOnClick: true,
-                      pauseOnHover: true,
-                      className: "text-center toast-notification",
-                    }
-                  );
-                }
-              });
-            }
-          }
-        });
+        }
+      }
     } else {
-      toast.error(`${_t(t("Please select a branch"))}`, {
-        position: "bottom-center",
-        autoClose: 10000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        className: "text-center toast-notification",
-      });
-    }
-  };
-
-  //set edit true & values
-  const handleSetEdit = (slug) => {
-    let waiter = waiterForSearch.filter((item) => {
-      return item.slug === slug;
-    });
-    let selectedOptionForBranch = null;
-    if (waiter[0].branch_id) {
-      selectedOptionForBranch = branchForSearch.filter((branchItem) => {
-        return branchItem.id === waiter[0].branch_id;
-      });
-    }
-    setNewWaiter({
-      ...newWaiter,
-      name: waiter[0].name,
-      phn_no: waiter[0].phn_no,
-      selectedBranch: selectedOptionForBranch[0] || null,
-      editSlug: waiter[0].slug,
-      editImage: waiter[0].image,
-      edit: true,
-    });
-  };
-
-  //update Group
-  const handleUpdateWaiter = (e) => {
-    e.preventDefault();
-    setNewWaiter({
-      ...newWaiter,
-      uploading: true,
-    });
-    const waiterUrl = BASE_URL + `/settings/update-waiter`;
-    let formData = new FormData();
-    formData.append("name", newWaiter.name);
-    formData.append("phn_no", newWaiter.phn_no);
-    if (newWaiter.branch !== null) {
-      formData.append("branch_id", newWaiter.branch.id);
-    }
-    formData.append("image", newWaiter.image);
-    formData.append("editSlug", newWaiter.editSlug);
-    return axios
-      .post(waiterUrl, formData, {
-        headers: { Authorization: `Bearer ${getCookie()}` },
-      })
-      .then((res) => {
-        setNewWaiter({
-          name: "",
-          phn_no: "",
-          branch: null,
-          selectedBranch: null,
-          image: null,
-          edit: false,
-          editSlug: null,
-          editImage: null,
-          uploading: false,
+      //check if group null
+      if (newAdminStaff.selectPermissionGroup !== null) {
+        setAdminStaff({
+          ...newAdminStaff,
+          uploading: true,
         });
-        setWaiterList(res.data[0]);
-        setWaiterforSearch(res.data[1]);
-        setSearchedWaiter({
-          ...searchedWaiter,
-          list: res.data[1],
-        });
-        setLoading(false);
-        toast.success(`${_t(t("Waiter has been updated"))}`, {
+        return axios
+          .post(adminStaffUrl, formData, {
+            headers: { Authorization: `Bearer ${getCookie()}` },
+          })
+          .then((res) => {
+            setAdminStaff({
+              user_type: "",
+              name: "",
+              email: "",
+              phn_no: "",
+              password: "",
+              password_confirmation: "",
+              branch: null,
+              selectPermissionGroup: null,
+              selectedBranch: null,
+              selectedPermissionGroup: null,
+              image: null,
+              edit: false,
+              editSlug: null,
+              editImage: null,
+              uploading: false,
+            });
+            setAdminStaffList(res.data[0]);
+            setAdminStaffListforSearch(res.data[1]);
+            setLoading(false);
+            toast.success(`${_t(t("User has been added"))}`, {
+              position: "bottom-center",
+              autoClose: 10000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              className: "text-center toast-notification",
+            });
+          })
+          .catch((error) => {
+            setLoading(false);
+            setAdminStaff({
+              ...newAdminStaff,
+              branch: null,
+              selectPermissionGroup: null,
+              uploading: false,
+            });
+            if (error && error.response.data.errors) {
+              if (error.response.data.errors.phn_no) {
+                error.response.data.errors.phn_no.forEach((item) => {
+                  if (item === "An user exists with this phone number") {
+                    toast.error(
+                      `${_t(t("An user exists with this phone number"))}`,
+                      {
+                        position: "bottom-center",
+                        autoClose: 10000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        className: "text-center toast-notification",
+                      }
+                    );
+                  }
+                });
+              }
+            }
+          });
+      } else {
+        toast.error(`${_t(t("Please select a permission group"))}`, {
           position: "bottom-center",
           autoClose: 10000,
           hideProgressBar: false,
@@ -265,42 +328,270 @@ const AdminStaffCrud = () => {
           pauseOnHover: true,
           className: "text-center toast-notification",
         });
-      })
-      .catch((error) => {
-        setLoading(false);
-        setNewWaiter({
-          ...newWaiter,
-          uploading: false,
-        });
-        if (error && error.response.data.errors) {
-          if (error.response.data.errors.phn_no) {
-            error.response.data.errors.phn_no.forEach((item) => {
-              if (item === "A waiter exists with this phone number") {
-                toast.error(
-                  `${_t(t("A waiter exists with this phone number"))}`,
-                  {
-                    position: "bottom-center",
-                    autoClose: 10000,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    className: "text-center toast-notification",
-                  }
-                );
-              }
-            });
-          }
-        }
-      });
+      }
+    }
   };
 
-  //search waiters here
+  //set edit true & values
+  const handleSetEdit = (slug) => {
+    let adminStaff = adminStaffForSearch.filter((item) => {
+      return item.slug === slug;
+    });
+
+    let selectedOptionForPermission = null;
+    if (adminStaff[0].permission_group_id) {
+      selectedOptionForPermission = permissionGroupForSearch.filter(
+        (groupItem) => {
+          return groupItem.id === adminStaff[0].permission_group_id;
+        }
+      );
+    }
+
+    if (adminStaff[0].user_type === "staff") {
+      let selectedOptionForBranch = null;
+      if (adminStaff[0].branch_id) {
+        selectedOptionForBranch = branchForSearch.filter((branchItem) => {
+          return branchItem.id === adminStaff[0].branch_id;
+        });
+      }
+      setAdminStaff({
+        ...newAdminStaff,
+        user_type: adminStaff[0].user_type,
+        name: adminStaff[0].name,
+        email: adminStaff[0].email,
+        phn_no: adminStaff[0].phn_no,
+        selectedBranch: selectedOptionForBranch[0] || null,
+        selectedPermissionGroup: selectedOptionForPermission[0] || null,
+        editSlug: adminStaff[0].slug,
+        editImage: adminStaff[0].image,
+        edit: true,
+      });
+    } else {
+      setAdminStaff({
+        ...newAdminStaff,
+        user_type: adminStaff[0].user_type,
+        name: adminStaff[0].name,
+        email: adminStaff[0].email,
+        phn_no: adminStaff[0].phn_no,
+        selectedPermissionGroup: selectedOptionForPermission[0] || null,
+        editSlug: adminStaff[0].slug,
+        editImage: adminStaff[0].image,
+        edit: true,
+      });
+    }
+  };
+
+  //update adminStaff
+  const handleUpdateAdminStaff = (e) => {
+    e.preventDefault();
+    //url and form data
+    const adminStaffUrl = BASE_URL + `/settings/update-admin-staff`;
+    let formData = new FormData();
+    formData.append("user_type", newAdminStaff.user_type);
+    formData.append("name", newAdminStaff.name);
+    formData.append("email", newAdminStaff.email);
+    formData.append("phn_no", newAdminStaff.phn_no);
+    formData.append("password", newAdminStaff.password);
+    formData.append(
+      "password_confirmation",
+      newAdminStaff.password_confirmation
+    );
+    if (newAdminStaff.selectPermissionGroup !== null) {
+      formData.append(
+        "permission_group_id",
+        newAdminStaff.selectPermissionGroup.id
+      );
+    }
+    if (newAdminStaff.user_type !== "admin" && newAdminStaff.branch !== null) {
+      formData.append("branch_id", newAdminStaff.branch.id);
+    }
+    formData.append("image", newAdminStaff.image);
+
+    //check user type
+    if (newAdminStaff.user_type === "staff") {
+      //check if group || branch null
+      if (
+        newAdminStaff.branch !== null &&
+        newAdminStaff.selectPermissionGroup !== null
+      ) {
+        setAdminStaff({
+          ...newAdminStaff,
+          uploading: true,
+        });
+
+        return axios
+          .post(adminStaffUrl, formData, {
+            headers: { Authorization: `Bearer ${getCookie()}` },
+          })
+          .then((res) => {
+            setAdminStaff({
+              user_type: "",
+              name: "",
+              email: "",
+              phn_no: "",
+              password: "",
+              password_confirmation: "",
+              branch: null,
+              selectPermissionGroup: null,
+              selectedBranch: null,
+              selectedPermissionGroup: null,
+              image: null,
+              edit: false,
+              editSlug: null,
+              editImage: null,
+              uploading: false,
+            });
+            setAdminStaffList(res.data[0]);
+            setAdminStaffListforSearch(res.data[1]);
+            setLoading(false);
+            toast.success(`${_t(t("User has been added"))}`, {
+              position: "bottom-center",
+              autoClose: 10000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              className: "text-center toast-notification",
+            });
+          })
+          .catch((error) => {
+            setLoading(false);
+            setAdminStaff({
+              ...newAdminStaff,
+              branch: null,
+              selectPermissionGroup: null,
+              uploading: false,
+            });
+            if (error && error.response.data.errors) {
+              if (error.response.data.errors.phn_no) {
+                error.response.data.errors.phn_no.forEach((item) => {
+                  if (item === "An user exists with this phone number") {
+                    toast.error(
+                      `${_t(t("An user exists with this phone number"))}`,
+                      {
+                        position: "bottom-center",
+                        autoClose: 10000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        className: "text-center toast-notification",
+                      }
+                    );
+                  }
+                });
+              }
+            }
+          });
+      } else {
+        if (newAdminStaff.branch === null) {
+          toast.error(`${_t(t("Please select a branch"))}`, {
+            position: "bottom-center",
+            autoClose: 10000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            className: "text-center toast-notification",
+          });
+        }
+        if (newAdminStaff.selectPermissionGroup === null) {
+          toast.error(`${_t(t("Please select a permission group"))}`, {
+            position: "bottom-center",
+            autoClose: 10000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            className: "text-center toast-notification",
+          });
+        }
+      }
+    } else {
+      //check if group null
+      if (newAdminStaff.selectPermissionGroup !== null) {
+        setAdminStaff({
+          ...newAdminStaff,
+          uploading: true,
+        });
+        return axios
+          .post(adminStaffUrl, formData, {
+            headers: { Authorization: `Bearer ${getCookie()}` },
+          })
+          .then((res) => {
+            setAdminStaff({
+              user_type: "",
+              name: "",
+              email: "",
+              phn_no: "",
+              password: "",
+              password_confirmation: "",
+              branch: null,
+              selectPermissionGroup: null,
+              selectedBranch: null,
+              selectedPermissionGroup: null,
+              image: null,
+              edit: false,
+              editSlug: null,
+              editImage: null,
+              uploading: false,
+            });
+            setAdminStaffList(res.data[0]);
+            setAdminStaffListforSearch(res.data[1]);
+            setLoading(false);
+            toast.success(`${_t(t("User has been added"))}`, {
+              position: "bottom-center",
+              autoClose: 10000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              className: "text-center toast-notification",
+            });
+          })
+          .catch((error) => {
+            setLoading(false);
+            setAdminStaff({
+              ...newAdminStaff,
+              branch: null,
+              selectPermissionGroup: null,
+              uploading: false,
+            });
+            if (error && error.response.data.errors) {
+              if (error.response.data.errors.phn_no) {
+                error.response.data.errors.phn_no.forEach((item) => {
+                  if (item === "An user exists with this phone number") {
+                    toast.error(
+                      `${_t(t("An user exists with this phone number"))}`,
+                      {
+                        position: "bottom-center",
+                        autoClose: 10000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        className: "text-center toast-notification",
+                      }
+                    );
+                  }
+                });
+              }
+            }
+          });
+      } else {
+        toast.error(`${_t(t("Please select a permission group"))}`, {
+          position: "bottom-center",
+          autoClose: 10000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          className: "text-center toast-notification",
+        });
+      }
+    }
+  };
+
+  //search admin staff here
   const handleSearch = (e) => {
     let searchInput = e.target.value.toLowerCase();
     if (searchInput.length === 0) {
-      setSearchedWaiter({ ...searchedWaiter, searched: false });
+      setSearchedAdminStaff({ ...searchedAdminStaff, searched: false });
     } else {
-      let searchedList = waiterForSearch.filter((item) => {
+      let searchedList = adminStaffForSearch.filter((item) => {
         let lowerCaseItemName = item.name.toLowerCase();
         let lowerCaseItemPhnNo = item.phn_no.toLowerCase();
         let lowerCaseItemBranch =
@@ -311,15 +602,15 @@ const AdminStaffCrud = () => {
           (lowerCaseItemBranch && lowerCaseItemBranch.includes(searchInput))
         );
       });
-      setSearchedWaiter({
-        ...searchedWaiter,
+      setSearchedAdminStaff({
+        ...searchedAdminStaff,
         list: searchedList,
         searched: true,
       });
     }
   };
 
-  //delete confirmation modal of waiter
+  //delete confirmation modal of adminStaff
   const handleDeleteConfirmation = (slug) => {
     confirmAlert({
       customUI: ({ onClose }) => {
@@ -347,23 +638,23 @@ const AdminStaffCrud = () => {
     });
   };
 
-  //delete waiter here
+  //delete adminStaff here
   const handleDeleteWaiter = (slug) => {
     setLoading(true);
-    const waiterUrl = BASE_URL + `/settings/delete-waiter/${slug}`;
+    const adminStaffUrl = BASE_URL + `/settings/delete-admin-staff/${slug}`;
     return axios
-      .get(waiterUrl, {
+      .get(adminStaffUrl, {
         headers: { Authorization: `Bearer ${getCookie()}` },
       })
       .then((res) => {
-        setPermissionGroup(res.data[0]);
-        setPermissionGroupForSearch(res.data[1]);
-        setSearchedWaiter({
-          ...searchedWaiter,
+        setAdminStaffList(res.data[0]);
+        setAdminStaffListforSearch(res.data[1]);
+        setSearchedAdminStaff({
+          ...searchedAdminStaff,
           list: res.data[1],
         });
         setLoading(false);
-        toast.success(`${_t(t("Waiter has been deleted successfully"))}`, {
+        toast.success(`${_t(t("User has been deleted successfully"))}`, {
           position: "bottom-center",
           autoClose: 10000,
           hideProgressBar: false,
@@ -388,7 +679,7 @@ const AdminStaffCrud = () => {
   return (
     <>
       <Helmet>
-        <title>{_t(t("Waiters"))}</title>
+        <title>{_t(t("Users"))}</title>
       </Helmet>
 
       {/* Add modal */}
@@ -398,9 +689,9 @@ const AdminStaffCrud = () => {
             <div className="modal-header align-items-center">
               <div className="fk-sm-card__content">
                 <h5 className="text-capitalize fk-sm-card__title">
-                  {!newWaiter.edit
-                    ? _t(t("Add new waiter"))
-                    : _t(t("Update waiter"))}
+                  {!newAdminStaff.edit
+                    ? _t(t("Add new admin / staff"))
+                    : _t(t("Update admin / staff"))}
                 </h5>
               </div>
               <button
@@ -412,14 +703,40 @@ const AdminStaffCrud = () => {
             </div>
             <div className="modal-body">
               {/* show form or show saving loading */}
-              {newWaiter.uploading === false ? (
+              {newAdminStaff.uploading === false ? (
                 <div key="fragment-permission-1">
                   <form
                     onSubmit={
-                      !newWaiter.edit ? handleSaveNewWaiter : handleUpdateWaiter
+                      !newAdminStaff.edit
+                        ? handleSaveNewAdminStaff
+                        : handleUpdateAdminStaff
                     }
                   >
                     <div>
+                      <label htmlFor="user_type" className="form-label">
+                        {_t(t("User type"))}{" "}
+                        <small className="text-primary">*</small>
+                      </label>
+                      <select
+                        name="user_type"
+                        className="form-control"
+                        onChange={handleSetNewAdminStaff}
+                        required
+                        value={newAdminStaff.user_type}
+                      >
+                        <option value="">
+                          {_t(t("Please select an user type"))}
+                        </option>
+                        <option value="admin" className="text-uppercase">
+                          {_t(t("Admin"))}
+                        </option>
+                        <option value="staff" className="text-uppercase">
+                          {_t(t("Staff"))}
+                        </option>
+                      </select>
+                    </div>
+
+                    <div className="mt-3">
                       <label htmlFor="name" className="form-label">
                         {_t(t("Name"))}{" "}
                         <small className="text-primary">*</small>
@@ -430,16 +747,32 @@ const AdminStaffCrud = () => {
                         id="name"
                         name="name"
                         placeholder="e.g. Mr. John"
-                        value={newWaiter.name || ""}
+                        value={newAdminStaff.name || ""}
                         required
-                        onChange={handleSetNewWaiter}
+                        onChange={handleSetNewAdminStaff}
+                      />
+                    </div>
+
+                    <div className="mt-3">
+                      <label htmlFor="email" className="form-label">
+                        {_t(t("Email"))}{" "}
+                        <small className="text-primary">*</small>
+                      </label>
+                      <input
+                        type="email"
+                        className="form-control"
+                        id="email"
+                        name="email"
+                        placeholder="e.g. staff@example.com"
+                        value={newAdminStaff.email || ""}
+                        required
+                        onChange={handleSetNewAdminStaff}
                       />
                     </div>
 
                     <div className="mt-3">
                       <label htmlFor="phn_no" className="form-label">
-                        {_t(t("Phone number"))}{" "}
-                        <small className="text-primary">*</small>
+                        {_t(t("Phone number"))}
                       </label>
                       <input
                         type="text"
@@ -447,21 +780,96 @@ const AdminStaffCrud = () => {
                         id="phn_no"
                         name="phn_no"
                         placeholder="e.g. 01xxx xxx xxx"
-                        value={newWaiter.phn_no || ""}
-                        required
-                        onChange={handleSetNewWaiter}
+                        value={newAdminStaff.phn_no || ""}
+                        onChange={handleSetNewAdminStaff}
                       />
                     </div>
 
                     <div className="mt-3">
+                      <label htmlFor="password" className="form-label">
+                        {_t(t("Password"))}{" "}
+                        <small className="text-primary">*</small>
+                      </label>
+                      <input
+                        type="password"
+                        className="form-control"
+                        id="password"
+                        name="password"
+                        placeholder="e.g. Password"
+                        value={newAdminStaff.password || ""}
+                        required
+                        onChange={handleSetNewAdminStaff}
+                      />
+                    </div>
+
+                    <div className="mt-3">
+                      <label
+                        htmlFor="password_confirmation"
+                        className="form-label"
+                      >
+                        {_t(t("Confirm Password"))}{" "}
+                        <small className="text-primary">*</small>
+                      </label>
+                      <input
+                        type="password"
+                        className="form-control"
+                        id="password_confirmation"
+                        name="password_confirmation"
+                        placeholder="e.g. Confirm password"
+                        value={newAdminStaff.password_confirmation || ""}
+                        required
+                        onChange={handleSetNewAdminStaff}
+                      />
+                    </div>
+
+                    {newAdminStaff.user_type === "staff" && (
+                      <div className="mt-3">
+                        <label className="form-label mb-0">
+                          {_t(t("Select a branch"))}{" "}
+                          {newAdminStaff.edit ? (
+                            <small className="text-primary">
+                              {"( "}
+                              {_t(
+                                t(
+                                  "Leave empty if you do not want to change branch"
+                                )
+                              )}
+                              {" )"}
+                            </small>
+                          ) : (
+                            <small className="text-primary">*</small>
+                          )}
+                        </label>
+                        {newAdminStaff.edit &&
+                          newAdminStaff.selectedBranch !== null && (
+                            <ul className="list-group list-group-horizontal-sm row col-12 mb-2 ml-md-1">
+                              <li className="list-group-item col-12 col-md-3 bg-success rounded-sm py-1 px-2 my-1 text-center">
+                                {newAdminStaff.selectedBranch.name}
+                              </li>
+                            </ul>
+                          )}
+                        <Select
+                          options={branchForSearch}
+                          components={makeAnimated()}
+                          getOptionLabel={(option) => option.name}
+                          getOptionValue={(option) => option.name}
+                          className="basic-multi-select"
+                          classNamePrefix="select"
+                          onChange={handleSetBranch}
+                          placeholder={_t(t("Please select a branch"))}
+                        />
+                      </div>
+                    )}
+
+                    <div className="mt-3">
                       <label className="form-label mb-0">
-                        {_t(t("Select a branch"))}{" "}
-                        {newWaiter.edit ? (
+                        {_t(t("Select a permission group"))}{" "}
+                        {newAdminStaff.edit ? (
                           <small className="text-primary">
                             {"( "}
                             {_t(
                               t(
-                                "Leave empty if you do not want to change branch"
+                                "Leave empty if you do not want to change permission group"
                               )
                             )}
                             {" )"}
@@ -470,22 +878,23 @@ const AdminStaffCrud = () => {
                           <small className="text-primary">*</small>
                         )}
                       </label>
-                      {newWaiter.edit && newWaiter.selectedBranch !== null && (
-                        <ul className="list-group list-group-horizontal-sm row col-12 mb-2 ml-md-1">
-                          <li className="list-group-item col-12 col-md-3 bg-success rounded-sm py-1 px-2 my-1 text-center">
-                            {newWaiter.selectedBranch.name}
-                          </li>
-                        </ul>
-                      )}
+                      {newAdminStaff.edit &&
+                        newAdminStaff.selectedPermissionGroup !== null && (
+                          <ul className="list-group list-group-horizontal-sm row col-12 mb-2 ml-md-1">
+                            <li className="list-group-item col-12 col-md-3 bg-success rounded-sm py-1 px-2 my-1 text-center">
+                              {newAdminStaff.selectedPermissionGroup.name}
+                            </li>
+                          </ul>
+                        )}
                       <Select
-                        options={branchForSearch}
+                        options={permissionGroupForSearch}
                         components={makeAnimated()}
                         getOptionLabel={(option) => option.name}
                         getOptionValue={(option) => option.name}
                         className="basic-multi-select"
                         classNamePrefix="select"
-                        onChange={handleSetBranch}
-                        placeholder={_t(t("Please select a branch"))}
+                        onChange={handleSetPermissionGroup}
+                        placeholder={_t(t("Please select a group"))}
                       />
                     </div>
 
@@ -497,11 +906,11 @@ const AdminStaffCrud = () => {
                             ({_t(t("Square Image Preferable"))})
                           </small>
                         </label>
-                        {newWaiter.edit && (
+                        {newAdminStaff.edit && (
                           <div
                             className="fk-language__flag"
                             style={{
-                              backgroundImage: `url(${newWaiter.editImage})`,
+                              backgroundImage: `url(${newAdminStaff.editImage})`,
                             }}
                           ></div>
                         )}
@@ -511,7 +920,7 @@ const AdminStaffCrud = () => {
                         className="form-control"
                         id="image"
                         name="image"
-                        onChange={handleWaiterImage}
+                        onChange={handleAdminStaffImage}
                       />
                     </div>
 
@@ -522,7 +931,9 @@ const AdminStaffCrud = () => {
                             type="submit"
                             className="btn btn-success text-dark w-100 xsm-text text-uppercase t-width-max"
                           >
-                            {!newWaiter.edit ? _t(t("Save")) : _t(t("Update"))}
+                            {!newAdminStaff.edit
+                              ? _t(t("Save"))
+                              : _t(t("Update"))}
                           </button>
                         </div>
                         <div className="col-6">
@@ -554,7 +965,9 @@ const AdminStaffCrud = () => {
                             e.preventDefault();
                           }}
                         >
-                          {!newWaiter.edit ? _t(t("Save")) : _t(t("Update"))}
+                          {!newAdminStaff.edit
+                            ? _t(t("Save"))
+                            : _t(t("Update"))}
                         </button>
                       </div>
                       <div className="col-6">
@@ -592,7 +1005,7 @@ const AdminStaffCrud = () => {
                 <div className="fk-scroll--pos-menu" data-simplebar>
                   <div className="t-pl-15 t-pr-15">
                     {/* Loading effect */}
-                    {newWaiter.uploading === true || loading === true ? (
+                    {newAdminStaff.uploading === true || loading === true ? (
                       tableLoading()
                     ) : (
                       <div key="fragment3">
@@ -605,8 +1018,8 @@ const AdminStaffCrud = () => {
                             <ul className="t-list fk-breadcrumb">
                               <li className="fk-breadcrumb__list">
                                 <span className="t-link fk-breadcrumb__link text-capitalize">
-                                  {!searchedWaiter.searched
-                                    ? _t(t("Waiter List"))
+                                  {!searchedAdminStaff.searched
+                                    ? _t(t("User List"))
                                     : _t(t("Search Result"))}
                                 </span>
                               </li>
@@ -645,9 +1058,10 @@ const AdminStaffCrud = () => {
                                   data-toggle="modal"
                                   data-target="#addWaiter"
                                   onClick={() => {
-                                    setNewWaiter({
-                                      ...newWaiter,
+                                    setAdminStaff({
+                                      ...newAdminStaff,
                                       branch: null,
+                                      selectPermissionGroup: null,
                                       edit: false,
                                       uploading: false,
                                     });
@@ -696,6 +1110,12 @@ const AdminStaffCrud = () => {
                                 >
                                   {_t(t("Branch"))}
                                 </th>
+                                <th
+                                  scope="col"
+                                  className="sm-text text-capitalize align-middle text-center border-1 border"
+                                >
+                                  {_t(t("user type"))}
+                                </th>
 
                                 <th
                                   scope="col"
@@ -707,10 +1127,10 @@ const AdminStaffCrud = () => {
                             </thead>
                             <tbody className="align-middle">
                               {/* loop here, logic === !search && haveData && haveDataLegnth > 0*/}
-                              {!searchedWaiter.searched
+                              {!searchedAdminStaff.searched
                                 ? [
-                                    waiterList && [
-                                      waiterList.data.length === 0 ? (
+                                    adminStaffList && [
+                                      adminStaffList.data.length === 0 ? (
                                         <tr className="align-middle">
                                           <td
                                             scope="row"
@@ -721,118 +1141,7 @@ const AdminStaffCrud = () => {
                                           </td>
                                         </tr>
                                       ) : (
-                                        waiterList.data.map((item, index) => {
-                                          return (
-                                            <tr
-                                              className="align-middle"
-                                              key={index}
-                                            >
-                                              <th
-                                                scope="row"
-                                                className="xsm-text text-capitalize align-middle text-center"
-                                              >
-                                                {index +
-                                                  1 +
-                                                  (waiterList.current_page -
-                                                    1) *
-                                                    waiterList.per_page}
-                                              </th>
-
-                                              <td className="xsm-text align-middle d-flex justify-content-center">
-                                                <div
-                                                  className="table-img-large"
-                                                  style={{
-                                                    backgroundImage: `url(${
-                                                      item.image !== null
-                                                        ? item.image
-                                                        : "/assets/img/waiter.jpg"
-                                                    })`,
-                                                  }}
-                                                ></div>
-                                              </td>
-                                              <td className="xsm-text text-capitalize align-middle text-center">
-                                                {item.name}
-                                              </td>
-                                              <td className="xsm-text text-capitalize align-middle text-center">
-                                                <a
-                                                  href={`tel:${item.phn_no}`}
-                                                  rel="noopener noreferrer"
-                                                >
-                                                  {item.phn_no}
-                                                </a>
-                                              </td>
-
-                                              <td className="xsm-text align-middle text-center">
-                                                {item.branch_name || "-"}
-                                              </td>
-
-                                              <td className="xsm-text text-capitalize align-middle text-center">
-                                                <div className="dropdown">
-                                                  <button
-                                                    className="btn t-bg-clear t-text-dark--light-40"
-                                                    type="button"
-                                                    data-toggle="dropdown"
-                                                  >
-                                                    <i className="fa fa-ellipsis-h"></i>
-                                                  </button>
-                                                  <div className="dropdown-menu">
-                                                    <button
-                                                      className="dropdown-item sm-text text-capitalize"
-                                                      onClick={() => {
-                                                        setNewWaiter({
-                                                          ...newWaiter,
-                                                          branch: null,
-                                                        });
-                                                        handleSetEdit(
-                                                          item.slug
-                                                        );
-                                                      }}
-                                                      data-toggle="modal"
-                                                      data-target="#addWaiter"
-                                                    >
-                                                      <span className="t-mr-8">
-                                                        <i className="fa fa-pencil"></i>
-                                                      </span>
-                                                      {_t(t("Edit"))}
-                                                    </button>
-
-                                                    <button
-                                                      className="dropdown-item sm-text text-capitalize"
-                                                      onClick={() => {
-                                                        handleDeleteConfirmation(
-                                                          item.slug
-                                                        );
-                                                      }}
-                                                    >
-                                                      <span className="t-mr-8">
-                                                        <i className="fa fa-trash"></i>
-                                                      </span>
-                                                      {_t(t("Delete"))}
-                                                    </button>
-                                                  </div>
-                                                </div>
-                                              </td>
-                                            </tr>
-                                          );
-                                        })
-                                      ),
-                                    ],
-                                  ]
-                                : [
-                                    /* searched data, logic === haveData*/
-                                    searchedWaiter && [
-                                      searchedWaiter.list.length === 0 ? (
-                                        <tr className="align-middle">
-                                          <td
-                                            scope="row"
-                                            colSpan="6"
-                                            className="xsm-text align-middle text-center"
-                                          >
-                                            {_t(t("No data available"))}
-                                          </td>
-                                        </tr>
-                                      ) : (
-                                        searchedWaiter.list.map(
+                                        adminStaffList.data.map(
                                           (item, index) => {
                                             return (
                                               <tr
@@ -845,9 +1154,126 @@ const AdminStaffCrud = () => {
                                                 >
                                                   {index +
                                                     1 +
-                                                    (waiterList.current_page -
+                                                    (adminStaffList.current_page -
                                                       1) *
-                                                      waiterList.per_page}
+                                                      adminStaffList.per_page}
+                                                </th>
+
+                                                <td className="xsm-text align-middle d-flex justify-content-center">
+                                                  <div
+                                                    className="table-img-large"
+                                                    style={{
+                                                      backgroundImage: `url(${
+                                                        item.image !== null
+                                                          ? item.image
+                                                          : "/assets/img/admin.png"
+                                                      })`,
+                                                    }}
+                                                  ></div>
+                                                </td>
+                                                <td className="xsm-text text-capitalize align-middle text-center">
+                                                  {item.name}
+                                                </td>
+                                                <td className="xsm-text text-capitalize align-middle text-center">
+                                                  <a
+                                                    href={`tel:${item.phn_no}`}
+                                                    rel="noopener noreferrer"
+                                                  >
+                                                    {item.phn_no}
+                                                  </a>
+                                                </td>
+
+                                                <td className="xsm-text align-middle text-center">
+                                                  {item.branch_name || "-"}
+                                                </td>
+
+                                                <td className="xsm-text align-middle text-center">
+                                                  {item.user_type || "-"}
+                                                </td>
+
+                                                <td className="xsm-text text-capitalize align-middle text-center">
+                                                  <div className="dropdown">
+                                                    <button
+                                                      className="btn t-bg-clear t-text-dark--light-40"
+                                                      type="button"
+                                                      data-toggle="dropdown"
+                                                    >
+                                                      <i className="fa fa-ellipsis-h"></i>
+                                                    </button>
+                                                    <div className="dropdown-menu">
+                                                      <button
+                                                        className="dropdown-item sm-text text-capitalize"
+                                                        onClick={() => {
+                                                          setAdminStaff({
+                                                            ...newAdminStaff,
+                                                            branch: null,
+                                                          });
+                                                          handleSetEdit(
+                                                            item.slug
+                                                          );
+                                                        }}
+                                                        data-toggle="modal"
+                                                        data-target="#addWaiter"
+                                                      >
+                                                        <span className="t-mr-8">
+                                                          <i className="fa fa-pencil"></i>
+                                                        </span>
+                                                        {_t(t("Edit"))}
+                                                      </button>
+
+                                                      <button
+                                                        className="dropdown-item sm-text text-capitalize"
+                                                        onClick={() => {
+                                                          handleDeleteConfirmation(
+                                                            item.slug
+                                                          );
+                                                        }}
+                                                      >
+                                                        <span className="t-mr-8">
+                                                          <i className="fa fa-trash"></i>
+                                                        </span>
+                                                        {_t(t("Delete"))}
+                                                      </button>
+                                                    </div>
+                                                  </div>
+                                                </td>
+                                              </tr>
+                                            );
+                                          }
+                                        )
+                                      ),
+                                    ],
+                                  ]
+                                : [
+                                    /* searched data, logic === haveData*/
+                                    searchedAdminStaff && [
+                                      searchedAdminStaff.list.length === 0 ? (
+                                        <tr className="align-middle">
+                                          <td
+                                            scope="row"
+                                            colSpan="6"
+                                            className="xsm-text align-middle text-center"
+                                          >
+                                            {_t(t("No data available"))}
+                                          </td>
+                                        </tr>
+                                      ) : (
+                                        searchedAdminStaff.list.map(
+                                          (item, index) => {
+                                            return (
+                                              <tr
+                                                className="align-middle"
+                                                key={index}
+                                              >
+                                                <th
+                                                  scope="row"
+                                                  className="xsm-text text-capitalize align-middle text-center"
+                                                >
+                                                  {index +
+                                                    1 +
+                                                    (adminStaffList.current_page -
+                                                      1) *
+                                                      adminStaffList.per_page}
                                                 </th>
 
                                                 <td className="xsm-text align-middle d-flex justify-content-center">
@@ -891,8 +1317,8 @@ const AdminStaffCrud = () => {
                                                       <button
                                                         className="dropdown-item sm-text text-capitalize"
                                                         onClick={() => {
-                                                          setNewWaiter({
-                                                            ...newWaiter,
+                                                          setAdminStaff({
+                                                            ...newAdminStaff,
                                                             branch: null,
                                                           });
                                                           handleSetEdit(
@@ -941,23 +1367,26 @@ const AdminStaffCrud = () => {
               </div>
 
               {/* pagination loading effect */}
-              {newWaiter.uploading === true || loading === true
+              {newAdminStaff.uploading === true || loading === true
                 ? paginationLoading()
                 : [
                     // logic === !searched
-                    !searchedWaiter.searched ? (
+                    !searchedAdminStaff.searched ? (
                       <div key="fragment4">
                         <div className="t-bg-white mt-1 t-pt-5 t-pb-5">
                           <div className="row align-items-center t-pl-15 t-pr-15">
                             <div className="col-md-7 t-mb-15 mb-md-0">
                               {/* pagination function */}
-                              {pagination(waiterList, setPaginatedWaiter)}
+                              {pagination(
+                                adminStaffList,
+                                setPaginatedAdminStaff
+                              )}
                             </div>
                             <div className="col-md-5">
                               <ul className="t-list d-flex justify-content-md-end align-items-center">
                                 <li className="t-list__item">
                                   <span className="d-inline-block sm-text">
-                                    {showingData(waiterList)}
+                                    {showingData(adminStaffList)}
                                   </span>
                                 </li>
                               </ul>
@@ -975,8 +1404,8 @@ const AdminStaffCrud = () => {
                                 <button
                                   className="btn btn-primary btn-sm"
                                   onClick={() =>
-                                    setSearchedWaiter({
-                                      ...searchedWaiter,
+                                    setSearchedAdminStaff({
+                                      ...searchedAdminStaff,
                                       searched: false,
                                     })
                                   }
@@ -991,8 +1420,8 @@ const AdminStaffCrud = () => {
                               <li className="t-list__item">
                                 <span className="d-inline-block sm-text">
                                   {searchedShowingData(
-                                    searchedWaiter,
-                                    waiterForSearch
+                                    searchedAdminStaff,
+                                    adminStaffForSearch
                                   )}
                                 </span>
                               </li>

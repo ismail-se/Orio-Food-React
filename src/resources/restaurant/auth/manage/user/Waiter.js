@@ -44,10 +44,6 @@ const Waiter = () => {
     //common
     loading,
     setLoading,
-
-    //group
-    setPermissionGroup,
-    setPermissionGroupForSearch,
   } = useContext(SettingsContext);
 
   let {
@@ -58,7 +54,7 @@ const Waiter = () => {
     setWaiterList,
     setPaginatedWaiter,
     waiterForSearch,
-    setWaiterforSearch,
+    setWaiterForSearch,
 
     //pagination
     dataPaginating,
@@ -147,7 +143,7 @@ const Waiter = () => {
             uploading: false,
           });
           setWaiterList(res.data[0]);
-          setWaiterforSearch(res.data[1]);
+          setWaiterForSearch(res.data[1]);
           setLoading(false);
           toast.success(`${_t(t("Waiter has been added"))}`, {
             position: "bottom-center",
@@ -251,7 +247,7 @@ const Waiter = () => {
           uploading: false,
         });
         setWaiterList(res.data[0]);
-        setWaiterforSearch(res.data[1]);
+        setWaiterForSearch(res.data[1]);
         setSearchedWaiter({
           ...searchedWaiter,
           list: res.data[1],
@@ -356,8 +352,8 @@ const Waiter = () => {
         headers: { Authorization: `Bearer ${getCookie()}` },
       })
       .then((res) => {
-        setPermissionGroup(res.data[0]);
-        setPermissionGroupForSearch(res.data[1]);
+        setWaiterList(res.data[0]);
+        setWaiterForSearch(res.data[1]);
         setSearchedWaiter({
           ...searchedWaiter,
           list: res.data[1],
