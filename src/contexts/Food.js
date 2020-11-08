@@ -34,6 +34,11 @@ const FoodProvider = ({ children }) => {
   const [propertyGroupList, setPropertyGroupList] = useState(null);
   const [propertyGroupForSearch, setPropertyGroupForSearch] = useState(null);
 
+  //property Item
+  const [propertyItemList, setPropertyItemList] = useState(null);
+  const [propertyItemForSearch, setPropertyItemForSearch] = useState(null);
+  let [propertyItemGroup, setPropertyItemGroup] = useState(null);
+
   //useEffect- to get data on render
   useEffect(() => {
     //call- unauthenticated
@@ -58,7 +63,6 @@ const FoodProvider = ({ children }) => {
       .then((res) => {
         setFoodGroupList(res.data[0]);
         setFoodGroupforSearch(res.data[1]);
-        setLoading(false);
       });
   };
 
@@ -171,9 +175,28 @@ const FoodProvider = ({ children }) => {
       .catch(() => {});
   };
 
+  //get property item
+  const getPropertyItem = (slug) => {
+    setLoading(true);
+    const propertyItemUrl = BASE_URL + "/settings/get-property-item/" + slug;
+    return axios
+      .get(propertyItemUrl, {
+        headers: { Authorization: `Bearer ${getCookie()}` },
+      })
+      .then((res) => {
+        setPropertyItemList(res.data[0]);
+        setPropertyItemForSearch(res.data[0]);
+        setPropertyItemGroup(res.data[1]);
+        setLoading(false);
+      });
+  };
+
   return (
     <FoodContext.Provider
       value={{
+        // common
+        loading,
+        setLoading,
         //food group
         getFoodGroup,
         foodGroupList,
@@ -205,6 +228,15 @@ const FoodProvider = ({ children }) => {
         setPaginatedPropertyGroup,
         propertyGroupForSearch,
         setPropertyGroupForSearch,
+
+        //property Item
+        getPropertyItem,
+        propertyItemList,
+        setPropertyItemList,
+        propertyItemForSearch,
+        setPropertyItemForSearch,
+        propertyItemGroup,
+        setPropertyItemGroup,
 
         //pagination
         dataPaginating,
