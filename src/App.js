@@ -36,7 +36,8 @@ import {
   Lang,
   Translation,
   Smtp,
-  //manage->settings
+  //manage->user
+  AdminStaffCrud,
   Waiter,
   Permissions,
   CustomerCrud,
@@ -128,6 +129,10 @@ function App() {
 
           <RestaurantRoute path="/dashboard/manage/user/customers" exact>
             <CustomerCrud />
+          </RestaurantRoute>
+
+          <RestaurantRoute path="/dashboard/manage/user/admin-staff" exact>
+            <AdminStaffCrud />
           </RestaurantRoute>
 
           <RestaurantRoute path="/dashboard/manage/user/waiters" exact>
