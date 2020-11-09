@@ -46,7 +46,7 @@ const Currency = () => {
     setCurrencyList,
     setPaginatedCurrencies,
     navCurrencyList,
-    setNavLanguageList,
+    setNavCurrencyList,
     currencyListForSearch,
     setCurrencyListForSearch,
 
@@ -117,7 +117,7 @@ const Currency = () => {
           uploading: false,
         });
         setCurrencyList(res.data[0]);
-        setNavLanguageList(res.data[1]);
+        setNavCurrencyList(res.data[1]);
         setCurrencyListForSearch(res.data[1]);
         setLoading(false);
         toast.success(`${_t(t("A new currency has been created"))}`, {
@@ -178,7 +178,7 @@ const Currency = () => {
       ...newCurrency,
       uploading: true,
     });
-    const currencyUrl = BASE_URL + `/settings/update-lang`;
+    const currencyUrl = BASE_URL + `/settings/update-currency`;
     let formData = new FormData();
     formData.append("name", newCurrency.name);
     formData.append("code", newCurrency.code);
@@ -199,7 +199,7 @@ const Currency = () => {
           uploading: false,
         });
         setCurrencyList(res.data[0]);
-        setNavLanguageList(res.data[1]);
+        setNavCurrencyList(res.data[1]);
         setCurrencyListForSearch(res.data[1]);
         setSearchedCurrencies({
           ...searchedCurrencies,
@@ -282,7 +282,7 @@ const Currency = () => {
       })
       .then((res) => {
         setCurrencyList(res.data[0]);
-        setNavLanguageList(res.data[1]);
+        setNavCurrencyList(res.data[1]);
         setCurrencyListForSearch(res.data[1]);
         setSearchedCurrencies({
           ...searchedCurrencies,
@@ -340,7 +340,7 @@ const Currency = () => {
               <button
                 className="btn btn-primary"
                 onClick={() => {
-                  handleDeleteLanguage(code);
+                  handleDeleteCurrency(code);
                   onClose();
                 }}
               >
@@ -357,19 +357,19 @@ const Currency = () => {
   };
 
   //delete language here
-  const handleDeleteLanguage = (code) => {
+  const handleDeleteCurrency = (code) => {
     setLoading(true);
-    if (code !== "en") {
-      const lang_url = BASE_URL + `/settings/delete-lang/${code}`;
+    if (code !== "usd") {
+      const currencyUrl = BASE_URL + `/settings/delete-currency/${code}`;
       return (
         axios
           //todo:: Authorization here
-          .get(lang_url, {
+          .get(currencyUrl, {
             headers: { Authorization: `Bearer ${getCookie()}` },
           })
           .then((res) => {
             setCurrencyList(res.data[0]);
-            setNavLanguageList(res.data[1]);
+            setNavCurrencyList(res.data[1]);
             setCurrencyListForSearch(res.data[1]);
             setSearchedCurrencies({
               ...searchedCurrencies,
@@ -402,7 +402,7 @@ const Currency = () => {
       );
     } else {
       setLoading(false);
-      toast.error(`${_t(t("English language can not be deleted!"))}`, {
+      toast.error(`${_t(t("USD currency can not be deleted!"))}`, {
         position: "bottom-center",
         autoClose: 10000,
         hideProgressBar: false,
@@ -787,7 +787,11 @@ const Currency = () => {
                                               </td>
 
                                               <td className="xsm-text text-capitalize align-middle text-center">
-                                                {item.alignment}
+                                                {item.alignment === "left"
+                                                  ? item.alignment +
+                                                    "  - [symbol] [amount]"
+                                                  : item.alignment +
+                                                    "  - [amount] [symbol]"}
                                               </td>
 
                                               <td className="xsm-text text-capitalize align-middle text-center">
