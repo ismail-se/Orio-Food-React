@@ -8,7 +8,6 @@ import ManageSidebar from "../ManageSidebar";
 import {
   _t,
   getCookie,
-  checkPermission,
   modalLoading,
   tableLoading,
   pagination,

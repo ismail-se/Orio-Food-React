@@ -5,7 +5,6 @@ import { useHistory } from "react-router-dom";
 import {
   _t,
   getCookie,
-  checkPermission,
   tableLoading,
 } from "../../../../../functions/Functions";
 import { useTranslation } from "react-i18next";

@@ -268,7 +268,7 @@ const Currency = () => {
       });
   };
 
-  //Save New Language
+  //Save New default currency
   const handleDefault = (code) => {
     setLoading(true);
     setNewDefault({ ...newDefault, uploading: true });
@@ -306,7 +306,7 @@ const Currency = () => {
       });
   };
 
-  //search language here
+  //search currencies here
   const handleSearch = (e) => {
     let searchInput = e.target.value.toLowerCase();
     if (searchInput.length === 0) {
@@ -328,7 +328,7 @@ const Currency = () => {
     }
   };
 
-  //delete confirmation modal of language
+  //delete confirmation modal of currency
   const handleDeleteConfirmation = (code) => {
     confirmAlert({
       customUI: ({ onClose }) => {
@@ -356,7 +356,7 @@ const Currency = () => {
     });
   };
 
-  //delete language here
+  //delete currency here
   const handleDeleteCurrency = (code) => {
     setLoading(true);
     if (code !== "usd") {
@@ -419,7 +419,7 @@ const Currency = () => {
         <title>{_t(t("Currencies"))}</title>
       </Helmet>
 
-      {/* Add language modal */}
+      {/* Add currency modal */}
       <div className="modal fade" id="addCurrency" aria-hidden="true">
         <div className="modal-dialog modal-lg">
           <div className="modal-content">
@@ -607,7 +607,7 @@ const Currency = () => {
           </div>
         </div>
       </div>
-      {/* Add language modal Ends*/}
+      {/* Add currency modal Ends*/}
 
       {/* main body */}
       <main id="main" data-simplebar>
@@ -670,7 +670,7 @@ const Currency = () => {
                                 </div>
                               </div>
 
-                              {/* Add language modal trigger button */}
+                              {/* Add currency modal trigger button */}
                               <div className="col-md-3 text-md-right">
                                 <button
                                   type="button"
