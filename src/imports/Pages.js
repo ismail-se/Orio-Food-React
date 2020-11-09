@@ -1,6 +1,7 @@
 //common pages
 import Refresh from "../resources/common/Refresh";
 import Login from "../resources/common/Login";
+import NoPermission from "../resources/common/NoPermission";
 
 //public page
 import RestaurantLanding from "../resources/restaurant/public/RestaurantLanding";
@@ -46,6 +47,7 @@ export {
   //common
   Refresh,
   Login,
+  NoPermission,
   //dashboard
   RestaurantHome,
   WorkPeriod,

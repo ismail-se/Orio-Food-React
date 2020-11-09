@@ -39,16 +39,21 @@ const Lang = () => {
   const history = useHistory();
   //getting context values here
   let {
+    //common
     loading,
     setLoading,
+
+    //langs
     languageList,
     setLanguageList,
     setPaginatedLanguages,
-    dataPaginating,
-    setDataPaginating,
     setNavLanguageList,
     languageListForSearch,
     setLanguageListForSearch,
+
+    //pagination
+    dataPaginating,
+    setDataPaginating,
   } = useContext(SettingsContext);
 
   let { authUserInfo } = useContext(UserContext);

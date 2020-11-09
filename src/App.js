@@ -5,7 +5,7 @@ import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import RestaurantRoute from "./routes/RestaurantRoute";
 
 //functions
-import { consolee } from "./functions/Functions";
+import { consolee, checkPermission } from "./functions/Functions";
 
 //3rd party packages
 import { ToastContainer } from "react-toastify";
@@ -17,6 +17,7 @@ import {
   //common
   Refresh,
   Login,
+  NoPermission,
   //dashboard
   RestaurantHome,
   WorkPeriod,
@@ -52,15 +53,17 @@ import { Navbar, Footer } from "./imports/Components";
 
 //context consumer
 import { SettingsContext } from "./contexts/Settings";
+import { UserContext } from "./contexts/User";
 
 function App() {
   //getting context values here
   const { loading, setLoading } = useContext(SettingsContext);
+  let { authUserInfo } = useContext(UserContext);
 
   //useEffect == componentDidMount()
   useEffect(() => {
     // consolee();
-  }, []);
+  }, [authUserInfo]);
   return (
     <>
       <ToastContainer />
@@ -103,88 +106,173 @@ function App() {
             <Reports />
           </RestaurantRoute>
 
-          {/* Manage menu routes */}
-
+          {/* Manage routes */}
           {/* food */}
           <RestaurantRoute path="/dashboard/manage/food/groups" exact>
-            <GroupCrud />
+            {authUserInfo.permissions !== null &&
+            checkPermission(authUserInfo.permissions, "Manage") ? (
+              <GroupCrud />
+            ) : (
+              <NoPermission />
+            )}
           </RestaurantRoute>
 
           <RestaurantRoute path="/dashboard/manage/food/units" exact>
-            <UnitCrud />
+            {authUserInfo.permissions !== null &&
+            checkPermission(authUserInfo.permissions, "Manage") ? (
+              <UnitCrud />
+            ) : (
+              <NoPermission />
+            )}
           </RestaurantRoute>
 
           <RestaurantRoute path="/dashboard/manage/food/variations" exact>
-            <VariationCrud />
+            {authUserInfo.permissions !== null &&
+            checkPermission(authUserInfo.permissions, "Manage") ? (
+              <VariationCrud />
+            ) : (
+              <NoPermission />
+            )}
           </RestaurantRoute>
 
           <RestaurantRoute path="/dashboard/manage/food/properties" exact>
-            <PropertyCrud />
+            {authUserInfo.permissions !== null &&
+            checkPermission(authUserInfo.permissions, "Manage") ? (
+              <PropertyCrud />
+            ) : (
+              <NoPermission />
+            )}
           </RestaurantRoute>
 
           <RestaurantRoute path="/dashboard/manage/food/properties/:slug" exact>
-            <PropertyItemCrud />
+            {authUserInfo.permissions !== null &&
+            checkPermission(authUserInfo.permissions, "Manage") ? (
+              <PropertyItemCrud />
+            ) : (
+              <NoPermission />
+            )}
           </RestaurantRoute>
 
           {/* Users */}
 
           <RestaurantRoute path="/dashboard/manage/user/customers" exact>
-            <CustomerCrud />
+            {authUserInfo.permissions !== null &&
+            checkPermission(authUserInfo.permissions, "Manage") ? (
+              <CustomerCrud />
+            ) : (
+              <NoPermission />
+            )}
           </RestaurantRoute>
 
           <RestaurantRoute path="/dashboard/manage/user/admin-staff" exact>
-            <AdminStaffCrud />
+            {authUserInfo.permissions !== null &&
+            checkPermission(authUserInfo.permissions, "Manage") ? (
+              <AdminStaffCrud />
+            ) : (
+              <NoPermission />
+            )}
           </RestaurantRoute>
 
           <RestaurantRoute path="/dashboard/manage/user/waiters" exact>
-            <Waiter />
+            {authUserInfo.permissions !== null &&
+            checkPermission(authUserInfo.permissions, "Manage") ? (
+              <Waiter />
+            ) : (
+              <NoPermission />
+            )}
           </RestaurantRoute>
 
           <RestaurantRoute path="/dashboard/manage/roles-and-permissions" exact>
-            <Permissions />
+            {authUserInfo.permissions !== null &&
+            checkPermission(authUserInfo.permissions, "Manage") ? (
+              <Permissions />
+            ) : (
+              <NoPermission />
+            )}
           </RestaurantRoute>
 
           {/* Restaurant */}
           <RestaurantRoute path="/dashboard/manage/restaurant/branches" exact>
-            <BranchCrud />
+            {authUserInfo.permissions !== null &&
+            checkPermission(authUserInfo.permissions, "Manage") ? (
+              <BranchCrud />
+            ) : (
+              <NoPermission />
+            )}
           </RestaurantRoute>
 
           <RestaurantRoute path="/dashboard/manage/restaurant/tables" exact>
-            <TableCrud />
+            {authUserInfo.permissions !== null &&
+            checkPermission(authUserInfo.permissions, "Manage") ? (
+              <TableCrud />
+            ) : (
+              <NoPermission />
+            )}
           </RestaurantRoute>
+
           <RestaurantRoute path="/dashboard/manage/restaurant/dept-tags" exact>
-            <DeptTagCrud />
+            {authUserInfo.permissions !== null &&
+            checkPermission(authUserInfo.permissions, "Manage") ? (
+              <DeptTagCrud />
+            ) : (
+              <NoPermission />
+            )}
           </RestaurantRoute>
 
           <RestaurantRoute
             path="/dashboard/manage/restaurant/payment-type"
             exact
           >
-            <PaymentTypeCrud />
+            {authUserInfo.permissions !== null &&
+            checkPermission(authUserInfo.permissions, "Manage") ? (
+              <PaymentTypeCrud />
+            ) : (
+              <NoPermission />
+            )}
           </RestaurantRoute>
 
           {/* Settings */}
 
           <RestaurantRoute path="/dashboard/manage/settings/currencies" exact>
-            <Currency />
+            {authUserInfo.permissions !== null &&
+            checkPermission(authUserInfo.permissions, "Manage") ? (
+              <Currency />
+            ) : (
+              <NoPermission />
+            )}
           </RestaurantRoute>
 
           <RestaurantRoute path="/dashboard/manage/settings/languages" exact>
-            <Lang />
+            {authUserInfo.permissions !== null &&
+            checkPermission(authUserInfo.permissions, "Manage") ? (
+              <Lang />
+            ) : (
+              <NoPermission />
+            )}
           </RestaurantRoute>
 
           <RestaurantRoute
             path="/dashboard/manage/settings/languages/:code"
             exact
           >
-            <Translation />
+            {authUserInfo.permissions !== null &&
+            checkPermission(authUserInfo.permissions, "Manage") ? (
+              <Translation />
+            ) : (
+              <NoPermission />
+            )}
           </RestaurantRoute>
 
           <RestaurantRoute
             path="/dashboard/manage/settings/smtp-settings"
             exact
           >
-            <Smtp />
+            {authUserInfo.permissions !== null &&
+            checkPermission(authUserInfo.permissions, "Manage") ? (
+              <Smtp />
+            ) : (
+              <NoPermission />
+            )}
           </RestaurantRoute>
         </Switch>
         <Footer />

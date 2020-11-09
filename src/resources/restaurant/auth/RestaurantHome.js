@@ -13,9 +13,9 @@ import {
   deleteCookie,
 } from "../../../functions/Functions";
 import { useTranslation } from "react-i18next";
-import Skeleton from "react-loading-skeleton";
 
 //3rd party packages
+import Skeleton from "react-loading-skeleton";
 
 const RestaurantHome = () => {
   const { t } = useTranslation();
