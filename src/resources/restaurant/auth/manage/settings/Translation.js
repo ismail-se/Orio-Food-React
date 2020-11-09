@@ -27,8 +27,6 @@ import ManageSidebar from "../ManageSidebar";
 
 //context consumer
 import { SettingsContext } from "../../../../../contexts/Settings";
-import { UserContext } from "../../../../../contexts/User";
-
 const Translation = () => {
   const { t } = useTranslation();
   const history = useHistory();
@@ -40,8 +38,6 @@ const Translation = () => {
     setDataPaginating,
   } = useContext(SettingsContext);
 
-  let { authUserInfo } = useContext(UserContext);
-
   //getting url parameter
   let { code } = useParams();
 
@@ -50,14 +46,9 @@ const Translation = () => {
 
   //useEffect == componentDidMount()
   useEffect(() => {
-    if (authUserInfo.permissions !== null) {
-      if (!checkPermission(authUserInfo.permissions, "Manage")) {
-        history.push("/dashboard");
-      }
-    }
     handleTranslate(code);
     toastAfterReload();
-  }, [authUserInfo]);
+  }, []);
 
   const toastAfterReload = () => {
     if (window.location.href.includes("translation-successful=true")) {

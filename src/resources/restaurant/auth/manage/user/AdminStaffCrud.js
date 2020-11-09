@@ -50,9 +50,6 @@ const AdminStaffCrud = () => {
   } = useContext(SettingsContext);
 
   let {
-    //auth user
-    authUserInfo,
-
     //adminStaff
     getAdminStaff,
     adminStaffList,
@@ -97,13 +94,7 @@ const AdminStaffCrud = () => {
   });
 
   //useEffect == componentDidMount
-  useEffect(() => {
-    if (authUserInfo.permissions !== null) {
-      if (!checkPermission(authUserInfo.permissions, "Manage")) {
-        history.push("/dashboard");
-      }
-    }
-  }, [authUserInfo]);
+  useEffect(() => {}, []);
 
   //set name, phn no hook
   const handleSetNewAdminStaff = (e) => {
@@ -1260,14 +1251,14 @@ const AdminStaffCrud = () => {
                             </div>
                           </div>
                         </div>
-                        <small className="text-primary">
+                        <div className="text-primary xsm-text">
                           {_t(
                             t(
                               "Users marked red are disabled, they can not login"
                             )
                           )}
                           *
-                        </small>
+                        </div>
                         {/* Table */}
                         <div className="table-responsive">
                           <table className="table table-bordered table-striped min-table-height">

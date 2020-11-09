@@ -30,8 +30,6 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 //context consumer
-import { SettingsContext } from "../../../../../contexts/Settings";
-import { UserContext } from "../../../../../contexts/User";
 import { FoodContext } from "../../../../../contexts/Food";
 
 const PropertyItemCrud = () => {
@@ -39,10 +37,6 @@ const PropertyItemCrud = () => {
   const history = useHistory();
   const propertySlug = useParams();
   //getting context values here
-  let {
-    //auth user
-    authUserInfo,
-  } = useContext(UserContext);
 
   let {
     //common
@@ -79,16 +73,11 @@ const PropertyItemCrud = () => {
   //useEffect == componentDidMount
   useEffect(() => {
     setLoading(true);
-    if (authUserInfo.permissions !== null) {
-      if (!checkPermission(authUserInfo.permissions, "Manage")) {
-        history.push("/dashboard");
-      }
-    }
     getPropertyItem(propertySlug.slug);
     setTimeout(() => {
       setLoading(false);
     }, 500);
-  }, [authUserInfo]);
+  }, []);
 
   //set name hook
   const handleSetNewPropertyItem = (e) => {

@@ -47,8 +47,6 @@ const Waiter = () => {
   } = useContext(SettingsContext);
 
   let {
-    //auth user
-    authUserInfo,
     //waiter
     waiterList,
     setWaiterList,
@@ -86,13 +84,7 @@ const Waiter = () => {
   });
 
   //useEffect == componentDidMount
-  useEffect(() => {
-    if (authUserInfo.permissions !== null) {
-      if (!checkPermission(authUserInfo.permissions, "Manage")) {
-        history.push("/dashboard");
-      }
-    }
-  }, [authUserInfo]);
+  useEffect(() => {}, []);
 
   //set name, phn no hook
   const handleSetNewWaiter = (e) => {

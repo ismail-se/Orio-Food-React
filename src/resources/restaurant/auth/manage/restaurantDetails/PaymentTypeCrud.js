@@ -31,7 +31,6 @@ import "react-toastify/dist/ReactToastify.css";
 
 //context consumer
 import { SettingsContext } from "../../../../../contexts/Settings";
-import { UserContext } from "../../../../../contexts/User";
 import { RestaurantContext } from "../../../../../contexts/Restaurant";
 
 const PaymentTypeCrud = () => {
@@ -43,11 +42,6 @@ const PaymentTypeCrud = () => {
     loading,
     setLoading,
   } = useContext(SettingsContext);
-
-  let {
-    //auth user
-    authUserInfo,
-  } = useContext(UserContext);
 
   let {
     //paymentType
@@ -78,13 +72,7 @@ const PaymentTypeCrud = () => {
   });
 
   //useEffect == componentDidMount
-  useEffect(() => {
-    if (authUserInfo.permissions !== null) {
-      if (!checkPermission(authUserInfo.permissions, "Manage")) {
-        history.push("/dashboard");
-      }
-    }
-  }, [authUserInfo]);
+  useEffect(() => {}, []);
 
   //set name, input key hook
   const handleSetNewPaymentType = (e) => {

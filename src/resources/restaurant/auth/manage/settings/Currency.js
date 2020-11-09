@@ -8,7 +8,6 @@ import ManageSidebar from "../ManageSidebar";
 import {
   _t,
   getCookie,
-  checkPermission,
   modalLoading,
   tableLoading,
   pagination,
@@ -32,7 +31,6 @@ import "react-toastify/dist/ReactToastify.css";
 
 //context consumer
 import { SettingsContext } from "../../../../../contexts/Settings";
-import { UserContext } from "../../../../../contexts/User";
 
 const Currency = () => {
   const { t } = useTranslation();
@@ -48,6 +46,7 @@ const Currency = () => {
     setCurrencyList,
     setPaginatedCurrencies,
     navCurrencyList,
+    setNavLanguageList,
     currencyListForSearch,
     setCurrencyListForSearch,
 
@@ -56,16 +55,16 @@ const Currency = () => {
     setDataPaginating,
   } = useContext(SettingsContext);
 
-  let { authUserInfo } = useContext(UserContext);
   // States hook here
-  //new languages
+  //new currency
   let [newCurrency, setNewCurrency] = useState({
     name: "",
     code: "",
-    image: null,
+    rate: "",
+    symbol: "",
+    alignment: "",
     edit: false,
     editCode: null,
-    editImage: null,
     uploading: false,
   });
 
@@ -81,55 +80,47 @@ const Currency = () => {
   });
 
   //useEffect == componentDidMount
-  useEffect(() => {
-    if (authUserInfo.permissions !== null) {
-      if (!checkPermission(authUserInfo.permissions, "Manage")) {
-        history.push("/dashboard");
-      }
-    }
-  }, [authUserInfo]);
+  useEffect(() => {}, []);
 
   //set name, code hook
   const handleSetNewCurrency = (e) => {
     setNewCurrency({ ...newCurrency, [e.target.name]: e.target.value });
   };
 
-  //set flag hook
-  const handleLangFlag = (e) => {
-    setNewCurrency({
-      ...newCurrency,
-      [e.target.name]: e.target.files[0],
-    });
-  };
-
-  //Save New Language
+  //Save New Currency
   const handleSaveNewCurrency = (e) => {
     e.preventDefault();
     setNewCurrency({
       ...newCurrency,
       uploading: true,
     });
-    const langUrl = BASE_URL + `/settings/new-lang`;
+    const currencyUrl = BASE_URL + `/settings/new-currency`;
     let formData = new FormData();
     formData.append("name", newCurrency.name);
     formData.append("code", newCurrency.code);
-    formData.append("image", newCurrency.image);
+    formData.append("rate", newCurrency.rate);
+    formData.append("symbol", newCurrency.symbol);
+    formData.append("alignment", newCurrency.alignment);
     return axios
-      .post(langUrl, formData, {
+      .post(currencyUrl, formData, {
         headers: { Authorization: `Bearer ${getCookie()}` },
       })
       .then((res) => {
         setNewCurrency({
           name: "",
           code: "",
-          image: null,
+          rate: "",
+          symbol: "",
+          alignment: "",
+          edit: false,
+          editCode: null,
           uploading: false,
         });
         setCurrencyList(res.data[0]);
-        navCurrencyList(res.data[1]);
+        setNavLanguageList(res.data[1]);
         setCurrencyListForSearch(res.data[1]);
         setLoading(false);
-        toast.success(`${_t(t("A new language has been created"))}`, {
+        toast.success(`${_t(t("A new currency has been created"))}`, {
           position: "bottom-center",
           autoClose: 10000,
           hideProgressBar: false,
@@ -144,30 +135,13 @@ const Currency = () => {
           ...newCurrency,
           uploading: false,
         });
-        if (error.response.data.errors) {
-          if (error.response.data.errors.name) {
-            error.response.data.errors.name.forEach((item) => {
-              if (item === "A language already exists with this name") {
-                toast.error(
-                  `${_t(t("A language already exists with this name"))}`,
-                  {
-                    position: "bottom-center",
-                    autoClose: 10000,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    className: "text-center toast-notification",
-                  }
-                );
-              }
-            });
-          }
-
+        console.log(error);
+        if (error && error.response.data.errors) {
           if (error.response.data.errors.code) {
             error.response.data.errors.code.forEach((item) => {
-              if (item === "A language already exists with this code") {
+              if (item === "A currency already exists with this code") {
                 toast.error(
-                  `${_t(t("A language already exists with this code"))}`,
+                  `${_t(t("A currency already exists with this code"))}`,
                   {
                     position: "bottom-center",
                     autoClose: 10000,
@@ -177,30 +151,6 @@ const Currency = () => {
                     className: "text-center toast-notification",
                   }
                 );
-              }
-            });
-          }
-          if (error.response.data.errors.image) {
-            error.response.data.errors.image.forEach((item) => {
-              if (item === "Please select a valid image file") {
-                toast.error(`${_t(t("Please select a valid image file"))}`, {
-                  position: "bottom-center",
-                  autoClose: 10000,
-                  hideProgressBar: false,
-                  closeOnClick: true,
-                  pauseOnHover: true,
-                  className: "text-center toast-notification",
-                });
-              }
-              if (item === "Please select a file less than 5MB") {
-                toast.error(`${_t(t("Please select a file less than 5MB"))}`, {
-                  position: "bottom-center",
-                  autoClose: 10000,
-                  hideProgressBar: false,
-                  closeOnClick: true,
-                  pauseOnHover: true,
-                  className: "text-center toast-notification",
-                });
               }
             });
           }
@@ -228,14 +178,14 @@ const Currency = () => {
       ...newCurrency,
       uploading: true,
     });
-    const langUrl = BASE_URL + `/settings/update-lang`;
+    const currencyUrl = BASE_URL + `/settings/update-lang`;
     let formData = new FormData();
     formData.append("name", newCurrency.name);
     formData.append("code", newCurrency.code);
     formData.append("image", newCurrency.image);
     formData.append("editCode", newCurrency.editCode);
     return axios
-      .post(langUrl, formData, {
+      .post(currencyUrl, formData, {
         headers: { Authorization: `Bearer ${getCookie()}` },
       })
       .then((res) => {
@@ -249,14 +199,14 @@ const Currency = () => {
           uploading: false,
         });
         setCurrencyList(res.data[0]);
-        navCurrencyList(res.data[1]);
+        setNavLanguageList(res.data[1]);
         setCurrencyListForSearch(res.data[1]);
         setSearchedCurrencies({
           ...searchedCurrencies,
           list: res.data[1],
         });
         setLoading(false);
-        toast.success(`${_t(t("Language has been updated"))}`, {
+        toast.success(`${_t(t("currency has been updated"))}`, {
           position: "bottom-center",
           autoClose: 10000,
           hideProgressBar: false,
@@ -274,9 +224,9 @@ const Currency = () => {
         if (error.response.data.errors) {
           if (error.response.data.errors.name) {
             error.response.data.errors.name.forEach((item) => {
-              if (item === "A language already exists with this name") {
+              if (item === "A currency already exists with this name") {
                 toast.error(
-                  `${_t(t("A language already exists with this name"))}`,
+                  `${_t(t("A currency already exists with this name"))}`,
                   {
                     position: "bottom-center",
                     autoClose: 10000,
@@ -323,16 +273,16 @@ const Currency = () => {
     setLoading(true);
     setNewDefault({ ...newDefault, uploading: true });
     setDataPaginating(true);
-    const langUrl = BASE_URL + `/settings/update-default`;
+    const currencyUrl = BASE_URL + `/settings/update-default`;
     let formData = new FormData();
     formData.append("code", code);
     return axios
-      .post(langUrl, formData, {
+      .post(currencyUrl, formData, {
         headers: { Authorization: `Bearer ${getCookie()}` },
       })
       .then((res) => {
         setCurrencyList(res.data[0]);
-        navCurrencyList(res.data[1]);
+        setNavLanguageList(res.data[1]);
         setCurrencyListForSearch(res.data[1]);
         setSearchedCurrencies({
           ...searchedCurrencies,
@@ -342,7 +292,7 @@ const Currency = () => {
         setLoading(false);
         setDataPaginating(false);
         setNewDefault({ ...newDefault, uploading: false });
-        toast.success(`${_t(t("Default language has been updated"))}`, {
+        toast.success(`${_t(t("Default currency has been updated"))}`, {
           position: "bottom-center",
           autoClose: 10000,
           hideProgressBar: false,
@@ -419,7 +369,7 @@ const Currency = () => {
           })
           .then((res) => {
             setCurrencyList(res.data[0]);
-            navCurrencyList(res.data[1]);
+            setNavLanguageList(res.data[1]);
             setCurrencyListForSearch(res.data[1]);
             setSearchedCurrencies({
               ...searchedCurrencies,
@@ -427,7 +377,7 @@ const Currency = () => {
             });
             setLoading(false);
             toast.success(
-              `${_t(t("Language has been deleted successfully"))}`,
+              `${_t(t("currency has been deleted successfully"))}`,
               {
                 position: "bottom-center",
                 autoClose: 10000,
@@ -543,7 +493,7 @@ const Currency = () => {
                         type="text"
                         className="form-control"
                         id="symbol"
-                        name="code"
+                        name="symbol"
                         onChange={handleSetNewCurrency}
                         value={newCurrency.symbol}
                         disabled={newCurrency.edit}
@@ -827,23 +777,19 @@ const Currency = () => {
                                               <td className="xsm-text align-middle text-center">
                                                 {item.code}
                                               </td>
+
                                               <td className="xsm-text text-capitalize align-middle text-center">
                                                 {item.name}
                                               </td>
+
                                               <td className="xsm-text text-capitalize align-middle text-center">
-                                                <div className="d-flex justify-content-center">
-                                                  <div
-                                                    className="fk-language__flag"
-                                                    style={
-                                                      item.image !== null
-                                                        ? {
-                                                            backgroundImage: `url(${item.image})`,
-                                                          }
-                                                        : ""
-                                                    }
-                                                  ></div>
-                                                </div>
+                                                {item.symbol}
                                               </td>
+
+                                              <td className="xsm-text text-capitalize align-middle text-center">
+                                                {item.alignment}
+                                              </td>
+
                                               <td className="xsm-text text-capitalize align-middle text-center">
                                                 <Switch
                                                   checked={item.is_default}

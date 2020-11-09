@@ -47,9 +47,6 @@ const CustomerCrud = () => {
   } = useContext(SettingsContext);
 
   let {
-    //auth user
-    authUserInfo,
-
     //customer
     getCustomer,
     customerList,
@@ -88,13 +85,7 @@ const CustomerCrud = () => {
   });
 
   //useEffect == componentDidMount
-  useEffect(() => {
-    if (authUserInfo.permissions !== null) {
-      if (!checkPermission(authUserInfo.permissions, "Manage")) {
-        history.push("/dashboard");
-      }
-    }
-  }, [authUserInfo]);
+  useEffect(() => {}, []);
 
   //set name, phn no hook
   const handleSetNewCustomer = (e) => {

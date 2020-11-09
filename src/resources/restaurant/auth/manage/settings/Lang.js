@@ -32,7 +32,6 @@ import "react-toastify/dist/ReactToastify.css";
 
 //context consumer
 import { SettingsContext } from "../../../../../contexts/Settings";
-import { UserContext } from "../../../../../contexts/User";
 
 const Lang = () => {
   const { t } = useTranslation();
@@ -56,7 +55,6 @@ const Lang = () => {
     setDataPaginating,
   } = useContext(SettingsContext);
 
-  let { authUserInfo } = useContext(UserContext);
   // States hook here
   //new languages
   let [newLang, setNewLang] = useState({
@@ -81,13 +79,7 @@ const Lang = () => {
   });
 
   //useEffect == componentDidMount
-  useEffect(() => {
-    if (authUserInfo.permissions !== null) {
-      if (!checkPermission(authUserInfo.permissions, "Manage")) {
-        history.push("/dashboard");
-      }
-    }
-  }, [authUserInfo]);
+  useEffect(() => {}, []);
 
   //set name, code hook
   const handleSetNewLang = (e) => {
@@ -144,7 +136,7 @@ const Lang = () => {
           ...newLang,
           uploading: false,
         });
-        if (error.response.data.errors) {
+        if (error && error.response.data.errors) {
           if (error.response.data.errors.name) {
             error.response.data.errors.name.forEach((item) => {
               if (item === "A language already exists with this name") {

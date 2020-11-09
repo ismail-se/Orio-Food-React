@@ -33,7 +33,6 @@ import makeAnimated from "react-select/animated";
 
 //context consumer
 import { SettingsContext } from "../../../../../contexts/Settings";
-import { UserContext } from "../../../../../contexts/User";
 
 const Permissions = () => {
   const { t } = useTranslation();
@@ -58,8 +57,6 @@ const Permissions = () => {
     dataPaginating,
   } = useContext(SettingsContext);
 
-  let { authUserInfo } = useContext(UserContext);
-
   // States hook here
   //new group
   let [newGroup, setNewGroup] = useState({
@@ -78,13 +75,7 @@ const Permissions = () => {
   });
 
   //useEffect == componentDidMount()
-  useEffect(() => {
-    if (authUserInfo.permissions !== null) {
-      if (!checkPermission(authUserInfo.permissions, "Manage")) {
-        history.push("/dashboard");
-      }
-    }
-  }, [authUserInfo]);
+  useEffect(() => {}, []);
 
   //set name array hook
   const handleSetNewGroup = (e) => {

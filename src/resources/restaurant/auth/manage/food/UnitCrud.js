@@ -31,7 +31,6 @@ import "react-toastify/dist/ReactToastify.css";
 
 //context consumer
 import { SettingsContext } from "../../../../../contexts/Settings";
-import { UserContext } from "../../../../../contexts/User";
 import { FoodContext } from "../../../../../contexts/Food";
 
 const UnitCrud = () => {
@@ -43,11 +42,6 @@ const UnitCrud = () => {
     loading,
     setLoading,
   } = useContext(SettingsContext);
-
-  let {
-    //auth user
-    authUserInfo,
-  } = useContext(UserContext);
 
   let {
     //food units
@@ -78,13 +72,7 @@ const UnitCrud = () => {
   });
 
   //useEffect == componentDidMount
-  useEffect(() => {
-    if (authUserInfo.permissions !== null) {
-      if (!checkPermission(authUserInfo.permissions, "Manage")) {
-        history.push("/dashboard");
-      }
-    }
-  }, [authUserInfo]);
+  useEffect(() => {}, []);
 
   //set name hook
   const handleSetNewFoodUnit = (e) => {
