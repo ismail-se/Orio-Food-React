@@ -33,6 +33,7 @@ import {
   PropertyCrud,
   PropertyItemCrud,
   //manage->settings
+  Currency,
   Lang,
   Translation,
   Smtp,
@@ -163,15 +164,22 @@ function App() {
           </RestaurantRoute>
 
           {/* Settings */}
+
+          <RestaurantRoute path="/dashboard/manage/settings/currencies" exact>
+            <Currency />
+          </RestaurantRoute>
+
           <RestaurantRoute path="/dashboard/manage/settings/languages" exact>
             <Lang />
           </RestaurantRoute>
+
           <RestaurantRoute
             path="/dashboard/manage/settings/languages/:code"
             exact
           >
             <Translation />
           </RestaurantRoute>
+
           <RestaurantRoute
             path="/dashboard/manage/settings/smtp-settings"
             exact

@@ -23,9 +23,11 @@ import PropertyCrud from "../resources/restaurant/auth/manage/food/PropertyCrud"
 import PropertyItemCrud from "../resources/restaurant/auth/manage/food/PropertyItemCrud";
 
 //-settings
+import Currency from "../resources/restaurant/auth/manage/settings/Currency";
 import Lang from "../resources/restaurant/auth/manage/settings/Lang";
 import Translation from "../resources/restaurant/auth/manage/settings/Translation";
 import Smtp from "../resources/restaurant/auth/manage/settings/Smtp";
+
 //-users
 import Permissions from "../resources/restaurant/auth/manage/user/Permissions";
 import Waiter from "../resources/restaurant/auth/manage/user/Waiter";
@@ -60,6 +62,7 @@ export {
   PropertyCrud,
   PropertyItemCrud,
   //manage->settings
+  Currency,
   Lang,
   Translation,
   Smtp,

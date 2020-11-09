@@ -205,10 +205,7 @@ const ManageSidebar = () => {
             {/* Settings */}
             <li
               className={`fk-pos-nav__list fk-pos-nav__list-has-sub ${
-                window.location.pathname.includes("/languages") ||
-                window.location.pathname.includes("/smtp")
-                  ? "active"
-                  : ""
+                window.location.pathname.includes("/settings/") ? "active" : ""
               }`}
             >
               <a
@@ -219,10 +216,10 @@ const ManageSidebar = () => {
                 {_t(t("Settings"))}
               </a>
               <ul className="t-list fk-pos-nav__sub t-bg-white list-group">
-                {/* {managePageHrefLink(
+                {managePageHrefLink(
                   "/dashboard/manage/settings/currencies",
                   _t(t("Currencies"))
-                )} */}
+                )}
 
                 {managePageHrefLink(
                   "/dashboard/manage/settings/languages",

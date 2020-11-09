@@ -17,10 +17,25 @@ const SettingsProvider = ({ children }) => {
   //loading
   const [loading, setLoading] = useState(false);
   const [dataPaginating, setDataPaginating] = useState(false);
+
+  //permission group
+  const [permissionGroup, setPermissionGroup] = useState(null);
+  const [permissionGroupForSearch, setPermissionGroupForSearch] = useState(
+    null
+  );
+
+  //permissions
+  const [permissions, setPermissions] = useState(null);
+
   //languages
   const [languageList, setLanguageList] = useState(null);
   const [navLanguageList, setNavLanguageList] = useState(null);
   const [languageListForSearch, setLanguageListForSearch] = useState(null);
+
+  //currencies
+  const [currencyList, setCurrencyList] = useState(null);
+  const [navCurrencyList, setNavCurrencyList] = useState(null);
+  const [currencyListForSearch, setCurrencyListForSearch] = useState(null);
 
   //smtp
   const [smtp, setSmtp] = useState({
@@ -34,19 +49,11 @@ const SettingsProvider = ({ children }) => {
     MAIL_FROM_NAME: null,
   });
 
-  //permission group
-  const [permissionGroup, setPermissionGroup] = useState(null);
-  const [permissionGroupForSearch, setPermissionGroupForSearch] = useState(
-    null
-  );
-
-  //permissions
-  const [permissions, setPermissions] = useState(null);
-
   //useEffect- to get data on render
   useEffect(() => {
     //call- unauthenticated
     getLanguages();
+    getCurrency();
 
     //call if authenticated
     if (getCookie() !== undefined) {
@@ -137,12 +144,46 @@ const SettingsProvider = ({ children }) => {
       .catch(() => {});
   };
 
+  //get all currency
+  const getCurrency = () => {
+    setLoading(true);
+    const currencyUrl = BASE_URL + "/settings/get-currency";
+    return axios.get(currencyUrl).then((res) => {
+      setCurrencyList(res.data[0]);
+      setNavCurrencyList(res.data[1]);
+      setCurrencyListForSearch(res.data[1]);
+      setLoading(false);
+    });
+  };
+
+  // get paginated currency
+  const setPaginatedCurrencies = (pageNo) => {
+    setDataPaginating(true);
+    const currencyUrl = BASE_URL + "/settings/get-currency?page=" + pageNo;
+    return axios
+      .get(currencyUrl)
+      .then((res) => {
+        setCurrencyList(res.data[0]);
+        setDataPaginating(false);
+      })
+      .catch((error) => {});
+  };
+
   return (
     <SettingsContext.Provider
       value={{
         //common
         loading,
         setLoading,
+
+        //currencies
+        currencyList,
+        setCurrencyList,
+        setPaginatedCurrencies,
+        navCurrencyList,
+        setNavCurrencyList,
+        currencyListForSearch,
+        setCurrencyListForSearch,
 
         //languages
         languageList,
