@@ -155,7 +155,7 @@ const PaymentTypeCrud = () => {
           ...newPaymentType,
           uploading: false,
         });
-        toast.error(`${_t(t("Please try again."))}`, {
+        toast.error(`${_t(t("Please try again"))}`, {
           position: "bottom-center",
           autoClose: 10000,
           hideProgressBar: false,
@@ -225,7 +225,7 @@ const PaymentTypeCrud = () => {
           ...newPaymentType,
           uploading: false,
         });
-        toast.error(`${_t(t("Please try again."))}`, {
+        toast.error(`${_t(t("Please try again"))}`, {
           position: "bottom-center",
           autoClose: 10000,
           hideProgressBar: false,
@@ -316,7 +316,7 @@ const PaymentTypeCrud = () => {
       })
       .catch(() => {
         setLoading(false);
-        toast.error(`${_t(t("Please try again."))}`, {
+        toast.error(`${_t(t("Please try again"))}`, {
           position: "bottom-center",
           autoClose: 10000,
           hideProgressBar: false,

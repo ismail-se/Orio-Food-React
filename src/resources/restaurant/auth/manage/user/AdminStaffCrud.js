@@ -226,6 +226,68 @@ const AdminStaffCrud = () => {
                   }
                 });
               }
+              if (error.response.data.errors.email) {
+                error.response.data.errors.email.forEach((item) => {
+                  if (item === "An user exists with this email") {
+                    toast.error(`${_t(t("An user exists with this email"))}`, {
+                      position: "bottom-center",
+                      autoClose: 10000,
+                      hideProgressBar: false,
+                      closeOnClick: true,
+                      pauseOnHover: true,
+                      className: "text-center toast-notification",
+                    });
+                  }
+                });
+              }
+
+              if (error.response.data.errors.password) {
+                error.response.data.errors.password.forEach((item) => {
+                  if (item === "Password confirmation does not match") {
+                    toast.error(
+                      `${_t(t("Password confirmation does not match"))}`,
+                      {
+                        position: "bottom-center",
+                        autoClose: 10000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        className: "text-center toast-notification",
+                      }
+                    );
+                  }
+                });
+              }
+              if (error.response.data.errors.image) {
+                error.response.data.errors.image.forEach((item) => {
+                  if (item === "Please select a valid image file") {
+                    toast.error(
+                      `${_t(t("Please select a valid image file"))}`,
+                      {
+                        position: "bottom-center",
+                        autoClose: 10000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        className: "text-center toast-notification",
+                      }
+                    );
+                  }
+                  if (item === "Please select a file less than 5MB") {
+                    toast.error(
+                      `${_t(t("Please select a file less than 5MB"))}`,
+                      {
+                        position: "bottom-center",
+                        autoClose: 10000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        className: "text-center toast-notification",
+                      }
+                    );
+                  }
+                });
+              }
             }
           });
       } else {
@@ -305,6 +367,68 @@ const AdminStaffCrud = () => {
                   if (item === "An user exists with this phone number") {
                     toast.error(
                       `${_t(t("An user exists with this phone number"))}`,
+                      {
+                        position: "bottom-center",
+                        autoClose: 10000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        className: "text-center toast-notification",
+                      }
+                    );
+                  }
+                });
+              }
+              if (error.response.data.errors.email) {
+                error.response.data.errors.email.forEach((item) => {
+                  if (item === "An user exists with this email") {
+                    toast.error(`${_t(t("An user exists with this email"))}`, {
+                      position: "bottom-center",
+                      autoClose: 10000,
+                      hideProgressBar: false,
+                      closeOnClick: true,
+                      pauseOnHover: true,
+                      className: "text-center toast-notification",
+                    });
+                  }
+                });
+              }
+
+              if (error.response.data.errors.password) {
+                error.response.data.errors.password.forEach((item) => {
+                  if (item === "Password confirmation does not match") {
+                    toast.error(
+                      `${_t(t("Password confirmation does not match"))}`,
+                      {
+                        position: "bottom-center",
+                        autoClose: 10000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        className: "text-center toast-notification",
+                      }
+                    );
+                  }
+                });
+              }
+              if (error.response.data.errors.image) {
+                error.response.data.errors.image.forEach((item) => {
+                  if (item === "Please select a valid image file") {
+                    toast.error(
+                      `${_t(t("Please select a valid image file"))}`,
+                      {
+                        position: "bottom-center",
+                        autoClose: 10000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        className: "text-center toast-notification",
+                      }
+                    );
+                  }
+                  if (item === "Please select a file less than 5MB") {
+                    toast.error(
+                      `${_t(t("Please select a file less than 5MB"))}`,
                       {
                         position: "bottom-center",
                         autoClose: 10000,
@@ -406,182 +530,144 @@ const AdminStaffCrud = () => {
       formData.append("branch_id", newAdminStaff.branch.id);
     }
     formData.append("image", newAdminStaff.image);
+    formData.append("editSlug", newAdminStaff.editSlug);
 
     //check user type
     if (newAdminStaff.user_type === "staff") {
-      //check if group || branch null
-      if (
-        newAdminStaff.branch !== null &&
-        newAdminStaff.selectPermissionGroup !== null
-      ) {
-        setAdminStaff({
-          ...newAdminStaff,
-          uploading: true,
-        });
+      setAdminStaff({
+        ...newAdminStaff,
+        uploading: true,
+      });
 
-        return axios
-          .post(adminStaffUrl, formData, {
-            headers: { Authorization: `Bearer ${getCookie()}` },
-          })
-          .then((res) => {
-            setAdminStaff({
-              user_type: "",
-              name: "",
-              email: "",
-              phn_no: "",
-              password: "",
-              password_confirmation: "",
-              branch: null,
-              selectPermissionGroup: null,
-              selectedBranch: null,
-              selectedPermissionGroup: null,
-              image: null,
-              edit: false,
-              editSlug: null,
-              editImage: null,
-              uploading: false,
-            });
-            setAdminStaffList(res.data[0]);
-            setAdminStaffListforSearch(res.data[1]);
-            setLoading(false);
-            toast.success(`${_t(t("User has been added"))}`, {
-              position: "bottom-center",
-              autoClose: 10000,
-              hideProgressBar: false,
-              closeOnClick: true,
-              pauseOnHover: true,
-              className: "text-center toast-notification",
-            });
-          })
-          .catch((error) => {
-            setLoading(false);
-            setAdminStaff({
-              ...newAdminStaff,
-              branch: null,
-              selectPermissionGroup: null,
-              uploading: false,
-            });
-            if (error && error.response.data.errors) {
-              if (error.response.data.errors.phn_no) {
-                error.response.data.errors.phn_no.forEach((item) => {
-                  if (item === "An user exists with this phone number") {
-                    toast.error(
-                      `${_t(t("An user exists with this phone number"))}`,
-                      {
-                        position: "bottom-center",
-                        autoClose: 10000,
-                        hideProgressBar: false,
-                        closeOnClick: true,
-                        pauseOnHover: true,
-                        className: "text-center toast-notification",
-                      }
-                    );
-                  }
-                });
-              }
+      return axios
+        .post(adminStaffUrl, formData, {
+          headers: { Authorization: `Bearer ${getCookie()}` },
+        })
+        .then((res) => {
+          setAdminStaff({
+            user_type: "",
+            name: "",
+            email: "",
+            phn_no: "",
+            password: "",
+            password_confirmation: "",
+            branch: null,
+            selectPermissionGroup: null,
+            selectedBranch: null,
+            selectedPermissionGroup: null,
+            image: null,
+            edit: false,
+            editSlug: null,
+            editImage: null,
+            uploading: false,
+          });
+          setAdminStaffList(res.data[0]);
+          setAdminStaffListforSearch(res.data[1]);
+          setLoading(false);
+          toast.success(`${_t(t("User has been updated"))}`, {
+            position: "bottom-center",
+            autoClose: 10000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            className: "text-center toast-notification",
+          });
+        })
+        .catch((error) => {
+          setLoading(false);
+          setAdminStaff({
+            ...newAdminStaff,
+            branch: null,
+            selectPermissionGroup: null,
+            uploading: false,
+          });
+          if (error && error.response.data.errors) {
+            if (error.response.data.errors.phn_no) {
+              error.response.data.errors.phn_no.forEach((item) => {
+                if (item === "An user exists with this phone number") {
+                  toast.error(
+                    `${_t(t("An user exists with this phone number"))}`,
+                    {
+                      position: "bottom-center",
+                      autoClose: 10000,
+                      hideProgressBar: false,
+                      closeOnClick: true,
+                      pauseOnHover: true,
+                      className: "text-center toast-notification",
+                    }
+                  );
+                }
+              });
             }
-          });
-      } else {
-        if (newAdminStaff.branch === null) {
-          toast.error(`${_t(t("Please select a branch"))}`, {
-            position: "bottom-center",
-            autoClose: 10000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            className: "text-center toast-notification",
-          });
-        }
-        if (newAdminStaff.selectPermissionGroup === null) {
-          toast.error(`${_t(t("Please select a permission group"))}`, {
-            position: "bottom-center",
-            autoClose: 10000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            className: "text-center toast-notification",
-          });
-        }
-      }
+          }
+        });
     } else {
-      //check if group null
-      if (newAdminStaff.selectPermissionGroup !== null) {
-        setAdminStaff({
-          ...newAdminStaff,
-          uploading: true,
-        });
-        return axios
-          .post(adminStaffUrl, formData, {
-            headers: { Authorization: `Bearer ${getCookie()}` },
-          })
-          .then((res) => {
-            setAdminStaff({
-              user_type: "",
-              name: "",
-              email: "",
-              phn_no: "",
-              password: "",
-              password_confirmation: "",
-              branch: null,
-              selectPermissionGroup: null,
-              selectedBranch: null,
-              selectedPermissionGroup: null,
-              image: null,
-              edit: false,
-              editSlug: null,
-              editImage: null,
-              uploading: false,
-            });
-            setAdminStaffList(res.data[0]);
-            setAdminStaffListforSearch(res.data[1]);
-            setLoading(false);
-            toast.success(`${_t(t("User has been added"))}`, {
-              position: "bottom-center",
-              autoClose: 10000,
-              hideProgressBar: false,
-              closeOnClick: true,
-              pauseOnHover: true,
-              className: "text-center toast-notification",
-            });
-          })
-          .catch((error) => {
-            setLoading(false);
-            setAdminStaff({
-              ...newAdminStaff,
-              branch: null,
-              selectPermissionGroup: null,
-              uploading: false,
-            });
-            if (error && error.response.data.errors) {
-              if (error.response.data.errors.phn_no) {
-                error.response.data.errors.phn_no.forEach((item) => {
-                  if (item === "An user exists with this phone number") {
-                    toast.error(
-                      `${_t(t("An user exists with this phone number"))}`,
-                      {
-                        position: "bottom-center",
-                        autoClose: 10000,
-                        hideProgressBar: false,
-                        closeOnClick: true,
-                        pauseOnHover: true,
-                        className: "text-center toast-notification",
-                      }
-                    );
-                  }
-                });
-              }
-            }
+      setAdminStaff({
+        ...newAdminStaff,
+        uploading: true,
+      });
+      return axios
+        .post(adminStaffUrl, formData, {
+          headers: { Authorization: `Bearer ${getCookie()}` },
+        })
+        .then((res) => {
+          setAdminStaff({
+            user_type: "",
+            name: "",
+            email: "",
+            phn_no: "",
+            password: "",
+            password_confirmation: "",
+            branch: null,
+            selectPermissionGroup: null,
+            selectedBranch: null,
+            selectedPermissionGroup: null,
+            image: null,
+            edit: false,
+            editSlug: null,
+            editImage: null,
+            uploading: false,
           });
-      } else {
-        toast.error(`${_t(t("Please select a permission group"))}`, {
-          position: "bottom-center",
-          autoClose: 10000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          className: "text-center toast-notification",
+          setAdminStaffList(res.data[0]);
+          setAdminStaffListforSearch(res.data[1]);
+          setLoading(false);
+          toast.success(`${_t(t("User has been added"))}`, {
+            position: "bottom-center",
+            autoClose: 10000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            className: "text-center toast-notification",
+          });
+        })
+        .catch((error) => {
+          setLoading(false);
+          setAdminStaff({
+            ...newAdminStaff,
+            branch: null,
+            selectPermissionGroup: null,
+            uploading: false,
+          });
+          if (error && error.response.data.errors) {
+            if (error.response.data.errors.phn_no) {
+              error.response.data.errors.phn_no.forEach((item) => {
+                if (item === "An user exists with this phone number") {
+                  toast.error(
+                    `${_t(t("An user exists with this phone number"))}`,
+                    {
+                      position: "bottom-center",
+                      autoClose: 10000,
+                      hideProgressBar: false,
+                      closeOnClick: true,
+                      pauseOnHover: true,
+                      className: "text-center toast-notification",
+                    }
+                  );
+                }
+              });
+            }
+          }
         });
-      }
     }
   };
 
@@ -594,11 +680,13 @@ const AdminStaffCrud = () => {
       let searchedList = adminStaffForSearch.filter((item) => {
         let lowerCaseItemName = item.name.toLowerCase();
         let lowerCaseItemPhnNo = item.phn_no.toLowerCase();
+        let lowerCaseItemType = item.user_type.toLowerCase();
         let lowerCaseItemBranch =
           item.branch_name !== null && item.branch_name.toLowerCase();
         return (
           lowerCaseItemName.includes(searchInput) ||
           lowerCaseItemPhnNo.includes(searchInput) ||
+          lowerCaseItemType.includes(searchInput) ||
           (lowerCaseItemBranch && lowerCaseItemBranch.includes(searchInput))
         );
       });
@@ -610,25 +698,30 @@ const AdminStaffCrud = () => {
     }
   };
 
-  //delete confirmation modal of adminStaff
-  const handleDeleteConfirmation = (slug) => {
+  //disable confirmation modal of adminStaff
+  const handleDisableConfirmation = (slug) => {
     confirmAlert({
       customUI: ({ onClose }) => {
         return (
-          <div className="card card-body">
-            <h1>{_t(t("Are you sure?"))}</h1>
-            <p className="text-center">{_t(t("You want to delete this?"))}</p>
+          <div className="card card-body bg-danger text-white">
+            <h1 className="text-white">{_t(t("Are you sure?"))}</h1>
+            <p className="text-center">
+              {_t(t("You want to disable this user?"))}
+            </p>
             <div className="d-flex justify-content-center">
               <button
-                className="btn btn-primary"
+                className="btn btn-warning text-dark"
                 onClick={() => {
-                  handleDeleteWaiter(slug);
+                  handleDisableUser(slug);
                   onClose();
                 }}
               >
-                {_t(t("Yes, delete it!"))}
+                {_t(t("Yes, please!"))}
               </button>
-              <button className="btn btn-success ml-2 px-3" onClick={onClose}>
+              <button
+                className="btn btn-success text-dark ml-2 px-3"
+                onClick={onClose}
+              >
                 {_t(t("No"))}
               </button>
             </div>
@@ -638,8 +731,8 @@ const AdminStaffCrud = () => {
     });
   };
 
-  //delete adminStaff here
-  const handleDeleteWaiter = (slug) => {
+  //disable adminStaff here
+  const handleDisableUser = (slug) => {
     setLoading(true);
     const adminStaffUrl = BASE_URL + `/settings/delete-admin-staff/${slug}`;
     return axios
@@ -654,7 +747,7 @@ const AdminStaffCrud = () => {
           list: res.data[1],
         });
         setLoading(false);
-        toast.success(`${_t(t("User has been deleted successfully"))}`, {
+        toast.success(`${_t(t("User has been disabled"))}`, {
           position: "bottom-center",
           autoClose: 10000,
           hideProgressBar: false,
@@ -665,7 +758,75 @@ const AdminStaffCrud = () => {
       })
       .catch(() => {
         setLoading(false);
-        toast.error(`${_t(t("Please try again."))}`, {
+        toast.error(`${_t(t("Please try again"))}`, {
+          position: "bottom-center",
+          autoClose: 10000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          className: "text-center toast-notification",
+        });
+      });
+  };
+
+  //active confirmation modal of adminStaff
+  const handleActiveConfirmation = (slug) => {
+    confirmAlert({
+      customUI: ({ onClose }) => {
+        return (
+          <div className="card card-body bg-success">
+            <h1>{_t(t("Are you sure?"))}</h1>
+            <p className="text-center">
+              {_t(t("You want to active this user?"))}
+            </p>
+            <div className="d-flex justify-content-center">
+              <button
+                className="btn btn-warning text-dark"
+                onClick={() => {
+                  handleActiveUser(slug);
+                  onClose();
+                }}
+              >
+                {_t(t("Yes, please!"))}
+              </button>
+              <button className="btn btn-primary ml-2 px-3" onClick={onClose}>
+                {_t(t("No"))}
+              </button>
+            </div>
+          </div>
+        );
+      },
+    });
+  };
+
+  //Active adminStaff here
+  const handleActiveUser = (slug) => {
+    setLoading(true);
+    const adminStaffUrl = BASE_URL + `/settings/delete-admin-staff/${slug}`;
+    return axios
+      .get(adminStaffUrl, {
+        headers: { Authorization: `Bearer ${getCookie()}` },
+      })
+      .then((res) => {
+        setAdminStaffList(res.data[0]);
+        setAdminStaffListforSearch(res.data[1]);
+        setSearchedAdminStaff({
+          ...searchedAdminStaff,
+          list: res.data[1],
+        });
+        setLoading(false);
+        toast.success(`${_t(t("User has been activated"))}`, {
+          position: "bottom-center",
+          autoClose: 10000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          className: "text-center toast-notification",
+        });
+      })
+      .catch(() => {
+        setLoading(false);
+        toast.error(`${_t(t("Please try again"))}`, {
           position: "bottom-center",
           autoClose: 10000,
           hideProgressBar: false,
@@ -712,29 +873,49 @@ const AdminStaffCrud = () => {
                         : handleUpdateAdminStaff
                     }
                   >
-                    <div>
-                      <label htmlFor="user_type" className="form-label">
-                        {_t(t("User type"))}{" "}
-                        <small className="text-primary">*</small>
-                      </label>
-                      <select
-                        name="user_type"
-                        className="form-control"
-                        onChange={handleSetNewAdminStaff}
-                        required
-                        value={newAdminStaff.user_type}
-                      >
-                        <option value="">
-                          {_t(t("Please select an user type"))}
-                        </option>
-                        <option value="admin" className="text-uppercase">
-                          {_t(t("Admin"))}
-                        </option>
-                        <option value="staff" className="text-uppercase">
-                          {_t(t("Staff"))}
-                        </option>
-                      </select>
-                    </div>
+                    {newAdminStaff.user_type === "superAdmin" ? (
+                      <div>
+                        <label htmlFor="user_type" className="form-label">
+                          {_t(t("User type"))}{" "}
+                          <small className="text-primary">*</small>
+                        </label>
+                        <select
+                          name="user_type"
+                          className="form-control"
+                          onChange={handleSetNewAdminStaff}
+                          value={newAdminStaff.user_type}
+                          disabled
+                        >
+                          <option value="superAdmin" className="text-uppercase">
+                            {_t(t("Super Admin"))}
+                          </option>
+                        </select>
+                      </div>
+                    ) : (
+                      <div>
+                        <label htmlFor="user_type" className="form-label">
+                          {_t(t("User type"))}{" "}
+                          <small className="text-primary">*</small>
+                        </label>
+                        <select
+                          name="user_type"
+                          className="form-control"
+                          onChange={handleSetNewAdminStaff}
+                          required
+                          value={newAdminStaff.user_type}
+                        >
+                          <option value="">
+                            {_t(t("Please select an user type"))}
+                          </option>
+                          <option value="admin" className="text-uppercase">
+                            {_t(t("Admin"))}
+                          </option>
+                          <option value="staff" className="text-uppercase">
+                            {_t(t("Staff"))}
+                          </option>
+                        </select>
+                      </div>
+                    )}
 
                     <div className="mt-3">
                       <label htmlFor="name" className="form-label">
@@ -788,7 +969,9 @@ const AdminStaffCrud = () => {
                     <div className="mt-3">
                       <label htmlFor="password" className="form-label">
                         {_t(t("Password"))}{" "}
-                        <small className="text-primary">*</small>
+                        {!newAdminStaff.edit && (
+                          <small className="text-primary">*</small>
+                        )}
                       </label>
                       <input
                         type="password"
@@ -797,7 +980,7 @@ const AdminStaffCrud = () => {
                         name="password"
                         placeholder="e.g. Password"
                         value={newAdminStaff.password || ""}
-                        required
+                        required={!newAdminStaff.edit}
                         onChange={handleSetNewAdminStaff}
                       />
                     </div>
@@ -808,7 +991,9 @@ const AdminStaffCrud = () => {
                         className="form-label"
                       >
                         {_t(t("Confirm Password"))}{" "}
-                        <small className="text-primary">*</small>
+                        {!newAdminStaff.edit && (
+                          <small className="text-primary">*</small>
+                        )}
                       </label>
                       <input
                         type="password"
@@ -817,7 +1002,7 @@ const AdminStaffCrud = () => {
                         name="password_confirmation"
                         placeholder="e.g. Confirm password"
                         value={newAdminStaff.password_confirmation || ""}
-                        required
+                        required={newAdminStaff.password !== ""}
                         onChange={handleSetNewAdminStaff}
                       />
                     </div>
@@ -861,42 +1046,44 @@ const AdminStaffCrud = () => {
                       </div>
                     )}
 
-                    <div className="mt-3">
-                      <label className="form-label mb-0">
-                        {_t(t("Select a permission group"))}{" "}
-                        {newAdminStaff.edit ? (
-                          <small className="text-primary">
-                            {"( "}
-                            {_t(
-                              t(
-                                "Leave empty if you do not want to change permission group"
-                              )
-                            )}
-                            {" )"}
-                          </small>
-                        ) : (
-                          <small className="text-primary">*</small>
-                        )}
-                      </label>
-                      {newAdminStaff.edit &&
-                        newAdminStaff.selectedPermissionGroup !== null && (
-                          <ul className="list-group list-group-horizontal-sm row col-12 mb-2 ml-md-1">
-                            <li className="list-group-item col-12 col-md-3 bg-success rounded-sm py-1 px-2 my-1 text-center">
-                              {newAdminStaff.selectedPermissionGroup.name}
-                            </li>
-                          </ul>
-                        )}
-                      <Select
-                        options={permissionGroupForSearch}
-                        components={makeAnimated()}
-                        getOptionLabel={(option) => option.name}
-                        getOptionValue={(option) => option.name}
-                        className="basic-multi-select"
-                        classNamePrefix="select"
-                        onChange={handleSetPermissionGroup}
-                        placeholder={_t(t("Please select a group"))}
-                      />
-                    </div>
+                    {newAdminStaff.user_type !== "superAdmin" && (
+                      <div className="mt-3">
+                        <label className="form-label mb-0">
+                          {_t(t("Select a permission group"))}{" "}
+                          {newAdminStaff.edit ? (
+                            <small className="text-primary">
+                              {"( "}
+                              {_t(
+                                t(
+                                  "Leave empty if you do not want to change permission group"
+                                )
+                              )}
+                              {" )"}
+                            </small>
+                          ) : (
+                            <small className="text-primary">*</small>
+                          )}
+                        </label>
+                        {newAdminStaff.edit &&
+                          newAdminStaff.selectedPermissionGroup !== null && (
+                            <ul className="list-group list-group-horizontal-sm row col-12 mb-2 ml-md-1">
+                              <li className="list-group-item col-12 col-md-3 bg-success rounded-sm py-1 px-2 my-1 text-center">
+                                {newAdminStaff.selectedPermissionGroup.name}
+                              </li>
+                            </ul>
+                          )}
+                        <Select
+                          options={permissionGroupForSearch}
+                          components={makeAnimated()}
+                          getOptionLabel={(option) => option.name}
+                          getOptionValue={(option) => option.name}
+                          className="basic-multi-select"
+                          classNamePrefix="select"
+                          onChange={handleSetPermissionGroup}
+                          placeholder={_t(t("Please select a group"))}
+                        />
+                      </div>
+                    )}
 
                     <div className="mt-3">
                       <div className="d-flex align-items-center mb-1">
@@ -1012,7 +1199,6 @@ const AdminStaffCrud = () => {
                         {/* next page data spin loading */}
                         <div className={`${dataPaginating && "loading"}`}></div>
                         {/* spin loading ends */}
-
                         <div className="row gx-2 align-items-center t-pt-15 t-pb-15">
                           <div className="col-md-6 col-lg-5 t-mb-15 mb-md-0">
                             <ul className="t-list fk-breadcrumb">
@@ -1061,6 +1247,7 @@ const AdminStaffCrud = () => {
                                     setAdminStaff({
                                       ...newAdminStaff,
                                       branch: null,
+                                      user_type: "",
                                       selectPermissionGroup: null,
                                       edit: false,
                                       uploading: false,
@@ -1073,6 +1260,14 @@ const AdminStaffCrud = () => {
                             </div>
                           </div>
                         </div>
+                        <small className="text-primary">
+                          {_t(
+                            t(
+                              "Users marked red are disabled, they can not login"
+                            )
+                          )}
+                          *
+                        </small>
                         {/* Table */}
                         <div className="table-responsive">
                           <table className="table table-bordered table-striped min-table-height">
@@ -1134,7 +1329,7 @@ const AdminStaffCrud = () => {
                                         <tr className="align-middle">
                                           <td
                                             scope="row"
-                                            colSpan="6"
+                                            colSpan="7"
                                             className="xsm-text align-middle text-center"
                                           >
                                             {_t(t("No data available"))}
@@ -1145,7 +1340,10 @@ const AdminStaffCrud = () => {
                                           (item, index) => {
                                             return (
                                               <tr
-                                                className="align-middle"
+                                                className={`align-middle ${
+                                                  item.is_banned &&
+                                                  "text-primary"
+                                                }`}
                                                 key={index}
                                               >
                                                 <th
@@ -1221,19 +1419,38 @@ const AdminStaffCrud = () => {
                                                         {_t(t("Edit"))}
                                                       </button>
 
-                                                      <button
-                                                        className="dropdown-item sm-text text-capitalize"
-                                                        onClick={() => {
-                                                          handleDeleteConfirmation(
-                                                            item.slug
-                                                          );
-                                                        }}
-                                                      >
-                                                        <span className="t-mr-8">
-                                                          <i className="fa fa-trash"></i>
-                                                        </span>
-                                                        {_t(t("Delete"))}
-                                                      </button>
+                                                      {item.user_type !==
+                                                        "superAdmin" && [
+                                                        !item.is_banned ? (
+                                                          <button
+                                                            className="dropdown-item sm-text text-capitalize"
+                                                            onClick={() => {
+                                                              handleDisableConfirmation(
+                                                                item.slug
+                                                              );
+                                                            }}
+                                                          >
+                                                            <span className="t-mr-8">
+                                                              <i className="fa fa-times"></i>
+                                                            </span>
+                                                            {_t(t("Disable"))}
+                                                          </button>
+                                                        ) : (
+                                                          <button
+                                                            className="dropdown-item sm-text text-capitalize"
+                                                            onClick={() => {
+                                                              handleActiveConfirmation(
+                                                                item.slug
+                                                              );
+                                                            }}
+                                                          >
+                                                            <span className="t-mr-8">
+                                                              <i className="fa fa-check"></i>
+                                                            </span>
+                                                            {_t(t("Active"))}
+                                                          </button>
+                                                        ),
+                                                      ]}
                                                     </div>
                                                   </div>
                                                 </td>
@@ -1251,7 +1468,7 @@ const AdminStaffCrud = () => {
                                         <tr className="align-middle">
                                           <td
                                             scope="row"
-                                            colSpan="6"
+                                            colSpan="7"
                                             className="xsm-text align-middle text-center"
                                           >
                                             {_t(t("No data available"))}
@@ -1262,7 +1479,10 @@ const AdminStaffCrud = () => {
                                           (item, index) => {
                                             return (
                                               <tr
-                                                className="align-middle"
+                                                className={`align-middle ${
+                                                  item.is_banned &&
+                                                  "text-primary"
+                                                }`}
                                                 key={index}
                                               >
                                                 <th
@@ -1283,7 +1503,7 @@ const AdminStaffCrud = () => {
                                                       backgroundImage: `url(${
                                                         item.image !== null
                                                           ? item.image
-                                                          : "/assets/img/waiter.jpg"
+                                                          : "/assets/img/admin.png"
                                                       })`,
                                                     }}
                                                   ></div>
@@ -1302,6 +1522,10 @@ const AdminStaffCrud = () => {
 
                                                 <td className="xsm-text align-middle text-center">
                                                   {item.branch_name || "-"}
+                                                </td>
+
+                                                <td className="xsm-text align-middle text-center">
+                                                  {item.user_type || "-"}
                                                 </td>
 
                                                 <td className="xsm-text text-capitalize align-middle text-center">
@@ -1334,19 +1558,38 @@ const AdminStaffCrud = () => {
                                                         {_t(t("Edit"))}
                                                       </button>
 
-                                                      <button
-                                                        className="dropdown-item sm-text text-capitalize"
-                                                        onClick={() => {
-                                                          handleDeleteConfirmation(
-                                                            item.slug
-                                                          );
-                                                        }}
-                                                      >
-                                                        <span className="t-mr-8">
-                                                          <i className="fa fa-trash"></i>
-                                                        </span>
-                                                        {_t(t("Delete"))}
-                                                      </button>
+                                                      {item.user_type !==
+                                                        "superAdmin" && [
+                                                        !item.is_banned ? (
+                                                          <button
+                                                            className="dropdown-item sm-text text-capitalize"
+                                                            onClick={() => {
+                                                              handleDisableConfirmation(
+                                                                item.slug
+                                                              );
+                                                            }}
+                                                          >
+                                                            <span className="t-mr-8">
+                                                              <i className="fa fa-times"></i>
+                                                            </span>
+                                                            {_t(t("Disable"))}
+                                                          </button>
+                                                        ) : (
+                                                          <button
+                                                            className="dropdown-item sm-text text-capitalize"
+                                                            onClick={() => {
+                                                              handleActiveConfirmation(
+                                                                item.slug
+                                                              );
+                                                            }}
+                                                          >
+                                                            <span className="t-mr-8">
+                                                              <i className="fa fa-check"></i>
+                                                            </span>
+                                                            {_t(t("Active"))}
+                                                          </button>
+                                                        ),
+                                                      ]}
                                                     </div>
                                                   </div>
                                                 </td>

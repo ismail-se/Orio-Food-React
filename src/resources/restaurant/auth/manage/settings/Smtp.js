@@ -100,7 +100,7 @@ const Smtp = () => {
       })
       .catch((error) => {
         toast.error(
-          `${_t(t("Something unexpected happened, please try again"))}`,
+          `${_t(t("Something unexpected happened, Please try again"))}`,
           {
             position: "bottom-center",
             autoClose: 10000,
