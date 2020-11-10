@@ -1,6 +1,10 @@
 import React, { useEffect, useContext, useState } from "react";
 import { useHistory } from "react-router-dom";
 
+//axios and base url
+import axios from "axios";
+import { BASE_URL } from "../../../../../BaseUrl";
+
 //functions
 import {
   _t,
@@ -23,22 +27,11 @@ import ManageSidebar from "../ManageSidebar";
 import { SettingsContext } from "../../../../../contexts/Settings";
 import { FoodContext } from "../../../../../contexts/Food";
 
-//axios and base url
-import axios from "axios";
-import { BASE_URL } from "../../../../../BaseUrl";
-
 const FoodItemCrud = () => {
   const { t } = useTranslation();
   const history = useHistory();
   //getting context values here
-  let {
-    loading,
-    setLoading,
-    dataPaginating,
-    smtp,
-    getSmtp,
-    setSmtp,
-  } = useContext(SettingsContext);
+  let { loading, setLoading, dataPaginating } = useContext(SettingsContext);
 
   let {
     foodGroupForSearch,
@@ -62,14 +55,40 @@ const FoodItemCrud = () => {
     uploading: false,
   });
 
+  let [priceForVariations, setPriceForVariations] = useState(null);
+
   //useEffect == componentDidMount()
-  useEffect(() => {
-    getSmtp();
-  }, []);
+  useEffect(() => {}, []);
 
   //on change input field
   const handleChange = (e) => {
     setNewItem({ ...newItem, [e.target.name]: e.target.value });
+  };
+
+  //set image hook
+  const handleItemImage = (e) => {
+    setNewItem({
+      ...newItem,
+      [e.target.name]: e.target.files[0],
+    });
+  };
+
+  //set variations hook
+  const handleSetVariations = (variations) => {
+    setNewItem({ ...newItem, variations });
+  };
+
+  //set each variation price
+  const handleVariationPrice = (e) => {
+    setPriceForVariations({
+      ...priceForVariations,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  //handle Set item group hook
+  const handleSetItemGroup = (itemGroup) => {
+    setNewItem({ ...newItem, itemGroup });
   };
 
   //has Property
@@ -90,67 +109,32 @@ const FoodItemCrud = () => {
     }
   };
 
-  //set variations hook
-  const handleSetVariations = (variations) => {
-    setNewItem({ ...newItem, variations });
-  };
-
   //send to server
   const handleSubmit = (e) => {
     e.preventDefault();
-    setLoading(true);
-    const url = BASE_URL + `/settings/set-smtp`;
-    const formData = {
-      MAIL_MAILER: smtp.MAIL_MAILER,
-      MAIL_HOST: smtp.MAIL_HOST,
-      MAIL_PORT: smtp.MAIL_PORT,
-      MAIL_USERNAME: smtp.MAIL_USERNAME,
-      MAIL_PASSWORD: smtp.MAIL_PASSWORD,
-      MAIL_ENCRYPTION: smtp.MAIL_ENCRYPTION,
-      MAIL_FROM_ADDRESS: smtp.MAIL_FROM_ADDRESS,
-      MAIL_FROM_NAME: smtp.MAIL_FROM_NAME,
-    };
-    return axios
-      .post(url, formData, {
-        headers: { Authorization: `Bearer ${getCookie()}` },
-      })
-      .then((res) => {
-        setSmtp({
-          ...smtp,
-          MAIL_MAILER: res.data[0].MAIL_MAILER,
-          MAIL_HOST: res.data[0].MAIL_HOST,
-          MAIL_PORT: res.data[0].MAIL_PORT,
-          MAIL_USERNAME: res.data[0].MAIL_USERNAME,
-          MAIL_PASSWORD: res.data[0].MAIL_PASSWORD,
-          MAIL_ENCRYPTION: res.data[0].MAIL_ENCRYPTION,
-          MAIL_FROM_ADDRESS: res.data[0].MAIL_FROM_ADDRESS,
-          MAIL_FROM_NAME: res.data[0].MAIL_FROM_NAME,
+    if (newItem.itemGroup !== null) {
+      let a = Object.entries(priceForVariations);
+      console.log(a);
+      let formData = new FormData();
+      formData.append("variations[]", a);
+      const url = BASE_URL + "/settings/new-food-item";
+      return axios
+        .post(url, formData, {
+          headers: { Authorization: `Bearer ${getCookie()}` },
+        })
+        .then((res) => {
+          console.log(res.data);
         });
-        getSmtp();
-        toast.success(`${_t(t("SMTP settings has been updated"))}`, {
-          position: "bottom-center",
-          autoClose: 10000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          className: "text-center toast-notification",
-        });
-        setLoading(false);
-      })
-      .catch((error) => {
-        toast.error(
-          `${_t(t("Something unexpected happened, Please try again"))}`,
-          {
-            position: "bottom-center",
-            autoClose: 10000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            className: "text-center toast-notification",
-          }
-        );
-        setLoading(false);
+    } else {
+      toast.error(`${_t(t("Please select a group for this item"))}`, {
+        position: "bottom-center",
+        autoClose: 10000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        className: "text-center toast-notification",
       });
+    }
   };
 
   return (
@@ -202,15 +186,18 @@ const FoodItemCrud = () => {
                         </div>
 
                         {/* Form starts here */}
-                        <form className="row card p-2 mx-3 mb-5">
+                        <form
+                          className="row card p-2 mx-3 mb-5"
+                          onSubmit={handleSubmit}
+                        >
                           <div className="col-12">
                             <div className="form-group mt-2">
                               <div className="mb-2">
                                 <label
-                                  htmlFor="image"
+                                  htmlFor="itemGroup"
                                   className="control-label"
                                 >
-                                  Item Group
+                                  {_t(t("Item Group"))}
                                   <span className="text-danger">*</span>
                                 </label>
                               </div>
@@ -220,6 +207,7 @@ const FoodItemCrud = () => {
                                 getOptionLabel={(option) => option.name}
                                 getOptionValue={(option) => option.name}
                                 classNamePrefix="select"
+                                onChange={handleSetItemGroup}
                                 placeholder={
                                   _t(t("Please select a group")) + ".."
                                 }
@@ -229,7 +217,7 @@ const FoodItemCrud = () => {
                             <div className="form-group mt-3">
                               <div className="mb-2">
                                 <label htmlFor="name" className="control-label">
-                                  Name
+                                  {_t(t("Name"))}
                                   <span className="text-danger">*</span>
                                 </label>
                               </div>
@@ -239,38 +227,42 @@ const FoodItemCrud = () => {
                                   className="form-control"
                                   id="name"
                                   name="name"
+                                  onChange={handleChange}
                                   placeholder="e.g. Spicy chicken burger"
                                   required
                                 />
                               </div>
                             </div>
 
-                            <div className="form-group mt-4">
-                              <div className="mb-2">
-                                <label
-                                  htmlFor="price"
-                                  className="control-label"
-                                >
-                                  Price
-                                  <span className="text-primary">* </span>
-                                  <small className="text-secondary">
-                                    ({_t(t("Enter price in USD"))})
-                                  </small>
-                                </label>
+                            {!newItem.hasVariation && (
+                              <div className="form-group mt-4">
+                                <div className="mb-2">
+                                  <label
+                                    htmlFor="price"
+                                    className="control-label"
+                                  >
+                                    {_t(t("Price"))}
+                                    <span className="text-primary">* </span>
+                                    <small className="text-secondary">
+                                      ({_t(t("Enter price in USD"))})
+                                    </small>
+                                  </label>
+                                </div>
+                                <div className="mb-2">
+                                  <input
+                                    id="price"
+                                    type="number"
+                                    step="0.01"
+                                    min="0"
+                                    className="form-control"
+                                    name="price"
+                                    onChange={handleChange}
+                                    placeholder="e.g. Type price of this item in 'US dollar'"
+                                    required
+                                  />
+                                </div>
                               </div>
-                              <div className="mb-2">
-                                <input
-                                  type="number"
-                                  step="0.01"
-                                  min="0"
-                                  className="form-control"
-                                  id="price"
-                                  name="price"
-                                  placeholder="e.g. Type price of this item in 'US dollar'"
-                                  required
-                                />
-                              </div>
-                            </div>
+                            )}
 
                             <div className="form-group mt-3">
                               <div className="mb-2">
@@ -278,7 +270,7 @@ const FoodItemCrud = () => {
                                   htmlFor="image"
                                   className="control-label"
                                 >
-                                  Image
+                                  {_t(t("Image"))}
                                   <span className="text-danger">*</span>{" "}
                                   <small className="text-secondary">
                                     ({_t(t("Square Image Preferable"))})
@@ -291,6 +283,7 @@ const FoodItemCrud = () => {
                                   className="form-control"
                                   id="image"
                                   name="image"
+                                  onChange={handleItemImage}
                                   required
                                 />
                               </div>
@@ -307,7 +300,7 @@ const FoodItemCrud = () => {
                                 className="form-check-label"
                                 htmlFor="propertyCheck"
                               >
-                                Has properties?
+                                {_t(t("Has properties?"))}
                               </label>
                             </div>
 
@@ -318,7 +311,7 @@ const FoodItemCrud = () => {
                                     htmlFor="image"
                                     className="control-label"
                                   >
-                                    Add properties
+                                    {_t(t("Add properties"))}
                                   </label>
                                 </div>
                                 <Select
@@ -329,9 +322,9 @@ const FoodItemCrud = () => {
                                   className="basic-multi-select"
                                   classNamePrefix="select"
                                   isMulti
-                                  placeholder={_t(
-                                    t("Please select properties")
-                                  )}
+                                  placeholder={
+                                    _t(t("Please select properties")) + ".."
+                                  }
                                 />
                               </div>
                             )}
@@ -348,7 +341,7 @@ const FoodItemCrud = () => {
                                 className="form-check-label"
                                 htmlFor="variationCheck"
                               >
-                                Has variations?
+                                {_t(t("Has variations?"))}
                               </label>
                             </div>
 
@@ -359,7 +352,7 @@ const FoodItemCrud = () => {
                                     htmlFor="image"
                                     className="control-label"
                                   >
-                                    Add variations
+                                    {_t(t("Add variations"))}
                                   </label>
                                 </div>
                                 <Select
@@ -371,44 +364,56 @@ const FoodItemCrud = () => {
                                   classNamePrefix="select"
                                   isMulti
                                   onChange={handleSetVariations}
-                                  placeholder={_t(
-                                    t("Please select variations")
-                                  )}
+                                  placeholder={
+                                    _t(t("Please select variations")) + ".."
+                                  }
                                 />
                               </div>
                             )}
                             {newItem.variations !== null && [
-                              newItem.variations.map((variationItem) => {
-                                return (
-                                  <div className="form-group mt-4 mx-5">
-                                    <div className="mb-2">
-                                      <label
-                                        htmlFor="price"
-                                        className="control-label"
-                                      >
-                                        {_t(t("Total price of"))}{" "}
-                                        {variationItem.name}
-                                        <span className="text-primary">* </span>
-                                        <small className="text-secondary">
-                                          ({_t(t("Enter price in USD"))})
-                                        </small>
-                                      </label>
-                                    </div>
-                                    <div className="mb-2">
-                                      <input
-                                        type="number"
-                                        step="0.01"
-                                        min="0"
-                                        className="form-control"
-                                        id="price"
-                                        name="price"
-                                        placeholder="e.g. Type price of this item in 'US dollar'"
-                                        required
-                                      />
-                                    </div>
+                              newItem.variations.length > 0 && (
+                                <div className="card ml-4 mt-3 p-3">
+                                  <div className="card-header bg-primary text-white rounded-sm text-center">
+                                    {_t(
+                                      t("Please enter price for each variation")
+                                    )}
                                   </div>
-                                );
-                              }),
+                                  {newItem.variations.map((variationItem) => {
+                                    return (
+                                      <div className="form-group mt-4">
+                                        <div className="mb-2">
+                                          <label
+                                            htmlFor={variationItem.slug}
+                                            className="control-label"
+                                          >
+                                            {_t(t("Total price of"))}{" "}
+                                            {variationItem.name}
+                                            <span className="text-primary">
+                                              *{" "}
+                                            </span>
+                                            <small className="text-secondary">
+                                              ({_t(t("Enter price in USD"))})
+                                            </small>
+                                          </label>
+                                        </div>
+                                        <div className="mb-2">
+                                          <input
+                                            type="number"
+                                            step="0.01"
+                                            min="0"
+                                            className="form-control"
+                                            id={variationItem.slug}
+                                            name={variationItem.slug}
+                                            onChange={handleVariationPrice}
+                                            placeholder="e.g. Type price of this item in 'US dollar'"
+                                            required
+                                          />
+                                        </div>
+                                      </div>
+                                    );
+                                  })}
+                                </div>
+                              ),
                             ]}
 
                             <div className="form-group mt-5 pb-2">

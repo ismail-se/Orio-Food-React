@@ -472,7 +472,7 @@ const Waiter = () => {
                         className="basic-multi-select"
                         classNamePrefix="select"
                         onChange={handleSetBranch}
-                        placeholder={_t(t("Please select a branch"))}
+                        placeholder={_t(t("Please select a branch")) + ".."}
                       />
                     </div>
 
