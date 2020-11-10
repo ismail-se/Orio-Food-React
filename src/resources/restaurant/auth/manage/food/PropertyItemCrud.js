@@ -6,10 +6,16 @@ import ManageSidebar from "../ManageSidebar";
 
 //functions
 import {
+  //common
   _t,
   getCookie,
+  formatPrice,
+
+  //loading
   modalLoading,
   tableLoading,
+
+  //pagination
   pagination,
   paginationLoading,
   showingData,
@@ -601,7 +607,7 @@ const PropertyItemCrud = () => {
                                               </td>
 
                                               <td className="xsm-text align-middle text-center">
-                                                {item.extra_price}
+                                                {formatPrice(item.extra_price)}
                                               </td>
 
                                               <td className="xsm-text text-capitalize align-middle text-center">
@@ -683,7 +689,9 @@ const PropertyItemCrud = () => {
                                                 </td>
 
                                                 <td className="xsm-text align-middle text-center">
-                                                  {item.extra_price}
+                                                  {formatPrice(
+                                                    item.extra_price
+                                                  )}
                                                 </td>
 
                                                 <td className="xsm-text text-capitalize align-middle text-center">

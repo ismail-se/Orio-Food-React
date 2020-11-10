@@ -191,6 +191,13 @@ const Currency = () => {
         headers: { Authorization: `Bearer ${getCookie()}` },
       })
       .then((res) => {
+        let localCurrency = JSON.parse(localStorage.getItem("currency"));
+        if (localCurrency.code === newCurrency.editCode) {
+          const temp = res.data[1].find((item) => {
+            return item.code === localCurrency.code;
+          });
+          localStorage.setItem("currency", JSON.stringify(temp));
+        }
         setNewCurrency({
           name: "",
           code: "",

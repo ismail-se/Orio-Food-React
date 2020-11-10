@@ -60,6 +60,16 @@ const checkPermission = (authUserPermissions, permission) => {
     }
 };
 
+//currency format price
+const formatPrice = (price) => {
+  let localCurrency = JSON.parse(localStorage.getItem("currency"));
+  if (localCurrency.alignment === "right") {
+    return (localCurrency.rate * price).toFixed(2) + localCurrency.symbol;
+  } else {
+    return localCurrency.symbol + (localCurrency.rate * price).toFixed(2);
+  }
+};
+
 //Delete cookie of authentication
 const deleteCookie = () => {
   const url = BASE_URL + `/auth/logout`;
@@ -329,6 +339,7 @@ export {
   getCookie,
   deleteCookie,
   checkPermission,
+  formatPrice,
   // common & necessary
 
   //navLink

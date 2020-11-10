@@ -12,6 +12,7 @@ import {
 //context consumer
 import { SettingsContext } from "../../contexts/Settings";
 import { UserContext } from "../../contexts/User";
+import { FoodContext } from "../../contexts/Food";
 
 //3rd party packages
 import { useTranslation } from "react-i18next";
@@ -25,19 +26,22 @@ const Navbar = (props) => {
   //getting context values here
   let { navLanguageList, navCurrencyList } = useContext(SettingsContext);
   let { authUserInfo } = useContext(UserContext);
+  let { setLoading } = useContext(FoodContext);
 
   // States hook  here
   const [defaultLang, setDefaultLang] = useState(null);
+  const [defaultCurrency, setDefaultCurrency] = useState(null);
 
   useEffect(() => {
     handleOnLoadDefaultLang();
-  }, [navLanguageList]);
+    handleOnLoadDefaultCurrency();
+  }, [navLanguageList, navCurrencyList]);
 
   //set default language on site load
   const handleOnLoadDefaultLang = () => {
     let localLang = localStorage.i18nextLng;
     if (localLang) {
-      if (localLang === "undefined" || localLang.includes("en-")) {
+      if (localLang === undefined || localLang.includes("en-")) {
         navLanguageList &&
           navLanguageList.map((item) => {
             if (item.is_default === true) {
@@ -72,6 +76,47 @@ const Navbar = (props) => {
     });
   };
 
+  //set default currency on site load
+  const handleOnLoadDefaultCurrency = () => {
+    let localCurrency = JSON.parse(localStorage.getItem("currency"));
+    if (localCurrency === null) {
+      navCurrencyList &&
+        navCurrencyList.map((item) => {
+          if (item.is_default === true) {
+            setDefaultCurrency(item);
+            localStorage.setItem("currency", JSON.stringify(item));
+          }
+          return true;
+        });
+    } else {
+      const temp =
+        navCurrencyList &&
+        navCurrencyList.find((item) => {
+          return item.code === localCurrency.code;
+        });
+      setDefaultCurrency(temp);
+    }
+  };
+
+  //change currency to selected
+  const handleDefaultCurrency = (item) => {
+    setLoading(true);
+    localStorage.setItem("currency", JSON.stringify(item));
+    setDefaultCurrency(item);
+    setTimeout(() => {
+      setLoading(false);
+    }, 1000);
+    toast.success(`${_t(t("Currency has been changed!"))}`, {
+      position: "bottom-center",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      className: "text-center toast-notification",
+    });
+  };
+
+  //logout
   const handleLogout = () => {
     deleteCookie();
     history.push({ pathname: "/login", state: "loggedOut" });
@@ -130,7 +175,7 @@ const Navbar = (props) => {
                         ></div>
                         <div className="dropdown">
                           <a
-                            className="text-capitalize sm-text nav-link dropdown-toggle"
+                            className="text-capitalize sm-text nav-link dropdown-toggle pl-2"
                             href="#"
                             data-toggle="dropdown"
                             aria-expanded="false"
@@ -166,43 +211,42 @@ const Navbar = (props) => {
                       <div className="d-flex align-items-center">
                         <div className="circle circle--sm rounded-circle bg-primary">
                           <span className="text-light">
-                            <i className="fa fa-usd" aria-hidden="true"></i>
+                            {defaultCurrency ? defaultCurrency.symbol : "$"}
                           </span>
                         </div>
                         <div className="dropdown">
                           <a
-                            className="text-capitalize sm-text nav-link dropdown-toggle"
+                            className="sm-text nav-link dropdown-toggle pl-2"
                             href="#"
                             data-toggle="dropdown"
                             aria-expanded="false"
                           >
-                            USD Dollar
+                            {defaultCurrency
+                              ? defaultCurrency.code
+                              : "Currency"}
                           </a>
                           <ul className="dropdown-menu">
-                            <li>
-                              <a
-                                className="dropdown-item sm-text text-capitalize"
-                                href="#"
-                              >
-                                Taka
-                              </a>
-                            </li>
-                            <li>
-                              <a
-                                className="dropdown-item sm-text text-capitalize"
-                                href="#"
-                              >
-                                Yen
-                              </a>
-                            </li>
-                            <li>
-                              <a
-                                className="dropdown-item sm-text text-capitalize"
-                                href="#"
-                              >
-                                Ringit
-                              </a>
-                            </li>
+                            {navCurrencyList &&
+                              navCurrencyList.map((item, index) => {
+                                return (
+                                  <li key={index}>
+                                    <button
+                                      type="button"
+                                      className={`dropdown-item sm-text text-capitalize ${
+                                        defaultCurrency &&
+                                        item.code === defaultCurrency.code
+                                          ? "active"
+                                          : ""
+                                      }`}
+                                      onClick={() =>
+                                        handleDefaultCurrency(item)
+                                      }
+                                    >
+                                      {item.name}
+                                    </button>
+                                  </li>
+                                );
+                              })}
                           </ul>
                         </div>
                       </div>
