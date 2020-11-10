@@ -275,7 +275,7 @@ const Navbar = (props) => {
                           </div>
                           <div className="dropdown">
                             <a
-                              className="font-weight-bold text-capitalize sm-text nav-link dropdown-toggle"
+                              className="font-weight-bold text-capitalize sm-text nav-link dropdown-toggle pl-2"
                               href="#"
                               data-toggle="dropdown"
                               aria-expanded="false"

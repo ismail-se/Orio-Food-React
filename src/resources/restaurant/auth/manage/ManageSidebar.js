@@ -92,10 +92,15 @@ const ManageSidebar = () => {
                 {_t(t("Foods"))}
               </a>
               <ul className="t-list fk-pos-nav__sub t-bg-white list-group">
-                {/* {managePageHrefLink(
-                  "/dashboard/manage/user/admin-staff-user",
+                {managePageHrefLink(
+                  "/dashboard/manage/food/add-new",
+                  _t(t("Add new item"))
+                )}
+
+                {managePageHrefLink(
+                  "/dashboard/manage/food/all-items",
                   _t(t("All Items"))
-                )} */}
+                )}
 
                 {managePageHrefLink(
                   "/dashboard/manage/food/groups",
@@ -116,13 +121,6 @@ const ManageSidebar = () => {
                   "/dashboard/manage/food/properties",
                   _t(t("Properties"))
                 )}
-
-                {/*
-                {managePageHrefLink(
-                  "/dashboard/manage/roles-and-permissions",
-                  _t(t("Add new item"))
-                )}
-                */}
               </ul>
             </li>
 

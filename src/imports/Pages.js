@@ -22,6 +22,8 @@ import UnitCrud from "../resources/restaurant/auth/manage/food/UnitCrud";
 import VariationCrud from "../resources/restaurant/auth/manage/food/VariationCrud";
 import PropertyCrud from "../resources/restaurant/auth/manage/food/PropertyCrud";
 import PropertyItemCrud from "../resources/restaurant/auth/manage/food/PropertyItemCrud";
+import FoodItemCrud from "../resources/restaurant/auth/manage/food/FoodItemCrud";
+import AllItemList from "../resources/restaurant/auth/manage/food/AllItemList";
 
 //-settings
 import Currency from "../resources/restaurant/auth/manage/settings/Currency";
@@ -63,6 +65,8 @@ export {
   VariationCrud,
   PropertyCrud,
   PropertyItemCrud,
+  FoodItemCrud,
+  AllItemList,
   //manage->settings
   Currency,
   Lang,

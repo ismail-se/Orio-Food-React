@@ -14,10 +14,12 @@ import { ToastContainer } from "react-toastify";
 import {
   //landing
   RestaurantLanding,
+
   //common
   Refresh,
   Login,
   NoPermission,
+
   //dashboard
   RestaurantHome,
   WorkPeriod,
@@ -27,22 +29,28 @@ import {
   Kitchen,
   Branch,
   Reports,
+
   //manage->food
   GroupCrud,
   UnitCrud,
   VariationCrud,
   PropertyCrud,
   PropertyItemCrud,
+  FoodItemCrud,
+  AllItemList,
+
   //manage->settings
   Currency,
   Lang,
   Translation,
   Smtp,
+
   //manage->user
   AdminStaffCrud,
   Waiter,
   Permissions,
   CustomerCrud,
+
   //manage->restaurantDetails
   BranchCrud,
   TableCrud,
@@ -153,8 +161,25 @@ function App() {
             )}
           </RestaurantRoute>
 
-          {/* Users */}
+          <RestaurantRoute path="/dashboard/manage/food/add-new" exact>
+            {authUserInfo.permissions !== null &&
+            checkPermission(authUserInfo.permissions, "Manage") ? (
+              <FoodItemCrud />
+            ) : (
+              <NoPermission />
+            )}
+          </RestaurantRoute>
 
+          <RestaurantRoute path="/dashboard/manage/food/all-items" exact>
+            {authUserInfo.permissions !== null &&
+            checkPermission(authUserInfo.permissions, "Manage") ? (
+              <AllItemList />
+            ) : (
+              <NoPermission />
+            )}
+          </RestaurantRoute>
+
+          {/* Users */}
           <RestaurantRoute path="/dashboard/manage/user/customers" exact>
             {authUserInfo.permissions !== null &&
             checkPermission(authUserInfo.permissions, "Manage") ? (

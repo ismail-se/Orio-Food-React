@@ -146,15 +146,6 @@ const Smtp = () => {
                               </li>
                             </ul>
                           </div>
-                          <div className="col-md-8 col-lg-9">
-                            <div className="row gx-0 align-items-center">
-                              {/* Search Smtpuages */}
-                              <div className="col-md-9 col-xl-10 t-mb-15 mb-md-0"></div>
-
-                              {/* Add Smtpuage modal trigger button */}
-                              <div className="col-md-3 col-xl-2 text-md-right"></div>
-                            </div>
-                          </div>
                         </div>
                         <div className="card-header border-bottom-0">
                           <h3 className="panel-title text-center">

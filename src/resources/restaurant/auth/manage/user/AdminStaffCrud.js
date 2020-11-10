@@ -1250,7 +1250,7 @@ const AdminStaffCrud = () => {
                             </div>
                           </div>
                         </div>
-                        <div className="text-primary xsm-text">
+                        <div className="text-right text-primary xsm-text">
                           {_t(
                             t(
                               "Users marked red are disabled, they can not login"

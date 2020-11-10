@@ -37,7 +37,7 @@ import "react-toastify/dist/ReactToastify.css";
 //context consumer
 import { FoodContext } from "../../../../../contexts/Food";
 
-const PropertyItemCrud = () => {
+const AllItemList = () => {
   const { t } = useTranslation();
   const history = useHistory();
   const propertySlug = useParams();
@@ -370,18 +370,16 @@ const PropertyItemCrud = () => {
                         {_t(t("Price"))}{" "}
                         <small className="text-primary">* </small>
                         <small className="text-secondary">
-                          ( {_t(t("Insert 0 if it is free"))} ) (
-                          {_t(t("Enter price in USD"))})
+                          ( {_t(t("Insert 0 if it is free"))} )
                         </small>
                       </label>
                       <input
                         type="number"
                         step="0.01"
-                        min="0"
                         className="form-control"
                         id="extraPrice"
                         name="extraPrice"
-                        placeholder="e.g. Type price of this item in 'US dollar'"
+                        placeholder="e.g. Type price of this item"
                         value={newPropertyItem.extraPrice || ""}
                         required
                         onChange={handleSetNewPropertyItem}
@@ -830,4 +828,4 @@ const PropertyItemCrud = () => {
   );
 };
 
-export default PropertyItemCrud;
+export default AllItemList;
