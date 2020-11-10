@@ -23,7 +23,7 @@ const Navbar = (props) => {
   const history = useHistory();
 
   //getting context values here
-  let { navLanguageList } = useContext(SettingsContext);
+  let { navLanguageList, navCurrencyList } = useContext(SettingsContext);
   let { authUserInfo } = useContext(UserContext);
 
   // States hook  here

@@ -45,7 +45,6 @@ const Currency = () => {
     currencyList,
     setCurrencyList,
     setPaginatedCurrencies,
-    navCurrencyList,
     setNavCurrencyList,
     currencyListForSearch,
     setCurrencyListForSearch,
@@ -159,15 +158,17 @@ const Currency = () => {
   };
 
   const handleSetEdit = (id) => {
-    let lang = currencyListForSearch.filter((item) => {
+    let currency = currencyListForSearch.filter((item) => {
       return item.id === id;
     });
     setNewCurrency({
       ...newCurrency,
-      name: lang[0].name,
-      code: lang[0].code,
-      editCode: lang[0].code,
-      editImage: lang[0].image,
+      name: currency[0].name,
+      code: currency[0].code,
+      rate: currency[0].rate,
+      symbol: currency[0].symbol,
+      alignment: currency[0].alignment,
+      editCode: currency[0].code,
       edit: true,
     });
   };
@@ -181,8 +182,9 @@ const Currency = () => {
     const currencyUrl = BASE_URL + `/settings/update-currency`;
     let formData = new FormData();
     formData.append("name", newCurrency.name);
-    formData.append("code", newCurrency.code);
-    formData.append("image", newCurrency.image);
+    formData.append("rate", newCurrency.rate);
+    formData.append("symbol", newCurrency.symbol);
+    formData.append("alignment", newCurrency.alignment);
     formData.append("editCode", newCurrency.editCode);
     return axios
       .post(currencyUrl, formData, {
@@ -192,10 +194,11 @@ const Currency = () => {
         setNewCurrency({
           name: "",
           code: "",
-          image: null,
+          rate: "",
+          symbol: "",
+          alignment: "",
           edit: false,
           editCode: null,
-          editImage: null,
           uploading: false,
         });
         setCurrencyList(res.data[0]);
@@ -215,56 +218,20 @@ const Currency = () => {
           className: "text-center toast-notification",
         });
       })
-      .catch((error) => {
+      .catch(() => {
         setLoading(false);
         setNewCurrency({
           ...newCurrency,
           uploading: false,
         });
-        if (error.response.data.errors) {
-          if (error.response.data.errors.name) {
-            error.response.data.errors.name.forEach((item) => {
-              if (item === "A currency already exists with this name") {
-                toast.error(
-                  `${_t(t("A currency already exists with this name"))}`,
-                  {
-                    position: "bottom-center",
-                    autoClose: 10000,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    className: "text-center toast-notification",
-                  }
-                );
-              }
-            });
-          }
-
-          if (error.response.data.errors.image) {
-            error.response.data.errors.image.forEach((item) => {
-              if (item === "Please select a valid image file") {
-                toast.error(`${_t(t("Please select a valid image file"))}`, {
-                  position: "bottom-center",
-                  autoClose: 10000,
-                  hideProgressBar: false,
-                  closeOnClick: true,
-                  pauseOnHover: true,
-                  className: "text-center toast-notification",
-                });
-              }
-              if (item === "Please select a file less than 5MB") {
-                toast.error(`${_t(t("Please select a file less than 5MB"))}`, {
-                  position: "bottom-center",
-                  autoClose: 10000,
-                  hideProgressBar: false,
-                  closeOnClick: true,
-                  pauseOnHover: true,
-                  className: "text-center toast-notification",
-                });
-              }
-            });
-          }
-        }
+        toast.error(`${_t(t("Please try again"))}`, {
+          position: "bottom-center",
+          autoClose: 10000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          className: "text-center toast-notification",
+        });
       });
   };
 
@@ -273,7 +240,7 @@ const Currency = () => {
     setLoading(true);
     setNewDefault({ ...newDefault, uploading: true });
     setDataPaginating(true);
-    const currencyUrl = BASE_URL + `/settings/update-default`;
+    const currencyUrl = BASE_URL + `/settings/update-default-currency`;
     let formData = new FormData();
     formData.append("code", code);
     return axios
@@ -496,7 +463,6 @@ const Currency = () => {
                         name="symbol"
                         onChange={handleSetNewCurrency}
                         value={newCurrency.symbol}
-                        disabled={newCurrency.edit}
                         required
                         placeholder="e.g. $, €, ৳"
                       />
@@ -516,7 +482,6 @@ const Currency = () => {
                         name="rate"
                         onChange={handleSetNewCurrency}
                         value={newCurrency.rate}
-                        disabled={newCurrency.edit}
                         required
                         placeholder="1 USD = ?"
                       />
@@ -707,14 +672,16 @@ const Currency = () => {
                                   scope="col"
                                   className="sm-text text-capitalize align-middle text-center border-1 border"
                                 >
-                                  {_t(t("Code"))}
+                                  {_t(t("Name"))}
                                 </th>
+
                                 <th
                                   scope="col"
                                   className="sm-text text-capitalize align-middle text-center border-1 border"
                                 >
-                                  {_t(t("Name"))}
+                                  1 USD = ?
                                 </th>
+
                                 <th
                                   scope="col"
                                   className="sm-text text-capitalize align-middle text-center border-1 border"
@@ -774,12 +741,12 @@ const Currency = () => {
                                                     currencyList.per_page}
                                               </th>
 
-                                              <td className="xsm-text align-middle text-center">
-                                                {item.code}
-                                              </td>
-
                                               <td className="xsm-text text-capitalize align-middle text-center">
                                                 {item.name}
+                                              </td>
+
+                                              <td className="xsm-text align-middle text-center">
+                                                {item.rate}
                                               </td>
 
                                               <td className="xsm-text text-capitalize align-middle text-center">
@@ -832,15 +799,6 @@ const Currency = () => {
                                                       </span>
                                                       {_t(t("Edit"))}
                                                     </button>
-                                                    <NavLink
-                                                      className="dropdown-item sm-text text-capitalize"
-                                                      to={`/dashboard/manage/settings/languages/${item.code}`}
-                                                    >
-                                                      <span className="t-mr-8">
-                                                        <i className="fa fa-refresh"></i>
-                                                      </span>
-                                                      {_t(t("Translate"))}
-                                                    </NavLink>
                                                     <button
                                                       className="dropdown-item sm-text text-capitalize"
                                                       onClick={() => {
@@ -949,15 +907,6 @@ const Currency = () => {
                                                         </span>
                                                         {_t(t("Edit"))}
                                                       </button>
-                                                      <NavLink
-                                                        className="dropdown-item sm-text text-capitalize"
-                                                        to={`/dashboard/manage/settings/languages/${item.code}`}
-                                                      >
-                                                        <span className="t-mr-8">
-                                                          <i className="fa fa-refresh"></i>
-                                                        </span>
-                                                        {_t(t("Translate"))}
-                                                      </NavLink>
                                                       <button
                                                         className="dropdown-item sm-text text-capitalize"
                                                         onClick={() => {
