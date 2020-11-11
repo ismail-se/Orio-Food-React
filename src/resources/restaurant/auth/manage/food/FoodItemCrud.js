@@ -31,12 +31,9 @@ const FoodItemCrud = () => {
   const { t } = useTranslation();
   const history = useHistory();
   //getting context values here
-  let { loading, dataPaginating } = useContext(SettingsContext);
+  let { loading, setLoading, dataPaginating } = useContext(SettingsContext);
 
   let {
-    //loading
-    setLoading,
-
     foodGroupForSearch,
     propertyGroupForSearch,
     variationForSearch,
@@ -145,6 +142,13 @@ const FoodItemCrud = () => {
       formData.append("price", newItem.price);
     } else {
       //converting variations and prices to array
+      let slugArray = [];
+      newItem.variations.map((newVarItem) => {
+        slugArray.push(newVarItem.slug);
+      });
+      slugArray.map((slugItem) => {
+        formData.append("slugOfVariations[]", slugItem);
+      });
       let tempData = Object.entries(priceForVariations);
       tempData.map((item) => {
         formData.append("variations[]", item);
@@ -183,7 +187,6 @@ const FoodItemCrud = () => {
   //send to server
   const handleSubmit = (e) => {
     e.preventDefault();
-
     //check item group selected
     if (newItem.itemGroup !== null) {
       //check properties selected if property checkbox checked
@@ -197,11 +200,8 @@ const FoodItemCrud = () => {
           className: "text-center toast-notification",
         });
       } else {
-        // todo:: login here if property checkbox not selected
-
-        //check properties deleted all in one click if property checkbox checked
-        if (newItem.properties.length > 0) {
-          //check variation selected if variation checkbox checked
+        // todo:: logic here if property checkbox not selected
+        if (newItem.hasProperty === false) {
           if (newItem.hasVariation === true && newItem.variations === null) {
             toast.error(`${_t(t("Please select variations"))}`, {
               position: "bottom-center",
@@ -212,71 +212,26 @@ const FoodItemCrud = () => {
               className: "text-center toast-notification",
             });
           } else {
-            //check variation deleted all in one click if variation checkbox checked
-            if (newItem.variations.length > 0) {
-              setLoading(true);
-
-              let formData = new FormData();
-              //form data
-              formData.append("food_group_id", newItem.itemGroup.id);
-              formData.append("name", newItem.name);
-
-              formData.append(
-                "hasProperty",
-                newItem.hasProperty === true ? 1 : 0
-              );
-              if (newItem.hasProperty === true) {
-                formData.append("hasProperty", 1);
-                let tempArray = [];
-                newItem.properties.map((pItem) => {
-                  tempArray.push(pItem.id);
-                });
-                formData.append("properties", tempArray);
-              }
-
-              formData.append(
-                "hasVariation",
-                newItem.hasVariation === true ? 1 : 0
-              );
-              if (newItem.hasVariation === false) {
-                formData.append("price", newItem.price);
-              } else {
-                //converting variations and prices to array
-                let tempData = Object.entries(priceForVariations);
-                tempData.map((item) => {
-                  formData.append("variations[]", item);
-                });
-              }
-
-              formData.append("image", newItem.image);
-
-              const url = BASE_URL + "/settings/new-food-item";
-              return axios
-                .post(url, formData, {
-                  headers: { Authorization: `Bearer ${getCookie()}` },
-                })
-                .then(() => {
-                  setNewItem({
-                    itemGroup: null,
-                    name: "",
-                    price: "",
-                    image: null,
-                    hasProperty: false,
-                    properties: null,
-                    hasVariation: false,
-                    variations: null,
-                  });
-                  setLoading(false);
-                  toast.success(`${_t(t("Food item has been added"))}`, {
-                    position: "bottom-center",
-                    autoClose: 10000,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    className: "text-center toast-notification",
-                  });
-                });
+            if (newItem.hasVariation === false) {
+              foodItemAxios();
             } else {
+              if (newItem.variations.length > 0) {
+                foodItemAxios();
+              } else {
+                toast.error(`${_t(t("Please select variations"))}`, {
+                  position: "bottom-center",
+                  autoClose: 10000,
+                  hideProgressBar: false,
+                  closeOnClick: true,
+                  pauseOnHover: true,
+                  className: "text-center toast-notification",
+                });
+              }
+            }
+          }
+        } else {
+          if (newItem.properties.length > 0) {
+            if (newItem.hasVariation === true && newItem.variations === null) {
               toast.error(`${_t(t("Please select variations"))}`, {
                 position: "bottom-center",
                 autoClose: 10000,
@@ -285,17 +240,34 @@ const FoodItemCrud = () => {
                 pauseOnHover: true,
                 className: "text-center toast-notification",
               });
+            } else {
+              if (newItem.hasVariation === false) {
+                foodItemAxios();
+              } else {
+                if (newItem.variations.length > 0) {
+                  foodItemAxios();
+                } else {
+                  toast.error(`${_t(t("Please select variations"))}`, {
+                    position: "bottom-center",
+                    autoClose: 10000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    className: "text-center toast-notification",
+                  });
+                }
+              }
             }
+          } else {
+            toast.error(`${_t(t("Please select properties"))}`, {
+              position: "bottom-center",
+              autoClose: 10000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              className: "text-center toast-notification",
+            });
           }
-        } else {
-          toast.error(`${_t(t("Please select property group"))}`, {
-            position: "bottom-center",
-            autoClose: 10000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            className: "text-center toast-notification",
-          });
         }
       }
     } else {
@@ -404,6 +376,7 @@ const FoodItemCrud = () => {
                                   id="name"
                                   name="name"
                                   onChange={handleChange}
+                                  value={newItem.name}
                                   placeholder="e.g. Spicy chicken burger"
                                   required
                                 />
@@ -432,6 +405,7 @@ const FoodItemCrud = () => {
                                     min="0"
                                     className="form-control"
                                     name="price"
+                                    value={newItem.price}
                                     onChange={handleChange}
                                     placeholder="e.g. Type price of this item in 'US dollar'"
                                     required
@@ -459,10 +433,7 @@ const FoodItemCrud = () => {
                               newItem.hasProperty && (
                                 <div className="form-group mt-2 ml-4">
                                   <div className="mb-2">
-                                    <label
-                                      htmlFor="image"
-                                      className="control-label"
-                                    >
+                                    <label className="control-label">
                                       {_t(t("Add properties"))}
                                     </label>
                                   </div>
@@ -504,10 +475,7 @@ const FoodItemCrud = () => {
                             {newItem.hasVariation && variationForSearch && (
                               <div className="form-group mt-2 ml-4">
                                 <div className="mb-2">
-                                  <label
-                                    htmlFor="image"
-                                    className="control-label"
-                                  >
+                                  <label className="control-label">
                                     {_t(t("Add variations"))}
                                   </label>
                                 </div>
@@ -529,22 +497,28 @@ const FoodItemCrud = () => {
                             )}
                             {newItem.variations !== null && [
                               newItem.variations.length > 0 && (
-                                <div className="card ml-4 mt-3 p-3">
-                                  <div className="card-header bg-primary text-white rounded-sm text-center">
+                                <div className="card ml-4 mt-3 p-3 custom-bg-secondary">
+                                  <div className="card-header t-bg-epsilon text-white rounded-sm text-center">
                                     {_t(
                                       t("Please enter price for each variation")
                                     )}
                                   </div>
                                   {newItem.variations.map((variationItem) => {
                                     return (
-                                      <div className="form-group mt-4">
+                                      <div
+                                        className="form-group mt-4"
+                                        key={variationItem.id}
+                                      >
                                         <div className="mb-2">
                                           <label
                                             htmlFor={variationItem.slug}
-                                            className="control-label"
+                                            className="control-label sm-text"
                                           >
                                             {_t(t("Total price of"))}{" "}
-                                            {variationItem.name}
+                                            <span className="text-primary text-bold">
+                                              {variationItem.name}
+                                            </span>{" "}
+                                            {_t(t("variation"))}
                                             <span className="text-primary">
                                               *{" "}
                                             </span>
@@ -573,7 +547,7 @@ const FoodItemCrud = () => {
                               ),
                             ]}
 
-                            <div className="form-group mt-3">
+                            <div className="form-group mt-4">
                               <div className="mb-2">
                                 <label
                                   htmlFor="image"
@@ -598,7 +572,7 @@ const FoodItemCrud = () => {
                               </div>
                             </div>
 
-                            <div className="form-group mt-5 pb-2">
+                            <div className="form-group mt-4 pb-2">
                               <div className="col-lg-12">
                                 <button
                                   className="btn btn-primary px-5"

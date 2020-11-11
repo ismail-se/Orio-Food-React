@@ -84,3 +84,8 @@ html {
 .translation-input {
   max-width: 150px;
 }
+
+/*  custom-bg-secondary */
+.custom-bg-secondary {
+  background-color: #ebeef6;
+}
