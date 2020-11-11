@@ -31,9 +31,12 @@ const FoodItemCrud = () => {
   const { t } = useTranslation();
   const history = useHistory();
   //getting context values here
-  let { loading, setLoading, dataPaginating } = useContext(SettingsContext);
+  let { loading, dataPaginating } = useContext(SettingsContext);
 
   let {
+    //loading
+    setLoading,
+
     foodGroupForSearch,
     propertyGroupForSearch,
     variationForSearch,
@@ -50,9 +53,6 @@ const FoodItemCrud = () => {
     properties: null,
     hasVariation: false,
     variations: null,
-    edit: false,
-    editSlug: null,
-    uploading: false,
   });
 
   let [priceForVariations, setPriceForVariations] = useState(null);
@@ -71,6 +71,11 @@ const FoodItemCrud = () => {
       ...newItem,
       [e.target.name]: e.target.files[0],
     });
+  };
+
+  //set properties hook
+  const handleSetPropertes = (properties) => {
+    setNewItem({ ...newItem, properties });
   };
 
   //set variations hook
@@ -93,7 +98,15 @@ const FoodItemCrud = () => {
 
   //has Property
   const handlePropertyCheckboxChange = (e) => {
-    setNewItem({ ...newItem, hasProperty: !newItem.hasProperty });
+    if (newItem.hasProperty === true) {
+      setNewItem({
+        ...newItem,
+        properties: null,
+        hasProperty: !newItem.hasProperty,
+      });
+    } else {
+      setNewItem({ ...newItem, hasProperty: !newItem.hasProperty });
+    }
   };
 
   //has variations
@@ -109,22 +122,182 @@ const FoodItemCrud = () => {
     }
   };
 
+  //post req of food item add
+  const foodItemAxios = () => {
+    setLoading(true);
+    let formData = new FormData();
+    //form data
+    formData.append("food_group_id", newItem.itemGroup.id);
+    formData.append("name", newItem.name);
+
+    formData.append("hasProperty", newItem.hasProperty === true ? 1 : 0);
+    if (newItem.hasProperty === true) {
+      formData.append("hasProperty", 1);
+      let tempArray = [];
+      newItem.properties.map((pItem) => {
+        tempArray.push(pItem.id);
+      });
+      formData.append("properties", tempArray);
+    }
+
+    formData.append("hasVariation", newItem.hasVariation === true ? 1 : 0);
+    if (newItem.hasVariation === false) {
+      formData.append("price", newItem.price);
+    } else {
+      //converting variations and prices to array
+      let tempData = Object.entries(priceForVariations);
+      tempData.map((item) => {
+        formData.append("variations[]", item);
+      });
+    }
+
+    formData.append("image", newItem.image);
+    const url = BASE_URL + "/settings/new-food-item";
+    return axios
+      .post(url, formData, {
+        headers: { Authorization: `Bearer ${getCookie()}` },
+      })
+      .then(() => {
+        setNewItem({
+          itemGroup: null,
+          name: "",
+          price: "",
+          image: null,
+          hasProperty: false,
+          properties: null,
+          hasVariation: false,
+          variations: null,
+        });
+        setLoading(false);
+        toast.success(`${_t(t("Food item has been added"))}`, {
+          position: "bottom-center",
+          autoClose: 10000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          className: "text-center toast-notification",
+        });
+      });
+  };
+
   //send to server
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    //check item group selected
     if (newItem.itemGroup !== null) {
-      let a = Object.entries(priceForVariations);
-      console.log(a);
-      let formData = new FormData();
-      formData.append("variations[]", a);
-      const url = BASE_URL + "/settings/new-food-item";
-      return axios
-        .post(url, formData, {
-          headers: { Authorization: `Bearer ${getCookie()}` },
-        })
-        .then((res) => {
-          console.log(res.data);
+      //check properties selected if property checkbox checked
+      if (newItem.hasProperty === true && newItem.properties === null) {
+        toast.error(`${_t(t("Please select property group"))}`, {
+          position: "bottom-center",
+          autoClose: 10000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          className: "text-center toast-notification",
         });
+      } else {
+        // todo:: login here if property checkbox not selected
+
+        //check properties deleted all in one click if property checkbox checked
+        if (newItem.properties.length > 0) {
+          //check variation selected if variation checkbox checked
+          if (newItem.hasVariation === true && newItem.variations === null) {
+            toast.error(`${_t(t("Please select variations"))}`, {
+              position: "bottom-center",
+              autoClose: 10000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              className: "text-center toast-notification",
+            });
+          } else {
+            //check variation deleted all in one click if variation checkbox checked
+            if (newItem.variations.length > 0) {
+              setLoading(true);
+
+              let formData = new FormData();
+              //form data
+              formData.append("food_group_id", newItem.itemGroup.id);
+              formData.append("name", newItem.name);
+
+              formData.append(
+                "hasProperty",
+                newItem.hasProperty === true ? 1 : 0
+              );
+              if (newItem.hasProperty === true) {
+                formData.append("hasProperty", 1);
+                let tempArray = [];
+                newItem.properties.map((pItem) => {
+                  tempArray.push(pItem.id);
+                });
+                formData.append("properties", tempArray);
+              }
+
+              formData.append(
+                "hasVariation",
+                newItem.hasVariation === true ? 1 : 0
+              );
+              if (newItem.hasVariation === false) {
+                formData.append("price", newItem.price);
+              } else {
+                //converting variations and prices to array
+                let tempData = Object.entries(priceForVariations);
+                tempData.map((item) => {
+                  formData.append("variations[]", item);
+                });
+              }
+
+              formData.append("image", newItem.image);
+
+              const url = BASE_URL + "/settings/new-food-item";
+              return axios
+                .post(url, formData, {
+                  headers: { Authorization: `Bearer ${getCookie()}` },
+                })
+                .then(() => {
+                  setNewItem({
+                    itemGroup: null,
+                    name: "",
+                    price: "",
+                    image: null,
+                    hasProperty: false,
+                    properties: null,
+                    hasVariation: false,
+                    variations: null,
+                  });
+                  setLoading(false);
+                  toast.success(`${_t(t("Food item has been added"))}`, {
+                    position: "bottom-center",
+                    autoClose: 10000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    className: "text-center toast-notification",
+                  });
+                });
+            } else {
+              toast.error(`${_t(t("Please select variations"))}`, {
+                position: "bottom-center",
+                autoClose: 10000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                className: "text-center toast-notification",
+              });
+            }
+          }
+        } else {
+          toast.error(`${_t(t("Please select property group"))}`, {
+            position: "bottom-center",
+            autoClose: 10000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            className: "text-center toast-notification",
+          });
+        }
+      }
     } else {
       toast.error(`${_t(t("Please select a group for this item"))}`, {
         position: "bottom-center",
@@ -191,28 +364,31 @@ const FoodItemCrud = () => {
                           onSubmit={handleSubmit}
                         >
                           <div className="col-12">
-                            <div className="form-group mt-2">
-                              <div className="mb-2">
-                                <label
-                                  htmlFor="itemGroup"
-                                  className="control-label"
-                                >
-                                  {_t(t("Item Group"))}
-                                  <span className="text-danger">*</span>
-                                </label>
+                            {foodGroupForSearch && (
+                              <div className="form-group mt-2">
+                                <div className="mb-2">
+                                  <label
+                                    htmlFor="itemGroup"
+                                    className="control-label"
+                                  >
+                                    {_t(t("Item Group"))}
+                                    <span className="text-danger">*</span>
+                                  </label>
+                                </div>
+                                <Select
+                                  options={foodGroupForSearch}
+                                  components={makeAnimated()}
+                                  getOptionLabel={(option) => option.name}
+                                  getOptionValue={(option) => option.name}
+                                  classNamePrefix="select"
+                                  onChange={handleSetItemGroup}
+                                  maxMenuHeight="200px"
+                                  placeholder={
+                                    _t(t("Please select a group")) + ".."
+                                  }
+                                />
                               </div>
-                              <Select
-                                options={foodGroupForSearch}
-                                components={makeAnimated()}
-                                getOptionLabel={(option) => option.name}
-                                getOptionValue={(option) => option.name}
-                                classNamePrefix="select"
-                                onChange={handleSetItemGroup}
-                                placeholder={
-                                  _t(t("Please select a group")) + ".."
-                                }
-                              />
-                            </div>
+                            )}
 
                             <div className="form-group mt-3">
                               <div className="mb-2">
@@ -264,30 +440,6 @@ const FoodItemCrud = () => {
                               </div>
                             )}
 
-                            <div className="form-group mt-3">
-                              <div className="mb-2">
-                                <label
-                                  htmlFor="image"
-                                  className="control-label"
-                                >
-                                  {_t(t("Image"))}
-                                  <span className="text-danger">*</span>{" "}
-                                  <small className="text-secondary">
-                                    ({_t(t("Square Image Preferable"))})
-                                  </small>
-                                </label>
-                              </div>
-                              <div className="mb-2">
-                                <input
-                                  type="file"
-                                  className="form-control"
-                                  id="image"
-                                  name="image"
-                                  onChange={handleItemImage}
-                                  required
-                                />
-                              </div>
-                            </div>
                             <div className="form-check mt-4">
                               <input
                                 type="checkbox"
@@ -303,31 +455,35 @@ const FoodItemCrud = () => {
                                 {_t(t("Has properties?"))}
                               </label>
                             </div>
-
-                            {newItem.hasProperty && (
-                              <div className="form-group mt-2 ml-4">
-                                <div className="mb-2">
-                                  <label
-                                    htmlFor="image"
-                                    className="control-label"
-                                  >
-                                    {_t(t("Add properties"))}
-                                  </label>
+                            {propertyGroupForSearch && [
+                              newItem.hasProperty && (
+                                <div className="form-group mt-2 ml-4">
+                                  <div className="mb-2">
+                                    <label
+                                      htmlFor="image"
+                                      className="control-label"
+                                    >
+                                      {_t(t("Add properties"))}
+                                    </label>
+                                  </div>
+                                  <Select
+                                    options={propertyGroupForSearch}
+                                    components={makeAnimated()}
+                                    getOptionLabel={(option) => option.name}
+                                    getOptionValue={(option) => option.name}
+                                    className="basic-multi-select"
+                                    classNamePrefix="select"
+                                    isMulti
+                                    maxMenuHeight="200px"
+                                    onChange={handleSetPropertes}
+                                    placeholder={
+                                      _t(t("Please select property groups")) +
+                                      ".."
+                                    }
+                                  />
                                 </div>
-                                <Select
-                                  options={propertyGroupForSearch}
-                                  components={makeAnimated()}
-                                  getOptionLabel={(option) => option.name}
-                                  getOptionValue={(option) => option.name}
-                                  className="basic-multi-select"
-                                  classNamePrefix="select"
-                                  isMulti
-                                  placeholder={
-                                    _t(t("Please select properties")) + ".."
-                                  }
-                                />
-                              </div>
-                            )}
+                              ),
+                            ]}
 
                             <div className="form-check mt-4">
                               <input
@@ -345,7 +501,7 @@ const FoodItemCrud = () => {
                               </label>
                             </div>
 
-                            {newItem.hasVariation && (
+                            {newItem.hasVariation && variationForSearch && (
                               <div className="form-group mt-2 ml-4">
                                 <div className="mb-2">
                                   <label
@@ -363,6 +519,7 @@ const FoodItemCrud = () => {
                                   className="basic-multi-select"
                                   classNamePrefix="select"
                                   isMulti
+                                  maxMenuHeight="200px"
                                   onChange={handleSetVariations}
                                   placeholder={
                                     _t(t("Please select variations")) + ".."
@@ -415,6 +572,31 @@ const FoodItemCrud = () => {
                                 </div>
                               ),
                             ]}
+
+                            <div className="form-group mt-3">
+                              <div className="mb-2">
+                                <label
+                                  htmlFor="image"
+                                  className="control-label"
+                                >
+                                  {_t(t("Image"))}
+                                  <span className="text-danger">*</span>{" "}
+                                  <small className="text-secondary">
+                                    ({_t(t("Square Image Preferable"))})
+                                  </small>
+                                </label>
+                              </div>
+                              <div className="mb-2">
+                                <input
+                                  type="file"
+                                  className="form-control"
+                                  id="image"
+                                  name="image"
+                                  onChange={handleItemImage}
+                                  required
+                                />
+                              </div>
+                            </div>
 
                             <div className="form-group mt-5 pb-2">
                               <div className="col-lg-12">
