@@ -200,7 +200,6 @@ const FoodItemCrud = () => {
           className: "text-center toast-notification",
         });
       } else {
-        // todo:: logic here if property checkbox not selected
         if (newItem.hasProperty === false) {
           if (newItem.hasVariation === true && newItem.variations === null) {
             toast.error(`${_t(t("Please select variations"))}`, {
@@ -271,7 +270,7 @@ const FoodItemCrud = () => {
         }
       }
     } else {
-      toast.error(`${_t(t("Please select a group for this item"))}`, {
+      toast.error(`${_t(t("Please select a Food Group for this item"))}`, {
         position: "bottom-center",
         autoClose: 10000,
         hideProgressBar: false,
@@ -332,7 +331,7 @@ const FoodItemCrud = () => {
 
                         {/* Form starts here */}
                         <form
-                          className="row card p-2 mx-3 mb-5"
+                          className="row card p-2 mx-3 mb-5 sm-text"
                           onSubmit={handleSubmit}
                         >
                           <div className="col-12">
@@ -343,7 +342,7 @@ const FoodItemCrud = () => {
                                     htmlFor="itemGroup"
                                     className="control-label"
                                   >
-                                    {_t(t("Item Group"))}
+                                    {_t(t("Food group"))}
                                     <span className="text-danger">*</span>
                                   </label>
                                 </div>
@@ -356,7 +355,7 @@ const FoodItemCrud = () => {
                                   onChange={handleSetItemGroup}
                                   maxMenuHeight="200px"
                                   placeholder={
-                                    _t(t("Please select a group")) + ".."
+                                    _t(t("Please select a food group")) + ".."
                                   }
                                 />
                               </div>
@@ -382,37 +381,6 @@ const FoodItemCrud = () => {
                                 />
                               </div>
                             </div>
-
-                            {!newItem.hasVariation && (
-                              <div className="form-group mt-4">
-                                <div className="mb-2">
-                                  <label
-                                    htmlFor="price"
-                                    className="control-label"
-                                  >
-                                    {_t(t("Price"))}
-                                    <span className="text-primary">* </span>
-                                    <small className="text-secondary">
-                                      ({_t(t("Enter price in USD"))})
-                                    </small>
-                                  </label>
-                                </div>
-                                <div className="mb-2">
-                                  <input
-                                    id="price"
-                                    type="number"
-                                    step="0.01"
-                                    min="0"
-                                    className="form-control"
-                                    name="price"
-                                    value={newItem.price}
-                                    onChange={handleChange}
-                                    placeholder="e.g. Type price of this item in 'US dollar'"
-                                    required
-                                  />
-                                </div>
-                              </div>
-                            )}
 
                             <div className="form-check mt-4">
                               <input
@@ -547,6 +515,37 @@ const FoodItemCrud = () => {
                               ),
                             ]}
 
+                            {!newItem.hasVariation && (
+                              <div className="form-group mt-4">
+                                <div className="mb-2">
+                                  <label
+                                    htmlFor="price"
+                                    className="control-label"
+                                  >
+                                    {_t(t("Price"))}
+                                    <span className="text-primary">* </span>
+                                    <small className="text-secondary">
+                                      ({_t(t("Enter price in USD"))})
+                                    </small>
+                                  </label>
+                                </div>
+                                <div className="mb-2">
+                                  <input
+                                    id="price"
+                                    type="number"
+                                    step="0.01"
+                                    min="0"
+                                    className="form-control"
+                                    name="price"
+                                    value={newItem.price}
+                                    onChange={handleChange}
+                                    placeholder="e.g. Type price of this item in 'US dollar'"
+                                    required
+                                  />
+                                </div>
+                              </div>
+                            )}
+
                             <div className="form-group mt-4">
                               <div className="mb-2">
                                 <label
@@ -563,7 +562,7 @@ const FoodItemCrud = () => {
                               <div className="mb-2">
                                 <input
                                   type="file"
-                                  className="form-control"
+                                  className="form-control sm-text"
                                   id="image"
                                   name="image"
                                   onChange={handleItemImage}
@@ -572,7 +571,7 @@ const FoodItemCrud = () => {
                               </div>
                             </div>
 
-                            <div className="form-group mt-4 pb-2">
+                            <div className="form-group mt-5 pb-2">
                               <div className="col-lg-12">
                                 <button
                                   className="btn btn-primary px-5"

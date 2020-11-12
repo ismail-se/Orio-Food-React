@@ -125,14 +125,14 @@ function App() {
             )}
           </RestaurantRoute>
 
-          <RestaurantRoute path="/dashboard/manage/food/units" exact>
+          {/* <RestaurantRoute path="/dashboard/manage/food/units" exact>
             {authUserInfo.permissions !== null &&
             checkPermission(authUserInfo.permissions, "Manage") ? (
               <UnitCrud />
             ) : (
               <NoPermission />
             )}
-          </RestaurantRoute>
+          </RestaurantRoute> */}
 
           <RestaurantRoute path="/dashboard/manage/food/variations" exact>
             {authUserInfo.permissions !== null &&

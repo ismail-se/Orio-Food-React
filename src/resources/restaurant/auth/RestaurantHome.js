@@ -157,7 +157,7 @@ const RestaurantHome = () => {
                         "t-text-zeta",
                         [_t(t("Manage"))],
                         [_t(t("Manage"))],
-                        "/dashboard/manage/settings/languages"
+                        "/dashboard/manage/food/add-new"
                       )
                     : null}
 

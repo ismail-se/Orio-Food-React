@@ -107,19 +107,19 @@ const ManageSidebar = () => {
                   _t(t("Groups"))
                 )}
 
-                {managePageHrefLink(
+                {/* {managePageHrefLink(
                   "/dashboard/manage/food/units",
                   _t(t("Units"))
+                )} */}
+
+                {managePageHrefLink(
+                  "/dashboard/manage/food/properties",
+                  _t(t("Properties"))
                 )}
 
                 {managePageHrefLink(
                   "/dashboard/manage/food/variations",
                   _t(t("Variations"))
-                )}
-
-                {managePageHrefLink(
-                  "/dashboard/manage/food/properties",
-                  _t(t("Properties"))
                 )}
               </ul>
             </li>
