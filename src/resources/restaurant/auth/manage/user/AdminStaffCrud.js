@@ -835,7 +835,7 @@ const AdminStaffCrud = () => {
 
       {/* Add modal */}
       <div className="modal fade" id="addWaiter" aria-hidden="true">
-        <div className="modal-dialog modal-lg">
+        <div className="modal-dialog modal-xl">
           <div className="modal-content">
             <div className="modal-header align-items-center">
               <div className="fk-sm-card__content">

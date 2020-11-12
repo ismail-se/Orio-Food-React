@@ -122,11 +122,10 @@ const FoodItemCrud = () => {
   //post req of food item add
   const foodItemAxios = () => {
     setLoading(true);
+
     let formData = new FormData();
-    //form data
     formData.append("food_group_id", newItem.itemGroup.id);
     formData.append("name", newItem.name);
-
     formData.append("hasProperty", newItem.hasProperty === true ? 1 : 0);
     if (newItem.hasProperty === true) {
       formData.append("hasProperty", 1);
@@ -149,6 +148,7 @@ const FoodItemCrud = () => {
       slugArray.map((slugItem) => {
         formData.append("slugOfVariations[]", slugItem);
       });
+
       let tempData = Object.entries(priceForVariations);
       tempData.map((item) => {
         formData.append("variations[]", item);
@@ -189,7 +189,7 @@ const FoodItemCrud = () => {
     e.preventDefault();
     //check item group selected
     if (newItem.itemGroup !== null) {
-      //check properties selected if property checkbox checked
+      //check property is selected or not if property checkbox is checked
       if (newItem.hasProperty === true && newItem.properties === null) {
         toast.error(`${_t(t("Please select properties"))}`, {
           position: "bottom-center",
@@ -200,7 +200,9 @@ const FoodItemCrud = () => {
           className: "text-center toast-notification",
         });
       } else {
+        //if property checkbox is not selected
         if (newItem.hasProperty === false) {
+          //check variation is selected or not if variation checkbox is checked
           if (newItem.hasVariation === true && newItem.variations === null) {
             toast.error(`${_t(t("Please select variations"))}`, {
               position: "bottom-center",
@@ -211,9 +213,11 @@ const FoodItemCrud = () => {
               className: "text-center toast-notification",
             });
           } else {
+            //if variation checkbox is not selected
             if (newItem.hasVariation === false) {
               foodItemAxios();
             } else {
+              //if variation checkbox is selected, options selected, but deleted all selected options at once
               if (newItem.variations.length > 0) {
                 foodItemAxios();
               } else {
@@ -229,6 +233,7 @@ const FoodItemCrud = () => {
             }
           }
         } else {
+          //if property checkbox is selected, options selected, but deleted all selected options at once
           if (newItem.properties.length > 0) {
             if (newItem.hasVariation === true && newItem.variations === null) {
               toast.error(`${_t(t("Please select variations"))}`, {
@@ -240,9 +245,11 @@ const FoodItemCrud = () => {
                 className: "text-center toast-notification",
               });
             } else {
+              //if variation checkbox is not selected
               if (newItem.hasVariation === false) {
                 foodItemAxios();
               } else {
+                //if variation checkbox is selected, options selected, but deleted all selected options at once
                 if (newItem.variations.length > 0) {
                   foodItemAxios();
                 } else {
@@ -270,6 +277,7 @@ const FoodItemCrud = () => {
         }
       }
     } else {
+      //if item group not selected
       toast.error(`${_t(t("Please select a Food Group for this item"))}`, {
         position: "bottom-center",
         autoClose: 10000,
