@@ -191,7 +191,7 @@ const FoodItemCrud = () => {
     if (newItem.itemGroup !== null) {
       //check properties selected if property checkbox checked
       if (newItem.hasProperty === true && newItem.properties === null) {
-        toast.error(`${_t(t("Please select property group"))}`, {
+        toast.error(`${_t(t("Please select properties"))}`, {
           position: "bottom-center",
           autoClose: 10000,
           hideProgressBar: false,
