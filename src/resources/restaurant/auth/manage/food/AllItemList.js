@@ -1,25 +1,20 @@
 import React, { useState, useContext, useEffect } from "react";
-import { NavLink, useHistory, useParams } from "react-router-dom";
+import { useHistory, NavLink } from "react-router-dom";
 
 //pages & includes
 import ManageSidebar from "../ManageSidebar";
 
 //functions
 import {
-  //common
   _t,
   getCookie,
-  formatPrice,
-
-  //loading
   modalLoading,
   tableLoading,
-
-  //pagination
   pagination,
   paginationLoading,
   showingData,
   searchedShowingData,
+  formatPrice,
 } from "../../../../../functions/Functions";
 import { useTranslation } from "react-i18next";
 
@@ -40,210 +35,75 @@ import { FoodContext } from "../../../../../contexts/Food";
 const AllItemList = () => {
   const { t } = useTranslation();
   const history = useHistory();
-  const propertySlug = useParams();
   //getting context values here
 
   let {
     //common
     loading,
     setLoading,
-    //property Item
-    getPropertyItem,
-    propertyItemList,
-    setPropertyItemList,
-    propertyItemForSearch,
-    setPropertyItemForSearch,
-    propertyItemGroup,
+
+    //food
+    getFood,
+    foodList,
+    setFoodList,
+    setPaginatedFood,
+    foodForSearch,
+    setFoodForSearch,
 
     //pagination
     dataPaginating,
   } = useContext(FoodContext);
 
   // States hook here
-  //new property item
-  let [newPropertyItem, setNewPropertyItem] = useState({
-    name: "",
-    extraPrice: null,
+  let [variations, setVariations] = useState({
+    //common
     edit: false,
-    editSlug: null,
     uploading: false,
+
+    //food item === item
+    item: null,
+
+    //variation list === list
+    list: null,
+
+    //new price of variations
+    newPrice: null,
+
+    //variation to delete- id of food_with_variations table
+    deletedVariations: null,
+
+    //if all variation deleted
+    priceAfterAllVariationDelete: "",
   });
 
   //search result
-  let [searchedPropertyItem, setSearchedPropertyItem] = useState({
+  let [searchedFoodGroup, setSearchedFoodGroup] = useState({
     list: null,
     searched: false,
   });
 
   //useEffect == componentDidMount
-  useEffect(() => {
-    setLoading(true);
-    getPropertyItem(propertySlug.slug);
-    setTimeout(() => {
-      setLoading(false);
-    }, 500);
-  }, []);
+  useEffect(() => {}, []);
 
-  //set name hook
-  const handleSetNewPropertyItem = (e) => {
-    setNewPropertyItem({
-      ...newPropertyItem,
-      [e.target.name]: e.target.value,
-    });
-  };
-
-  //Save New property item
-  const handleSaveNewPropertyItem = (e) => {
-    e.preventDefault();
-    setNewPropertyItem({
-      ...newPropertyItem,
-      uploading: true,
-    });
-    const propertyItemUrl = BASE_URL + `/settings/new-property-item`;
-    let formData = new FormData();
-    formData.append("name", newPropertyItem.name);
-    formData.append("extraPrice", newPropertyItem.extraPrice);
-    formData.append("propertyGroupSlug", propertySlug.slug);
-    return axios
-      .post(propertyItemUrl, formData, {
-        headers: { Authorization: `Bearer ${getCookie()}` },
-      })
-      .then((res) => {
-        setNewPropertyItem({
-          name: "",
-          extraPrice: null,
-          edit: false,
-          editSlug: null,
-          uploading: false,
-        });
-        setPropertyItemList(res.data[0]);
-        setPropertyItemForSearch(res.data[0]);
-        setSearchedPropertyItem({
-          ...searchedPropertyItem,
-          list: res.data[0],
-        });
-        setLoading(false);
-        toast.success(`${_t(t("Property item has been added"))}`, {
-          position: "bottom-center",
-          autoClose: 10000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          className: "text-center toast-notification",
-        });
-      })
-      .catch(() => {
-        setLoading(false);
-        setNewPropertyItem({
-          ...newPropertyItem,
-          uploading: false,
-        });
-        toast.error(`${_t(t("Please try again"))}`, {
-          position: "bottom-center",
-          autoClose: 10000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          className: "text-center toast-notification",
-        });
-      });
-  };
-
-  //set edit true & values
-  const handleSetEdit = (slug) => {
-    let variation = propertyItemForSearch.filter((item) => {
-      return item.slug === slug;
-    });
-    setNewPropertyItem({
-      ...newPropertyItem,
-      name: variation[0].name,
-      extraPrice: variation[0].extra_price,
-      editSlug: variation[0].slug,
-      edit: true,
-    });
-  };
-
-  //update property item
-  const handleUpdatePropertyItem = (e) => {
-    e.preventDefault();
-    setNewPropertyItem({
-      ...newPropertyItem,
-      uploading: true,
-    });
-    const propertyItemUrl = BASE_URL + `/settings/update-property-item`;
-    let formData = new FormData();
-    formData.append("name", newPropertyItem.name);
-    formData.append("extraPrice", newPropertyItem.extraPrice);
-    formData.append("editSlug", newPropertyItem.editSlug);
-    formData.append("propertyGroupSlug", propertySlug.slug);
-    return axios
-      .post(propertyItemUrl, formData, {
-        headers: { Authorization: `Bearer ${getCookie()}` },
-      })
-      .then((res) => {
-        setNewPropertyItem({
-          name: "",
-          extraPrice: null,
-          edit: false,
-          editSlug: null,
-          uploading: false,
-        });
-        setPropertyItemList(res.data[0]);
-        setPropertyItemForSearch(res.data[0]);
-        setSearchedPropertyItem({
-          ...searchedPropertyItem,
-          list: res.data[0],
-        });
-        setLoading(false);
-        toast.success(`${_t(t("Property item has been updated"))}`, {
-          position: "bottom-center",
-          autoClose: 10000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          className: "text-center toast-notification",
-        });
-      })
-      .catch((error) => {
-        setLoading(false);
-        setNewPropertyItem({
-          ...newPropertyItem,
-          uploading: false,
-        });
-        toast.error(`${_t(t("Please try again"))}`, {
-          position: "bottom-center",
-          autoClose: 10000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          className: "text-center toast-notification",
-        });
-      });
-  };
-
-  //search property item here
+  //search food group here
   const handleSearch = (e) => {
     let searchInput = e.target.value.toLowerCase();
     if (searchInput.length === 0) {
-      setSearchedPropertyItem({ ...searchedPropertyItem, searched: false });
+      setSearchedFoodGroup({ ...searchedFoodGroup, searched: false });
     } else {
-      let searchedList = propertyItemForSearch.filter((item) => {
+      let searchedList = foodForSearch.filter((item) => {
         let lowerCaseItemName = item.name.toLowerCase();
-        let lowerCaseItemExtraPrice = item.extra_price.toLowerCase();
-        return (
-          lowerCaseItemName.includes(searchInput) ||
-          lowerCaseItemExtraPrice.includes(searchInput)
-        );
+        return lowerCaseItemName.includes(searchInput);
       });
-      setSearchedPropertyItem({
-        ...searchedPropertyItem,
+      setSearchedFoodGroup({
+        ...searchedFoodGroup,
         list: searchedList,
         searched: true,
       });
     }
   };
 
-  //delete confirmation modal of property item
+  //delete confirmation modal of paymentType
   const handleDeleteConfirmation = (slug) => {
     confirmAlert({
       customUI: ({ onClose }) => {
@@ -255,7 +115,7 @@ const AllItemList = () => {
               <button
                 className="btn btn-primary"
                 onClick={() => {
-                  handleDeletePropertyItem(slug);
+                  // handleDeleteFoodGroup(slug);
                   onClose();
                 }}
               >
@@ -271,63 +131,28 @@ const AllItemList = () => {
     });
   };
 
-  //delete variation here
-  const handleDeletePropertyItem = (slug) => {
-    setLoading(true);
-    const propertyItemUrl = BASE_URL + `/settings/delete-property-item/${slug}`;
-    return axios
-      .get(propertyItemUrl, {
-        headers: { Authorization: `Bearer ${getCookie()}` },
-      })
-      .then((res) => {
-        setPropertyItemList(res.data[0]);
-        setPropertyItemForSearch(res.data[0]);
-        setSearchedPropertyItem({
-          ...searchedPropertyItem,
-          list: res.data[0],
-        });
-        setLoading(false);
-        toast.success(
-          `${_t(t("Property item has been deleted successfully"))}`,
-          {
-            position: "bottom-center",
-            autoClose: 10000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            className: "text-center toast-notification",
-          }
-        );
-      })
-      .catch(() => {
-        setLoading(false);
-        toast.error(`${_t(t("Please try again"))}`, {
-          position: "bottom-center",
-          autoClose: 10000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          className: "text-center toast-notification",
-        });
-      });
-  };
-
   return (
     <>
       <Helmet>
-        <title>{_t(t("Property Items"))}</title>
+        <title>{_t(t("Food Items"))}</title>
       </Helmet>
 
-      {/* Add modal */}
-      <div className="modal fade" id="addvariation" aria-hidden="true">
+      {/* variations modal */}
+      <div className="modal fade" id="foodVariations" aria-hidden="true">
         <div className="modal-dialog modal-lg">
           <div className="modal-content">
             <div className="modal-header align-items-center">
               <div className="fk-sm-card__content">
-                <h5 className="text-capitalize fk-sm-card__title">
-                  {!newPropertyItem.edit
-                    ? _t(t("Add new property item"))
-                    : _t(t("Update property item"))}
+                <h5 className="fk-sm-card__title">
+                  {/* food item name in variation modal */}
+                  {!variations.edit
+                    ? [variations.item && variations.item.name]
+                    : [
+                        _t(t("Update variations of")) +
+                          " " +
+                          [variations.item && variations.item.name],
+                      ]}
+                  {/* food item name in variation modal ends */}
                 </h5>
               </div>
               <button
@@ -338,118 +163,327 @@ const AllItemList = () => {
               ></button>
             </div>
             <div className="modal-body">
-              {/* show form or show saving loading */}
-              {newPropertyItem.uploading === false ? (
-                <div key="fragment-property-item-1">
-                  <form
-                    onSubmit={
-                      !newPropertyItem.edit
-                        ? handleSaveNewPropertyItem
-                        : handleUpdatePropertyItem
-                    }
+              {/* showing this-> if update has been submitted or not */}
+              {!variations.uploading && (
+                <div className="text-right">
+                  <button
+                    className={`btn btn-primary text-capitalize mb-3 sm-text px-4`}
+                    onClick={() => {
+                      //set variations which are selected to delete === null; if "Cancel" button is clicked,
+                      //edit variation true if "Edit" button clicked
+                      setVariations({
+                        ...variations,
+                        deletedVariations:
+                          variations.edit === true
+                            ? null
+                            : variations.deletedVariations,
+                        edit: !variations.edit,
+                      });
+                    }}
                   >
-                    <div>
-                      <label htmlFor="name" className="form-label">
-                        {_t(t("Name"))}{" "}
-                        <small className="text-primary">*</small>
-                      </label>
-                      <input
-                        type="text"
-                        className="form-control"
-                        id="name"
-                        name="name"
-                        placeholder="e.g. Egg, Cheese, Mild, Spicy"
-                        value={newPropertyItem.name || ""}
-                        required
-                        onChange={handleSetNewPropertyItem}
-                      />
-                    </div>
-
-                    <div className="mt-2">
-                      <label htmlFor="extraPrice" className="form-label">
-                        {_t(t("Price"))}{" "}
-                        <small className="text-primary">* </small>
-                        <small className="text-secondary">
-                          ( {_t(t("Insert 0 if it is free"))} )
-                        </small>
-                      </label>
-                      <input
-                        type="number"
-                        step="0.01"
-                        className="form-control"
-                        id="extraPrice"
-                        name="extraPrice"
-                        placeholder="e.g. Type price of this item"
-                        value={newPropertyItem.extraPrice || ""}
-                        required
-                        onChange={handleSetNewPropertyItem}
-                      />
-                    </div>
-
-                    <div className="mt-4">
-                      <div className="row">
-                        <div className="col-6">
-                          <button
-                            type="submit"
-                            className="btn btn-success text-dark w-100 xsm-text text-uppercase t-width-max"
-                          >
-                            {!newPropertyItem.edit
-                              ? _t(t("Save"))
-                              : _t(t("Update"))}
-                          </button>
-                        </div>
-                        <div className="col-6">
-                          <button
-                            type="button"
-                            className="btn btn-primary w-100 xsm-text text-uppercase t-width-max"
-                            data-dismiss="modal"
-                          >
-                            {_t(t("Close"))}
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  </form>
-                </div>
-              ) : (
-                <div key="fragment2">
-                  <div className="text-center text-primary font-weight-bold text-uppercase">
-                    {_t(t("Please wait"))}
-                  </div>
-                  {modalLoading(3)}
-                  <div className="mt-4">
-                    <div className="row">
-                      <div className="col-6">
-                        <button
-                          type="button"
-                          className="btn btn-success text-dark w-100 xsm-text text-uppercase t-width-max"
-                          onClick={(e) => {
-                            e.preventDefault();
-                          }}
-                        >
-                          {!newPropertyItem.edit
-                            ? _t(t("Save"))
-                            : _t(t("Update"))}
-                        </button>
-                      </div>
-                      <div className="col-6">
-                        <button
-                          type="button"
-                          className="btn btn-primary w-100 xsm-text text-uppercase t-width-max"
-                          data-dismiss="modal"
-                        >
-                          {_t(t("Close"))}
-                        </button>
-                      </div>
-                    </div>
-                  </div>
+                    {!variations.edit ? _t(t("edit")) : _t(t("cancel"))}
+                  </button>
                 </div>
               )}
+              {/* if update has been submitted or not ends here */}
+
+              {/* show table data / form / show modal loading */}
+              {variations.edit === false ? (
+                // if variation edit is false- show table data
+                <div key="fragment-food-group-1 table-responsive">
+                  <table className="table table-bordered table-striped">
+                    <thead className="align-middle">
+                      <tr>
+                        <th
+                          scope="col"
+                          className="sm-text align-middle text-center border-1 border"
+                        >
+                          {_t(t("S/L"))}
+                        </th>
+
+                        <th
+                          scope="col"
+                          className="sm-text align-middle text-center border-1 border"
+                        >
+                          {_t(t("Variation name"))}
+                        </th>
+                        <th
+                          scope="col"
+                          className="sm-text align-middle text-center border-1 border"
+                        >
+                          {_t(t("Price"))}
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {variations.list &&
+                        variations.list.map((item, index) => {
+                          return (
+                            <tr
+                              scope="row"
+                              className="xsm-text align-middle text-center"
+                            >
+                              <td className="xsm-text text-capitalize align-middle text-center">
+                                {index + 1}
+                              </td>
+                              <td className="xsm-text text-capitalize align-middle text-center">
+                                {item.variation_name}
+                              </td>
+                              <td className="xsm-text text-capitalize align-middle text-center">
+                                {formatPrice(item.food_with_variation_price)}
+                              </td>
+                            </tr>
+                          );
+                        })}
+                    </tbody>
+                  </table>
+                </div>
+              ) : (
+                //variation edit is true here- show input box for price
+
+                <div key="fragment2">
+                  {/* check if edit is true and update button clicked */}
+                  {variations.uploading === false ? (
+                    //show form if Update button not clicked
+                    <form
+                      className="table-responsive"
+                      onSubmit={(e) => {
+                        e.preventDefault();
+                        setVariations({ ...variations, uploading: true });
+                      }}
+                    >
+                      <table className="table table-bordered table-striped">
+                        <thead className="align-middle">
+                          <tr>
+                            <th
+                              scope="col"
+                              className="sm-text align-middle text-center border-1 border"
+                            >
+                              {_t(t("S/L"))}
+                            </th>
+
+                            <th
+                              scope="col"
+                              className="sm-text align-middle text-center border-1 border"
+                            >
+                              {_t(t("Variation name"))}
+                            </th>
+                            <th
+                              scope="col"
+                              className="sm-text align-middle text-center border-1 border"
+                            >
+                              {_t(t("Price"))}
+                            </th>
+                            <th
+                              scope="col"
+                              className="sm-text align-middle text-center border-1 border"
+                            >
+                              {_t(t("New price"))}{" "}
+                              <small className="text-primary">
+                                ({_t(t("optional"))})
+                              </small>
+                            </th>
+                            <th
+                              scope="col"
+                              className="sm-text align-middle text-center border-1 border"
+                            >
+                              {_t(t("Action"))}
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {/* loop to show each variation item with input box of price */}
+                          {variations.list &&
+                            variations.list.map((item, index) => {
+                              return (
+                                <tr
+                                  scope="row"
+                                  className={`xsm-text align-middle text-center ${
+                                    //text deleted css if food_with_variation id exist is array of variations to delete
+                                    variations.deletedVariations &&
+                                    variations.deletedVariations.includes(
+                                      item.food_with_variation_id
+                                    )
+                                      ? "text-deleted text-primary"
+                                      : ""
+                                  }`}
+                                >
+                                  <td className="xsm-text text-capitalize align-middle text-center">
+                                    {index + 1}
+                                  </td>
+                                  <td className="xsm-text text-capitalize align-middle text-center">
+                                    {item.variation_name}
+                                  </td>
+                                  <td className="xsm-text text-capitalize align-middle text-center">
+                                    {formatPrice(
+                                      item.food_with_variation_price
+                                    )}
+                                  </td>
+                                  <td className="xsm-text text-capitalize align-middle text-center">
+                                    <input
+                                      type="number"
+                                      step="0.01"
+                                      min="0"
+                                      name={item.food_with_variation_id}
+                                      onChange={(e) => {
+                                        setVariations({
+                                          //set new price for each variation
+                                          ...variations,
+                                          newPrice: {
+                                            ...variations.newPrice,
+                                            [e.target.name]: e.target.value,
+                                          },
+                                        });
+                                      }}
+                                      className="form-control xsm-text text-center variation-min-price-input-width"
+                                      placeholder="Type new price in us dollar"
+                                      disabled={
+                                        //disable input field of variation if item is selected to delete
+                                        variations.deletedVariations &&
+                                        variations.deletedVariations.includes(
+                                          item.food_with_variation_id
+                                        )
+                                      }
+                                    />
+                                  </td>
+                                  <td className="xsm-text text-capitalize align-middle text-center">
+                                    {/* Delete button or Undo button to display, show undo button if item is in array of variation to delete-->variations.deletedVariations */}
+                                    {variations.deletedVariations &&
+                                    variations.deletedVariations.includes(
+                                      item.food_with_variation_id
+                                    ) ? (
+                                      //Undo button
+                                      <button
+                                        type="button"
+                                        className="btn btn-success text-dark btn-sm py-0"
+                                        onClick={() => {
+                                          //Remove variation item from-->(deleted variation array which will be sent to server to delete)
+                                          let deletedArray = [];
+                                          if (variations.deletedVariations) {
+                                            //Pushing all old items to an empty array
+                                            variations.deletedVariations.map(
+                                              (deletedItem) => {
+                                                deletedArray.push(deletedItem);
+                                              }
+                                            );
+                                          }
+                                          //removing the item from new array
+                                          let tempDeletedArray = deletedArray.filter(
+                                            (undoItem) => {
+                                              return (
+                                                undoItem !==
+                                                item.food_with_variation_id
+                                              );
+                                            }
+                                          );
+                                          //set new array as array of variation items to delete-->(which will be sent to server to delete)
+                                          setVariations({
+                                            ...variations,
+                                            deletedVariations: tempDeletedArray,
+                                          });
+                                        }}
+                                      >
+                                        {_t(t("Undo"))}
+                                        {/* Undo button */}
+                                      </button>
+                                    ) : (
+                                      <button
+                                        type="button"
+                                        className="btn btn-primary btn-sm py-0"
+                                        onClick={() => {
+                                          //add variation item to-->(deleted variation array which will be sent to server to delete)
+                                          let deletedArray = [];
+                                          if (variations.deletedVariations) {
+                                            //Pushing all old items to an empty array
+                                            variations.deletedVariations.map(
+                                              (deletedItem) => {
+                                                deletedArray.push(deletedItem);
+                                              }
+                                            );
+                                          }
+                                          //adding the item to new array
+                                          deletedArray.push(
+                                            item.food_with_variation_id
+                                          );
+
+                                          //set new array as array of variation items to delete-->(which will be sent to server to delete)
+                                          setVariations({
+                                            ...variations,
+                                            deletedVariations: deletedArray,
+                                          });
+                                        }}
+                                      >
+                                        {_t(t("Delete"))}
+                                      </button>
+                                    )}
+                                  </td>
+                                </tr>
+                              );
+                            })}
+                        </tbody>
+                      </table>
+
+                      {/* input field for price if all variations has been deleted */}
+                      {variations.list &&
+                        variations.deletedVariations && [
+                          variations.deletedVariations.length ===
+                          variations.list.length ? (
+                            //Check array.length to delete from food_with variations table === total variation of the items
+                            <div className="mt-4">
+                              <label htmlFor="price" className="form-label">
+                                {_t(t("Price of the food item"))}
+                                <small className="text-primary">*</small>
+                              </label>
+                              <input
+                                type="number"
+                                step="0.01"
+                                min="0"
+                                className="form-control"
+                                id="price"
+                                name="price"
+                                placeholder="Type price for this item in 'US dollar'"
+                                value={
+                                  variations.priceAfterAllVariationDelete || ""
+                                }
+                                required
+                                onChange={(e) => {
+                                  //set price of all variation selected to delete
+                                  setVariations({
+                                    ...variations,
+                                    priceAfterAllVariationDelete:
+                                      e.target.value,
+                                  });
+                                }}
+                              />
+                            </div>
+                          ) : (
+                            ""
+                          ),
+                        ]}
+                      <button
+                        type="submit"
+                        className="btn btn-primary sm-text px-4 mt-3 mb-2"
+                      >
+                        {_t(t("Update"))}
+                      </button>
+                    </form>
+                  ) : (
+                    //show loading if update has been clicked
+                    <div>
+                      <div className="text-center text-primary font-weight-bold text-uppercase">
+                        {_t(t("Please wait"))}
+                      </div>
+                      {modalLoading(5)}
+                    </div>
+                  )}
+                </div>
+              )}
+              {/* show table data / form / show modal loading ends here*/}
             </div>
           </div>
         </div>
       </div>
-      {/* Add modal Ends*/}
+      {/* variations modal Ends*/}
 
       {/* main body */}
       <main id="main" data-simplebar>
@@ -467,7 +501,7 @@ const AllItemList = () => {
                 <div className="fk-scroll--pos-menu" data-simplebar>
                   <div className="t-pl-15 t-pr-15">
                     {/* Loading effect */}
-                    {newPropertyItem.uploading === true || loading === true ? (
+                    {variations.uploading === true || loading === true ? (
                       tableLoading()
                     ) : (
                       <div key="fragment3">
@@ -480,14 +514,8 @@ const AllItemList = () => {
                             <ul className="t-list fk-breadcrumb">
                               <li className="fk-breadcrumb__list">
                                 <span className="t-link fk-breadcrumb__link text-capitalize">
-                                  {!searchedPropertyItem.searched
-                                    ? [
-                                        `${
-                                          propertyItemGroup
-                                            ? propertyItemGroup.name
-                                            : ""
-                                        } ${_t(t("List"))}`,
-                                      ]
+                                  {!searchedFoodGroup.searched
+                                    ? _t(t("Food Items List"))
                                     : _t(t("Search Result"))}
                                 </span>
                               </li>
@@ -520,21 +548,12 @@ const AllItemList = () => {
 
                               {/* Add group modal trigger button */}
                               <div className="col-md-3 text-md-right">
-                                <button
-                                  type="button"
+                                <NavLink
+                                  to="/dashboard/manage/food/add-new"
                                   className="btn btn-primary xsm-text text-uppercase btn-lg btn-block"
-                                  data-toggle="modal"
-                                  data-target="#addvariation"
-                                  onClick={() => {
-                                    setNewPropertyItem({
-                                      ...newPropertyItem,
-                                      edit: false,
-                                      uploading: false,
-                                    });
-                                  }}
                                 >
                                   {_t(t("add new"))}
-                                </button>
+                                </NavLink>
                               </div>
                             </div>
                           </div>
@@ -555,7 +574,21 @@ const AllItemList = () => {
                                   scope="col"
                                   className="sm-text text-capitalize align-middle text-center border-1 border"
                                 >
+                                  {_t(t("Image"))}
+                                </th>
+
+                                <th
+                                  scope="col"
+                                  className="sm-text text-capitalize align-middle text-center border-1 border"
+                                >
                                   {_t(t("Name"))}
+                                </th>
+
+                                <th
+                                  scope="col"
+                                  className="sm-text text-capitalize align-middle text-center border-1 border"
+                                >
+                                  {_t(t("Group"))}
                                 </th>
 
                                 <th
@@ -575,10 +608,10 @@ const AllItemList = () => {
                             </thead>
                             <tbody className="align-middle">
                               {/* loop here, logic === !search && haveData && haveDataLegnth > 0*/}
-                              {!searchedPropertyItem.searched
+                              {!searchedFoodGroup.searched
                                 ? [
-                                    propertyItemList && [
-                                      propertyItemList.length === 0 ? (
+                                    foodList && [
+                                      foodList.data.length === 0 ? (
                                         <tr className="align-middle">
                                           <td
                                             scope="row"
@@ -589,7 +622,7 @@ const AllItemList = () => {
                                           </td>
                                         </tr>
                                       ) : (
-                                        propertyItemList.map((item, index) => {
+                                        foodList.data.map((item, index) => {
                                           return (
                                             <tr
                                               className="align-middle"
@@ -599,15 +632,54 @@ const AllItemList = () => {
                                                 scope="row"
                                                 className="xsm-text text-capitalize align-middle text-center"
                                               >
-                                                {index + 1}
+                                                {index +
+                                                  1 +
+                                                  (foodList.current_page - 1) *
+                                                    foodList.per_page}
                                               </th>
 
-                                              <td className="xsm-text align-middle text-center">
+                                              <td className="xsm-text align-middle d-flex justify-content-center">
+                                                <div
+                                                  className="table-img-large"
+                                                  style={{
+                                                    backgroundImage: `url(${
+                                                      item.image !== null
+                                                        ? item.image
+                                                        : "/assets/img/def_food.png"
+                                                    })`,
+                                                  }}
+                                                ></div>
+                                              </td>
+
+                                              <td className="xsm-text text-capitalize align-middle text-center">
                                                 {item.name}
                                               </td>
 
-                                              <td className="xsm-text align-middle text-center">
-                                                {formatPrice(item.extra_price)}
+                                              <td className="xsm-text text-capitalize align-middle text-center">
+                                                {item.food_group}
+                                              </td>
+
+                                              <td className="xsm-text text-capitalize align-middle text-center">
+                                                {item.price ? (
+                                                  formatPrice(item.price)
+                                                ) : (
+                                                  <button
+                                                    className="btn btn-primary btn-sm py-0"
+                                                    onClick={() =>
+                                                      setVariations({
+                                                        ...variations,
+                                                        edit: false,
+                                                        item: item,
+                                                        list: item.variations,
+                                                        deletedVariations: null,
+                                                      })
+                                                    }
+                                                    data-toggle="modal"
+                                                    data-target="#foodVariations"
+                                                  >
+                                                    {_t(t("check variations"))}
+                                                  </button>
+                                                )}
                                               </td>
 
                                               <td className="xsm-text text-capitalize align-middle text-center">
@@ -623,10 +695,11 @@ const AllItemList = () => {
                                                     <button
                                                       className="dropdown-item sm-text text-capitalize"
                                                       onClick={() =>
-                                                        handleSetEdit(item.slug)
+                                                        // handleSetEdit(item.slug)
+                                                        ""
                                                       }
                                                       data-toggle="modal"
-                                                      data-target="#addvariation"
+                                                      data-target="#editFood"
                                                     >
                                                       <span className="t-mr-8">
                                                         <i className="fa fa-pencil"></i>
@@ -658,8 +731,8 @@ const AllItemList = () => {
                                   ]
                                 : [
                                     /* searched data, logic === haveData*/
-                                    searchedPropertyItem && [
-                                      searchedPropertyItem.list.length === 0 ? (
+                                    searchedFoodGroup && [
+                                      searchedFoodGroup.list.length === 0 ? (
                                         <tr className="align-middle">
                                           <td
                                             scope="row"
@@ -670,7 +743,7 @@ const AllItemList = () => {
                                           </td>
                                         </tr>
                                       ) : (
-                                        searchedPropertyItem.list.map(
+                                        searchedFoodGroup.list.map(
                                           (item, index) => {
                                             return (
                                               <tr
@@ -681,17 +754,15 @@ const AllItemList = () => {
                                                   scope="row"
                                                   className="xsm-text text-capitalize align-middle text-center"
                                                 >
-                                                  {index + 1}
+                                                  {index +
+                                                    1 +
+                                                    (foodList.current_page -
+                                                      1) *
+                                                      foodList.per_page}
                                                 </th>
 
-                                                <td className="xsm-text align-middle text-center">
+                                                <td className="xsm-text text-capitalize align-middle text-center">
                                                   {item.name}
-                                                </td>
-
-                                                <td className="xsm-text align-middle text-center">
-                                                  {formatPrice(
-                                                    item.extra_price
-                                                  )}
                                                 </td>
 
                                                 <td className="xsm-text text-capitalize align-middle text-center">
@@ -707,12 +778,13 @@ const AllItemList = () => {
                                                       <button
                                                         className="dropdown-item sm-text text-capitalize"
                                                         onClick={() =>
-                                                          handleSetEdit(
-                                                            item.slug
-                                                          )
+                                                          // handleSetEdit(
+                                                          //   item.slug
+                                                          // )
+                                                          ""
                                                         }
                                                         data-toggle="modal"
-                                                        data-target="#addvariation"
+                                                        data-target="#editFood"
                                                       >
                                                         <span className="t-mr-8">
                                                           <i className="fa fa-pencil"></i>
@@ -753,27 +825,23 @@ const AllItemList = () => {
               </div>
 
               {/* pagination loading effect */}
-              {newPropertyItem.uploading === true || loading === true
+              {variations.uploading === true || loading === true
                 ? paginationLoading()
                 : [
                     // logic === !searched
-                    !searchedPropertyItem.searched ? (
+                    !searchedFoodGroup.searched ? (
                       <div key="fragment4">
                         <div className="t-bg-white mt-1 t-pt-5 t-pb-5">
                           <div className="row align-items-center t-pl-15 t-pr-15">
                             <div className="col-md-7 t-mb-15 mb-md-0">
-                              <div style={{ height: "33px" }}></div>
+                              {/* pagination function */}
+                              {pagination(foodList, setPaginatedFood)}
                             </div>
                             <div className="col-md-5">
                               <ul className="t-list d-flex justify-content-md-end align-items-center">
                                 <li className="t-list__item">
                                   <span className="d-inline-block sm-text">
-                                    {_t(t("Showing"))}{" "}
-                                    {propertyItemForSearch &&
-                                      propertyItemForSearch.length}{" "}
-                                    {_t(t("of"))}{" "}
-                                    {propertyItemForSearch &&
-                                      propertyItemForSearch.length}
+                                    {showingData(foodList)}
                                   </span>
                                 </li>
                               </ul>
@@ -791,8 +859,8 @@ const AllItemList = () => {
                                 <button
                                   className="btn btn-primary btn-sm"
                                   onClick={() =>
-                                    setSearchedPropertyItem({
-                                      ...searchedPropertyItem,
+                                    setSearchedFoodGroup({
+                                      ...searchedFoodGroup,
                                       searched: false,
                                     })
                                   }
@@ -807,8 +875,8 @@ const AllItemList = () => {
                               <li className="t-list__item">
                                 <span className="d-inline-block sm-text">
                                   {searchedShowingData(
-                                    searchedPropertyItem,
-                                    propertyItemForSearch
+                                    searchedFoodGroup,
+                                    foodForSearch
                                   )}
                                 </span>
                               </li>

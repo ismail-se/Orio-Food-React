@@ -18,6 +18,10 @@ const FoodProvider = ({ children }) => {
   const [loading, setLoading] = useState(false);
   const [dataPaginating, setDataPaginating] = useState(false);
 
+  //foods
+  const [foodList, setFoodList] = useState(null);
+  const [foodForSearch, setFoodForSearch] = useState(null);
+
   //food group
   const [foodGroupList, setFoodGroupList] = useState(null);
   const [foodGroupForSearch, setFoodGroupforSearch] = useState(null);
@@ -37,7 +41,7 @@ const FoodProvider = ({ children }) => {
   //property Item
   const [propertyItemList, setPropertyItemList] = useState(null);
   const [propertyItemForSearch, setPropertyItemForSearch] = useState(null);
-  let [propertyItemGroup, setPropertyItemGroup] = useState(null);
+  const [propertyItemGroup, setPropertyItemGroup] = useState(null);
 
   //useEffect- to get data on render
   useEffect(() => {
@@ -45,12 +49,43 @@ const FoodProvider = ({ children }) => {
 
     //call if authenticated
     if (getCookie() !== undefined) {
+      getFood();
       getFoodGroup();
       getFoodUnit();
       getVariation();
       getPropertyGroup();
     }
   }, []);
+
+  //get foods
+  const getFood = () => {
+    setLoading(true);
+    const foodItemUrl = BASE_URL + "/settings/get-food-item";
+    return axios
+      .get(foodItemUrl, {
+        headers: { Authorization: `Bearer ${getCookie()}` },
+      })
+      .then((res) => {
+        setFoodList(res.data[0]);
+        setFoodForSearch(res.data[1]);
+      });
+  };
+
+  // get paginated food
+  const setPaginatedFood = (pageNo) => {
+    setDataPaginating(true);
+    const url = BASE_URL + "/settings/get-food-item?page=" + pageNo;
+    return axios
+      .get(url, {
+        headers: { Authorization: `Bearer ${getCookie()}` },
+      })
+      .then((res) => {
+        setFoodList(res.data[0]);
+        setFoodForSearch(res.data[1]);
+        setDataPaginating(false);
+      })
+      .catch(() => {});
+  };
 
   //get food groups
   const getFoodGroup = () => {
@@ -197,6 +232,14 @@ const FoodProvider = ({ children }) => {
         // common
         loading,
         setLoading,
+
+        //food
+        getFood,
+        foodList,
+        setFoodList,
+        setPaginatedFood,
+        foodForSearch,
+        setFoodForSearch,
 
         //food group
         getFoodGroup,

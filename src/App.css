@@ -89,3 +89,13 @@ html {
 .custom-bg-secondary {
   background-color: #ebeef6;
 }
+
+/* variation-min-price-input-width */
+.variation-min-price-input-width {
+  min-width: 250px;
+}
+
+/* text-decoration: line-through; */
+.text-deleted {
+  text-decoration: line-through;
+}
