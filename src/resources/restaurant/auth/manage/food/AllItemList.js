@@ -28,6 +28,8 @@ import { confirmAlert } from "react-confirm-alert";
 import "react-confirm-alert/src/react-confirm-alert.css";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Select from "react-select";
+import makeAnimated from "react-select/animated";
 
 //context consumer
 import { FoodContext } from "../../../../../contexts/Food";
@@ -35,8 +37,8 @@ import { FoodContext } from "../../../../../contexts/Food";
 const AllItemList = () => {
   const { t } = useTranslation();
   const history = useHistory();
-  //getting context values here
 
+  //getting context values here
   let {
     //common
     loading,
@@ -49,6 +51,9 @@ const AllItemList = () => {
     setPaginatedFood,
     foodForSearch,
     setFoodForSearch,
+
+    //variations
+    variationForSearch,
 
     //pagination
     dataPaginating,
@@ -76,6 +81,14 @@ const AllItemList = () => {
     priceAfterAllVariationDelete: "",
   });
 
+  //new variation
+  let [newVariation, setNewVariation] = useState({
+    //food item === item
+    item: null,
+    variations: null,
+  });
+  let [priceForVariations, setPriceForVariations] = useState(null);
+
   //search result
   let [searchedFoodGroup, setSearchedFoodGroup] = useState({
     list: null,
@@ -84,6 +97,19 @@ const AllItemList = () => {
 
   //useEffect == componentDidMount
   useEffect(() => {}, []);
+
+  //set variations hook
+  const handleSetVariations = (variations) => {
+    setNewVariation({ ...newVariation, variations });
+  };
+
+  //set each variation price
+  const handleVariationPrice = (e) => {
+    setPriceForVariations({
+      ...priceForVariations,
+      [e.target.name]: e.target.value,
+    });
+  };
 
   //update variations here
   const handleUpdateVariations = (e) => {
@@ -143,6 +169,72 @@ const AllItemList = () => {
       });
   };
 
+  //save new variations here
+  const handleSaveNewVariations = (e) => {
+    e.preventDefault();
+    if (newVariation.variations === null) {
+      toast.error(`${_t(t("Please select variations"))}`, {
+        position: "bottom-center",
+        autoClose: 10000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        className: "text-center toast-notification",
+      });
+    } else {
+      if (newVariation.variations.length > 0) {
+        setVariations({ ...variations, uploading: true });
+
+        let formData = new FormData();
+        formData.append("foodItemId", newVariation.item.id);
+        //converting variations and prices to array
+        let slugArray = [];
+        newVariation.variations.map((newVarItem) => {
+          slugArray.push(newVarItem.slug);
+        });
+        slugArray.map((slugItem) => {
+          formData.append("slugOfVariations[]", slugItem);
+        });
+
+        let tempData = Object.entries(priceForVariations);
+        tempData.map((item) => {
+          formData.append("variations[]", item);
+        });
+
+        const url = BASE_URL + "/settings/new-food-item-variation";
+        return axios
+          .post(url, formData, {
+            headers: { Authorization: `Bearer ${getCookie()}` },
+          })
+          .then(() => {
+            setNewVariation({
+              item: null,
+              variations: null,
+            });
+            setPriceForVariations(null);
+            setVariations({ ...variations, uploading: false });
+            toast.success(`${_t(t("Food item has been added"))}`, {
+              position: "bottom-center",
+              autoClose: 10000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              className: "text-center toast-notification",
+            });
+          });
+      } else {
+        toast.error(`${_t(t("Please select variations"))}`, {
+          position: "bottom-center",
+          autoClose: 10000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          className: "text-center toast-notification",
+        });
+      }
+    }
+  };
+
   //search food group here
   const handleSearch = (e) => {
     let searchInput = e.target.value.toLowerCase();
@@ -161,7 +253,7 @@ const AllItemList = () => {
     }
   };
 
-  //delete confirmation modal of paymentType
+  //delete confirmation modal of food item
   const handleDeleteConfirmation = (slug) => {
     confirmAlert({
       customUI: ({ onClose }) => {
@@ -195,7 +287,7 @@ const AllItemList = () => {
         <title>{_t(t("Food Items"))}</title>
       </Helmet>
 
-      {/* variations modal */}
+      {/*update variations modal */}
       <div className="modal fade" id="foodVariations" aria-hidden="true">
         <div className="modal-dialog modal-lg">
           <div className="modal-content">
@@ -329,7 +421,7 @@ const AllItemList = () => {
                 //variation edit is true here- show input box for price
 
                 <div key="fragment2">
-                  {/* check if edit is true and update button clicked */}
+                  {/* check if edit is true and update button clicked or not */}
                   {variations.uploading === false ? (
                     //show form if Update button not clicked
                     <form
@@ -567,7 +659,146 @@ const AllItemList = () => {
           </div>
         </div>
       </div>
-      {/* variations modal Ends*/}
+      {/*update variations modal Ends*/}
+
+      {/* Add variation modal */}
+      <div className="modal fade" id="addVariations" aria-hidden="true">
+        <div className="modal-dialog modal-lg">
+          <div className="modal-content">
+            <div className="modal-header align-items-center">
+              <div className="fk-sm-card__content">
+                <h5 className="fk-sm-card__title">
+                  {_t(t("Add variations for"))}{" "}
+                  <span className="text-capitalize">
+                    {newVariation.item && newVariation.item.name}
+                  </span>
+                </h5>
+              </div>
+              <button
+                type="button"
+                className="btn-close"
+                data-dismiss="modal"
+                aria-label="Close"
+              ></button>
+            </div>
+            <div className="modal-body">
+              {/* show form or show saving loading */}
+              {variations.uploading === false ? (
+                <div key="fragment-food-group-1">
+                  <form onSubmit={handleSaveNewVariations} className="mx-2">
+                    {variationForSearch && (
+                      <div className="form-group">
+                        <div className="mb-2">
+                          <label className="control-label">
+                            {_t(t("Add variations"))}
+                          </label>
+                        </div>
+                        <Select
+                          options={variationForSearch}
+                          components={makeAnimated()}
+                          getOptionLabel={(option) => option.name}
+                          getOptionValue={(option) => option.name}
+                          className="basic-multi-select"
+                          classNamePrefix="select"
+                          isMulti
+                          maxMenuHeight="200px"
+                          onChange={handleSetVariations}
+                          placeholder={_t(t("Please select variations")) + ".."}
+                        />
+                      </div>
+                    )}
+                    {newVariation.variations !== null && [
+                      newVariation.variations.length > 0 && (
+                        <div className="card mt-3 p-3 custom-bg-secondary">
+                          <div className="card-header t-bg-epsilon text-white rounded-sm text-center">
+                            {_t(t("Please enter price for each variation"))}
+                          </div>
+                          {newVariation.variations.map((variationItem) => {
+                            return (
+                              <div
+                                className="form-group mt-4"
+                                key={variationItem.id}
+                              >
+                                <div className="mb-2">
+                                  <label
+                                    htmlFor={variationItem.slug}
+                                    className="control-label sm-text"
+                                  >
+                                    {_t(t("Total price of"))}{" "}
+                                    <span className="text-primary text-bold">
+                                      {variationItem.name}
+                                    </span>{" "}
+                                    {_t(t("variation"))}
+                                    <span className="text-primary">* </span>
+                                    <small className="text-secondary">
+                                      ({_t(t("Enter price in USD"))})
+                                    </small>
+                                  </label>
+                                </div>
+                                <div className="mb-2">
+                                  <input
+                                    type="number"
+                                    step="0.01"
+                                    min="0"
+                                    className="form-control"
+                                    id={variationItem.slug}
+                                    name={variationItem.slug}
+                                    onChange={handleVariationPrice}
+                                    placeholder="e.g. Type price of this item in 'US dollar'"
+                                    required
+                                  />
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      ),
+                    ]}
+                    <button
+                      type="submit"
+                      className="btn btn-primary xsm-text text-uppercase px-3 py-2 my-4"
+                    >
+                      {_t(t("Save"))}
+                    </button>
+                  </form>
+                </div>
+              ) : (
+                <div key="fragment2">
+                  <div className="text-center text-primary font-weight-bold text-uppercase">
+                    {_t(t("Please wait"))}
+                  </div>
+                  {modalLoading(3)}
+                  <div className="mt-4">
+                    <div className="row">
+                      <div className="col-6">
+                        <button
+                          type="button"
+                          className="btn btn-success text-dark w-100 xsm-text text-uppercase t-width-max"
+                          onClick={(e) => {
+                            e.preventDefault();
+                          }}
+                        >
+                          {!variations.edit ? _t(t("Save")) : _t(t("Update"))}
+                        </button>
+                      </div>
+                      <div className="col-6">
+                        <button
+                          type="button"
+                          className="btn btn-primary w-100 xsm-text text-uppercase t-width-max"
+                          data-dismiss="modal"
+                        >
+                          {_t(t("Close"))}
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+      {/* Add variation modal Ends*/}
 
       {/* main body */}
       <main id="main" data-simplebar>
@@ -779,6 +1010,27 @@ const AllItemList = () => {
                                                     <i className="fa fa-ellipsis-h"></i>
                                                   </button>
                                                   <div className="dropdown-menu">
+                                                    <button
+                                                      className="dropdown-item sm-text"
+                                                      onClick={() => {
+                                                        setPriceForVariations(
+                                                          null
+                                                        );
+                                                        setNewVariation({
+                                                          ...newVariation,
+                                                          item: item,
+                                                          variations: null,
+                                                        });
+                                                      }}
+                                                      data-toggle="modal"
+                                                      data-target="#addVariations"
+                                                    >
+                                                      <span className="t-mr-8">
+                                                        <i className="fa fa-plus"></i>
+                                                      </span>
+                                                      {_t(t("Add variation"))}
+                                                    </button>
+
                                                     <button
                                                       className="dropdown-item sm-text text-capitalize"
                                                       onClick={() =>
