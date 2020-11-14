@@ -85,6 +85,64 @@ const AllItemList = () => {
   //useEffect == componentDidMount
   useEffect(() => {}, []);
 
+  //update variations here
+  const handleUpdateVariations = (e) => {
+    e.preventDefault();
+    setVariations({ ...variations, uploading: true });
+    let formData = {
+      foodItemId: variations.item.id,
+      deletedVariationsArray: variations.deletedVariations,
+      newPriceArray: variations.newPrice
+        ? Object.entries(variations.newPrice)
+        : null,
+      priceAfterAllVariationDelete: variations.priceAfterAllVariationDelete,
+    };
+
+    const foodVariationUpdateUrl =
+      BASE_URL + `/settings/update-food-item-variation`;
+    return axios
+      .post(foodVariationUpdateUrl, formData, {
+        headers: { Authorization: `Bearer ${getCookie()}` },
+      })
+      .then((res) => {
+        setFoodList(res.data[0]);
+        setFoodForSearch(res.data[1]);
+
+        //handling variations in modal after variations updated
+        let tempItem = res.data[1].find((item) => {
+          return item.id === variations.item.id;
+        });
+        setVariations({
+          ...variations,
+          edit: false,
+          uploading: false,
+          item: tempItem,
+          list: tempItem.variations,
+          deletedVariations: null,
+          newPrice: null,
+          priceAfterAllVariationDelete: "",
+        });
+        toast.success(`${_t(t("Food variations has been updated"))}`, {
+          position: "bottom-center",
+          autoClose: 10000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          className: "text-center toast-notification",
+        });
+      })
+      .catch(() => {
+        toast.error(`${_t(t("Please try again"))}`, {
+          position: "bottom-center",
+          autoClose: 10000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          className: "text-center toast-notification",
+        });
+      });
+  };
+
   //search food group here
   const handleSearch = (e) => {
     let searchInput = e.target.value.toLowerCase();
@@ -166,23 +224,39 @@ const AllItemList = () => {
               {/* showing this-> if update has been submitted or not */}
               {!variations.uploading && (
                 <div className="text-right">
-                  <button
-                    className={`btn btn-primary text-capitalize mb-3 sm-text px-4`}
-                    onClick={() => {
-                      //set variations which are selected to delete === null; if "Cancel" button is clicked,
-                      //edit variation true if "Edit" button clicked
-                      setVariations({
-                        ...variations,
-                        deletedVariations:
-                          variations.edit === true
-                            ? null
-                            : variations.deletedVariations,
-                        edit: !variations.edit,
-                      });
-                    }}
-                  >
-                    {!variations.edit ? _t(t("edit")) : _t(t("cancel"))}
-                  </button>
+                  {variations.list && variations.list.length > 0 && (
+                    <button
+                      className={`btn btn-primary text-capitalize mb-3 sm-text px-4`}
+                      onClick={() => {
+                        //set variations which are selected to delete === null; if "Cancel" button is clicked,
+                        //edit variation true if "Edit" button clicked
+                        setVariations({
+                          ...variations,
+                          //items to delete
+                          deletedVariations:
+                            variations.edit === true
+                              ? null
+                              : variations.deletedVariations,
+
+                          //items to set new price
+                          newPrice:
+                            variations.edit === true
+                              ? null
+                              : variations.newPrice,
+
+                          //if all variation deleted
+                          priceAfterAllVariationDelete:
+                            variations.edit === true
+                              ? null
+                              : variations.priceAfterAllVariationDelete,
+
+                          edit: !variations.edit,
+                        });
+                      }}
+                    >
+                      {!variations.edit ? _t(t("edit")) : _t(t("cancel"))}
+                    </button>
+                  )}
                 </div>
               )}
               {/* if update has been submitted or not ends here */}
@@ -216,25 +290,38 @@ const AllItemList = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {variations.list &&
-                        variations.list.map((item, index) => {
-                          return (
-                            <tr
-                              scope="row"
-                              className="xsm-text align-middle text-center"
-                            >
-                              <td className="xsm-text text-capitalize align-middle text-center">
-                                {index + 1}
-                              </td>
-                              <td className="xsm-text text-capitalize align-middle text-center">
-                                {item.variation_name}
-                              </td>
-                              <td className="xsm-text text-capitalize align-middle text-center">
-                                {formatPrice(item.food_with_variation_price)}
-                              </td>
-                            </tr>
-                          );
-                        })}
+                      {variations.list && variations.list.length > 0 ? (
+                        [
+                          variations.list.map((item, index) => {
+                            return (
+                              <tr
+                                scope="row"
+                                className="xsm-text align-middle text-center"
+                              >
+                                <td className="xsm-text text-capitalize align-middle text-center">
+                                  {index + 1}
+                                </td>
+                                <td className="xsm-text text-capitalize align-middle text-center">
+                                  {item.variation_name}
+                                </td>
+                                <td className="xsm-text text-capitalize align-middle text-center">
+                                  {formatPrice(item.food_with_variation_price)}
+                                </td>
+                              </tr>
+                            );
+                          }),
+                        ]
+                      ) : (
+                        <tr className="align-middle">
+                          <td
+                            scope="row"
+                            colSpan="6"
+                            className="xsm-text align-middle text-center"
+                          >
+                            {_t(t("No data available"))}
+                          </td>
+                        </tr>
+                      )}
                     </tbody>
                   </table>
                 </div>
@@ -247,10 +334,7 @@ const AllItemList = () => {
                     //show form if Update button not clicked
                     <form
                       className="table-responsive"
-                      onSubmit={(e) => {
-                        e.preventDefault();
-                        setVariations({ ...variations, uploading: true });
-                      }}
+                      onSubmit={handleUpdateVariations}
                     >
                       <table className="table table-bordered table-striped">
                         <thead className="align-middle">
@@ -672,6 +756,9 @@ const AllItemList = () => {
                                                         item: item,
                                                         list: item.variations,
                                                         deletedVariations: null,
+                                                        newPrice: null,
+                                                        priceAfterAllVariationDelete:
+                                                          "",
                                                       })
                                                     }
                                                     data-toggle="modal"
