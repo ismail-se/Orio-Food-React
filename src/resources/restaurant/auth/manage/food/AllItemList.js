@@ -44,6 +44,12 @@ const AllItemList = () => {
     loading,
     setLoading,
 
+    //foodGroup
+    foodGroupForSearch,
+
+    //property group
+    propertyGroupForSearch,
+
     //food
     getFood,
     foodList,
@@ -89,6 +95,19 @@ const AllItemList = () => {
   });
   let [priceForVariations, setPriceForVariations] = useState(null);
 
+  //edit food item
+  let [foodItemEdit, setFoodItemEdit] = useState({
+    //show data on modal
+    editItem: null,
+    propertyGroup: null,
+
+    //formData
+    item: null,
+    newPropertyGroups: null,
+    newFoodGroup: null,
+    removeProperty: false,
+  });
+
   //search result
   let [searchedFoodGroup, setSearchedFoodGroup] = useState({
     list: null,
@@ -97,6 +116,69 @@ const AllItemList = () => {
 
   //useEffect == componentDidMount
   useEffect(() => {}, []);
+
+  //edit food item
+  const handleSetItemGroup = (foodGroup) => {
+    setFoodItemEdit({
+      ...foodItemEdit,
+      newFoodGroup: foodGroup,
+    });
+  };
+
+  //on change input fields
+  const handleChange = (e) => {
+    setFoodItemEdit({
+      ...foodItemEdit,
+      item: { ...foodItemEdit.item, [e.target.name]: e.target.value },
+    });
+  };
+
+  //set properties hook
+  const handleSetPropertes = (property) => {
+    setFoodItemEdit({
+      ...foodItemEdit,
+      newPropertyGroups: property,
+    });
+  };
+
+  //submit edit food item request to server
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    let formData = {
+      //item id
+      itemId: foodItemEdit.editItem.id,
+
+      //item group
+      itemNewFoodGroup:
+        foodItemEdit.newFoodGroup !== null ? foodItemEdit.newFoodGroup : null,
+
+      //new name
+      name: foodItemEdit.item.name,
+
+      //new price
+      price: foodItemEdit.editItem.price ? foodItemEdit.item.price : null,
+
+      //to delete all property, boolean
+      deleteProperty: foodItemEdit.deleteProperty ? 1 : 0,
+
+      //new property groups
+      newPropertyGroups:
+        foodItemEdit.newPropertyGroups !== null &&
+        foodItemEdit.newPropertyGroups.length > 0
+          ? foodItemEdit.newPropertyGroups
+          : null,
+    };
+
+    //send req here
+    const url = BASE_URL + `/settings/update-food-item`;
+    return axios
+      .post(url, formData, {
+        headers: { Authorization: `Bearer ${getCookie()}` },
+      })
+      .then((res) => {
+        console.log(res.data);
+      });
+  };
 
   //set variations hook
   const handleSetVariations = (variations) => {
@@ -213,7 +295,7 @@ const AllItemList = () => {
             });
             setPriceForVariations(null);
             setVariations({ ...variations, uploading: false });
-            toast.success(`${_t(t("Food item has been added"))}`, {
+            toast.success(`${_t(t("variations has been added"))}`, {
               position: "bottom-center",
               autoClose: 10000,
               hideProgressBar: false,
@@ -286,6 +368,197 @@ const AllItemList = () => {
       <Helmet>
         <title>{_t(t("Food Items"))}</title>
       </Helmet>
+
+      {/* edit item modal */}
+      <div className="modal fade" id="editFood" aria-hidden="true">
+        <div className="modal-dialog modal-lg">
+          <div className="modal-content">
+            <div className="modal-header align-items-center">
+              <div className="fk-sm-card__content">
+                <h5 className="fk-sm-card__title">
+                  {_t(t("Update"))}{" "}
+                  <span className="text-capitalize">
+                    {foodItemEdit.editItem && foodItemEdit.editItem.name}
+                  </span>
+                </h5>
+              </div>
+              <button
+                type="button"
+                className="btn-close"
+                data-dismiss="modal"
+                aria-label="Close"
+              ></button>
+            </div>
+            <div className="modal-body">
+              {/* show form or show saving loading */}
+              {variations.uploading === false ? (
+                <div key="fragment-food-group-1">
+                  <form onSubmit={handleSubmit} className="mx-2 sm-text">
+                    {foodGroupForSearch && (
+                      <div className="form-group mt-2">
+                        <div className="mb-2">
+                          <label htmlFor="itemGroup" className="control-label">
+                            {_t(t("Food group"))}
+                            <span className="text-primary mr-1">
+                              ({_t(t("Optional"))})
+                            </span>
+                            ({_t(t("Selected Group"))}-
+                            <span className="text-secondary ml-1">
+                              {foodItemEdit.editItem &&
+                                foodItemEdit.editItem.food_group}
+                            </span>
+                            )
+                          </label>
+                        </div>
+
+                        <Select
+                          options={foodGroupForSearch}
+                          components={makeAnimated()}
+                          getOptionLabel={(option) => option.name}
+                          getOptionValue={(option) => option.name}
+                          classNamePrefix="select"
+                          onChange={handleSetItemGroup}
+                          maxMenuHeight="200px"
+                          placeholder={
+                            _t(t("Please select a food group")) + ".."
+                          }
+                        />
+                      </div>
+                    )}
+
+                    <div className="form-group mt-3">
+                      <div className="mb-2">
+                        <label htmlFor="name" className="control-label">
+                          {_t(t("Name"))}
+                          <span className="text-danger">*</span>
+                        </label>
+                      </div>
+                      <div className="mb-2">
+                        <input
+                          type="text"
+                          className="form-control"
+                          id="name"
+                          name="name"
+                          onChange={handleChange}
+                          value={foodItemEdit.item && foodItemEdit.item.name}
+                          placeholder="e.g. Spicy chicken burger"
+                          required
+                        />
+                      </div>
+                    </div>
+
+                    {foodItemEdit.item && foodItemEdit.item.price && (
+                      <div className="form-group mt-4">
+                        <div className="mb-2">
+                          <label htmlFor="price" className="control-label">
+                            {_t(t("Price"))}
+                            <span className="text-primary">* </span>
+                            <small className="text-secondary">
+                              ({_t(t("Enter price in USD"))})
+                            </small>
+                          </label>
+                        </div>
+                        <div className="mb-2">
+                          <input
+                            id="price"
+                            type="number"
+                            step="0.01"
+                            min="0"
+                            className="form-control"
+                            name="price"
+                            value={foodItemEdit.item.price}
+                            onChange={handleChange}
+                            placeholder="e.g. Type price of this item in 'US dollar'"
+                            required
+                          />
+                        </div>
+                      </div>
+                    )}
+
+                    <div className="form-group mt-3">
+                      <div className="mb-2">
+                        <label className="control-label">
+                          {_t(t("Property groups"))}
+                          <span className="text-primary mr-1">
+                            ({_t(t("Optional"))})
+                          </span>
+                        </label>
+                      </div>
+                      {/* delete all property chceckbox */}
+                      {foodItemEdit.editItem &&
+                        foodItemEdit.editItem.has_property === "1" && (
+                          <div className="form-check mt-2 ml-2">
+                            <input
+                              type="checkbox"
+                              className="form-check-input"
+                              id="propertyCheck"
+                              checked={foodItemEdit.deleteProperty}
+                              onChange={() => {
+                                setFoodItemEdit({
+                                  ...foodItemEdit,
+                                  deleteProperty: !foodItemEdit.deleteProperty,
+                                });
+                              }}
+                            />
+                            <label
+                              className="form-check-label"
+                              htmlFor="propertyCheck"
+                            >
+                              {_t(t("Remove all properties?"))}
+                            </label>
+                          </div>
+                        )}
+                      {/* selected property group */}
+                      {foodItemEdit.propertyGroup && (
+                        <ul className="list-group list-group-horizontal-sm row col-12 mb-2 ml-md-1">
+                          {foodItemEdit.propertyGroup.map((selectedItem) => {
+                            return (
+                              <li className="list-group-item col-12 col-md-3 bg-success rounded-sm py-1 px-2 mx-2 my-1 text-center">
+                                {selectedItem.name}
+                              </li>
+                            );
+                          })}
+                        </ul>
+                      )}
+                      {!foodItemEdit.deleteProperty && (
+                        <Select
+                          options={propertyGroupForSearch}
+                          components={makeAnimated()}
+                          getOptionLabel={(option) => option.name}
+                          getOptionValue={(option) => option.name}
+                          className="basic-multi-select"
+                          classNamePrefix="select"
+                          isMulti
+                          maxMenuHeight="200px"
+                          onChange={handleSetPropertes}
+                          placeholder={
+                            _t(t("Please select property groups")) + ".."
+                          }
+                        />
+                      )}
+                    </div>
+
+                    <button
+                      type="submit"
+                      className="btn btn-primary xsm-text text-uppercase px-3 py-2 my-4"
+                    >
+                      {_t(t("Update"))}
+                    </button>
+                  </form>
+                </div>
+              ) : (
+                <div key="fragment2">
+                  <div className="text-center text-primary font-weight-bold text-uppercase">
+                    {_t(t("Please wait"))}
+                  </div>
+                  {modalLoading(5)}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+      {/* edit item modal Ends*/}
 
       {/*update variations modal */}
       <div className="modal fade" id="foodVariations" aria-hidden="true">
@@ -767,31 +1040,7 @@ const AllItemList = () => {
                   <div className="text-center text-primary font-weight-bold text-uppercase">
                     {_t(t("Please wait"))}
                   </div>
-                  {modalLoading(3)}
-                  <div className="mt-4">
-                    <div className="row">
-                      <div className="col-6">
-                        <button
-                          type="button"
-                          className="btn btn-success text-dark w-100 xsm-text text-uppercase t-width-max"
-                          onClick={(e) => {
-                            e.preventDefault();
-                          }}
-                        >
-                          {!variations.edit ? _t(t("Save")) : _t(t("Update"))}
-                        </button>
-                      </div>
-                      <div className="col-6">
-                        <button
-                          type="button"
-                          className="btn btn-primary w-100 xsm-text text-uppercase t-width-max"
-                          data-dismiss="modal"
-                        >
-                          {_t(t("Close"))}
-                        </button>
-                      </div>
-                    </div>
-                  </div>
+                  {modalLoading(5)}
                 </div>
               )}
             </div>
@@ -988,6 +1237,7 @@ const AllItemList = () => {
                                                         list: item.variations,
                                                         deletedVariations: null,
                                                         newPrice: null,
+                                                        uploading: false,
                                                         priceAfterAllVariationDelete:
                                                           "",
                                                       })
@@ -1033,17 +1283,59 @@ const AllItemList = () => {
 
                                                     <button
                                                       className="dropdown-item sm-text text-capitalize"
-                                                      onClick={() =>
-                                                        // handleSetEdit(item.slug)
-                                                        ""
-                                                      }
+                                                      onClick={() => {
+                                                        setVariations({
+                                                          ...variations,
+                                                          uploading: true,
+                                                        });
+                                                        let selectedGroups = [];
+                                                        if (
+                                                          item.property_groups
+                                                        ) {
+                                                          item.property_groups.map(
+                                                            (grpItem) => {
+                                                              propertyGroupForSearch.map(
+                                                                (
+                                                                  singlePropertyGroup
+                                                                ) => {
+                                                                  if (
+                                                                    singlePropertyGroup.id ===
+                                                                    grpItem
+                                                                  ) {
+                                                                    selectedGroups.push(
+                                                                      singlePropertyGroup
+                                                                    );
+                                                                  }
+                                                                }
+                                                              );
+                                                            }
+                                                          );
+                                                        }
+                                                        setFoodItemEdit({
+                                                          ...foodItemEdit,
+                                                          editItem: item,
+                                                          item,
+                                                          propertyGroup: item.property_groups
+                                                            ? selectedGroups
+                                                            : null,
+                                                          newPropertyGroups: null,
+                                                          newFoodGroup: null,
+                                                          deleteProperty: false,
+                                                        });
+                                                        setTimeout(() => {
+                                                          setVariations({
+                                                            ...variations,
+                                                            uploading: false,
+                                                          });
+                                                        }, 500);
+                                                      }}
                                                       data-toggle="modal"
                                                       data-target="#editFood"
                                                     >
                                                       <span className="t-mr-8">
                                                         <i className="fa fa-pencil"></i>
                                                       </span>
-                                                      {_t(t("Edit"))}
+                                                      {_t(t("Edit / View"))}
                                                     </button>
 
                                                     <button
