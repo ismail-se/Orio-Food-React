@@ -589,6 +589,34 @@ const AdminStaffCrud = () => {
                 }
               });
             }
+
+            if (error.response.data.errors.image) {
+              error.response.data.errors.image.forEach((item) => {
+                if (item === "Please select a valid image file") {
+                  toast.error(`${_t(t("Please select a valid image file"))}`, {
+                    position: "bottom-center",
+                    autoClose: 10000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    className: "text-center toast-notification",
+                  });
+                }
+                if (item === "Please select a file less than 5MB") {
+                  toast.error(
+                    `${_t(t("Please select a file less than 5MB"))}`,
+                    {
+                      position: "bottom-center",
+                      autoClose: 10000,
+                      hideProgressBar: false,
+                      closeOnClick: true,
+                      pauseOnHover: true,
+                      className: "text-center toast-notification",
+                    }
+                  );
+                }
+              });
+            }
           }
         });
     } else {

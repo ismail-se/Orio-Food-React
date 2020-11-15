@@ -106,10 +106,14 @@ const AllItemList = () => {
     newPropertyGroups: null,
     newFoodGroup: null,
     removeProperty: false,
+
+    //image
+    imageUpdate: false,
+    newImage: null,
   });
 
   //search result
-  let [searchedFoodGroup, setSearchedFoodGroup] = useState({
+  let [searchedFoodItem, setSearchedFoodItem] = useState({
     list: null,
     searched: false,
   });
@@ -133,6 +137,14 @@ const AllItemList = () => {
     });
   };
 
+  //set image hook
+  const handleItemImage = (e) => {
+    setFoodItemEdit({
+      ...foodItemEdit,
+      newImage: e.target.files[0],
+    });
+  };
+
   //set properties hook
   const handleSetPropertes = (property) => {
     setFoodItemEdit({
@@ -144,23 +156,19 @@ const AllItemList = () => {
   //submit edit food item request to server
   const handleSubmit = (e) => {
     e.preventDefault();
+    setVariations({ ...variations, uploading: true });
     let formData = {
       //item id
       itemId: foodItemEdit.editItem.id,
-
       //item group
       itemNewFoodGroup:
         foodItemEdit.newFoodGroup !== null ? foodItemEdit.newFoodGroup : null,
-
       //new name
       name: foodItemEdit.item.name,
-
       //new price
       price: foodItemEdit.editItem.price ? foodItemEdit.item.price : null,
-
       //to delete all property, boolean
       deleteProperty: foodItemEdit.deleteProperty ? 1 : 0,
-
       //new property groups
       newPropertyGroups:
         foodItemEdit.newPropertyGroups !== null &&
@@ -176,7 +184,132 @@ const AllItemList = () => {
         headers: { Authorization: `Bearer ${getCookie()}` },
       })
       .then((res) => {
-        console.log(res.data);
+        setFoodList(res.data[0]);
+        setFoodForSearch(res.data[1]);
+        setSearchedFoodItem({
+          ...searchedFoodItem,
+          list: res.data[1],
+        });
+        //handling item in modal after item has been updated
+        let tempItem = res.data[1].find((item) => {
+          return item.id === foodItemEdit.editItem.id;
+        });
+        let selectedGroups = [];
+        if (tempItem.property_groups) {
+          tempItem.property_groups.map((grpItem) => {
+            propertyGroupForSearch.map((singlePropertyGroup) => {
+              if (singlePropertyGroup.id === grpItem) {
+                selectedGroups.push(singlePropertyGroup);
+              }
+            });
+          });
+        }
+        setFoodItemEdit({
+          //show data on modal
+          editItem: tempItem,
+          propertyGroup: tempItem.property_groups ? selectedGroups : null,
+
+          //formData
+          item: tempItem,
+          newPropertyGroups: null,
+          newFoodGroup: null,
+          removeProperty: false,
+        });
+        setVariations({ ...variations, uploading: false });
+        toast.success(`${_t(t("Food item has been updated"))}`, {
+          position: "bottom-center",
+          autoClose: 10000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          className: "text-center toast-notification",
+        });
+      })
+      .catch(() => {
+        setVariations({ ...variations, uploading: false });
+        toast.error(`${_t(t("Please try again"))}`, {
+          position: "bottom-center",
+          autoClose: 10000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          className: "text-center toast-notification",
+        });
+      });
+  };
+
+  //submit image request to server
+  const handleSubmitImage = (e) => {
+    e.preventDefault();
+    setVariations({ ...variations, uploading: true });
+    let formData = new FormData();
+    formData.append(
+      "itemId",
+      foodItemEdit.editItem && foodItemEdit.editItem.id
+    );
+    formData.append("image", foodItemEdit.newImage);
+
+    //send req here
+    const url = BASE_URL + `/settings/update-food-item`;
+    return axios
+      .post(url, formData, {
+        headers: { Authorization: `Bearer ${getCookie()}` },
+      })
+      .then((res) => {
+        setFoodList(res.data[0]);
+        setFoodForSearch(res.data[1]);
+        setSearchedFoodItem({
+          ...searchedFoodItem,
+          list: res.data[1],
+        });
+        //handling item in modal after item has been updated
+        let tempItem = res.data[1].find((item) => {
+          return item.id === foodItemEdit.editItem.id;
+        });
+        setFoodItemEdit({
+          //show data on modal
+          editItem: tempItem,
+          //formData
+          item: tempItem,
+          imageUpdate: true,
+          newImage: null,
+        });
+        setVariations({ ...variations, uploading: false });
+        toast.success(`${_t(t("Image has been updated"))}`, {
+          position: "bottom-center",
+          autoClose: 10000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          className: "text-center toast-notification",
+        });
+      })
+      .catch((error) => {
+        setVariations({ ...variations, uploading: false });
+        if (error.response.data.errors.image) {
+          error.response.data.errors.image.forEach((item) => {
+            if (item === "Please select a valid image file") {
+              toast.error(`${_t(t("Please select a valid image file"))}`, {
+                position: "bottom-center",
+                autoClose: 10000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                className: "text-center toast-notification",
+              });
+            }
+            if (item === "Please select a file less than 5MB") {
+              toast.error(`${_t(t("Please select a file less than 5MB"))}`, {
+                position: "bottom-center",
+                autoClose: 10000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                className: "text-center toast-notification",
+              });
+            }
+          });
+        }
       });
   };
 
@@ -215,7 +348,10 @@ const AllItemList = () => {
       .then((res) => {
         setFoodList(res.data[0]);
         setFoodForSearch(res.data[1]);
-
+        setSearchedFoodItem({
+          ...searchedFoodItem,
+          list: res.data[1],
+        });
         //handling variations in modal after variations updated
         let tempItem = res.data[1].find((item) => {
           return item.id === variations.item.id;
@@ -266,7 +402,6 @@ const AllItemList = () => {
     } else {
       if (newVariation.variations.length > 0) {
         setVariations({ ...variations, uploading: true });
-
         let formData = new FormData();
         formData.append("foodItemId", newVariation.item.id);
         //converting variations and prices to array
@@ -321,14 +456,18 @@ const AllItemList = () => {
   const handleSearch = (e) => {
     let searchInput = e.target.value.toLowerCase();
     if (searchInput.length === 0) {
-      setSearchedFoodGroup({ ...searchedFoodGroup, searched: false });
+      setSearchedFoodItem({ ...searchedFoodItem, searched: false });
     } else {
       let searchedList = foodForSearch.filter((item) => {
         let lowerCaseItemName = item.name.toLowerCase();
-        return lowerCaseItemName.includes(searchInput);
+        let lowerCaseItemGroup = item.food_group.toLowerCase();
+        return (
+          lowerCaseItemName.includes(searchInput) ||
+          lowerCaseItemGroup.includes(searchInput)
+        );
       });
-      setSearchedFoodGroup({
-        ...searchedFoodGroup,
+      setSearchedFoodItem({
+        ...searchedFoodItem,
         list: searchedList,
         searched: true,
       });
@@ -347,7 +486,7 @@ const AllItemList = () => {
               <button
                 className="btn btn-primary"
                 onClick={() => {
-                  // handleDeleteFoodGroup(slug);
+                  handleDeleteFood(slug);
                   onClose();
                 }}
               >
@@ -361,6 +500,44 @@ const AllItemList = () => {
         );
       },
     });
+  };
+
+  //delete food here
+  const handleDeleteFood = (slug) => {
+    setLoading(true);
+    const url = BASE_URL + `/settings/delete-food-item/${slug}`;
+    return axios
+      .get(url, {
+        headers: { Authorization: `Bearer ${getCookie()}` },
+      })
+      .then((res) => {
+        setFoodList(res.data[0]);
+        setFoodForSearch(res.data[1]);
+        setSearchedFoodItem({
+          ...searchedFoodItem,
+          list: res.data[1],
+        });
+        setLoading(false);
+        toast.success(`${_t(t("Item has been deleted successfully"))}`, {
+          position: "bottom-center",
+          autoClose: 10000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          className: "text-center toast-notification",
+        });
+      })
+      .catch(() => {
+        setLoading(false);
+        toast.error(`${_t(t("Please try again"))}`, {
+          position: "bottom-center",
+          autoClose: 10000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          className: "text-center toast-notification",
+        });
+      });
   };
 
   return (
@@ -393,158 +570,207 @@ const AllItemList = () => {
               {/* show form or show saving loading */}
               {variations.uploading === false ? (
                 <div key="fragment-food-group-1">
-                  <form onSubmit={handleSubmit} className="mx-2 sm-text">
-                    {foodGroupForSearch && (
-                      <div className="form-group mt-2">
-                        <div className="mb-2">
-                          <label htmlFor="itemGroup" className="control-label">
-                            {_t(t("Food group"))}
-                            <span className="text-primary mr-1">
-                              ({_t(t("Optional"))})
-                            </span>
-                            ({_t(t("Selected Group"))}-
-                            <span className="text-secondary ml-1">
-                              {foodItemEdit.editItem &&
-                                foodItemEdit.editItem.food_group}
-                            </span>
-                            )
-                          </label>
-                        </div>
-
-                        <Select
-                          options={foodGroupForSearch}
-                          components={makeAnimated()}
-                          getOptionLabel={(option) => option.name}
-                          getOptionValue={(option) => option.name}
-                          classNamePrefix="select"
-                          onChange={handleSetItemGroup}
-                          maxMenuHeight="200px"
-                          placeholder={
-                            _t(t("Please select a food group")) + ".."
-                          }
-                        />
-                      </div>
-                    )}
-
-                    <div className="form-group mt-3">
-                      <div className="mb-2">
-                        <label htmlFor="name" className="control-label">
-                          {_t(t("Name"))}
-                          <span className="text-danger">*</span>
-                        </label>
-                      </div>
-                      <div className="mb-2">
-                        <input
-                          type="text"
-                          className="form-control"
-                          id="name"
-                          name="name"
-                          onChange={handleChange}
-                          value={foodItemEdit.item && foodItemEdit.item.name}
-                          placeholder="e.g. Spicy chicken burger"
-                          required
-                        />
-                      </div>
-                    </div>
-
-                    {foodItemEdit.item && foodItemEdit.item.price && (
+                  {foodItemEdit.imageUpdate ? (
+                    <form onSubmit={handleSubmitImage} className="mx-2 sm-text">
                       <div className="form-group mt-4">
-                        <div className="mb-2">
-                          <label htmlFor="price" className="control-label">
-                            {_t(t("Price"))}
-                            <span className="text-primary">* </span>
+                        <div className="d-flex align-items-center mb-2">
+                          <label htmlFor="image" className="control-label mr-3">
+                            {_t(t("Image"))}
                             <small className="text-secondary">
-                              ({_t(t("Enter price in USD"))})
+                              ({_t(t("Square Image Preferable"))})
                             </small>
                           </label>
+                          <div
+                            className="fk-language__flag"
+                            style={{
+                              backgroundImage: `url(${
+                                foodItemEdit.editItem &&
+                                foodItemEdit.editItem.image
+                                  ? foodItemEdit.editItem.image
+                                  : null
+                              })`,
+                            }}
+                          ></div>
                         </div>
                         <div className="mb-2">
                           <input
-                            id="price"
-                            type="number"
-                            step="0.01"
-                            min="0"
-                            className="form-control"
-                            name="price"
-                            value={foodItemEdit.item.price}
-                            onChange={handleChange}
-                            placeholder="e.g. Type price of this item in 'US dollar'"
+                            type="file"
+                            className="form-control sm-text"
+                            id="image"
+                            name="image"
+                            onChange={handleItemImage}
                             required
                           />
                         </div>
                       </div>
-                    )}
 
-                    <div className="form-group mt-3">
-                      <div className="mb-2">
-                        <label className="control-label">
-                          {_t(t("Property groups"))}
-                          <span className="text-primary mr-1">
-                            ({_t(t("Optional"))})
-                          </span>
-                        </label>
-                      </div>
-                      {/* delete all property chceckbox */}
-                      {foodItemEdit.editItem &&
-                        foodItemEdit.editItem.has_property === "1" && (
-                          <div className="form-check mt-2 ml-2">
-                            <input
-                              type="checkbox"
-                              className="form-check-input"
-                              id="propertyCheck"
-                              checked={foodItemEdit.deleteProperty}
-                              onChange={() => {
-                                setFoodItemEdit({
-                                  ...foodItemEdit,
-                                  deleteProperty: !foodItemEdit.deleteProperty,
-                                });
-                              }}
-                            />
+                      <button
+                        type="submit"
+                        className="btn btn-primary xsm-text text-uppercase px-3 py-2 my-4"
+                      >
+                        {_t(t("Update"))}
+                      </button>
+                    </form>
+                  ) : (
+                    <form onSubmit={handleSubmit} className="mx-2 sm-text">
+                      {foodGroupForSearch && (
+                        <div className="form-group mt-2">
+                          <div className="mb-2">
                             <label
-                              className="form-check-label"
-                              htmlFor="propertyCheck"
+                              htmlFor="itemGroup"
+                              className="control-label"
                             >
-                              {_t(t("Remove all properties?"))}
+                              {_t(t("Food group"))}
+                              <span className="text-primary mr-1">
+                                ({_t(t("Optional"))})
+                              </span>
                             </label>
                           </div>
-                        )}
-                      {/* selected property group */}
-                      {foodItemEdit.propertyGroup && (
-                        <ul className="list-group list-group-horizontal-sm row col-12 mb-2 ml-md-1">
-                          {foodItemEdit.propertyGroup.map((selectedItem) => {
-                            return (
-                              <li className="list-group-item col-12 col-md-3 bg-success rounded-sm py-1 px-2 mx-2 my-1 text-center">
-                                {selectedItem.name}
+                          {foodItemEdit.editItem && (
+                            <ul className="list-group list-group-horizontal-sm row col-12 mb-2 ml-md-1">
+                              <li className="list-group-item col-12 col-md-2 py-1 my-1 border-0 px-0 ml-3 ml-md-0">
+                                {_t(t("Selected Group"))}-
                               </li>
-                            );
-                          })}
-                        </ul>
+                              <li className="list-group-item col-12 col-md-3 bg-success rounded-sm py-1 px-2 mx-2 my-1 text-center">
+                                {foodItemEdit.editItem.food_group}
+                              </li>
+                            </ul>
+                          )}
+                          <Select
+                            options={foodGroupForSearch}
+                            components={makeAnimated()}
+                            getOptionLabel={(option) => option.name}
+                            getOptionValue={(option) => option.name}
+                            classNamePrefix="select"
+                            onChange={handleSetItemGroup}
+                            maxMenuHeight="200px"
+                            placeholder={
+                              _t(t("Please select a food group")) + ".."
+                            }
+                          />
+                        </div>
                       )}
-                      {!foodItemEdit.deleteProperty && (
-                        <Select
-                          options={propertyGroupForSearch}
-                          components={makeAnimated()}
-                          getOptionLabel={(option) => option.name}
-                          getOptionValue={(option) => option.name}
-                          className="basic-multi-select"
-                          classNamePrefix="select"
-                          isMulti
-                          maxMenuHeight="200px"
-                          onChange={handleSetPropertes}
-                          placeholder={
-                            _t(t("Please select property groups")) + ".."
-                          }
-                        />
-                      )}
-                    </div>
 
-                    <button
-                      type="submit"
-                      className="btn btn-primary xsm-text text-uppercase px-3 py-2 my-4"
-                    >
-                      {_t(t("Update"))}
-                    </button>
-                  </form>
+                      <div className="form-group mt-3">
+                        <div className="mb-2">
+                          <label htmlFor="name" className="control-label">
+                            {_t(t("Name"))}
+                            <span className="text-danger">*</span>
+                          </label>
+                        </div>
+                        <div className="mb-2">
+                          <input
+                            type="text"
+                            className="form-control"
+                            id="name"
+                            name="name"
+                            onChange={handleChange}
+                            value={foodItemEdit.item && foodItemEdit.item.name}
+                            placeholder="e.g. Spicy chicken burger"
+                            required
+                          />
+                        </div>
+                      </div>
+
+                      {foodItemEdit.editItem && foodItemEdit.editItem.price && (
+                        <div className="form-group mt-4">
+                          <div className="mb-2">
+                            <label htmlFor="price" className="control-label">
+                              {_t(t("Price"))}
+                              <span className="text-primary">* </span>
+                              <small className="text-secondary">
+                                ({_t(t("Enter price in USD"))})
+                              </small>
+                            </label>
+                          </div>
+                          <div className="mb-2">
+                            <input
+                              id="price"
+                              type="number"
+                              step="0.01"
+                              min="0"
+                              className="form-control"
+                              name="price"
+                              value={foodItemEdit.item.price}
+                              onChange={handleChange}
+                              placeholder="e.g. Type price of this item in 'US dollar'"
+                              required
+                            />
+                          </div>
+                        </div>
+                      )}
+
+                      <div className="form-group mt-3">
+                        <div className="mb-2">
+                          <label className="control-label">
+                            {_t(t("Property groups"))}
+                            <span className="text-primary mr-1">
+                              ({_t(t("Optional"))})
+                            </span>
+                          </label>
+                        </div>
+                        {/* delete all property chceckbox */}
+                        {foodItemEdit.editItem &&
+                          foodItemEdit.editItem.has_property === "1" && (
+                            <div className="form-check mt-2 ml-2">
+                              <input
+                                type="checkbox"
+                                className="form-check-input"
+                                id="propertyCheck"
+                                checked={foodItemEdit.deleteProperty}
+                                onChange={() => {
+                                  setFoodItemEdit({
+                                    ...foodItemEdit,
+                                    deleteProperty: !foodItemEdit.deleteProperty,
+                                  });
+                                }}
+                              />
+                              <label
+                                className="form-check-label"
+                                htmlFor="propertyCheck"
+                              >
+                                {_t(t("Remove all properties?"))}
+                              </label>
+                            </div>
+                          )}
+                        {/* selected property group */}
+                        {foodItemEdit.propertyGroup && (
+                          <ul className="list-group list-group-horizontal-sm row col-12 mb-2 ml-md-1">
+                            {foodItemEdit.propertyGroup.map((selectedItem) => {
+                              return (
+                                <li className="list-group-item col-12 col-md-3 bg-success rounded-sm py-1 px-2 mx-2 my-1 text-center">
+                                  {selectedItem.name}
+                                </li>
+                              );
+                            })}
+                          </ul>
+                        )}
+                        {!foodItemEdit.deleteProperty && (
+                          <Select
+                            options={propertyGroupForSearch}
+                            components={makeAnimated()}
+                            getOptionLabel={(option) => option.name}
+                            getOptionValue={(option) => option.name}
+                            className="basic-multi-select"
+                            classNamePrefix="select"
+                            isMulti
+                            maxMenuHeight="200px"
+                            onChange={handleSetPropertes}
+                            placeholder={
+                              _t(t("Please select property groups")) + ".."
+                            }
+                          />
+                        )}
+                      </div>
+
+                      <button
+                        type="submit"
+                        className="btn btn-primary xsm-text text-uppercase px-3 py-2 my-4"
+                      >
+                        {_t(t("Update"))}
+                      </button>
+                    </form>
+                  )}
                 </div>
               ) : (
                 <div key="fragment2">
@@ -586,7 +812,7 @@ const AllItemList = () => {
               ></button>
             </div>
             <div className="modal-body">
-              {/* showing this-> if update has been submitted or not */}
+              {/* showing this-> depending on update has been submitted or not */}
               {!variations.uploading && (
                 <div className="text-right">
                   {variations.list && variations.list.length > 0 && (
@@ -1078,7 +1304,7 @@ const AllItemList = () => {
                             <ul className="t-list fk-breadcrumb">
                               <li className="fk-breadcrumb__list">
                                 <span className="t-link fk-breadcrumb__link text-capitalize">
-                                  {!searchedFoodGroup.searched
+                                  {!searchedFoodItem.searched
                                     ? _t(t("Food Items List"))
                                     : _t(t("Search Result"))}
                                 </span>
@@ -1094,7 +1320,9 @@ const AllItemList = () => {
                                     <input
                                       type="text"
                                       className="form-control border-0 form-control--light-1 rounded-0"
-                                      placeholder={_t(t("Search")) + ".."}
+                                      placeholder={
+                                        _t(t("Search by name, group")) + ".."
+                                      }
                                       onChange={handleSearch}
                                     />
                                   </div>
@@ -1172,7 +1400,7 @@ const AllItemList = () => {
                             </thead>
                             <tbody className="align-middle">
                               {/* loop here, logic === !search && haveData && haveDataLegnth > 0*/}
-                              {!searchedFoodGroup.searched
+                              {!searchedFoodItem.searched
                                 ? [
                                     foodList && [
                                       foodList.data.length === 0 ? (
@@ -1321,6 +1549,9 @@ const AllItemList = () => {
                                                           newPropertyGroups: null,
                                                           newFoodGroup: null,
                                                           deleteProperty: false,
+
+                                                          imageUpdate: false,
+                                                          newImage: null,
                                                         });
                                                         setTimeout(() => {
                                                           setVariations({
@@ -1336,6 +1567,38 @@ const AllItemList = () => {
                                                         <i className="fa fa-pencil"></i>
                                                       </span>
                                                       {_t(t("Edit / View"))}
+                                                    </button>
+
+                                                    <button
+                                                      className="dropdown-item sm-text"
+                                                      onClick={() => {
+                                                        setVariations({
+                                                          ...variations,
+                                                          uploading: true,
+                                                        });
+
+                                                        setFoodItemEdit({
+                                                          ...foodItemEdit,
+                                                          editItem: item,
+                                                          item,
+                                                          imageUpdate: true,
+                                                          newImage: null,
+                                                        });
+
+                                                        setTimeout(() => {
+                                                          setVariations({
+                                                            ...variations,
+                                                            uploading: false,
+                                                          });
+                                                        }, 500);
+                                                      }}
+                                                      data-toggle="modal"
+                                                      data-target="#editFood"
+                                                    >
+                                                      <span className="t-mr-8">
+                                                        <i className="fa fa-file"></i>
+                                                      </span>
+                                                      {_t(t("Image"))}
                                                     </button>
 
                                                     <button
@@ -1362,8 +1625,8 @@ const AllItemList = () => {
                                   ]
                                 : [
                                     /* searched data, logic === haveData*/
-                                    searchedFoodGroup && [
-                                      searchedFoodGroup.list.length === 0 ? (
+                                    searchedFoodItem && [
+                                      searchedFoodItem.list.length === 0 ? (
                                         <tr className="align-middle">
                                           <td
                                             scope="row"
@@ -1374,7 +1637,7 @@ const AllItemList = () => {
                                           </td>
                                         </tr>
                                       ) : (
-                                        searchedFoodGroup.list.map(
+                                        searchedFoodItem.list.map(
                                           (item, index) => {
                                             return (
                                               <tr
@@ -1392,8 +1655,54 @@ const AllItemList = () => {
                                                       foodList.per_page}
                                                 </th>
 
+                                                <td className="xsm-text align-middle d-flex justify-content-center">
+                                                  <div
+                                                    className="table-img-large"
+                                                    style={{
+                                                      backgroundImage: `url(${
+                                                        item.image !== null
+                                                          ? item.image
+                                                          : "/assets/img/def_food.png"
+                                                      })`,
+                                                    }}
+                                                  ></div>
+                                                </td>
+
                                                 <td className="xsm-text text-capitalize align-middle text-center">
                                                   {item.name}
+                                                </td>
+
+                                                <td className="xsm-text text-capitalize align-middle text-center">
+                                                  {item.food_group}
+                                                </td>
+
+                                                <td className="xsm-text text-capitalize align-middle text-center">
+                                                  {item.price ? (
+                                                    formatPrice(item.price)
+                                                  ) : (
+                                                    <button
+                                                      className="btn btn-primary btn-sm py-0"
+                                                      onClick={() =>
+                                                        setVariations({
+                                                          ...variations,
+                                                          edit: false,
+                                                          item: item,
+                                                          list: item.variations,
+                                                          deletedVariations: null,
+                                                          newPrice: null,
+                                                          uploading: false,
+                                                          priceAfterAllVariationDelete:
+                                                            "",
+                                                        })
+                                                      }
+                                                      data-toggle="modal"
+                                                      data-target="#foodVariations"
+                                                    >
+                                                      {_t(
+                                                        t("check variations")
+                                                      )}
+                                                    </button>
+                                                  )}
                                                 </td>
 
                                                 <td className="xsm-text text-capitalize align-middle text-center">
@@ -1407,20 +1716,116 @@ const AllItemList = () => {
                                                     </button>
                                                     <div className="dropdown-menu">
                                                       <button
+                                                        className="dropdown-item sm-text"
+                                                        onClick={() => {
+                                                          setPriceForVariations(
+                                                            null
+                                                          );
+                                                          setNewVariation({
+                                                            ...newVariation,
+                                                            item: item,
+                                                            variations: null,
+                                                          });
+                                                        }}
+                                                        data-toggle="modal"
+                                                        data-target="#addVariations"
+                                                      >
+                                                        <span className="t-mr-8">
+                                                          <i className="fa fa-plus"></i>
+                                                        </span>
+                                                        {_t(t("Add variation"))}
+                                                      </button>
+
+                                                      <button
                                                         className="dropdown-item sm-text text-capitalize"
-                                                        onClick={() =>
-                                                          // handleSetEdit(
-                                                          //   item.slug
-                                                          // )
-                                                          ""
-                                                        }
+                                                        onClick={() => {
+                                                          setVariations({
+                                                            ...variations,
+                                                            uploading: true,
+                                                          });
+                                                          let selectedGroups = [];
+                                                          if (
+                                                            item.property_groups
+                                                          ) {
+                                                            item.property_groups.map(
+                                                              (grpItem) => {
+                                                                propertyGroupForSearch.map(
+                                                                  (
+                                                                    singlePropertyGroup
+                                                                  ) => {
+                                                                    if (
+                                                                      singlePropertyGroup.id ===
+                                                                      grpItem
+                                                                    ) {
+                                                                      selectedGroups.push(
+                                                                        singlePropertyGroup
+                                                                      );
+                                                                    }
+                                                                  }
+                                                                );
+                                                              }
+                                                            );
+                                                          }
+                                                          setFoodItemEdit({
+                                                            ...foodItemEdit,
+                                                            editItem: item,
+                                                            item,
+                                                            propertyGroup: item.property_groups
+                                                              ? selectedGroups
+                                                              : null,
+                                                            newPropertyGroups: null,
+                                                            newFoodGroup: null,
+                                                            deleteProperty: false,
+
+                                                            imageUpdate: false,
+                                                            newImage: null,
+                                                          });
+                                                          setTimeout(() => {
+                                                            setVariations({
+                                                              ...variations,
+                                                              uploading: false,
+                                                            });
+                                                          }, 500);
+                                                        }}
                                                         data-toggle="modal"
                                                         data-target="#editFood"
                                                       >
                                                         <span className="t-mr-8">
                                                           <i className="fa fa-pencil"></i>
                                                         </span>
-                                                        {_t(t("Edit"))}
+                                                        {_t(t("Edit / View"))}
+                                                      </button>
+
+                                                      <button
+                                                        className="dropdown-item sm-text"
+                                                        onClick={() => {
+                                                          setVariations({
+                                                            ...variations,
+                                                            uploading: true,
+                                                          });
+
+                                                          setFoodItemEdit({
+                                                            ...foodItemEdit,
+                                                            editItem: item,
+                                                            item,
+                                                            imageUpdate: true,
+                                                            newImage: null,
+                                                          });
+
+                                                          setTimeout(() => {
+                                                            setVariations({
+                                                              ...variations,
+                                                              uploading: false,
+                                                            });
+                                                          }, 500);
+                                                        }}
+                                                        data-toggle="modal"
+                                                        data-target="#editFood"
+                                                      >
+                                                        <span className="t-mr-8">
+                                                          <i className="fa fa-file"></i>
+                                                        </span>
+                                                        {_t(t("Image"))}
                                                       </button>
 
                                                       <button
@@ -1460,7 +1865,7 @@ const AllItemList = () => {
                 ? paginationLoading()
                 : [
                     // logic === !searched
-                    !searchedFoodGroup.searched ? (
+                    !searchedFoodItem.searched ? (
                       <div key="fragment4">
                         <div className="t-bg-white mt-1 t-pt-5 t-pb-5">
                           <div className="row align-items-center t-pl-15 t-pr-15">
@@ -1490,8 +1895,8 @@ const AllItemList = () => {
                                 <button
                                   className="btn btn-primary btn-sm"
                                   onClick={() =>
-                                    setSearchedFoodGroup({
-                                      ...searchedFoodGroup,
+                                    setSearchedFoodItem({
+                                      ...searchedFoodItem,
                                       searched: false,
                                     })
                                   }
@@ -1506,7 +1911,7 @@ const AllItemList = () => {
                               <li className="t-list__item">
                                 <span className="d-inline-block sm-text">
                                   {searchedShowingData(
-                                    searchedFoodGroup,
+                                    searchedFoodItem,
                                     foodForSearch
                                   )}
                                 </span>
