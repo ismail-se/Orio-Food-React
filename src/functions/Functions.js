@@ -63,10 +63,22 @@ const checkPermission = (authUserPermissions, permission) => {
 //currency format price
 const formatPrice = (price) => {
   let localCurrency = JSON.parse(localStorage.getItem("currency"));
-  if (localCurrency.alignment === "right") {
-    return (localCurrency.rate * price).toFixed(2) + localCurrency.symbol;
+  return (localCurrency.rate * price).toFixed(2);
+};
+const currencySymbolLeft = () => {
+  let localCurrency = JSON.parse(localStorage.getItem("currency"));
+  if (localCurrency.alignment === "left") {
+    return localCurrency.symbol;
   } else {
-    return localCurrency.symbol + (localCurrency.rate * price).toFixed(2);
+    return "";
+  }
+};
+const currencySymbolRight = () => {
+  let localCurrency = JSON.parse(localStorage.getItem("currency"));
+  if (localCurrency.alignment === "right") {
+    return localCurrency.symbol;
+  } else {
+    return "";
   }
 };
 
@@ -340,6 +352,8 @@ export {
   deleteCookie,
   checkPermission,
   formatPrice,
+  currencySymbolLeft,
+  currencySymbolRight,
   // common & necessary
 
   //navLink

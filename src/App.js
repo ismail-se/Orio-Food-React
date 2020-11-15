@@ -44,6 +44,7 @@ import {
   Lang,
   Translation,
   Smtp,
+  General,
 
   //manage->user
   AdminStaffCrud,
@@ -295,6 +296,18 @@ function App() {
             {authUserInfo.permissions !== null &&
             checkPermission(authUserInfo.permissions, "Manage") ? (
               <Smtp />
+            ) : (
+              <NoPermission />
+            )}
+          </RestaurantRoute>
+
+          <RestaurantRoute
+            path="/dashboard/manage/settings/general-settings"
+            exact
+          >
+            {authUserInfo.permissions !== null &&
+            checkPermission(authUserInfo.permissions, "Manage") ? (
+              <General />
             ) : (
               <NoPermission />
             )}

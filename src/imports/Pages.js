@@ -30,6 +30,7 @@ import Currency from "../resources/restaurant/auth/manage/settings/Currency";
 import Lang from "../resources/restaurant/auth/manage/settings/Lang";
 import Translation from "../resources/restaurant/auth/manage/settings/Translation";
 import Smtp from "../resources/restaurant/auth/manage/settings/Smtp";
+import General from "../resources/restaurant/auth/manage/settings/General";
 
 //-users
 import Permissions from "../resources/restaurant/auth/manage/user/Permissions";
@@ -72,6 +73,7 @@ export {
   Lang,
   Translation,
   Smtp,
+  General,
   //manage->users
   AdminStaffCrud,
   Waiter,

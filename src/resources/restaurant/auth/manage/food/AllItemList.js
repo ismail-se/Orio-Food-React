@@ -15,6 +15,8 @@ import {
   showingData,
   searchedShowingData,
   formatPrice,
+  currencySymbolLeft,
+  currencySymbolRight,
 } from "../../../../../functions/Functions";
 import { useTranslation } from "react-i18next";
 
@@ -890,7 +892,9 @@ const AllItemList = () => {
                                   {item.variation_name}
                                 </td>
                                 <td className="xsm-text text-capitalize align-middle text-center">
+                                  {currencySymbolLeft()}
                                   {formatPrice(item.food_with_variation_price)}
+                                  {currencySymbolRight()}
                                 </td>
                               </tr>
                             );
@@ -984,9 +988,11 @@ const AllItemList = () => {
                                     {item.variation_name}
                                   </td>
                                   <td className="xsm-text text-capitalize align-middle text-center">
+                                    {currencySymbolLeft()}
                                     {formatPrice(
                                       item.food_with_variation_price
                                     )}
+                                    {currencySymbolRight()}
                                   </td>
                                   <td className="xsm-text text-capitalize align-middle text-center">
                                     <input
@@ -1424,9 +1430,9 @@ const AllItemList = () => {
                                                     foodList.per_page}
                                               </th>
 
-                                              <td className="xsm-text align-middle d-flex justify-content-center">
+                                              <td className="xsm-text">
                                                 <div
-                                                  className="table-img-large"
+                                                  className="table-img-large mx-auto"
                                                   style={{
                                                     backgroundImage: `url(${
                                                       item.image !== null
@@ -1447,7 +1453,11 @@ const AllItemList = () => {
 
                                               <td className="xsm-text text-capitalize align-middle text-center">
                                                 {item.price ? (
-                                                  formatPrice(item.price)
+                                                  [
+                                                    `${currencySymbolLeft()}${formatPrice(
+                                                      item.price
+                                                    )}${currencySymbolRight()}`,
+                                                  ]
                                                 ) : (
                                                   <button
                                                     className="btn btn-primary btn-sm py-0"
@@ -1654,9 +1664,9 @@ const AllItemList = () => {
                                                       foodList.per_page}
                                                 </th>
 
-                                                <td className="xsm-text align-middle d-flex justify-content-center">
+                                                <td className="xsm-text">
                                                   <div
-                                                    className="table-img-large"
+                                                    className="table-img-large mx-auto"
                                                     style={{
                                                       backgroundImage: `url(${
                                                         item.image !== null
@@ -1677,7 +1687,11 @@ const AllItemList = () => {
 
                                                 <td className="xsm-text text-capitalize align-middle text-center">
                                                   {item.price ? (
-                                                    formatPrice(item.price)
+                                                    [
+                                                      `${currencySymbolLeft()}${formatPrice(
+                                                        item.price
+                                                      )}${currencySymbolRight()}`,
+                                                    ]
                                                   ) : (
                                                     <button
                                                       className="btn btn-primary btn-sm py-0"

@@ -229,10 +229,10 @@ const ManageSidebar = () => {
                   _t(t("Email / Smtp"))
                 )}
 
-                {/* {managePageHrefLink(
-                  "/dashboard/manage/settings/smtp-settings",
+                {managePageHrefLink(
+                  "/dashboard/manage/settings/general-settings",
                   _t(t("General Settings"))
-                )} */}
+                )}
               </ul>
             </li>
           </ul>

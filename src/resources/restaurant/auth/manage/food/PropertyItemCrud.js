@@ -10,6 +10,8 @@ import {
   _t,
   getCookie,
   formatPrice,
+  currencySymbolLeft,
+  currencySymbolRight,
 
   //loading
   modalLoading,
@@ -609,7 +611,9 @@ const PropertyItemCrud = () => {
                                               </td>
 
                                               <td className="xsm-text align-middle text-center">
+                                                {currencySymbolLeft()}
                                                 {formatPrice(item.extra_price)}
+                                                {currencySymbolRight()}
                                               </td>
 
                                               <td className="xsm-text text-capitalize align-middle text-center">
@@ -691,9 +695,11 @@ const PropertyItemCrud = () => {
                                                 </td>
 
                                                 <td className="xsm-text align-middle text-center">
+                                                  {currencySymbolLeft()}
                                                   {formatPrice(
                                                     item.extra_price
                                                   )}
+                                                  {currencySymbolRight()}
                                                 </td>
 
                                                 <td className="xsm-text text-capitalize align-middle text-center">

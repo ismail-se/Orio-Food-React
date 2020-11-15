@@ -776,9 +776,9 @@ const Waiter = () => {
                                                     waiterList.per_page}
                                               </th>
 
-                                              <td className="xsm-text align-middle d-flex justify-content-center">
+                                              <td className="xsm-text">
                                                 <div
-                                                  className="table-img-large"
+                                                  className="table-img-large mx-auto"
                                                   style={{
                                                     backgroundImage: `url(${
                                                       item.image !== null
@@ -888,9 +888,9 @@ const Waiter = () => {
                                                       waiterList.per_page}
                                                 </th>
 
-                                                <td className="xsm-text align-middle d-flex justify-content-center">
+                                                <td className="xsm-text">
                                                   <div
-                                                    className="table-img-large"
+                                                    className="table-img-large mx-auto"
                                                     style={{
                                                       backgroundImage: `url(${
                                                         item.image !== null
