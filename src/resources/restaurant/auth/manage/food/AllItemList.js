@@ -176,8 +176,6 @@ const AllItemList = () => {
           ? foodItemEdit.newPropertyGroups
           : null,
     };
-
-    //send req here
     const url = BASE_URL + `/settings/update-food-item`;
     return axios
       .post(url, formData, {
@@ -248,8 +246,6 @@ const AllItemList = () => {
       foodItemEdit.editItem && foodItemEdit.editItem.id
     );
     formData.append("image", foodItemEdit.newImage);
-
-    //send req here
     const url = BASE_URL + `/settings/update-food-item`;
     return axios
       .post(url, formData, {
@@ -586,8 +582,6 @@ const AllItemList = () => {
                               backgroundImage: `url(${
                                 foodItemEdit.editItem &&
                                 foodItemEdit.editItem.image
-                                  ? foodItemEdit.editItem.image
-                                  : null
                               })`,
                             }}
                           ></div>
@@ -1458,6 +1452,7 @@ const AllItemList = () => {
                                                   <button
                                                     className="btn btn-primary btn-sm py-0"
                                                     onClick={() =>
+                                                      // set variations on button click
                                                       setVariations({
                                                         ...variations,
                                                         edit: false,
@@ -1491,6 +1486,7 @@ const AllItemList = () => {
                                                     <button
                                                       className="dropdown-item sm-text"
                                                       onClick={() => {
+                                                        // hadle previously set form data
                                                         setPriceForVariations(
                                                           null
                                                         );
@@ -1512,10 +1508,12 @@ const AllItemList = () => {
                                                     <button
                                                       className="dropdown-item sm-text text-capitalize"
                                                       onClick={() => {
+                                                        // hadle data for edit modal
                                                         setVariations({
                                                           ...variations,
                                                           uploading: true,
                                                         });
+                                                        //property groups
                                                         let selectedGroups = [];
                                                         if (
                                                           item.property_groups
@@ -1572,6 +1570,7 @@ const AllItemList = () => {
                                                     <button
                                                       className="dropdown-item sm-text"
                                                       onClick={() => {
+                                                        //handle image upload
                                                         setVariations({
                                                           ...variations,
                                                           uploading: true,
@@ -1683,6 +1682,7 @@ const AllItemList = () => {
                                                     <button
                                                       className="btn btn-primary btn-sm py-0"
                                                       onClick={() =>
+                                                        // set variations on button click
                                                         setVariations({
                                                           ...variations,
                                                           edit: false,
@@ -1718,6 +1718,7 @@ const AllItemList = () => {
                                                       <button
                                                         className="dropdown-item sm-text"
                                                         onClick={() => {
+                                                          // hadle previously set form data
                                                           setPriceForVariations(
                                                             null
                                                           );
@@ -1739,10 +1740,12 @@ const AllItemList = () => {
                                                       <button
                                                         className="dropdown-item sm-text text-capitalize"
                                                         onClick={() => {
+                                                          // hadle data for edit modal
                                                           setVariations({
                                                             ...variations,
                                                             uploading: true,
                                                           });
+                                                          //property groups
                                                           let selectedGroups = [];
                                                           if (
                                                             item.property_groups
@@ -1799,6 +1802,7 @@ const AllItemList = () => {
                                                       <button
                                                         className="dropdown-item sm-text"
                                                         onClick={() => {
+                                                          //handle image upload
                                                           setVariations({
                                                             ...variations,
                                                             uploading: true,
