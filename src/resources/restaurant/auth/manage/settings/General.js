@@ -10,6 +10,7 @@ import {
   _t,
   getCookie,
   tableLoading,
+  getSystemSettings,
 } from "../../../../../functions/Functions";
 import { useTranslation } from "react-i18next";
 
@@ -19,6 +20,8 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Select from "react-select";
 import makeAnimated from "react-select/animated";
+import { SketchPicker } from "react-color";
+import reactCSS from "reactcss";
 
 //pages & includes
 import ManageSidebar from "../ManageSidebar";
@@ -31,148 +34,78 @@ const General = () => {
   const { t } = useTranslation();
   const history = useHistory();
   //getting context values here
-  let { loading, setLoading, dataPaginating } = useContext(SettingsContext);
-
   let {
-    foodGroupForSearch,
-    propertyGroupForSearch,
-    variationForSearch,
-  } = useContext(FoodContext);
+    loading,
+    setLoading,
+    generalSettings,
+    setGeneralSettings,
+    dataPaginating,
+  } = useContext(SettingsContext);
 
   // States hook here
-  //new item
-  let [newItem, setNewItem] = useState({
-    itemGroup: null,
-    name: "",
-    price: "",
-    image: null,
-    hasProperty: false,
-    properties: null,
-    hasVariation: false,
-    variations: null,
+  //color picker
+  let [colorPick, setColorPick] = useState({
+    displayColorPicker: false,
+    color: getSystemSettings(generalSettings, "type_background"),
   });
 
-  let [priceForVariations, setPriceForVariations] = useState(null);
+  //new item
+  let [newSettings, setNewSettings] = useState({
+    footerText: getSystemSettings(generalSettings, "type_footer"),
+    image: null,
+  });
 
   //useEffect == componentDidMount()
   useEffect(() => {}, []);
 
   //on change input field
   const handleChange = (e) => {
-    setNewItem({ ...newItem, [e.target.name]: e.target.value });
+    setNewSettings({ ...newSettings, [e.target.name]: e.target.value });
   };
 
   //set image hook
   const handleItemImage = (e) => {
-    setNewItem({
-      ...newItem,
+    setNewSettings({
+      ...newSettings,
       [e.target.name]: e.target.files[0],
     });
   };
 
-  //set properties hook
-  const handleSetPropertes = (properties) => {
-    setNewItem({ ...newItem, properties });
-  };
-
-  //set variations hook
-  const handleSetVariations = (variations) => {
-    setNewItem({ ...newItem, variations });
-  };
-
-  //set each variation price
-  const handleVariationPrice = (e) => {
-    setPriceForVariations({
-      ...priceForVariations,
-      [e.target.name]: e.target.value,
+  //color picker's function
+  const handleClick = () => {
+    setColorPick({
+      ...colorPick,
+      displayColorPicker: !colorPick.displayColorPicker,
     });
   };
-
-  //handle Set item group hook
-  const handleSetItemGroup = (itemGroup) => {
-    setNewItem({ ...newItem, itemGroup });
+  const handleClose = () => {
+    setColorPick({ ...colorPick, displayColorPicker: false });
+  };
+  const handleChangeColor = (color) => {
+    setColorPick({ ...colorPick, color: color.hex });
   };
 
-  //has Property
-  const handlePropertyCheckboxChange = (e) => {
-    if (newItem.hasProperty === true) {
-      setNewItem({
-        ...newItem,
-        properties: null,
-        hasProperty: !newItem.hasProperty,
-      });
-    } else {
-      setNewItem({ ...newItem, hasProperty: !newItem.hasProperty });
-    }
-  };
-
-  //has variations
-  const handleVariationCheckboxChange = (e) => {
-    if (newItem.hasVariation === true) {
-      setNewItem({
-        ...newItem,
-        variations: null,
-        hasVariation: !newItem.hasVariation,
-      });
-    } else {
-      setNewItem({ ...newItem, hasVariation: !newItem.hasVariation });
-    }
-  };
-
-  //post req of food item add
-  const foodItemAxios = () => {
+  //send req to server
+  const handleSubmit = (e) => {
+    e.preventDefault();
     setLoading(true);
     let formData = new FormData();
-    formData.append("food_group_id", newItem.itemGroup.id);
-    formData.append("name", newItem.name);
-    formData.append("hasProperty", newItem.hasProperty === true ? 1 : 0);
-    if (newItem.hasProperty === true) {
-      formData.append("hasProperty", 1);
-      let tempArray = [];
-      newItem.properties.map((pItem) => {
-        tempArray.push(pItem.id);
-      });
-      formData.append("properties", tempArray);
-    }
-
-    formData.append("hasVariation", newItem.hasVariation === true ? 1 : 0);
-    if (newItem.hasVariation === false) {
-      formData.append("price", newItem.price);
-    } else {
-      //converting variations and prices to array
-      let slugArray = [];
-      newItem.variations.map((newVarItem) => {
-        slugArray.push(newVarItem.slug);
-      });
-      slugArray.map((slugItem) => {
-        formData.append("slugOfVariations[]", slugItem);
-      });
-
-      let tempData = Object.entries(priceForVariations);
-      tempData.map((item) => {
-        formData.append("variations[]", item);
-      });
-    }
-
-    formData.append("image", newItem.image);
-    const url = BASE_URL + "/settings/new-food-item";
+    formData.append("image", newSettings.image);
+    formData.append("type_footer", newSettings.footerText);
+    formData.append("type_background", colorPick.color);
+    const url = BASE_URL + "/settings/general-settings";
     return axios
       .post(url, formData, {
         headers: { Authorization: `Bearer ${getCookie()}` },
       })
-      .then(() => {
-        setNewItem({
-          itemGroup: null,
-          name: "",
-          price: "",
+      .then((res) => {
+        setGeneralSettings(res.data);
+        setNewSettings({
+          footerText: getSystemSettings(res.data, "type_footer"),
           image: null,
-          hasProperty: false,
-          properties: null,
-          hasVariation: false,
-          variations: null,
         });
         setLoading(false);
-        toast.success(`${_t(t("Food item has been added"))}`, {
+        toast.success(`${_t(t("Settings has been updated"))}`, {
           position: "bottom-center",
           autoClose: 10000,
           hideProgressBar: false,
@@ -181,43 +114,9 @@ const General = () => {
           className: "text-center toast-notification",
         });
       })
-      .catch((error) => {
+      .catch(() => {
         setLoading(false);
-        if (error.response.data.errors.image) {
-          error.response.data.errors.image.forEach((item) => {
-            if (item === "Please select a valid image file") {
-              toast.error(`${_t(t("Please select a valid image file"))}`, {
-                position: "bottom-center",
-                autoClose: 10000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                className: "text-center toast-notification",
-              });
-            }
-            if (item === "Please select a file less than 5MB") {
-              toast.error(`${_t(t("Please select a file less than 5MB"))}`, {
-                position: "bottom-center",
-                autoClose: 10000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                className: "text-center toast-notification",
-              });
-            }
-          });
-        }
-      });
-  };
-
-  //send to server
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    //check item group selected
-    if (newItem.itemGroup !== null) {
-      //check property is selected or not if property checkbox is checked
-      if (newItem.hasProperty === true && newItem.properties === null) {
-        toast.error(`${_t(t("Please select properties"))}`, {
+        toast.error(`${_t(t("Please try again"))}`, {
           position: "bottom-center",
           autoClose: 10000,
           hideProgressBar: false,
@@ -225,100 +124,41 @@ const General = () => {
           pauseOnHover: true,
           className: "text-center toast-notification",
         });
-      } else {
-        //if property checkbox is not selected
-        if (newItem.hasProperty === false) {
-          //check variation is selected or not if variation checkbox is checked
-          if (newItem.hasVariation === true && newItem.variations === null) {
-            toast.error(`${_t(t("Please select variations"))}`, {
-              position: "bottom-center",
-              autoClose: 10000,
-              hideProgressBar: false,
-              closeOnClick: true,
-              pauseOnHover: true,
-              className: "text-center toast-notification",
-            });
-          } else {
-            //if variation checkbox is not selected
-            if (newItem.hasVariation === false) {
-              foodItemAxios();
-            } else {
-              //if variation checkbox is selected, options selected, but deleted all selected options at once
-              if (newItem.variations.length > 0) {
-                foodItemAxios();
-              } else {
-                toast.error(`${_t(t("Please select variations"))}`, {
-                  position: "bottom-center",
-                  autoClose: 10000,
-                  hideProgressBar: false,
-                  closeOnClick: true,
-                  pauseOnHover: true,
-                  className: "text-center toast-notification",
-                });
-              }
-            }
-          }
-        } else {
-          //if property checkbox is selected, options selected, but deleted all selected options at once
-          if (newItem.properties.length > 0) {
-            if (newItem.hasVariation === true && newItem.variations === null) {
-              toast.error(`${_t(t("Please select variations"))}`, {
-                position: "bottom-center",
-                autoClose: 10000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                className: "text-center toast-notification",
-              });
-            } else {
-              //if variation checkbox is not selected
-              if (newItem.hasVariation === false) {
-                foodItemAxios();
-              } else {
-                //if variation checkbox is selected, options selected, but deleted all selected options at once
-                if (newItem.variations.length > 0) {
-                  foodItemAxios();
-                } else {
-                  toast.error(`${_t(t("Please select variations"))}`, {
-                    position: "bottom-center",
-                    autoClose: 10000,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    className: "text-center toast-notification",
-                  });
-                }
-              }
-            }
-          } else {
-            toast.error(`${_t(t("Please select properties"))}`, {
-              position: "bottom-center",
-              autoClose: 10000,
-              hideProgressBar: false,
-              closeOnClick: true,
-              pauseOnHover: true,
-              className: "text-center toast-notification",
-            });
-          }
-        }
-      }
-    } else {
-      //if item group not selected
-      toast.error(`${_t(t("Please select a Food Group for this item"))}`, {
-        position: "bottom-center",
-        autoClose: 10000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        className: "text-center toast-notification",
       });
-    }
   };
+
+  //color picker css
+  const styles = reactCSS({
+    default: {
+      color: {
+        height: "24px",
+        borderRadius: "2px",
+        background: colorPick.color,
+      },
+      swatch: {
+        padding: "5px",
+        background: "#fff",
+        display: "inline-block",
+        cursor: "pointer",
+      },
+      popover: {
+        position: "absolute",
+        zIndex: "2",
+      },
+      cover: {
+        position: "fixed",
+        top: "0px",
+        right: "0px",
+        bottom: "0px",
+        left: "0px",
+      },
+    },
+  });
 
   return (
     <>
       <Helmet>
-        <title>{_t(t("Add New Item"))}</title>
+        <title>{_t(t("General Settings"))}</title>
       </Helmet>
 
       {/* main body */}
@@ -353,7 +193,7 @@ const General = () => {
                             <ul className="t-list fk-breadcrumb">
                               <li className="fk-breadcrumb__list">
                                 <span className="t-link fk-breadcrumb__link text-capitalize">
-                                  {_t(t("Add new item"))}
+                                  {_t(t("General Settings"))}
                                 </span>
                               </li>
                             </ul>
@@ -365,220 +205,37 @@ const General = () => {
 
                         {/* Form starts here */}
                         <form
-                          className="row card p-2 mx-3 mb-5 sm-text"
+                          className="row card p-2 mx-3 sm-text my-5"
                           onSubmit={handleSubmit}
                         >
                           <div className="col-12">
-                            {foodGroupForSearch && (
-                              <div className="form-group mt-2">
-                                <div className="mb-2">
-                                  <label
-                                    htmlFor="itemGroup"
-                                    className="control-label"
-                                  >
-                                    {_t(t("Food group"))}
-                                    <span className="text-danger">*</span>
-                                  </label>
-                                </div>
-                                <Select
-                                  options={foodGroupForSearch}
-                                  components={makeAnimated()}
-                                  getOptionLabel={(option) => option.name}
-                                  getOptionValue={(option) => option.name}
-                                  classNamePrefix="select"
-                                  onChange={handleSetItemGroup}
-                                  maxMenuHeight="200px"
-                                  placeholder={
-                                    _t(t("Please select a food group")) + ".."
-                                  }
-                                />
-                              </div>
-                            )}
-
                             <div className="form-group mt-3">
                               <div className="mb-2">
-                                <label htmlFor="name" className="control-label">
-                                  {_t(t("Name"))}
+                                <label className="control-label">
+                                  {_t(t("Background of logo, clock"))}...
                                   <span className="text-danger">*</span>
                                 </label>
                               </div>
-                              <div className="mb-2">
-                                <input
-                                  type="text"
-                                  className="form-control"
-                                  id="name"
-                                  name="name"
-                                  onChange={handleChange}
-                                  value={newItem.name}
-                                  placeholder="e.g. Spicy chicken burger"
-                                  required
-                                />
-                              </div>
-                            </div>
-
-                            <div className="form-check mt-4">
-                              <input
-                                type="checkbox"
-                                className="form-check-input"
-                                id="propertyCheck"
-                                checked={newItem.hasProperty}
-                                onChange={handlePropertyCheckboxChange}
-                              />
-                              <label
-                                className="form-check-label"
-                                htmlFor="propertyCheck"
+                              <div
+                                style={styles.swatch}
+                                onClick={handleClick}
+                                className="form-control rounded-md"
                               >
-                                {_t(t("Has properties?"))}
-                              </label>
-                            </div>
-                            {propertyGroupForSearch && [
-                              newItem.hasProperty && (
-                                <div className="form-group mt-2 ml-4">
-                                  <div className="mb-2">
-                                    <label className="control-label">
-                                      {_t(t("Add properties"))}
-                                    </label>
-                                  </div>
-                                  <Select
-                                    options={propertyGroupForSearch}
-                                    components={makeAnimated()}
-                                    getOptionLabel={(option) => option.name}
-                                    getOptionValue={(option) => option.name}
-                                    className="basic-multi-select"
-                                    classNamePrefix="select"
-                                    isMulti
-                                    maxMenuHeight="200px"
-                                    onChange={handleSetPropertes}
-                                    placeholder={
-                                      _t(t("Please select property groups")) +
-                                      ".."
-                                    }
+                                <div style={styles.color} />
+                              </div>
+                              {colorPick.displayColorPicker && (
+                                <div style={styles.popover}>
+                                  <div
+                                    style={styles.cover}
+                                    onClick={handleClose}
+                                  />
+                                  <SketchPicker
+                                    color={colorPick.color}
+                                    onChange={handleChangeColor}
                                   />
                                 </div>
-                              ),
-                            ]}
-
-                            <div className="form-check mt-4">
-                              <input
-                                type="checkbox"
-                                className="form-check-input"
-                                id="variationCheck"
-                                checked={newItem.hasVariation}
-                                onChange={handleVariationCheckboxChange}
-                              />
-                              <label
-                                className="form-check-label"
-                                htmlFor="variationCheck"
-                              >
-                                {_t(t("Has variations?"))}
-                              </label>
+                              )}
                             </div>
-
-                            {newItem.hasVariation && variationForSearch && (
-                              <div className="form-group mt-2 ml-4">
-                                <div className="mb-2">
-                                  <label className="control-label">
-                                    {_t(t("Add variations"))}
-                                  </label>
-                                </div>
-                                <Select
-                                  options={variationForSearch}
-                                  components={makeAnimated()}
-                                  getOptionLabel={(option) => option.name}
-                                  getOptionValue={(option) => option.name}
-                                  className="basic-multi-select"
-                                  classNamePrefix="select"
-                                  isMulti
-                                  maxMenuHeight="200px"
-                                  onChange={handleSetVariations}
-                                  placeholder={
-                                    _t(t("Please select variations")) + ".."
-                                  }
-                                />
-                              </div>
-                            )}
-                            {newItem.variations !== null && [
-                              newItem.variations.length > 0 && (
-                                <div className="card ml-4 mt-3 p-3 custom-bg-secondary">
-                                  <div className="card-header t-bg-epsilon text-white rounded-sm text-center">
-                                    {_t(
-                                      t("Please enter price for each variation")
-                                    )}
-                                  </div>
-                                  {newItem.variations.map((variationItem) => {
-                                    return (
-                                      <div
-                                        className="form-group mt-4"
-                                        key={variationItem.id}
-                                      >
-                                        <div className="mb-2">
-                                          <label
-                                            htmlFor={variationItem.slug}
-                                            className="control-label sm-text"
-                                          >
-                                            {_t(t("Total price of"))}{" "}
-                                            <span className="text-primary text-bold">
-                                              {variationItem.name}
-                                            </span>{" "}
-                                            {_t(t("variation"))}
-                                            <span className="text-primary">
-                                              *{" "}
-                                            </span>
-                                            <small className="text-secondary">
-                                              ({_t(t("Enter price in USD"))})
-                                            </small>
-                                          </label>
-                                        </div>
-                                        <div className="mb-2">
-                                          <input
-                                            type="number"
-                                            step="0.01"
-                                            min="0"
-                                            className="form-control"
-                                            id={variationItem.slug}
-                                            name={variationItem.slug}
-                                            onChange={handleVariationPrice}
-                                            placeholder="e.g. Type price of this item in 'US dollar'"
-                                            required
-                                          />
-                                        </div>
-                                      </div>
-                                    );
-                                  })}
-                                </div>
-                              ),
-                            ]}
-
-                            {!newItem.hasVariation && (
-                              <div className="form-group mt-4">
-                                <div className="mb-2">
-                                  <label
-                                    htmlFor="price"
-                                    className="control-label"
-                                  >
-                                    {_t(t("Price"))}
-                                    <span className="text-primary">* </span>
-                                    <small className="text-secondary">
-                                      ({_t(t("Enter price in USD"))})
-                                    </small>
-                                  </label>
-                                </div>
-                                <div className="mb-2">
-                                  <input
-                                    id="price"
-                                    type="number"
-                                    step="0.01"
-                                    min="0"
-                                    className="form-control"
-                                    name="price"
-                                    value={newItem.price}
-                                    onChange={handleChange}
-                                    placeholder="e.g. Type price of this item in 'US dollar'"
-                                    required
-                                  />
-                                </div>
-                              </div>
-                            )}
 
                             <div className="form-group mt-4">
                               <div className="mb-2">
@@ -586,10 +243,15 @@ const General = () => {
                                   htmlFor="image"
                                   className="control-label"
                                 >
-                                  {_t(t("Image"))}
-                                  <span className="text-danger">*</span>{" "}
+                                  {_t(t("Logo"))}
                                   <small className="text-secondary">
-                                    ({_t(t("Square Image Preferable"))})
+                                    (
+                                    {_t(
+                                      t(
+                                        "Background color will be hidden/shown depending on width of this image"
+                                      )
+                                    )}
+                                    )
                                   </small>
                                 </label>
                               </div>
@@ -600,6 +262,28 @@ const General = () => {
                                   id="image"
                                   name="image"
                                   onChange={handleItemImage}
+                                />
+                              </div>
+                            </div>
+
+                            <div className="form-group mt-4">
+                              <div className="mb-2">
+                                <label
+                                  htmlFor="footerText"
+                                  className="control-label"
+                                >
+                                  {_t(t("Footer text"))}
+                                  <span className="text-danger">*</span>{" "}
+                                </label>
+                              </div>
+                              <div className="mb-2">
+                                <textarea
+                                  className="form-control sm-text pt-4"
+                                  id="footerText"
+                                  name="footerText"
+                                  onChange={handleChange}
+                                  value={newSettings.footerText}
+                                  placeholder="e.g. FoodKhan | All rights reserved | 2020"
                                   required
                                 />
                               </div>

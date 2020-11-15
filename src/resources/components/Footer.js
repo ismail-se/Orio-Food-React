@@ -1,9 +1,19 @@
-import React from "react";
-import { withRouter } from "react-router-dom";
+import React, { useContext } from "react";
+import { withRouter, NavLink } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { _t, footerHrefLink, getCookie } from "../../functions/Functions";
+import {
+  _t,
+  footerHrefLink,
+  getCookie,
+  getSystemSettings,
+} from "../../functions/Functions";
+
+//context consumer
+import { SettingsContext } from "../../contexts/Settings";
 
 const Footer = () => {
+  //getting context values here
+  let { generalSettings } = useContext(SettingsContext);
   var weekday = [
     "Sunday",
     "Monday",
@@ -28,6 +38,15 @@ const Footer = () => {
     "Nov",
     "Dec",
   ];
+
+  const style = {
+    logo: {
+      backgroundColor:
+        generalSettings &&
+        getSystemSettings(generalSettings, "type_background"),
+    },
+  };
+
   return (
     <>
       {window.location.pathname !== "/login" && (
@@ -37,8 +56,55 @@ const Footer = () => {
               <div className="col-lg-2 t-mb-30 mb-lg-0">
                 <div className="fk-brand--footer fk-brand--footer-sqr mx-auto mr-lg-auto ml-lg-0">
                   {getCookie() !== undefined
-                    ? footerHrefLink("/dashboard")
-                    : footerHrefLink("/")}
+                    ? [
+                        window.location.pathname === "/dashboard" ? (
+                          <NavLink
+                            to={{ pathname: "/refresh", state: "/dashboard" }}
+                            exact
+                            className="t-link w-100 t-h-50"
+                          >
+                            {/* todo:: background image dynamic */}
+                            <span
+                              className="fk-brand--footer-img fk-brand__img--fk"
+                              style={style.logo}
+                            ></span>
+                          </NavLink>
+                        ) : (
+                          <NavLink
+                            to="/dashboard"
+                            className="t-link w-100 t-h-50"
+                          >
+                            {/* todo:: background image dynamic */}
+                            <span
+                              className="fk-brand--footer-img fk-brand__img--fk"
+                              style={style.logo}
+                            ></span>
+                          </NavLink>
+                        ),
+                      ]
+                    : [
+                        window.location.pathname === "/" ? (
+                          <NavLink
+                            to={{ pathname: "/refresh", state: "/" }}
+                            exact
+                            className="t-link w-100 t-h-50"
+                          >
+                            {/* todo:: background image dynamic */}
+                            <span
+                              className="fk-brand--footer-img fk-brand__img--fk"
+                              style={style.logo}
+                            ></span>
+                          </NavLink>
+                        ) : (
+                          <NavLink to="/" className="t-link w-100 t-h-50">
+                            {/* todo:: background image dynamic */}
+                            <span
+                              className="fk-brand--footer-img fk-brand__img--fk"
+                              style={style.logo}
+                            ></span>
+                          </NavLink>
+                        ),
+                      ]}
                 </div>
               </div>
               <div className="col-lg-6 col-xl-7 t-mb-30 mb-lg-0">

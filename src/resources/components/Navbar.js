@@ -4,9 +4,9 @@ import { NavLink, Link, withRouter, useHistory } from "react-router-dom";
 //pages, functions
 import {
   _t,
-  navbarHrefLink,
   getCookie,
   deleteCookie,
+  getSystemSettings,
 } from "../../functions/Functions";
 
 //context consumer
@@ -24,7 +24,9 @@ const Navbar = (props) => {
   const history = useHistory();
 
   //getting context values here
-  let { navLanguageList, navCurrencyList } = useContext(SettingsContext);
+  let { navLanguageList, navCurrencyList, generalSettings } = useContext(
+    SettingsContext
+  );
   let { authUserInfo } = useContext(UserContext);
   let { setLoading } = useContext(FoodContext);
 
@@ -122,6 +124,13 @@ const Navbar = (props) => {
     history.push({ pathname: "/login", state: "loggedOut" });
   };
 
+  const style = {
+    logo: {
+      backgroundColor:
+        generalSettings &&
+        getSystemSettings(generalSettings, "type_background"),
+    },
+  };
   return (
     <>
       {props.location.pathname !== "/login" && (
@@ -131,8 +140,52 @@ const Navbar = (props) => {
               <div className="col-lg-2">
                 <div className="fk-brand fk-brand--sr-lg">
                   {getCookie() !== undefined
-                    ? navbarHrefLink("/dashboard")
-                    : navbarHrefLink("/")}
+                    ? [
+                        window.location.pathname === "/dashboard" ? (
+                          <NavLink
+                            to={{ pathname: "/refresh", state: "/dashboard" }}
+                            exact
+                            className="t-link w-100"
+                          >
+                            <span
+                              className="fk-brand__img fk-brand__img--fk"
+                              style={style.logo}
+                            ></span>
+                          </NavLink>
+                        ) : (
+                          <NavLink
+                            to="/dashboard"
+                            exact
+                            className="t-link w-100"
+                          >
+                            <span
+                              className="fk-brand__img fk-brand__img--fk"
+                              style={style.logo}
+                            ></span>
+                          </NavLink>
+                        ),
+                      ]
+                    : [
+                        window.location.pathname === "/" ? (
+                          <NavLink
+                            to={{ pathname: "/refresh", state: "/" }}
+                            exact
+                            className="t-link w-100"
+                          >
+                            <span
+                              className="fk-brand__img fk-brand__img--fk"
+                              style={style.logo}
+                            ></span>
+                          </NavLink>
+                        ) : (
+                          <NavLink to="/" exact className="t-link w-100">
+                            <span
+                              className="fk-brand__img fk-brand__img--fk"
+                              style={style.logo}
+                            ></span>
+                          </NavLink>
+                        ),
+                      ]}
                 </div>
               </div>
               <div className="order-2 order-lg-1 col-10 col-lg-3 col-xl-4 col-xxl-5 t-mb-15 mb-lg-0 t-mt-15 mt-lg-0">

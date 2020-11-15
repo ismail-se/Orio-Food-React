@@ -82,6 +82,14 @@ const currencySymbolRight = () => {
   }
 };
 
+//general settings
+const getSystemSettings = (settingsArray, checkType) => {
+  let tempItem = settingsArray.find((item) => {
+    return item.name === checkType;
+  });
+  return tempItem.value;
+};
+
 //Delete cookie of authentication
 const deleteCookie = () => {
   const url = BASE_URL + `/auth/logout`;
@@ -117,51 +125,6 @@ const deleteCookie = () => {
         cookies.remove("xss", { path: "/" });
       }
     });
-};
-
-//navbar links
-const navbarHrefLink = (redirectTo) => {
-  if (getCookie() !== undefined) {
-    if (window.location.pathname === redirectTo) {
-      return (
-        <NavLink
-          to={{ pathname: "/refresh", state: redirectTo }}
-          exact
-          className="t-link w-100"
-        >
-          {/* todo:: background image dynamic */}
-          <span className="bg-primary fk-brand__img fk-brand__img--fk"></span>
-        </NavLink>
-      );
-    } else {
-      return (
-        <NavLink to={redirectTo} exact className="t-link w-100">
-          {/* todo:: background image dynamic */}
-          <span className="bg-primary fk-brand__img fk-brand__img--fk"></span>
-        </NavLink>
-      );
-    }
-  } else {
-    if (window.location.pathname === redirectTo) {
-      return (
-        <NavLink
-          to={{ pathname: "/refresh", state: redirectTo }}
-          exact
-          className="t-link w-100"
-        >
-          {/* todo:: background image dynamic */}
-          <span className="bg-primary fk-brand__img fk-brand__img--fk"></span>
-        </NavLink>
-      );
-    } else {
-      return (
-        <NavLink to={redirectTo} exact className="t-link w-100">
-          {/* todo:: background image dynamic */}
-          <span className="bg-primary fk-brand__img fk-brand__img--fk"></span>
-        </NavLink>
-      );
-    }
-  }
 };
 
 //footer logo link
@@ -354,10 +317,10 @@ export {
   formatPrice,
   currencySymbolLeft,
   currencySymbolRight,
+  getSystemSettings,
   // common & necessary
 
   //navLink
-  navbarHrefLink,
   footerHrefLink,
   restaurantMenuLink,
   managePageHrefLink,

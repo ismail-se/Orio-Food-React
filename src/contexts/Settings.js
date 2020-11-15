@@ -37,6 +37,9 @@ const SettingsProvider = ({ children }) => {
   const [navCurrencyList, setNavCurrencyList] = useState(null);
   const [currencyListForSearch, setCurrencyListForSearch] = useState(null);
 
+  //currencies
+  const [generalSettings, setGeneralSettings] = useState(null);
+
   //smtp
   const [smtp, setSmtp] = useState({
     MAIL_MAILER: null,
@@ -54,6 +57,7 @@ const SettingsProvider = ({ children }) => {
     //call- unauthenticated
     getLanguages();
     getCurrency();
+    getSettings();
 
     //call if authenticated
     if (getCookie() !== undefined) {
@@ -169,6 +173,16 @@ const SettingsProvider = ({ children }) => {
       .catch((error) => {});
   };
 
+  //get all languages
+  const getSettings = () => {
+    setLoading(true);
+    const url = BASE_URL + "/settings/general-settings";
+    return axios.get(url).then((res) => {
+      setGeneralSettings(res.data);
+      setLoading(false);
+    });
+  };
+
   return (
     <SettingsContext.Provider
       value={{
@@ -176,6 +190,9 @@ const SettingsProvider = ({ children }) => {
         loading,
         setLoading,
 
+        //general settings
+        generalSettings,
+        setGeneralSettings,
         //currencies
         currencyList,
         setCurrencyList,
