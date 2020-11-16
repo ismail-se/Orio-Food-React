@@ -127,39 +127,6 @@ const deleteCookie = () => {
     });
 };
 
-//footer logo link
-const footerHrefLink = (redirectTo) => {
-  if (window.location.pathname === redirectTo) {
-    return (
-      <NavLink
-        to={{ pathname: "/refresh", state: redirectTo }}
-        exact
-        className="t-link w-100 t-h-50"
-      >
-        {/* todo:: background image dynamic */}
-        <span
-          className="bg-primary fk-brand--footer-img fk-brand__img--fk"
-          style={{
-            backgroundImage: `url("/assets/img/foodkhan.png")`,
-          }}
-        ></span>
-      </NavLink>
-    );
-  } else {
-    return (
-      <NavLink to={redirectTo} className="t-link w-100 t-h-50">
-        {/* todo:: background image dynamic */}
-        <span
-          className="bg-primary fk-brand--footer-img fk-brand__img--fk"
-          style={{
-            backgroundImage: `url("/assets/img/foodkhan.png")`,
-          }}
-        ></span>
-      </NavLink>
-    );
-  }
-};
-
 //restaurant dashboard menu links
 const restaurantMenuLink = (
   img,
@@ -321,7 +288,6 @@ export {
   // common & necessary
 
   //navLink
-  footerHrefLink,
   restaurantMenuLink,
   managePageHrefLink,
   //navLink

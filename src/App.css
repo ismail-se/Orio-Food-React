@@ -99,3 +99,7 @@ html {
 .text-deleted {
   text-decoration: line-through;
 }
+
+.fk-brand__img--fk {
+  background-image: none;
+}

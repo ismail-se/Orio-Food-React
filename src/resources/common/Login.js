@@ -9,7 +9,7 @@ import {
   _t,
   getCookie,
   modalLoading,
-  footerHrefLink,
+  getSystemSettings,
 } from "../../functions/Functions";
 import { useTranslation } from "react-i18next";
 
@@ -34,9 +34,13 @@ const Login = () => {
   const history = useHistory();
 
   //getting context values here
-  let { loading, setLoading, getSmtp, getPermissionGroups } = useContext(
-    SettingsContext
-  );
+  let {
+    loading,
+    setLoading,
+    generalSettings,
+    getSmtp,
+    getPermissionGroups,
+  } = useContext(SettingsContext);
   let { getAuthUser, authUserInfo } = useContext(UserContext);
 
   //state hooks here
@@ -146,6 +150,17 @@ const Login = () => {
       });
   };
 
+  const style = {
+    logo: {
+      backgroundColor:
+        generalSettings &&
+        getSystemSettings(generalSettings, "type_background"),
+      backgroundImage:
+        generalSettings &&
+        `url(${getSystemSettings(generalSettings, "type_logo")})`,
+    },
+  };
+
   return (
     <>
       <Helmet>
@@ -186,7 +201,25 @@ const Login = () => {
             <div className="row">
               <div className="col-md-6">
                 <div className="fk-brand--footer fk-brand--footer-sqr">
-                  {footerHrefLink("/")}
+                  {window.location.pathname === "/" ? (
+                    <NavLink
+                      to={{ pathname: "/refresh", state: "/" }}
+                      exact
+                      className="t-link w-100 t-h-50"
+                    >
+                      <span
+                        className="fk-brand--footer-img fk-brand__img--fk"
+                        style={style.logo}
+                      ></span>
+                    </NavLink>
+                  ) : (
+                    <NavLink to="/" className="t-link w-100 t-h-50">
+                      <span
+                        className="fk-brand--footer-img fk-brand__img--fk"
+                        style={style.logo}
+                      ></span>
+                    </NavLink>
+                  )}
                 </div>
               </div>
             </div>
@@ -218,7 +251,7 @@ const Login = () => {
                     </div>
                   ) : (
                     <div key="loading">
-                      <h3 className="mt-0 text-capitalize font-weight-bold">
+                      <h3 className="mt-0 text-capitalize text-dark font-weight-bold">
                         sign in
                       </h3>
                       <form onSubmit={handleSubmit}>
@@ -268,7 +301,7 @@ const Login = () => {
                               <div className="t-mr-8">
                                 <button
                                   type="submit"
-                                  className="btn btn-success sm-text text-uppercase"
+                                  className="btn btn-success text-dark sm-text text-uppercase"
                                 >
                                   sign in
                                 </button>

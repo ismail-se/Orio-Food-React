@@ -18,6 +18,7 @@ import { FoodContext } from "../../contexts/Food";
 import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { BASE_URL } from "../../BaseUrl";
 
 const Navbar = (props) => {
   const { t, i18n } = useTranslation();
@@ -126,6 +127,14 @@ const Navbar = (props) => {
 
   const style = {
     logo: {
+      backgroundColor:
+        generalSettings &&
+        getSystemSettings(generalSettings, "type_background"),
+      backgroundImage:
+        generalSettings &&
+        `url(${getSystemSettings(generalSettings, "type_logo")})`,
+    },
+    currency: {
       backgroundColor:
         generalSettings &&
         getSystemSettings(generalSettings, "type_background"),
@@ -262,7 +271,10 @@ const Navbar = (props) => {
                     </li>
                     <li className="config-list__item">
                       <div className="d-flex align-items-center">
-                        <div className="circle circle--sm rounded-circle bg-primary">
+                        <div
+                          className="circle circle--sm rounded-circle"
+                          style={style.currency}
+                        >
                           <span className="text-light">
                             {defaultCurrency ? defaultCurrency.symbol : "$"}
                           </span>
@@ -321,7 +333,15 @@ const Navbar = (props) => {
                         <div className="d-flex align-items-center ">
                           <div className="circle circle--sm rounded-circle avatar">
                             <img
-                              src="/assets/img/user.jpg"
+                              src={
+                                authUserInfo.details !== null
+                                  ? [
+                                      BASE_URL +
+                                        "/public/" +
+                                        authUserInfo.details.image,
+                                    ]
+                                  : "/assets/img/user.jpg"
+                              }
                               alt="foodkhan"
                               className="img-fluid avatar__img"
                             />

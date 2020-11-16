@@ -18,8 +18,6 @@ import { useTranslation } from "react-i18next";
 import { Helmet } from "react-helmet";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import Select from "react-select";
-import makeAnimated from "react-select/animated";
 import { SketchPicker } from "react-color";
 import reactCSS from "reactcss";
 
@@ -28,7 +26,6 @@ import ManageSidebar from "../ManageSidebar";
 
 //context consumer
 import { SettingsContext } from "../../../../../contexts/Settings";
-import { FoodContext } from "../../../../../contexts/Food";
 
 const General = () => {
   const { t } = useTranslation();
@@ -52,6 +49,7 @@ const General = () => {
   //new item
   let [newSettings, setNewSettings] = useState({
     footerText: getSystemSettings(generalSettings, "type_footer"),
+    vat: getSystemSettings(generalSettings, "type_vat"),
     image: null,
   });
 
@@ -91,8 +89,9 @@ const General = () => {
     setLoading(true);
     let formData = new FormData();
     formData.append("image", newSettings.image);
-    formData.append("type_footer", newSettings.footerText);
     formData.append("type_background", colorPick.color);
+    formData.append("type_footer", newSettings.footerText);
+    formData.append("type_vat", newSettings.vat);
     const url = BASE_URL + "/settings/general-settings";
     return axios
       .post(url, formData, {
@@ -102,6 +101,7 @@ const General = () => {
         setGeneralSettings(res.data);
         setNewSettings({
           footerText: getSystemSettings(res.data, "type_footer"),
+          vat: getSystemSettings(res.data, "type_vat"),
           image: null,
         });
         setLoading(false);
@@ -136,7 +136,6 @@ const General = () => {
         background: colorPick.color,
       },
       swatch: {
-        padding: "5px",
         background: "#fff",
         display: "inline-block",
         cursor: "pointer",
@@ -214,27 +213,41 @@ const General = () => {
                                 <label className="control-label">
                                   {_t(t("Background of logo, clock"))}...
                                   <span className="text-danger">*</span>
+                                  <span className="text-secondary ml-1">
+                                    ({" "}
+                                    {_t(
+                                      t(
+                                        "Please pick a color, click on the color below"
+                                      )
+                                    )}
+                                    )
+                                  </span>
                                 </label>
                               </div>
-                              <div
-                                style={styles.swatch}
-                                onClick={handleClick}
-                                className="form-control rounded-md"
-                              >
-                                <div style={styles.color} />
-                              </div>
-                              {colorPick.displayColorPicker && (
-                                <div style={styles.popover}>
+                              <div className="row">
+                                <div
+                                  style={styles.swatch}
+                                  onClick={handleClick}
+                                  className="rounded-md col-12 col-md-3"
+                                >
                                   <div
-                                    style={styles.cover}
-                                    onClick={handleClose}
-                                  />
-                                  <SketchPicker
-                                    color={colorPick.color}
-                                    onChange={handleChangeColor}
+                                    style={styles.color}
+                                    className="form-control"
                                   />
                                 </div>
-                              )}
+                                {colorPick.displayColorPicker && (
+                                  <div style={styles.popover}>
+                                    <div
+                                      style={styles.cover}
+                                      onClick={handleClose}
+                                    />
+                                    <SketchPicker
+                                      color={colorPick.color}
+                                      onChange={handleChangeColor}
+                                    />
+                                  </div>
+                                )}
+                              </div>
                             </div>
 
                             <div className="form-group mt-4">
@@ -262,6 +275,29 @@ const General = () => {
                                   id="image"
                                   name="image"
                                   onChange={handleItemImage}
+                                />
+                              </div>
+                            </div>
+
+                            <div className="form-group mt-4">
+                              <div className="mb-2">
+                                <label htmlFor="vat" className="control-label">
+                                  {_t(t("Vat"))}
+                                  <span className="text-danger">*</span>{" "}
+                                </label>
+                              </div>
+                              <div className="mb-2">
+                                <input
+                                  type="number"
+                                  step="0.01"
+                                  min="0"
+                                  className="form-control sm-text"
+                                  id="vat"
+                                  name="vat"
+                                  onChange={handleChange}
+                                  value={newSettings.vat}
+                                  placeholder="e.g. Type vat %"
+                                  required
                                 />
                               </div>
                             </div>

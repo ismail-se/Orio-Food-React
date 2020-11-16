@@ -1,12 +1,7 @@
 import React, { useContext } from "react";
 import { withRouter, NavLink } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import {
-  _t,
-  footerHrefLink,
-  getCookie,
-  getSystemSettings,
-} from "../../functions/Functions";
+import { _t, getCookie, getSystemSettings } from "../../functions/Functions";
 
 //context consumer
 import { SettingsContext } from "../../contexts/Settings";
@@ -41,6 +36,14 @@ const Footer = () => {
 
   const style = {
     logo: {
+      backgroundColor:
+        generalSettings &&
+        getSystemSettings(generalSettings, "type_background"),
+      backgroundImage:
+        generalSettings &&
+        `url(${getSystemSettings(generalSettings, "type_logo")})`,
+    },
+    clock: {
       backgroundColor:
         generalSettings &&
         getSystemSettings(generalSettings, "type_background"),
@@ -89,7 +92,6 @@ const Footer = () => {
                             exact
                             className="t-link w-100 t-h-50"
                           >
-                            {/* todo:: background image dynamic */}
                             <span
                               className="fk-brand--footer-img fk-brand__img--fk"
                               style={style.logo}
@@ -97,7 +99,6 @@ const Footer = () => {
                           </NavLink>
                         ) : (
                           <NavLink to="/" className="t-link w-100 t-h-50">
-                            {/* todo:: background image dynamic */}
                             <span
                               className="fk-brand--footer-img fk-brand__img--fk"
                               style={style.logo}
@@ -110,14 +111,12 @@ const Footer = () => {
               <div className="col-lg-6 col-xl-7 t-mb-30 mb-lg-0">
                 <p className="mb-0 text-center sm-text">
                   &copy;
-                  <a href="#" className="t-link t-link--alpha text-capitalize ">
-                    Food Khan
-                  </a>
-                  | All rights reserved | 2020
+                  {generalSettings &&
+                    getSystemSettings(generalSettings, "type_footer")}
                 </p>
               </div>
               <div className="col-lg-4 col-xl-3">
-                <div className="clock bg-primary">
+                <div className="clock" style={style.clock}>
                   <div className="clock__icon t-mr-30">
                     <span className="fa fa-clock-o"></span>
                   </div>
