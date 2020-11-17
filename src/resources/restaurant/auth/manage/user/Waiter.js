@@ -699,7 +699,7 @@ const Waiter = () => {
                         </div>
                         {/* Table */}
                         <div className="table-responsive">
-                          <table className="table table-bordered table-striped min-table-height">
+                          <table className="table table-bordered table-hover min-table-height">
                             <thead className="align-middle">
                               <tr>
                                 <th

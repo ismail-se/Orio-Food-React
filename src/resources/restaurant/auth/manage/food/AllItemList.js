@@ -852,7 +852,7 @@ const AllItemList = () => {
               {variations.edit === false ? (
                 // if variation edit is false- show table data
                 <div key="fragment-food-group-1 table-responsive">
-                  <table className="table table-bordered table-striped">
+                  <table className="table table-bordered table-hover">
                     <thead className="align-middle">
                       <tr>
                         <th
@@ -925,7 +925,7 @@ const AllItemList = () => {
                       className="table-responsive"
                       onSubmit={handleUpdateVariations}
                     >
-                      <table className="table table-bordered table-striped">
+                      <table className="table table-bordered table-hover">
                         <thead className="align-middle">
                           <tr>
                             <th
@@ -1352,7 +1352,7 @@ const AllItemList = () => {
                         </div>
                         {/* Table */}
                         <div className="table-responsive">
-                          <table className="table table-bordered table-striped min-table-height">
+                          <table className="table table-bordered table-hover min-table-height">
                             <thead className="align-middle">
                               <tr>
                                 <th
