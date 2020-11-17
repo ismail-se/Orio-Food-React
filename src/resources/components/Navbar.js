@@ -145,10 +145,10 @@ const Navbar = (props) => {
   return (
     <>
       {props.location.pathname !== "/login" && (
-        <header id="header">
+        <header id="header" className="sticky-top">
           <div className="container">
             <div className="row align-items-center">
-              <div className="col-lg-2">
+              <div className="col-6 col-lg-2">
                 <div className="fk-brand fk-brand--sr-lg">
                   {getCookie() !== undefined
                     ? [
@@ -199,27 +199,8 @@ const Navbar = (props) => {
                       ]}
                 </div>
               </div>
-              <div className="order-2 order-lg-1 col-10 col-lg-3 col-xl-4 col-xxl-5 t-mb-15 mb-lg-0 t-mt-15 mt-lg-0">
-                {getCookie() !== undefined
-                  ? [
-                      window.location.pathname !== "/" ? null : (
-                        <div className="input-group">
-                          <div className="form-file">
-                            <input
-                              type="text"
-                              className="form-control border-0 form-control--light-1 rounded-0"
-                              placeholder={_t(t("Search")) + ".."}
-                            />
-                          </div>
-                          <button className="btn btn-primary" type="button">
-                            <i className="fa fa-search" aria-hidden="true"></i>
-                          </button>
-                        </div>
-                      ),
-                    ]
-                  : null}
-              </div>
-              <div className="order-1 order-lg-2 col-2 col-lg-7 col-xl-6 col-xxl-5 t-mb-15 mb-lg-0 t-mt-15 mt-lg-0">
+
+              <div className="col-6 col-lg-7 col-xl-6 col-xxl-5 ml-lg-auto">
                 <div className="fk-phn-nav text-right d-lg-none">
                   <span className="fk-phn-nav__icon xlg-text">
                     <i className="fa fa-bars"></i>
@@ -316,7 +297,6 @@ const Navbar = (props) => {
                         </div>
                       </div>
                     </li>
-
                     {getCookie() === undefined ||
                     (props.location.state &&
                       props.location.state === "loggedOut") ? (

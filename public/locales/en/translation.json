@@ -118,6 +118,7 @@
     "Left": "Left",
     "List": "List",
     "Logo": "Logo",
+    "Logout": "Logout",
     "Manage": "Manage",
     "Name": "Name",
     "New price": "New price",
@@ -181,7 +182,6 @@
     "Search by branch, date, user": "Search by branch, date, user",
     "Search by name": "Search by name",
     "Search by name, group": "Search by name, group",
-    "sec":"sec",
     "Select 'sendmail' for Mail Mailer if you face any issue after configuring 'smtp' as Mail Mailer": "Select 'sendmail' for Mail Mailer if you face any issue after configuring 'smtp' as Mail Mailer",
     "Select a branch": "Select a branch",
     "Select a permission group": "Select a permission group",
@@ -283,6 +283,7 @@
     "optional": "optional",
     "phn no.": "phn no.",
     "save": "save",
+    "sec": "sec",
     "start work period": "start work period",
     "user type": "user type",
     "variation": "variation"
