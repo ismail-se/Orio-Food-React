@@ -257,9 +257,9 @@ const WorkPeriod = () => {
     var hours = Math.floor(minutes / 60);
     minutes = Math.floor(minutes % 60);
     var seconds = ((millis % 60000) / 1000).toFixed(0);
-    return `${hours}${_t(t("hr"))} - ${minutes}${_t(t("min"))} - ${
+    return `${hours} ${_t(t("hr"))} - ${minutes} ${_t(t("min"))} - ${
       seconds < 10 ? "0" : ""
-    }${seconds}sec`;
+    }${seconds} ${_t(t("sec"))}`;
   };
 
   //end confirmation modal of workPeriod
@@ -421,7 +421,7 @@ const WorkPeriod = () => {
                                     onClick={handleSaveNewWorkPeriod}
                                     className="w-100 btn btn-secondary sm-text text-uppercase"
                                   >
-                                    start work period
+                                    {_t(t("start work period"))}
                                   </button>
                                 </li>
                               </ul>
@@ -435,7 +435,7 @@ const WorkPeriod = () => {
                                   onClick={handleSaveNewWorkPeriod}
                                   className="w-100 btn btn-secondary sm-text text-uppercase"
                                 >
-                                  start work period
+                                  {_t(t("start work period"))}
                                 </button>
                               </li>
                             </ul>
@@ -447,56 +447,56 @@ const WorkPeriod = () => {
                   <div className="fk-scroll--order-history" data-simplebar>
                     <div className="t-pl-15 t-pr-15">
                       <div className="table-responsive">
-                        <table className="table table-bordered table-striped table-hover min-table-height mt-4">
+                        <table className="table table-bordered table-hover min-table-height mt-4">
                           <thead className="align-middle">
                             <tr>
                               <th
                                 scope="col"
                                 className="sm-text align-middle text-center border-1 border"
                               >
-                                S/L
+                                {_t(t("S/L"))}
                               </th>
                               <th
                                 scope="col"
                                 className="sm-text align-middle text-center border-1 border"
                               >
-                                Branch
+                                {_t(t("Branch"))}
                               </th>
                               <th
                                 scope="col"
                                 className="sm-text align-middle text-center border-1 border"
                               >
-                                Started by
+                                {_t(t("Started by"))}
                               </th>
                               <th
                                 scope="col"
                                 className="sm-text align-middle text-center border-1 border"
                               >
-                                Date
+                                {_t(t("Date"))}
                               </th>
                               <th
                                 scope="col"
                                 className="sm-text align-middle text-center border-1 border"
                               >
-                                Started at
+                                {_t(t("Started at"))}
                               </th>
                               <th
                                 scope="col"
                                 className="sm-text align-middle text-center border-1 border"
                               >
-                                Ended at
+                                {_t(t("Ended at"))}
                               </th>
                               <th
                                 scope="col"
                                 className="sm-text align-middle text-center border-1 border"
                               >
-                                Ended by
+                                {_t(t("Ended by"))}
                               </th>
                               <th
                                 scope="col"
                                 className="sm-text align-middle text-center border-1 border"
                               >
-                                Total time
+                                {_t(t("Total time"))}
                               </th>
                             </tr>
                           </thead>
@@ -544,7 +544,7 @@ const WorkPeriod = () => {
                                               {item.date}
                                             </td>
 
-                                            <td className="xsm-text align-middle text-center">
+                                            <td className="xsm-text align-middle text-center text-green">
                                               <Moment format="LT">
                                                 {
                                                   new Date(
@@ -554,7 +554,7 @@ const WorkPeriod = () => {
                                               </Moment>
                                             </td>
 
-                                            <td className="xsm-text align-middle text-center">
+                                            <td className="xsm-text align-middle text-center text-primary">
                                               {item.ended_at ? (
                                                 <Moment format="LT">
                                                   {
