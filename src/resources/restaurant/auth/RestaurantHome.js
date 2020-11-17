@@ -122,7 +122,7 @@ const RestaurantHome = () => {
                       )
                     : null}
                   {/* image, imgAltTxt, smallInfoIcon, infoTextColorName, infoText, title, redirectToUrl */}
-                  {authUserInfo.permissions !== null &&
+                  {/* {authUserInfo.permissions !== null &&
                   authUserInfo.permissions.includes("Branch")
                     ? restaurantMenuLink(
                         "/assets/img/product-img-5.png",
@@ -133,7 +133,7 @@ const RestaurantHome = () => {
                         [_t(t("Branches"))],
                         "/dashboard/branches"
                       )
-                    : null}
+                    : null} */}
                   {/* image, imgAltTxt, smallInfoIcon, infoTextColorName, infoText, title, redirectToUrl */}
                   {authUserInfo.permissions !== null &&
                   authUserInfo.permissions.includes("Report")

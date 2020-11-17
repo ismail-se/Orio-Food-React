@@ -242,12 +242,23 @@ const modalLoading = (count) => {
   );
 };
 
-// table loading
+// manage page table loading
 const tableLoading = () => {
   return (
     <SkeletonTheme color="#f1f2f6" highlightColor="#dfe4ea">
       <p>
         <Skeleton style={{ height: `calc(100vh - 222px)` }} />
+      </p>
+    </SkeletonTheme>
+  );
+};
+
+// table loading
+const pageLoading = () => {
+  return (
+    <SkeletonTheme color="#f1f2f6" highlightColor="#dfe4ea">
+      <p>
+        <Skeleton style={{ height: `calc(100vh - 187px)` }} />
       </p>
     </SkeletonTheme>
   );
@@ -293,6 +304,7 @@ export {
   //navLink
 
   //loading
+  pageLoading,
   modalLoading,
   tableLoading,
   paginationLoading,

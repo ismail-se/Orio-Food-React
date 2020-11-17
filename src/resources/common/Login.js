@@ -26,6 +26,7 @@ import Cookies from "universal-cookie";
 //context consumer
 import { SettingsContext } from "../../contexts/Settings";
 import { UserContext } from "../../contexts/User";
+import { RestaurantContext } from "../../contexts/Restaurant";
 
 const cookies = new Cookies();
 
@@ -42,6 +43,7 @@ const Login = () => {
     getPermissionGroups,
   } = useContext(SettingsContext);
   let { getAuthUser, authUserInfo } = useContext(UserContext);
+  let { getBranch } = useContext(RestaurantContext);
 
   //state hooks here
   const [credentials, setCredentials] = useState({
@@ -127,6 +129,7 @@ const Login = () => {
         //common
         getAuthUser();
         getPermissionGroups();
+        getBranch();
 
         //permission based
         if (

@@ -34,6 +34,10 @@ const RestaurantProvider = ({ children }) => {
   const [paymentTypeList, setPaymentTypeList] = useState(null);
   const [paymentTypeForSearch, setPaymentTypeforSearch] = useState(null);
 
+  //work period
+  const [workPeriodList, setWorkPeriodList] = useState(null);
+  const [workPeriodForSearch, setWorkPeriodListForSearch] = useState(null);
+
   //useEffect- to get data on render
   useEffect(() => {
     //call- unauthenticated
@@ -43,6 +47,7 @@ const RestaurantProvider = ({ children }) => {
       getBranch();
       getTable();
       getPaymentType();
+      getWorkPeriod();
     }
   }, []);
 
@@ -170,6 +175,37 @@ const RestaurantProvider = ({ children }) => {
       .catch(() => {});
   };
 
+  //get work period
+  const getWorkPeriod = () => {
+    setLoading(true);
+    const url = BASE_URL + "/settings/get-work-period";
+    return axios
+      .get(url, {
+        headers: { Authorization: `Bearer ${getCookie()}` },
+      })
+      .then((res) => {
+        setWorkPeriodList(res.data[0]);
+        setWorkPeriodListForSearch(res.data[1]);
+        setLoading(false);
+      });
+  };
+
+  // get paginated work period
+  const setPaginatedWorkPeriod = (pageNo) => {
+    setDataPaginating(true);
+    const url = BASE_URL + "/settings/get-work-period?page=" + pageNo;
+    return axios
+      .get(url, {
+        headers: { Authorization: `Bearer ${getCookie()}` },
+      })
+      .then((res) => {
+        setWorkPeriodList(res.data[0]);
+        setWorkPeriodListForSearch(res.data[1]);
+        setDataPaginating(false);
+      })
+      .catch(() => {});
+  };
+
   return (
     <RestaurantContext.Provider
       value={{
@@ -204,6 +240,14 @@ const RestaurantProvider = ({ children }) => {
         setPaginatedPaymentType,
         paymentTypeForSearch,
         setPaymentTypeforSearch,
+
+        //work period
+        getWorkPeriod,
+        workPeriodList,
+        setWorkPeriodList,
+        setPaginatedWorkPeriod,
+        workPeriodForSearch,
+        setWorkPeriodListForSearch,
 
         //pagination
         dataPaginating,
