@@ -1,6 +1,5 @@
 import React, { useContext } from "react";
 import { withRouter, NavLink } from "react-router-dom";
-import { useTranslation } from "react-i18next";
 import { _t, getCookie, getSystemSettings } from "../../functions/Functions";
 
 //context consumer
@@ -48,6 +47,17 @@ const Footer = () => {
         generalSettings &&
         getSystemSettings(generalSettings, "type_background"),
     },
+    clockText: {
+      color:
+        generalSettings && getSystemSettings(generalSettings, "type_color"),
+    },
+    clockIcon: {
+      color:
+        generalSettings &&
+        getSystemSettings(generalSettings, "type_background"),
+      backgroundColor:
+        generalSettings && getSystemSettings(generalSettings, "type_color"),
+    },
   };
 
   return (
@@ -66,7 +76,6 @@ const Footer = () => {
                             exact
                             className="t-link w-100 t-h-50"
                           >
-                            {/* todo:: background image dynamic */}
                             <span
                               className="fk-brand--footer-img fk-brand__img--fk"
                               style={style.logo}
@@ -77,7 +86,6 @@ const Footer = () => {
                             to="/dashboard"
                             className="t-link w-100 t-h-50"
                           >
-                            {/* todo:: background image dynamic */}
                             <span
                               className="fk-brand--footer-img fk-brand__img--fk"
                               style={style.logo}
@@ -117,18 +125,25 @@ const Footer = () => {
               </div>
               <div className="col-lg-4 col-xl-3">
                 <div className="clock" style={style.clock}>
-                  <div className="clock__icon t-mr-30">
-                    <span className="fa fa-clock-o"></span>
+                  <div className="clock__icon t-mr-30" style={style.clockIcon}>
+                    <span
+                      className="fa fa-clock-o"
+                      style={style.clockIcon}
+                    ></span>
                   </div>
                   <div className="clock__content">
                     <div
                       id="MyClockDisplay"
                       className="clockDisply"
+                      style={style.clockText}
                       onLoad={() => {
                         "showTime()";
                       }}
                     ></div>
-                    <p className="mb-0 font-10px font-weight-normal">
+                    <p
+                      className="mb-0 font-10px font-weight-normal"
+                      style={style.clockText}
+                    >
                       {weekday[new Date().getDay()]}, {new Date().getDate()}{" "}
                       {month[new Date().getMonth()]}, {new Date().getFullYear()}
                     </p>

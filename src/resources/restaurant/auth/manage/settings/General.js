@@ -45,6 +45,11 @@ const General = () => {
     displayColorPicker: false,
     color: getSystemSettings(generalSettings, "type_background"),
   });
+  //color text
+  let [colorTextPick, setColorTextPick] = useState({
+    displayColorTextPicker: false,
+    color: getSystemSettings(generalSettings, "type_color"),
+  });
 
   //new item
   let [newSettings, setNewSettings] = useState({
@@ -83,6 +88,20 @@ const General = () => {
     setColorPick({ ...colorPick, color: color.hex });
   };
 
+  //text color
+  const handleClickText = () => {
+    setColorTextPick({
+      ...colorTextPick,
+      displayColorTextPicker: !colorTextPick.displayColorTextPicker,
+    });
+  };
+  const handleCloseText = () => {
+    setColorTextPick({ ...colorTextPick, displayColorTextPicker: false });
+  };
+  const handleChangeColorText = (color) => {
+    setColorTextPick({ ...colorTextPick, color: color.hex });
+  };
+
   //send req to server
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -90,6 +109,7 @@ const General = () => {
     let formData = new FormData();
     formData.append("image", newSettings.image);
     formData.append("type_background", colorPick.color);
+    formData.append("type_color", colorTextPick.color);
     formData.append("type_footer", newSettings.footerText);
     formData.append("type_vat", newSettings.vat);
     const url = BASE_URL + "/settings/general-settings";
@@ -134,6 +154,32 @@ const General = () => {
         height: "24px",
         borderRadius: "2px",
         background: colorPick.color,
+      },
+      swatch: {
+        background: "#fff",
+        display: "inline-block",
+        cursor: "pointer",
+      },
+      popover: {
+        position: "absolute",
+        zIndex: "2",
+      },
+      cover: {
+        position: "fixed",
+        top: "0px",
+        right: "0px",
+        bottom: "0px",
+        left: "0px",
+      },
+    },
+  });
+
+  const stylesText = reactCSS({
+    default: {
+      color: {
+        height: "24px",
+        borderRadius: "2px",
+        background: colorTextPick.color,
       },
       swatch: {
         background: "#fff",
@@ -204,7 +250,7 @@ const General = () => {
 
                         {/* Form starts here */}
                         <form
-                          className="row card p-2 mx-3 sm-text my-5"
+                          className="row card p-2 mx-3 sm-text my-2"
                           onSubmit={handleSubmit}
                         >
                           <div className="col-12">
@@ -244,6 +290,48 @@ const General = () => {
                                     <SketchPicker
                                       color={colorPick.color}
                                       onChange={handleChangeColor}
+                                    />
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+
+                            <div className="form-group mt-4">
+                              <div className="mb-2">
+                                <label className="control-label">
+                                  {_t(t("Text color of currency, clock"))}...
+                                  <span className="text-danger">*</span>
+                                  <span className="text-secondary ml-1">
+                                    ({" "}
+                                    {_t(
+                                      t(
+                                        "Please pick a color, click on the color below"
+                                      )
+                                    )}
+                                    )
+                                  </span>
+                                </label>
+                              </div>
+                              <div className="row">
+                                <div
+                                  style={stylesText.swatch}
+                                  onClick={handleClickText}
+                                  className="rounded-md col-12 col-md-3"
+                                >
+                                  <div
+                                    style={stylesText.color}
+                                    className="form-control"
+                                  />
+                                </div>
+                                {colorTextPick.displayColorTextPicker && (
+                                  <div style={stylesText.popover}>
+                                    <div
+                                      style={stylesText.cover}
+                                      onClick={handleCloseText}
+                                    />
+                                    <SketchPicker
+                                      color={colorTextPick.color}
+                                      onChange={handleChangeColorText}
                                     />
                                   </div>
                                 )}
@@ -325,7 +413,7 @@ const General = () => {
                               </div>
                             </div>
 
-                            <div className="form-group mt-5 pb-2">
+                            <div className="form-group mt-4 pb-2">
                               <div className="col-lg-12">
                                 <button
                                   className="btn btn-primary px-5"

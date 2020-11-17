@@ -138,6 +138,8 @@ const Navbar = (props) => {
       backgroundColor:
         generalSettings &&
         getSystemSettings(generalSettings, "type_background"),
+      color:
+        generalSettings && getSystemSettings(generalSettings, "type_color"),
     },
   };
   return (
@@ -272,12 +274,10 @@ const Navbar = (props) => {
                     <li className="config-list__item">
                       <div className="d-flex align-items-center">
                         <div
-                          className="circle circle--sm rounded-circle"
+                          className="circle circle--sm rounded-circle border"
                           style={style.currency}
                         >
-                          <span className="text-light">
-                            {defaultCurrency ? defaultCurrency.symbol : "$"}
-                          </span>
+                          {defaultCurrency ? defaultCurrency.symbol : "$"}
                         </div>
                         <div className="dropdown">
                           <a

@@ -421,7 +421,7 @@ const WorkPeriod = () => {
                                     onClick={handleSaveNewWorkPeriod}
                                     className="w-100 btn btn-secondary sm-text text-uppercase"
                                   >
-                                    start
+                                    start work period
                                   </button>
                                 </li>
                               </ul>
@@ -435,7 +435,7 @@ const WorkPeriod = () => {
                                   onClick={handleSaveNewWorkPeriod}
                                   className="w-100 btn btn-secondary sm-text text-uppercase"
                                 >
-                                  start
+                                  start work period
                                 </button>
                               </li>
                             </ul>
