@@ -8,9 +8,11 @@
         min-width: 100%;
     }
     &__head {
-        padding-top: 3px;
-        padding-bottom: 3px;
-        border-bottom: 1px solid darken($light-2, 10%);
+        padding-top: 10px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid darken($epsilon, 10%);
+        background: $epsilon;
+        color: $white;
         text-transform: capitalize;
         font-weight: 700;
     }

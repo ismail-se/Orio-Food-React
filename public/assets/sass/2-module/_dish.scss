@@ -11,6 +11,8 @@
         }
     }
     &-card {
+        display: flex;
+        flex-direction: column;
         position: relative;
         box-shadow: 0 5px 10px 0 rgba($dark, .15);
         &:hover {
@@ -31,7 +33,11 @@
             }
         }
         &__title {
-            display: block;
+            display: flex;
+            flex-grow: 1;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
             padding-top: 5px;
             padding-bottom: 5px;
             padding-left: 5px;
@@ -55,6 +61,7 @@
         }
     }
     &__link {
+        display: flex !important;
         &.active {
             .fk-dish-card__title {
                 background: $primary;

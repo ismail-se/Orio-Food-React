@@ -9,7 +9,6 @@ import RestaurantLanding from "../resources/restaurant/public/RestaurantLanding"
 
 //private pages
 import RestaurantHome from "../resources/restaurant/auth/RestaurantHome";
-import Pos from "../resources/restaurant/auth/Pos";
 import OrderHistories from "../resources/restaurant/auth/OrderHistories";
 import Kitchen from "../resources/restaurant/auth/Kitchen";
 import Branch from "../resources/restaurant/auth/Branch";
@@ -19,6 +18,8 @@ import Reports from "../resources/restaurant/auth/Reports";
 import WorkPeriod from "../resources/restaurant/auth/workPeriod/WorkPeriod";
 //customers
 import Customers from "../resources/restaurant/auth/customer/Customers";
+//pos
+import Pos from "../resources/restaurant/auth/pos/Pos";
 
 //from restaurant-auth-manage
 //-food
