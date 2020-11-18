@@ -736,10 +736,7 @@ const AdminStaffCrud = () => {
               >
                 {_t(t("Yes, please!"))}
               </button>
-              <button
-                className="btn btn-success text-dark ml-2 px-3"
-                onClick={onClose}
-              >
+              <button className="btn btn-success ml-2 px-3" onClick={onClose}>
                 {_t(t("No"))}
               </button>
             </div>
@@ -1134,7 +1131,7 @@ const AdminStaffCrud = () => {
                         <div className="col-6">
                           <button
                             type="submit"
-                            className="btn btn-success text-dark w-100 xsm-text text-uppercase t-width-max"
+                            className="btn btn-success w-100 xsm-text text-uppercase t-width-max"
                           >
                             {!newAdminStaff.edit
                               ? _t(t("Save"))
@@ -1165,7 +1162,7 @@ const AdminStaffCrud = () => {
                       <div className="col-6">
                         <button
                           type="button"
-                          className="btn btn-success text-dark w-100 xsm-text text-uppercase t-width-max"
+                          className="btn btn-success w-100 xsm-text text-uppercase t-width-max"
                           onClick={(e) => {
                             e.preventDefault();
                           }}

@@ -45,7 +45,7 @@
       filterizd.filterizr({
         //options object
         layout: "sameWidth",
-        gutterPixels: 10,
+        gutterPixels: 40,
       });
     }
     /*--------Filterizer End----------*/

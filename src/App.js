@@ -18,6 +18,7 @@ import {
   //common
   Refresh,
   Login,
+  ForgetPw,
   NoPermission,
 
   //dashboard
@@ -86,6 +87,14 @@ function App() {
           <Route path="/login" exact>
             <Login />
           </Route>
+          <Route path="/reset-password" exact>
+            <ForgetPw />
+          </Route>
+
+          <Route path="/set-new-password/:token" exact>
+            <ForgetPw />
+          </Route>
+
           <Route path="/" exact>
             <RestaurantLanding />
           </Route>

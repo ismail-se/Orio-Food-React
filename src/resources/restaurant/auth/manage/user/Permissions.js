@@ -464,7 +464,7 @@ const Permissions = () => {
                         <div className="col-6">
                           <button
                             type="submit"
-                            className="btn btn-success text-dark w-100 xsm-text text-uppercase t-width-max"
+                            className="btn btn-success w-100 xsm-text text-uppercase t-width-max"
                           >
                             {!newGroup.edit ? _t(t("Save")) : _t(t("Update"))}
                           </button>
@@ -493,7 +493,7 @@ const Permissions = () => {
                       <div className="col-6">
                         <button
                           type="button"
-                          className="btn btn-success text-dark w-100 xsm-text text-uppercase t-width-max"
+                          className="btn btn-success w-100 xsm-text text-uppercase t-width-max"
                           onClick={(e) => {
                             e.preventDefault();
                           }}

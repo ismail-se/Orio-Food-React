@@ -446,7 +446,7 @@ const TableCrud = () => {
                         <div className="col-6">
                           <button
                             type="submit"
-                            className="btn btn-success text-dark w-100 xsm-text text-uppercase t-width-max"
+                            className="btn btn-success w-100 xsm-text text-uppercase t-width-max"
                           >
                             {!newTable.edit ? _t(t("Save")) : _t(t("Update"))}
                           </button>
@@ -475,7 +475,7 @@ const TableCrud = () => {
                       <div className="col-6">
                         <button
                           type="button"
-                          className="btn btn-success text-dark w-100 xsm-text text-uppercase t-width-max"
+                          className="btn btn-success w-100 xsm-text text-uppercase t-width-max"
                           onClick={(e) => {
                             e.preventDefault();
                           }}

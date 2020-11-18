@@ -30,7 +30,7 @@ import { RestaurantContext } from "../../contexts/Restaurant";
 
 const cookies = new Cookies();
 
-const Login = () => {
+const ForgetPw = () => {
   const { t } = useTranslation();
   const history = useHistory();
 
@@ -97,60 +97,48 @@ const Login = () => {
     return axios
       .post(url, credentials)
       .then((res) => {
-        if (res.data[2] === 0) {
-          let access_token = {
-            _user: res.data[0].access_token.slice(0, 8),
-            sbb: res.data[0].access_token.slice(8, 10),
-            frr: res.data[0].access_token.slice(10, 13),
-            xss: res.data[0].access_token.slice(13),
-          };
-          let date = new Date();
-          date.setFullYear(date.getFullYear() + 1);
-          cookies.set("_user", access_token._user, {
-            path: "/",
-            expires: date,
-            sameSite: "lax",
-          });
-          cookies.set("sbb", access_token.sbb, {
-            path: "/",
-            expires: date,
-            sameSite: "lax",
-          });
-          cookies.set("frr", access_token.frr, {
-            path: "/",
-            expires: date,
-            sameSite: "lax",
-          });
-          cookies.set("xss", access_token.xss, {
-            path: "/",
-            expires: date,
-            sameSite: "lax",
-          });
-          // todo:: get data if have permission here after authentication
-          //common
-          getAuthUser();
-          getPermissionGroups();
-          getBranch();
+        let access_token = {
+          _user: res.data[0].access_token.slice(0, 8),
+          sbb: res.data[0].access_token.slice(8, 10),
+          frr: res.data[0].access_token.slice(10, 13),
+          xss: res.data[0].access_token.slice(13),
+        };
+        let date = new Date();
+        date.setFullYear(date.getFullYear() + 1);
+        cookies.set("_user", access_token._user, {
+          path: "/",
+          expires: date,
+          sameSite: "lax",
+        });
+        cookies.set("sbb", access_token.sbb, {
+          path: "/",
+          expires: date,
+          sameSite: "lax",
+        });
+        cookies.set("frr", access_token.frr, {
+          path: "/",
+          expires: date,
+          sameSite: "lax",
+        });
+        cookies.set("xss", access_token.xss, {
+          path: "/",
+          expires: date,
+          sameSite: "lax",
+        });
+        // todo:: get data if have permission here after authentication
+        //common
+        getAuthUser();
+        getPermissionGroups();
+        getBranch();
 
-          //permission based
-          if (
-            authUserInfo.permissions !== null &&
-            authUserInfo.permissions.includes("Manage")
-          ) {
-            getSmtp();
-          }
-          history.push("/dashboard");
-        } else {
-          setLoading(false);
-          toast.error(`${_t(t("Sorry, you do not have access!"))}`, {
-            position: "bottom-center",
-            autoClose: 10000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            className: "text-center toast-notification",
-          });
+        //permission based
+        if (
+          authUserInfo.permissions !== null &&
+          authUserInfo.permissions.includes("Manage")
+        ) {
+          getSmtp();
         }
+        history.push("/dashboard");
       })
       .catch((error) => {
         setLoading(false);
@@ -179,14 +167,14 @@ const Login = () => {
   return (
     <>
       <Helmet>
-        <title>Sign In</title>
+        <title>Reset Password</title>
       </Helmet>
       <main>
         <div className="fk-global-access">
           <div className="d-none d-lg-block">
             <div className="fk-global-img text-center">
               <img
-                src="/assets/img/sign-in.png"
+                src="/assets/img/verifiy-img.png"
                 alt="foodkhan"
                 className="img-fluid mx-auto fk-global-img__is"
               />
@@ -267,7 +255,7 @@ const Login = () => {
                   ) : (
                     <div key="loading">
                       <h3 className="mt-0 text-capitalize font-weight-bold">
-                        sign in
+                        reset password
                       </h3>
                       <form onSubmit={handleSubmit}>
                         <div className="row">
@@ -276,44 +264,13 @@ const Login = () => {
                               onChange={handleCredentials}
                               type="email"
                               name="email"
-                              placeholder="Email"
+                              placeholder="Enter your email"
                               value={credentials.email}
                               required
                               className="form-control border-0 rounded-1"
                             />
                           </div>
-                          <div className="col-12 t-mb-15">
-                            <input
-                              onChange={handleCredentials}
-                              name="password"
-                              type="password"
-                              placeholder="Password"
-                              value={credentials.password}
-                              required
-                              className="form-control border-0 rounded-1"
-                            />
-                          </div>
-                          <div className="col-6 t-mb-15">
-                            <label className="mx-checkbox">
-                              <input
-                                onChange={handleCredentials}
-                                name="remember_me"
-                                type="checkbox"
-                                className="mx-checkbox__input mx-checkbox__input-solid mx-checkbox__input-solid--danger mx-checkbox__input-sm"
-                              />
-                              <span className="mx-checkbox__text text-capitalize t-text-heading t-ml-8">
-                                Remember Me
-                              </span>
-                            </label>
-                          </div>
-                          <div className="col-6 t-mb-15 text-right">
-                            <NavLink
-                              to="/reset-password"
-                              className="t-link sm-text"
-                            >
-                              Forgot password?
-                            </NavLink>
-                          </div>
+
                           <div className="col-12">
                             <div className="d-flex align-items-center">
                               <div className="t-mr-8">
@@ -321,8 +278,16 @@ const Login = () => {
                                   type="submit"
                                   className="btn btn-success sm-text text-uppercase"
                                 >
-                                  sign in
+                                  Reset Password
                                 </button>
+                              </div>
+                              <div className="t-mr-8 ml-auto">
+                                <NavLink
+                                  to="/login"
+                                  className="btn btn-primary sm-text text-uppercase"
+                                >
+                                  Sign in
+                                </NavLink>
                               </div>
                             </div>
                           </div>
@@ -340,4 +305,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default ForgetPw;

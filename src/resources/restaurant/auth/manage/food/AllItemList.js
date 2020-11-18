@@ -1030,7 +1030,7 @@ const AllItemList = () => {
                                       //Undo button
                                       <button
                                         type="button"
-                                        className="btn btn-success text-dark btn-sm py-0"
+                                        className="btn btn-success btn-sm py-0"
                                         onClick={() => {
                                           //Remove variation item from-->(deleted variation array which will be sent to server to delete)
                                           let deletedArray = [];

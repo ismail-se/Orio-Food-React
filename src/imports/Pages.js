@@ -1,6 +1,7 @@
 //common pages
 import Refresh from "../resources/common/Refresh";
 import Login from "../resources/common/Login";
+import ForgetPw from "../resources/common/ForgetPw";
 import NoPermission from "../resources/common/NoPermission";
 
 //public page
@@ -54,6 +55,7 @@ export {
   //common
   Refresh,
   Login,
+  ForgetPw,
   NoPermission,
   //dashboard
   RestaurantHome,

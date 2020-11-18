@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
+import { useHistory } from "react-router-dom";
 
 //axios and base url
 import axios from "axios";
 import { BASE_URL } from "../BaseUrl";
 
 //functions
-import { getCookie } from "../functions/Functions";
+import { getCookie, deleteCookie } from "../functions/Functions";
 
 //3rd party packages
 
@@ -13,6 +14,8 @@ import { getCookie } from "../functions/Functions";
 const UserContext = React.createContext();
 
 const UserProvider = ({ children }) => {
+  const history = useHistory();
+
   // State hooks  here
   //loading
   const [loading, setLoading] = useState(false);
@@ -57,12 +60,16 @@ const UserProvider = ({ children }) => {
         headers: { Authorization: `Bearer ${getCookie()}` },
       })
       .then((res) => {
-        setAuthUserInfo({
-          ...authUserInfo,
-          details: res.data[0],
-          permissions: res.data[1],
-        });
-        setLoading(false);
+        if (res.data[0].is_banned === 0) {
+          setAuthUserInfo({
+            ...authUserInfo,
+            details: res.data[0],
+            permissions: res.data[1],
+          });
+          setLoading(false);
+        } else {
+          deleteCookie();
+        }
       })
       .catch(() => {});
   };
