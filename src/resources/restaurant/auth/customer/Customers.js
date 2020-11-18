@@ -8,6 +8,7 @@ import { BASE_URL } from "../../../../BaseUrl";
 import {
   _t,
   getCookie,
+  modalLoading,
   pageLoading,
   paginationLoading,
   pagination,
@@ -24,7 +25,6 @@ import { confirmAlert } from "react-confirm-alert";
 import "react-confirm-alert/src/react-confirm-alert.css";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import Moment from "react-moment";
 
 //importing context consumer here
 import { UserContext } from "../../../../contexts/User";
@@ -32,189 +32,111 @@ import { SettingsContext } from "../../../../contexts/Settings";
 import { RestaurantContext } from "../../../../contexts/Restaurant";
 
 const Customers = () => {
-  var weekday = [
-    "Sunday",
-    "Monday",
-    "Tuesday",
-    "Wednesday",
-    "Thursday",
-    "Friday",
-    "Saturday",
-  ];
-
-  var month = [
-    "Jan",
-    "Feb",
-    "Mar",
-    "Apr",
-    "May",
-    "Jun",
-    "Jul",
-    "Aug",
-    "Sep",
-    "Oct",
-    "Nov",
-    "Dec",
-  ];
-
   //getting context values here
   const {
     //common
     loading,
     setLoading,
-    dataPaginating,
   } = useContext(SettingsContext);
 
-  const { authUserInfo } = useContext(UserContext);
+  const {
+    authUserInfo,
+
+    //customer
+    getCustomer,
+    customerList,
+    setCustomerList,
+    setPaginatedCustomer,
+    customerForSearch,
+    setCustomerForSearch,
+
+    //pagination
+    dataPaginating,
+  } = useContext(UserContext);
 
   const {
     //branch
     branchForSearch,
-
-    //work period
-    getWorkPeriod,
-    workPeriodList,
-    setWorkPeriodList,
-    setPaginatedWorkPeriod,
-    workPeriodForSearch,
-    setWorkPeriodListForSearch,
   } = useContext(RestaurantContext);
 
   const { t } = useTranslation();
 
-  //new unit
-  let [newWorkPeriod, setNewWorkPeriod] = useState({
-    user_type: null,
-    branch_id: null,
+  // States hook here
+  //new customer
+  let [newCustomer, setNewCustomer] = useState({
+    name: "",
+    email: "",
+    phn_no: "",
+    address: "",
+    branch: null,
+    selectedBranch: null,
     edit: false,
     editSlug: null,
     uploading: false,
   });
 
   //search result
-  let [searchedWorkPeriod, setSearchedWorkPeriod] = useState({
+  let [searchedCustomer, setSearchedCustomer] = useState({
     list: null,
     searched: false,
   });
 
   //useEffect == componentDidMount
-  useEffect(() => {
-    authUserInfo.details &&
-      setNewWorkPeriod({
-        branch_id: authUserInfo.details.branch_id
-          ? authUserInfo.details.branch_id
-          : null,
-        user_type: authUserInfo.details.user_type,
-      });
-  }, []);
+  useEffect(() => {}, []);
 
-  //set branch id
-  const handleSetBranchId = (branch) => {
-    setNewWorkPeriod({
-      ...newWorkPeriod,
-      branch_id: branch.id,
-    });
+  //set name, phn no hook
+  const handleSetNewCustomer = (e) => {
+    setNewCustomer({ ...newCustomer, [e.target.name]: e.target.value });
   };
 
-  //search work periods here
-  const handleSearch = (e) => {
-    let searchInput = e.target.value.toLowerCase();
-    if (searchInput.length === 0) {
-      setSearchedWorkPeriod({ ...searchedWorkPeriod, searched: false });
-    } else {
-      let searchedList = workPeriodForSearch.filter((item) => {
-        let lowerCaseItemBranchName = item.branch_name.toLowerCase();
-        let lowerCaseItemUserName = item.started_by.toLowerCase();
-        let lowerCaseItemDate = item.date.toLowerCase();
-        let lowerCaseItemUserName2 =
-          item.ended_by && item.ended_by.toLowerCase();
-        return (
-          lowerCaseItemBranchName.includes(searchInput) ||
-          lowerCaseItemUserName.includes(searchInput) ||
-          lowerCaseItemDate.includes(searchInput) ||
-          (lowerCaseItemUserName2 &&
-            lowerCaseItemUserName2.includes(searchInput))
-        );
-      });
-      setSearchedWorkPeriod({
-        ...searchedWorkPeriod,
-        list: searchedList,
-        searched: true,
-      });
-    }
+  //set branch hook
+  const handleSetBranch = (branch) => {
+    setNewCustomer({ ...newCustomer, branch });
   };
 
-  //Save New work period
-  const handleSaveNewWorkPeriod = (e) => {
+  //Save New customer
+  const handleSaveNewCustomer = (e) => {
     e.preventDefault();
-    if (newWorkPeriod.branch_id) {
-      setNewWorkPeriod({
-        ...newWorkPeriod,
-        uploading: true,
-      });
-      const url = BASE_URL + `/settings/new-work-period`;
-      let date =
-        weekday[new Date().getDay()] +
-        ", " +
-        new Date().getDate() +
-        " " +
-        month[new Date().getMonth()] +
-        ", " +
-        new Date().getFullYear();
-
-      let time = new Date().getTime();
-
-      let formData = {
-        date: date,
-        branch_id: newWorkPeriod.branch_id,
-        started_at: time,
-      };
-      return axios
-        .post(url, formData, {
-          headers: { Authorization: `Bearer ${getCookie()}` },
-        })
-        .then((res) => {
-          if (res.data === "exist") {
-            authUserInfo.details &&
-              setNewWorkPeriod({
-                branch_id: authUserInfo.details.branch_id
-                  ? authUserInfo.details.branch_id
-                  : null,
-                user_type: authUserInfo.details.user_type,
-                edit: false,
-                editSlug: null,
-                uploading: false,
-              });
-            toast.error(
-              `${_t(t("Please end the started work period first"))}`,
-              {
-                position: "bottom-center",
-                autoClose: 10000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                className: "text-center toast-notification",
-              }
-            );
-          } else {
-            authUserInfo.details &&
-              setNewWorkPeriod({
-                branch_id: authUserInfo.details.branch_id
-                  ? authUserInfo.details.branch_id
-                  : null,
-                user_type: authUserInfo.details.user_type,
-                edit: false,
-                editSlug: null,
-                uploading: false,
-              });
-            setWorkPeriodList(res.data[0]);
-            setWorkPeriodListForSearch(res.data[1]);
-            setSearchedWorkPeriod({
-              ...searchedWorkPeriod,
-              list: res.data[1],
+    let checkBranch = false;
+    if (
+      authUserInfo.details !== null &&
+      authUserInfo.details.user_type !== "staff"
+    ) {
+      checkBranch = true;
+    }
+    if (checkBranch) {
+      if (newCustomer.branch !== null) {
+        setNewCustomer({
+          ...newCustomer,
+          uploading: true,
+        });
+        const customerUrl = BASE_URL + `/settings/new-customer`;
+        let formData = new FormData();
+        formData.append("name", newCustomer.name);
+        formData.append("phn_no", newCustomer.phn_no);
+        formData.append("email", newCustomer.email);
+        formData.append("address", newCustomer.address);
+        formData.append("branch_id", newCustomer.branch.id);
+        return axios
+          .post(customerUrl, formData, {
+            headers: { Authorization: `Bearer ${getCookie()}` },
+          })
+          .then((res) => {
+            setNewCustomer({
+              name: "",
+              email: "",
+              phn_no: "",
+              address: "",
+              branch: null,
+              selectedBranch: null,
+              edit: false,
+              editSlug: null,
+              uploading: false,
             });
+            setCustomerList(res.data[0]);
+            setCustomerForSearch(res.data[1]);
             setLoading(false);
-            toast.success(`${_t(t("Work period has been started"))}`, {
+            toast.success(`${_t(t("Customer has been added"))}`, {
               position: "bottom-center",
               autoClose: 10000,
               hideProgressBar: false,
@@ -222,15 +144,77 @@ const Customers = () => {
               pauseOnHover: true,
               className: "text-center toast-notification",
             });
-          }
+          })
+          .catch((error) => {
+            setLoading(false);
+            setNewCustomer({
+              ...newCustomer,
+              uploading: false,
+            });
+            if (error && error.response.data.errors) {
+              if (error.response.data.errors.phn_no) {
+                error.response.data.errors.phn_no.forEach((item) => {
+                  if (item === "A customer exists with this phone number") {
+                    toast.error(
+                      `${_t(t("A customer exists with this phone number"))}`,
+                      {
+                        position: "bottom-center",
+                        autoClose: 10000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        className: "text-center toast-notification",
+                      }
+                    );
+                  }
+                });
+              }
+            }
+          });
+      } else {
+        toast.error(`${_t(t("Please select a branch"))}`, {
+          position: "bottom-center",
+          autoClose: 10000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          className: "text-center toast-notification",
+        });
+      }
+    } else {
+      setNewCustomer({
+        ...newCustomer,
+        uploading: true,
+      });
+      const customerUrl = BASE_URL + `/settings/new-customer`;
+      let formData = new FormData();
+      formData.append("name", newCustomer.name);
+      formData.append("phn_no", newCustomer.phn_no);
+      formData.append("email", newCustomer.email);
+      formData.append("address", newCustomer.address);
+      if (authUserInfo.details !== null) {
+        formData.append("branch_id", authUserInfo.details.branch_id);
+      }
+      return axios
+        .post(customerUrl, formData, {
+          headers: { Authorization: `Bearer ${getCookie()}` },
         })
-        .catch(() => {
-          setLoading(false);
-          setNewWorkPeriod({
-            ...newWorkPeriod,
+        .then((res) => {
+          setNewCustomer({
+            name: "",
+            email: "",
+            phn_no: "",
+            address: "",
+            branch: null,
+            selectedBranch: null,
+            edit: false,
+            editSlug: null,
             uploading: false,
           });
-          toast.error(`${_t(t("Please try again"))}`, {
+          setCustomerList(res.data[0]);
+          setCustomerForSearch(res.data[1]);
+          setLoading(false);
+          toast.success(`${_t(t("Customer has been added"))}`, {
             position: "bottom-center",
             autoClose: 10000,
             hideProgressBar: false,
@@ -238,47 +222,203 @@ const Customers = () => {
             pauseOnHover: true,
             className: "text-center toast-notification",
           });
+        })
+        .catch((error) => {
+          setLoading(false);
+          setNewCustomer({
+            ...newCustomer,
+            uploading: false,
+          });
+          if (error && error.response.data.errors) {
+            if (error.response.data.errors.phn_no) {
+              error.response.data.errors.phn_no.forEach((item) => {
+                if (item === "A customer exists with this phone number") {
+                  toast.error(
+                    `${_t(t("A customer exists with this phone number"))}`,
+                    {
+                      position: "bottom-center",
+                      autoClose: 10000,
+                      hideProgressBar: false,
+                      closeOnClick: true,
+                      pauseOnHover: true,
+                      className: "text-center toast-notification",
+                    }
+                  );
+                }
+              });
+            }
+          }
         });
+    }
+  };
+
+  //set edit true & values
+  const handleSetEdit = (slug) => {
+    let customer = customerForSearch.filter((item) => {
+      return item.slug === slug;
+    });
+
+    let selectedOptionForBranch = null;
+    if (
+      authUserInfo.details !== null &&
+      authUserInfo.details.user_type !== "staff"
+    ) {
+      if (customer[0].branch_id) {
+        selectedOptionForBranch = branchForSearch.filter((branchItem) => {
+          return branchItem.id === customer[0].branch_id;
+        });
+      }
+    }
+    setNewCustomer({
+      ...newCustomer,
+      name: customer[0].name,
+      email: customer[0].email,
+      phn_no: customer[0].phn_no,
+      address: customer[0].address,
+      selectedBranch: selectedOptionForBranch
+        ? selectedOptionForBranch[0]
+        : null,
+      editSlug: customer[0].slug,
+      edit: true,
+    });
+  };
+
+  //update customer
+  const handleUpdateCustomer = (e) => {
+    e.preventDefault();
+    setNewCustomer({
+      ...newCustomer,
+      uploading: true,
+    });
+    const customerUrl = BASE_URL + `/settings/update-customer`;
+    let formData = new FormData();
+    formData.append("name", newCustomer.name);
+    formData.append("phn_no", newCustomer.phn_no);
+    formData.append("email", newCustomer.email);
+    formData.append("address", newCustomer.address);
+    if (newCustomer.branch !== null) {
+      formData.append("branch_id", newCustomer.branch.id);
+    }
+    formData.append("editSlug", newCustomer.editSlug);
+    return axios
+      .post(customerUrl, formData, {
+        headers: { Authorization: `Bearer ${getCookie()}` },
+      })
+      .then((res) => {
+        setNewCustomer({
+          name: "",
+          email: "",
+          phn_no: "",
+          address: "",
+          branch: null,
+          selectedBranch: null,
+          edit: false,
+          editSlug: null,
+          uploading: false,
+        });
+        setCustomerList(res.data[0]);
+        setCustomerForSearch(res.data[1]);
+        setSearchedCustomer({
+          ...searchedCustomer,
+          list: res.data[1],
+        });
+        setLoading(false);
+        toast.success(`${_t(t("Customer has been updated"))}`, {
+          position: "bottom-center",
+          autoClose: 10000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          className: "text-center toast-notification",
+        });
+      })
+      .catch((error) => {
+        setLoading(false);
+        setNewCustomer({
+          ...newCustomer,
+          uploading: false,
+        });
+        if (error && error.response.data.errors) {
+          if (error.response.data.errors.phn_no) {
+            error.response.data.errors.phn_no.forEach((item) => {
+              if (item === "A customer exists with this phone number") {
+                toast.error(
+                  `${_t(t("A customer exists with this phone number"))}`,
+                  {
+                    position: "bottom-center",
+                    autoClose: 10000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    className: "text-center toast-notification",
+                  }
+                );
+              }
+            });
+          }
+        }
+      });
+  };
+
+  //search customers here
+  const handleSearch = (e) => {
+    let searchInput = e.target.value.toLowerCase();
+    if (searchInput.length === 0) {
+      setSearchedCustomer({ ...searchedCustomer, searched: false });
     } else {
-      toast.error(`${_t(t("Please select a branch"))}`, {
-        position: "bottom-center",
-        autoClose: 10000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        className: "text-center toast-notification",
+      let searchedList = customerForSearch.filter((item) => {
+        //name
+        let lowerCaseItemName = item.name.toLowerCase();
+
+        //email
+        let lowerCaseItemEmail =
+          item.email !== null && item.email.toLowerCase();
+
+        //phn no
+        let lowerCaseItemPhnNo =
+          item.phn_no !== null && item.phn_no.toLowerCase();
+
+        //address
+        let lowerCaseItemAddress =
+          item.address !== null && item.address.toLowerCase();
+
+        //branch
+        let lowerCaseItemBranch =
+          item.branch_name !== null && item.branch_name.toLowerCase();
+        return (
+          lowerCaseItemName.includes(searchInput) ||
+          (lowerCaseItemEmail && lowerCaseItemEmail.includes(searchInput)) ||
+          (lowerCaseItemPhnNo && lowerCaseItemPhnNo.includes(searchInput)) ||
+          (lowerCaseItemAddress &&
+            lowerCaseItemAddress.includes(searchInput)) ||
+          (lowerCaseItemBranch && lowerCaseItemBranch.includes(searchInput))
+        );
+      });
+      setSearchedCustomer({
+        ...searchedCustomer,
+        list: searchedList,
+        searched: true,
       });
     }
   };
 
-  //milisec to hour min
-  const millisToMinutesAndHours = (millis) => {
-    var minutes = Math.floor(millis / 60000);
-    var hours = Math.floor(minutes / 60);
-    minutes = Math.floor(minutes % 60);
-    var seconds = ((millis % 60000) / 1000).toFixed(0);
-    return `${hours} ${_t(t("hr"))} - ${minutes} ${_t(t("min"))} - ${
-      seconds < 10 ? "0" : ""
-    }${seconds} ${_t(t("sec"))}`;
-  };
-
-  //end confirmation modal of Customers
-  const handleDeleteConfirmation = (id) => {
+  //delete confirmation modal of waiter
+  const handleDeleteConfirmation = (slug) => {
     confirmAlert({
       customUI: ({ onClose }) => {
         return (
           <div className="card card-body">
             <h1>{_t(t("Are you sure?"))}</h1>
-            <p className="text-center">{_t(t("You want to end now?"))}</p>
+            <p className="text-center">{_t(t("You want to delete this?"))}</p>
             <div className="d-flex justify-content-center">
               <button
                 className="btn btn-primary"
                 onClick={() => {
-                  handleEndWorkPeriod(id);
+                  handleDeleteCustomer(slug);
                   onClose();
                 }}
               >
-                {_t(t("Yes, end work period!"))}
+                {_t(t("Yes, delete it!"))}
               </button>
               <button className="btn btn-success ml-2 px-3" onClick={onClose}>
                 {_t(t("No"))}
@@ -290,41 +430,23 @@ const Customers = () => {
     });
   };
 
-  //end here
-  const handleEndWorkPeriod = (id) => {
-    setNewWorkPeriod({
-      ...newWorkPeriod,
-      uploading: true,
-    });
-    const url = BASE_URL + `/settings/update-work-period`;
-    let time = new Date().getTime();
-    let formData = {
-      id: id,
-      ended_at: time,
-    };
+  //delete customer here
+  const handleDeleteCustomer = (slug) => {
+    setLoading(true);
+    const customerUrl = BASE_URL + `/settings/delete-customer/${slug}`;
     return axios
-      .post(url, formData, {
+      .get(customerUrl, {
         headers: { Authorization: `Bearer ${getCookie()}` },
       })
       .then((res) => {
-        authUserInfo.details &&
-          setNewWorkPeriod({
-            branch_id: authUserInfo.details.branch_id
-              ? authUserInfo.details.branch_id
-              : null,
-            user_type: authUserInfo.details.user_type,
-            edit: false,
-            editSlug: null,
-            uploading: false,
-          });
-        setWorkPeriodList(res.data[0]);
-        setWorkPeriodListForSearch(res.data[1]);
-        setSearchedWorkPeriod({
-          ...searchedWorkPeriod,
+        setCustomerList(res.data[0]);
+        setCustomerForSearch(res.data[1]);
+        setSearchedCustomer({
+          ...searchedCustomer,
           list: res.data[1],
         });
         setLoading(false);
-        toast.success(`${_t(t("Work period has been ended"))}`, {
+        toast.success(`${_t(t("Customer has been deleted successfully"))}`, {
           position: "bottom-center",
           autoClose: 10000,
           hideProgressBar: false,
@@ -335,10 +457,6 @@ const Customers = () => {
       })
       .catch(() => {
         setLoading(false);
-        setNewWorkPeriod({
-          ...newWorkPeriod,
-          uploading: false,
-        });
         toast.error(`${_t(t("Please try again"))}`, {
           position: "bottom-center",
           autoClose: 10000,
@@ -355,11 +473,208 @@ const Customers = () => {
       <Helmet>
         <title>{_t(t("Customers"))}</title>
       </Helmet>
+
+      {/* Add modal */}
+      <div className="modal fade" id="addCustomer" aria-hidden="true">
+        <div className="modal-dialog modal-lg">
+          <div className="modal-content">
+            <div className="modal-header align-items-center">
+              <div className="fk-sm-card__content">
+                <h5 className="text-capitalize fk-sm-card__title">
+                  {!newCustomer.edit
+                    ? _t(t("Add new customer"))
+                    : _t(t("Update customer"))}
+                </h5>
+              </div>
+              <button
+                type="button"
+                className="btn-close"
+                data-dismiss="modal"
+                aria-label="Close"
+              ></button>
+            </div>
+            <div className="modal-body">
+              {/* show form or show saving loading */}
+              {newCustomer.uploading === false ? (
+                <div key="fragment-customer-1">
+                  <form
+                    onSubmit={
+                      !newCustomer.edit
+                        ? handleSaveNewCustomer
+                        : handleUpdateCustomer
+                    }
+                  >
+                    <div>
+                      <label htmlFor="name" className="form-label">
+                        {_t(t("Name"))}{" "}
+                        <small className="text-primary">*</small>
+                      </label>
+                      <input
+                        type="text"
+                        className="form-control"
+                        id="name"
+                        name="name"
+                        placeholder="e.g. Mr. John"
+                        value={newCustomer.name || ""}
+                        required
+                        onChange={handleSetNewCustomer}
+                      />
+                    </div>
+
+                    {authUserInfo.details !== null &&
+                      authUserInfo.details.user_type !== "staff" && (
+                        <div className="mt-3">
+                          <label className="form-label mb-0">
+                            {_t(t("Select a branch"))}{" "}
+                            {newCustomer.edit ? (
+                              <small className="text-primary">
+                                {"( "}
+                                {_t(
+                                  t(
+                                    "Leave empty if you do not want to change branch"
+                                  )
+                                )}
+                                {" )"}
+                              </small>
+                            ) : (
+                              <small className="text-primary">*</small>
+                            )}
+                          </label>
+                          {newCustomer.edit &&
+                            newCustomer.selectedBranch !== null && (
+                              <ul className="list-group list-group-horizontal-sm row col-12 mb-2 ml-md-1">
+                                <li className="list-group-item col-12 col-md-3 bg-success rounded-sm py-1 px-2 my-1 text-center">
+                                  {newCustomer.selectedBranch.name}
+                                </li>
+                              </ul>
+                            )}
+                          <Select
+                            options={branchForSearch}
+                            components={makeAnimated()}
+                            getOptionLabel={(option) => option.name}
+                            getOptionValue={(option) => option.name}
+                            className="basic-multi-select mt-2"
+                            classNamePrefix="select"
+                            onChange={handleSetBranch}
+                            placeholder={_t(t("Please select a branch"))}
+                          />
+                        </div>
+                      )}
+
+                    <div className="mt-3">
+                      <label htmlFor="email" className="form-label">
+                        {_t(t("Email"))}
+                      </label>
+                      <input
+                        type="email"
+                        className="form-control"
+                        id="email"
+                        name="email"
+                        placeholder="e.g. customer@example.com"
+                        value={newCustomer.email || ""}
+                        onChange={handleSetNewCustomer}
+                      />
+                    </div>
+
+                    <div className="mt-3">
+                      <label htmlFor="phn_no" className="form-label">
+                        {_t(t("Phone number"))}
+                      </label>
+                      <input
+                        type="text"
+                        className="form-control"
+                        id="phn_no"
+                        name="phn_no"
+                        placeholder="e.g. 01xxx xxx xxx"
+                        value={newCustomer.phn_no || ""}
+                        onChange={handleSetNewCustomer}
+                      />
+                    </div>
+
+                    <div className="mt-3">
+                      <label htmlFor="address" className="form-label">
+                        {_t(t("Address"))}
+                      </label>
+                      <textarea
+                        type="text"
+                        className="form-control"
+                        id="address"
+                        name="address"
+                        placeholder="Type customer address"
+                        value={newCustomer.address || ""}
+                        onChange={handleSetNewCustomer}
+                      />
+                    </div>
+
+                    <div className="mt-4">
+                      <div className="row">
+                        <div className="col-6">
+                          <button
+                            type="submit"
+                            className="btn btn-success text-dark w-100 xsm-text text-uppercase t-width-max"
+                          >
+                            {!newCustomer.edit
+                              ? _t(t("Save"))
+                              : _t(t("Update"))}
+                          </button>
+                        </div>
+                        <div className="col-6">
+                          <button
+                            type="button"
+                            className="btn btn-primary w-100 xsm-text text-uppercase t-width-max"
+                            data-dismiss="modal"
+                          >
+                            {_t(t("Close"))}
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+              ) : (
+                <div key="fragment2">
+                  <div className="text-center text-primary font-weight-bold text-uppercase">
+                    {_t(t("Please wait"))}
+                  </div>
+                  {modalLoading(3)}
+                  <div className="mt-4">
+                    <div className="row">
+                      <div className="col-6">
+                        <button
+                          type="button"
+                          className="btn btn-success text-dark w-100 xsm-text text-uppercase t-width-max"
+                          onClick={(e) => {
+                            e.preventDefault();
+                          }}
+                        >
+                          {!newCustomer.edit ? _t(t("Save")) : _t(t("Update"))}
+                        </button>
+                      </div>
+                      <div className="col-6">
+                        <button
+                          type="button"
+                          className="btn btn-primary w-100 xsm-text text-uppercase t-width-max"
+                          data-dismiss="modal"
+                        >
+                          {_t(t("Close"))}
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+      {/* Add modal Ends*/}
+
+      {/* main body */}
       <main id="main" data-simplebar>
         <div className="container">
           <div className="row t-mt-10 gx-2">
             <div className="col-12 t-mb-30 mb-lg-0">
-              {newWorkPeriod.uploading === true || loading === true ? (
+              {newCustomer.uploading === true || loading === true ? (
                 pageLoading()
               ) : (
                 <div className="t-bg-white ">
@@ -371,7 +686,7 @@ const Customers = () => {
                       <ul className="t-list fk-breadcrumb">
                         <li className="fk-breadcrumb__list">
                           <span className="t-link fk-breadcrumb__link text-capitalize">
-                            {!searchedWorkPeriod.searched
+                            {!searchedCustomer.searched
                               ? _t(t("Customers"))
                               : _t(t("Search Result"))}
                           </span>
@@ -387,9 +702,7 @@ const Customers = () => {
                           <input
                             type="text"
                             className="form-control border-0 form-control--light-1 rounded-0"
-                            placeholder={
-                              _t(t("Search by branch, date, user")) + ".."
-                            }
+                            placeholder={_t(t("Search")) + ".."}
                             onChange={handleSearch}
                           />
                         </div>
@@ -401,8 +714,17 @@ const Customers = () => {
                           <ul className="t-list fk-sort align-items-center justify-content-center">
                             <li className="fk-sort__list mb-0 flex-grow-1">
                               <button
-                                onClick={handleSaveNewWorkPeriod}
                                 className="w-100 btn btn-secondary sm-text text-uppercase"
+                                data-toggle="modal"
+                                data-target="#addCustomer"
+                                onClick={() => {
+                                  setNewCustomer({
+                                    ...newCustomer,
+                                    branch: null,
+                                    edit: false,
+                                    uploading: false,
+                                  });
+                                }}
                               >
                                 {_t(t("add new"))}
                               </button>
@@ -420,70 +742,68 @@ const Customers = () => {
                             <tr>
                               <th
                                 scope="col"
-                                className="sm-text align-middle text-center border-1 border"
+                                className="sm-text text-capitalize align-middle text-center border-1 border"
                               >
                                 {_t(t("S/L"))}
                               </th>
+
                               <th
                                 scope="col"
-                                className="sm-text align-middle text-center border-1 border"
+                                className="sm-text text-capitalize align-middle text-center border-1 border"
+                              >
+                                {_t(t("Name"))}
+                              </th>
+                              <th
+                                scope="col"
+                                className="sm-text text-capitalize align-middle text-center border-1 border"
+                              >
+                                {_t(t("email"))}
+                              </th>
+                              <th
+                                scope="col"
+                                className="sm-text text-capitalize align-middle text-center border-1 border"
+                              >
+                                {_t(t("Phn no"))}
+                              </th>
+                              <th
+                                scope="col"
+                                className="sm-text text-capitalize align-middle text-center border-1 border"
+                              >
+                                {_t(t("Address"))}
+                              </th>
+
+                              <th
+                                scope="col"
+                                className="sm-text text-capitalize align-middle text-center border-1 border"
                               >
                                 {_t(t("Branch"))}
                               </th>
+
                               <th
                                 scope="col"
-                                className="sm-text align-middle text-center border-1 border"
+                                className="sm-text text-capitalize align-middle text-center border-1 border"
                               >
-                                {_t(t("Started by"))}
-                              </th>
-                              <th
-                                scope="col"
-                                className="sm-text align-middle text-center border-1 border"
-                              >
-                                {_t(t("Date"))}
-                              </th>
-                              <th
-                                scope="col"
-                                className="sm-text align-middle text-center border-1 border"
-                              >
-                                {_t(t("Started at"))}
-                              </th>
-                              <th
-                                scope="col"
-                                className="sm-text align-middle text-center border-1 border"
-                              >
-                                {_t(t("Ended at"))}
-                              </th>
-                              <th
-                                scope="col"
-                                className="sm-text align-middle text-center border-1 border"
-                              >
-                                {_t(t("Ended by"))}
-                              </th>
-                              <th
-                                scope="col"
-                                className="sm-text align-middle text-center border-1 border"
-                              >
-                                {_t(t("Total time"))}
+                                {_t(t("Action"))}
                               </th>
                             </tr>
                           </thead>
                           <tbody className="align-middle">
-                            {!searchedWorkPeriod.searched
+                            {/* loop here, logic === !search && haveData && haveDataLegnth > 0*/}
+                            {!searchedCustomer.searched
                               ? [
-                                  workPeriodList && [
-                                    workPeriodList.data.length === 0 ? (
+                                  customerList && [
+                                    customerList.data.length === 0 ? (
                                       <tr className="align-middle">
                                         <td
                                           scope="row"
-                                          colSpan="8"
+                                          colSpan="7"
                                           className="xsm-text align-middle text-center"
                                         >
                                           {_t(t("No data available"))}
                                         </td>
                                       </tr>
                                     ) : (
-                                      workPeriodList.data.map((item, index) => {
+                                      customerList.data.map((item, index) => {
                                         return (
                                           <tr
                                             className="align-middle"
@@ -495,73 +815,82 @@ const Customers = () => {
                                             >
                                               {index +
                                                 1 +
-                                                (workPeriodList.current_page -
+                                                (customerList.current_page -
                                                   1) *
-                                                  workPeriodList.per_page}
+                                                  customerList.per_page}
                                             </th>
 
-                                            <td className="xsm-text align-middle text-center text-secondary">
-                                              {item.branch_name}
+                                            <td className="xsm-text text-capitalize align-middle text-center">
+                                              {item.name}
                                             </td>
 
                                             <td className="xsm-text align-middle text-center">
-                                              {item.started_by}
+                                              {item.email || "-"}
                                             </td>
 
-                                            <td className="xsm-text align-middle text-center">
-                                              {item.date}
-                                            </td>
-
-                                            <td className="xsm-text align-middle text-center text-green">
-                                              <Moment format="LT">
-                                                {
-                                                  new Date(
-                                                    parseInt(item.started_at)
-                                                  )
-                                                }
-                                              </Moment>
-                                            </td>
-
-                                            <td className="xsm-text align-middle text-center text-primary">
-                                              {item.ended_at ? (
-                                                <Moment format="LT">
-                                                  {
-                                                    new Date(
-                                                      parseInt(item.ended_at)
-                                                    )
-                                                  }
-                                                </Moment>
+                                            <td className="xsm-text text-capitalize align-middle text-center">
+                                              {item.phn_no ? (
+                                                <a
+                                                  href={`tel:${item.phn_no}`}
+                                                  rel="noopener noreferrer"
+                                                >
+                                                  {item.phn_no}
+                                                </a>
                                               ) : (
                                                 "-"
                                               )}
                                             </td>
-
-                                            <td className="xsm-text align-middle text-center">
-                                              {item.ended_at ? (
-                                                item.ended_by
-                                              ) : (
-                                                <button
-                                                  className="btn btn-primary btn-sm py-0 px-4"
-                                                  onClick={() => {
-                                                    handleDeleteConfirmation(
-                                                      item.id
-                                                    );
-                                                  }}
-                                                >
-                                                  {_t(t("End"))}
-                                                </button>
-                                              )}
+                                            <td className="xsm-text text-capitalize align-middle text-center">
+                                              {item.address || "-"}
                                             </td>
 
                                             <td className="xsm-text align-middle text-center">
-                                              {item.ended_at
-                                                ? millisToMinutesAndHours(
-                                                    parseInt(
-                                                      item.ended_at -
-                                                        item.started_at
-                                                    )
-                                                  )
-                                                : "-"}
+                                              {item.branch_name || "-"}
+                                            </td>
+
+                                            <td className="xsm-text text-capitalize align-middle text-center">
+                                              <div className="dropdown">
+                                                <button
+                                                  className="btn t-bg-clear t-text-dark--light-40"
+                                                  type="button"
+                                                  data-toggle="dropdown"
+                                                >
+                                                  <i className="fa fa-ellipsis-h"></i>
+                                                </button>
+                                                <div className="dropdown-menu">
+                                                  <button
+                                                    className="dropdown-item sm-text text-capitalize"
+                                                    onClick={() => {
+                                                      setNewCustomer({
+                                                        ...newCustomer,
+                                                        branch: null,
+                                                      });
+                                                      handleSetEdit(item.slug);
+                                                    }}
+                                                    data-toggle="modal"
+                                                    data-target="#addCustomer"
+                                                  >
+                                                    <span className="t-mr-8">
+                                                      <i className="fa fa-pencil"></i>
+                                                    </span>
+                                                    {_t(t("Edit"))}
+                                                  </button>
+
+                                                  <button
+                                                    className="dropdown-item sm-text text-capitalize"
+                                                    onClick={() => {
+                                                      handleDeleteConfirmation(
+                                                        item.slug
+                                                      );
+                                                    }}
+                                                  >
+                                                    <span className="t-mr-8">
+                                                      <i className="fa fa-trash"></i>
+                                                    </span>
+                                                    {_t(t("Delete"))}
+                                                  </button>
+                                                </div>
+                                              </div>
                                             </td>
                                           </tr>
                                         );
@@ -571,19 +900,19 @@ const Customers = () => {
                                 ]
                               : [
                                   /* searched data, logic === haveData*/
-                                  searchedWorkPeriod && [
-                                    searchedWorkPeriod.list.length === 0 ? (
+                                  searchedCustomer && [
+                                    searchedCustomer.list.length === 0 ? (
                                       <tr className="align-middle">
                                         <td
                                           scope="row"
-                                          colSpan="8"
+                                          colSpan="7"
                                           className="xsm-text align-middle text-center"
                                         >
                                           {_t(t("No data available"))}
                                         </td>
                                       </tr>
                                     ) : (
-                                      searchedWorkPeriod.list.map(
+                                      searchedCustomer.list.map(
                                         (item, index) => {
                                           return (
                                             <tr
@@ -596,73 +925,84 @@ const Customers = () => {
                                               >
                                                 {index +
                                                   1 +
-                                                  (workPeriodList.current_page -
+                                                  (customerList.current_page -
                                                     1) *
-                                                    workPeriodList.per_page}
+                                                    customerList.per_page}
                                               </th>
 
-                                              <td className="xsm-text align-middle text-center text-secondary">
-                                                {item.branch_name}
+                                              <td className="xsm-text text-capitalize align-middle text-center">
+                                                {item.name}
                                               </td>
 
                                               <td className="xsm-text align-middle text-center">
-                                                {item.started_by}
+                                                {item.email || "-"}
                                               </td>
 
-                                              <td className="xsm-text align-middle text-center">
-                                                {item.date}
-                                              </td>
-
-                                              <td className="xsm-text align-middle text-center">
-                                                <Moment format="LT">
-                                                  {
-                                                    new Date(
-                                                      parseInt(item.started_at)
-                                                    )
-                                                  }
-                                                </Moment>
-                                              </td>
-
-                                              <td className="xsm-text align-middle text-center">
-                                                {item.ended_at ? (
-                                                  <Moment format="LT">
-                                                    {
-                                                      new Date(
-                                                        parseInt(item.ended_at)
-                                                      )
-                                                    }
-                                                  </Moment>
+                                              <td className="xsm-text text-capitalize align-middle text-center">
+                                                {item.phn_no ? (
+                                                  <a
+                                                    href={`tel:${item.phn_no}`}
+                                                    rel="noopener noreferrer"
+                                                  >
+                                                    {item.phn_no}
+                                                  </a>
                                                 ) : (
                                                   "-"
                                                 )}
                                               </td>
-
                                               <td className="xsm-text align-middle text-center">
-                                                {item.ended_at ? (
-                                                  item.ended_by
-                                                ) : (
-                                                  <button
-                                                    className="btn btn-primary btn-sm py-0 px-4"
-                                                    onClick={() => {
-                                                      handleDeleteConfirmation(
-                                                        item.id
-                                                      );
-                                                    }}
-                                                  >
-                                                    {_t(t("End"))}
-                                                  </button>
-                                                )}
+                                                {item.address || "-"}
                                               </td>
 
                                               <td className="xsm-text align-middle text-center">
-                                                {item.ended_at
-                                                  ? millisToMinutesAndHours(
-                                                      parseInt(
-                                                        item.ended_at -
-                                                          item.started_at
-                                                      )
-                                                    )
-                                                  : "-"}
+                                                {item.branch_name || "-"}
+                                              </td>
+
+                                              <td className="xsm-text text-capitalize align-middle text-center">
+                                                <div className="dropdown">
+                                                  <button
+                                                    className="btn t-bg-clear t-text-dark--light-40"
+                                                    type="button"
+                                                    data-toggle="dropdown"
+                                                  >
+                                                    <i className="fa fa-ellipsis-h"></i>
+                                                  </button>
+                                                  <div className="dropdown-menu">
+                                                    <button
+                                                      className="dropdown-item sm-text text-capitalize"
+                                                      onClick={() => {
+                                                        setNewCustomer({
+                                                          ...newCustomer,
+                                                          branch: null,
+                                                        });
+                                                        handleSetEdit(
+                                                          item.slug
+                                                        );
+                                                      }}
+                                                      data-toggle="modal"
+                                                      data-target="#addCustomer"
+                                                    >
+                                                      <span className="t-mr-8">
+                                                        <i className="fa fa-pencil"></i>
+                                                      </span>
+                                                      {_t(t("Edit"))}
+                                                    </button>
+
+                                                    <button
+                                                      className="dropdown-item sm-text text-capitalize"
+                                                      onClick={() => {
+                                                        handleDeleteConfirmation(
+                                                          item.slug
+                                                        );
+                                                      }}
+                                                    >
+                                                      <span className="t-mr-8">
+                                                        <i className="fa fa-trash"></i>
+                                                      </span>
+                                                      {_t(t("Delete"))}
+                                                    </button>
+                                                  </div>
+                                                </div>
                                               </td>
                                             </tr>
                                           );
@@ -679,26 +1019,23 @@ const Customers = () => {
                 </div>
               )}
               {/* pagination loading effect */}
-              {newWorkPeriod.uploading === true || loading === true
+              {newCustomer.uploading === true || loading === true
                 ? paginationLoading()
                 : [
                     // logic === !searched
-                    !searchedWorkPeriod.searched ? (
+                    !searchedCustomer.searched ? (
                       <div key="fragment4">
                         <div className="t-bg-white mt-1 t-pt-5 t-pb-5">
                           <div className="row align-items-center t-pl-15 t-pr-15">
                             <div className="col-md-7 t-mb-15 mb-md-0">
                               {/* pagination function */}
-                              {pagination(
-                                workPeriodList,
-                                setPaginatedWorkPeriod
-                              )}
+                              {pagination(customerList, setPaginatedCustomer)}
                             </div>
                             <div className="col-md-5">
                               <ul className="t-list d-flex justify-content-md-end align-items-center">
                                 <li className="t-list__item">
                                   <span className="d-inline-block sm-text">
-                                    {showingData(workPeriodList)}
+                                    {showingData(customerList)}
                                   </span>
                                 </li>
                               </ul>
@@ -716,8 +1053,8 @@ const Customers = () => {
                                 <button
                                   className="btn btn-primary btn-sm"
                                   onClick={() =>
-                                    setSearchedWorkPeriod({
-                                      ...searchedWorkPeriod,
+                                    setSearchedCustomer({
+                                      ...searchedCustomer,
                                       searched: false,
                                     })
                                   }
@@ -732,8 +1069,8 @@ const Customers = () => {
                               <li className="t-list__item">
                                 <span className="d-inline-block sm-text">
                                   {searchedShowingData(
-                                    searchedWorkPeriod,
-                                    workPeriodForSearch
+                                    searchedCustomer,
+                                    customerForSearch
                                   )}
                                 </span>
                               </li>

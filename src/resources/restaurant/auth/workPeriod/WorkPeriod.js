@@ -86,8 +86,6 @@ const WorkPeriod = () => {
   let [newWorkPeriod, setNewWorkPeriod] = useState({
     user_type: null,
     branch_id: null,
-    edit: false,
-    editSlug: null,
     uploading: false,
   });
 
@@ -181,8 +179,7 @@ const WorkPeriod = () => {
                   ? authUserInfo.details.branch_id
                   : null,
                 user_type: authUserInfo.details.user_type,
-                edit: false,
-                editSlug: null,
+
                 uploading: false,
               });
             toast.error(
@@ -203,8 +200,7 @@ const WorkPeriod = () => {
                   ? authUserInfo.details.branch_id
                   : null,
                 user_type: authUserInfo.details.user_type,
-                edit: false,
-                editSlug: null,
+
                 uploading: false,
               });
             setWorkPeriodList(res.data[0]);
@@ -313,8 +309,7 @@ const WorkPeriod = () => {
               ? authUserInfo.details.branch_id
               : null,
             user_type: authUserInfo.details.user_type,
-            edit: false,
-            editSlug: null,
+
             uploading: false,
           });
         setWorkPeriodList(res.data[0]);

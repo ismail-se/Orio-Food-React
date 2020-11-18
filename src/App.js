@@ -79,6 +79,7 @@ function App() {
       <Router>
         <Navbar />
         <Switch>
+          {/* common */}
           <Route path="/refresh" exact>
             <Refresh />
           </Route>
@@ -93,24 +94,40 @@ function App() {
           <RestaurantRoute path="/dashboard" exact>
             <RestaurantHome />
           </RestaurantRoute>
+
           <RestaurantRoute path="/dashboard/work-periods" exact>
-            <WorkPeriod />
+            {authUserInfo.permissions !== null &&
+            checkPermission(authUserInfo.permissions, "Work period") ? (
+              <WorkPeriod />
+            ) : (
+              <NoPermission />
+            )}
           </RestaurantRoute>
+
           <RestaurantRoute path="/dashboard/pos" exact>
             <Pos />
           </RestaurantRoute>
           <RestaurantRoute path="/dashboard/orders" exact>
             <OrderHistories />
           </RestaurantRoute>
+
           <RestaurantRoute path="/dashboard/customers" exact>
-            <Customers />
+            {authUserInfo.permissions !== null &&
+            checkPermission(authUserInfo.permissions, "Customer") ? (
+              <Customers />
+            ) : (
+              <NoPermission />
+            )}
           </RestaurantRoute>
+
           <RestaurantRoute path="/dashboard/kitchen" exact>
             <Kitchen />
           </RestaurantRoute>
-          <RestaurantRoute path="/dashboard/branches" exact>
+
+          {/* <RestaurantRoute path="/dashboard/branches" exact>
             <Branch />
-          </RestaurantRoute>
+          </RestaurantRoute> */}
+
           <RestaurantRoute path="/dashboard/reports" exact>
             <Reports />
           </RestaurantRoute>

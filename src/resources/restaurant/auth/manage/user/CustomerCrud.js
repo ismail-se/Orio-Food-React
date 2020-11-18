@@ -347,7 +347,7 @@ const CustomerCrud = () => {
     });
   };
 
-  //delete waiter here
+  //delete customer here
   const handleDeleteCustomer = (slug) => {
     setLoading(true);
     const customerUrl = BASE_URL + `/settings/delete-customer/${slug}`;
@@ -400,7 +400,7 @@ const CustomerCrud = () => {
                 <h5 className="text-capitalize fk-sm-card__title">
                   {!newCustomer.edit
                     ? _t(t("Add new customer"))
-                    : _t(t("Update waiter"))}
+                    : _t(t("Update customer"))}
                 </h5>
               </div>
               <button
