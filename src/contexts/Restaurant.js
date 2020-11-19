@@ -46,6 +46,7 @@ const RestaurantProvider = ({ children }) => {
     if (getCookie() !== undefined) {
       getBranch();
       getTable();
+      getDeptTag();
       getPaymentType();
       getWorkPeriod();
     }

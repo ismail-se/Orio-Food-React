@@ -1,12 +1,70 @@
-import React from "react";
-import { Helmet } from "react-helmet";
+import React, { useContext } from "react";
 
 //functions
 import { _t } from "../../../../functions/Functions";
 import { useTranslation } from "react-i18next";
 
+//3rd party packages
+import { Helmet } from "react-helmet";
+import Select from "react-select";
+import makeAnimated from "react-select/animated";
+import { confirmAlert } from "react-confirm-alert";
+import "react-confirm-alert/src/react-confirm-alert.css";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import Moment from "react-moment";
+// import Calculator from "awesome-react-calculator";
+
+//importing context consumer here
+import { UserContext } from "../../../../contexts/User";
+import { SettingsContext } from "../../../../contexts/Settings";
+import { RestaurantContext } from "../../../../contexts/Restaurant";
+
 const Pos = () => {
+  //getting context values here
+  const {
+    //common
+    loading,
+    setLoading,
+  } = useContext(SettingsContext);
+
+  const {
+    authUserInfo,
+
+    //customer
+    customerForSearch,
+    setCustomerForSearch,
+
+    //waiter
+    waiterForSearch,
+    setWaiterForSearch,
+  } = useContext(UserContext);
+
+  const {
+    //branch
+    branchForSearch,
+
+    //table
+    tableForSearch,
+
+    //dept-tag
+    deptTagForSearch,
+
+    //payment-type
+    paymentTypeForSearch,
+  } = useContext(RestaurantContext);
   const { t } = useTranslation();
+
+  const handleInput = (input) => {
+    console.log(
+      `${input.expression} is shown in the calculator, User clicked the ${input.key}`
+    );
+  };
+  const onResultChange = (newResult) => {
+    console.log(newResult);
+    console.log(`${newResult.expression} is validated as ${newResult.result} `);
+  };
+
   return (
     <>
       <Helmet>
@@ -987,62 +1045,95 @@ const Pos = () => {
                         <div className="col-12 flex-grow-1">
                           <div className="fk-right-nav__scroll" data-simplebar>
                             <ul className="t-list addons-list">
-                              <li className="addons-list__item">
-                                <select className="fk-select">
-                                  <option data-display="Select Customer">
-                                    Select Customer
-                                  </option>
-                                  <option value="1">
-                                    Shoanur Rahman (0123456789)
-                                  </option>
-                                </select>
+                              <li className="addons-list__item mt-1 mx-1">
+                                <Select
+                                  options={
+                                    customerForSearch && customerForSearch
+                                  }
+                                  components={makeAnimated()}
+                                  getOptionLabel={(option) =>
+                                    option.name + " (" + option.phn_no + ")"
+                                  }
+                                  getOptionValue={(option) => option.name}
+                                  classNamePrefix="select"
+                                  className="xsm-text"
+                                  onChange={"handleSetBranchId"}
+                                  maxMenuHeight="200px"
+                                  placeholder={_t(t("Customer")) + ".."}
+                                />
                               </li>
-                              <li className="addons-list__item">
-                                <select className="fk-select">
-                                  <option data-display="Select Table">
-                                    Select Table
-                                  </option>
-                                  <option value="1">Table 1</option>
-                                </select>
+                              <li className="addons-list__item mx-1">
+                                <Select
+                                  options={tableForSearch && tableForSearch}
+                                  components={makeAnimated()}
+                                  getOptionLabel={(option) => option.name}
+                                  getOptionValue={(option) => option.name}
+                                  classNamePrefix="select"
+                                  className="xsm-text"
+                                  onChange={"handleSetBranchId"}
+                                  maxMenuHeight="200px"
+                                  placeholder={_t(t("Table")) + ".."}
+                                />
                               </li>
-                              <li className="addons-list__item">
-                                <select className="fk-select">
-                                  <option data-display="Select Customer">
-                                    Select Waiter
-                                  </option>
-                                  <option value="1">Shoanur Rahman</option>
-                                </select>
+                              <li className="addons-list__item mx-1">
+                                <Select
+                                  options={waiterForSearch && waiterForSearch}
+                                  components={makeAnimated()}
+                                  getOptionLabel={(option) => option.name}
+                                  getOptionValue={(option) => option.name}
+                                  classNamePrefix="select"
+                                  className="xsm-text"
+                                  onChange={"handleSetBranchId"}
+                                  maxMenuHeight="200px"
+                                  placeholder={_t(t("Waiter")) + ".."}
+                                />
                               </li>
-                              <li className="addons-list__item">
-                                <select className="fk-select">
-                                  <option data-display="Select Customer">
-                                    Department Tag
-                                  </option>
-                                </select>
+                              <li className="addons-list__item mx-1">
+                                <Select
+                                  options={deptTagForSearch && deptTagForSearch}
+                                  components={makeAnimated()}
+                                  getOptionLabel={(option) => option.name}
+                                  getOptionValue={(option) => option.name}
+                                  classNamePrefix="select"
+                                  className="xsm-text"
+                                  onChange={"handleSetBranchId"}
+                                  maxMenuHeight="200px"
+                                  placeholder={_t(t("Dept tag")) + ".."}
+                                />
                               </li>
-                              <li className="addons-list__item">
-                                <select className="fk-select">
-                                  <option data-display="Select Customer">
-                                    Payment Type
-                                  </option>
-                                </select>
+                              <li className="addons-list__item mx-1 payment-type-parent">
+                                <Select
+                                  options={
+                                    paymentTypeForSearch && paymentTypeForSearch
+                                  }
+                                  components={makeAnimated()}
+                                  getOptionLabel={(option) => option.name}
+                                  getOptionValue={(option) => option.name}
+                                  classNamePrefix="select"
+                                  className="xsm-text"
+                                  onChange={"handleSetBranchId"}
+                                  maxMenuHeight="200px"
+                                  isMulti
+                                  clearIndicator={null}
+                                  placeholder={_t(t("Payment type")) + ".."}
+                                />
                               </li>
-                              <li className="addons-list__item">
+                              <li className="addons-list__item mx-1">
                                 {/* Example single danger button  */}
-                                <div className="btn-group w-100">
+                                <div className="btn-group w-100 xsm-text">
                                   <button
                                     type="button"
-                                    className="fk-right-nav__guest-btn btn text-uppercase w-100 t-bg-white dropdown-toggle"
+                                    className="fk-right-nav__guest-btn btn text-uppercase w-100 t-bg-white dropdown-toggle xsm-text"
                                     data-toggle="dropdown"
                                     aria-expanded="false"
                                   >
                                     total guest
                                   </button>
-                                  <ul className="dropdown-menu w-100 border-0">
+                                  <ul className="dropdown-menu w-100 border-0 xsm-text">
                                     <li>
                                       <input
                                         type="number"
-                                        className="form-control sm-text"
+                                        className="form-control xsm-text"
                                         placeholder="Total guest.."
                                       />
                                     </li>
@@ -1932,42 +2023,18 @@ const Pos = () => {
                                       >
                                         <i className="fa fa-calculator"></i>
                                       </button>
-                                      <div className="calculator">
-                                        <div className="input" id="input"></div>
-                                        <div className="buttons">
-                                          <div className="operators">
-                                            <div>+</div>
-                                            <div>-</div>
-                                            <div>&times;</div>
-                                            <div>&divide;</div>
-                                          </div>
-                                          <div className="leftPanel">
-                                            <div className="numbers">
-                                              <div>7</div>
-                                              <div>8</div>
-                                              <div>9</div>
-                                            </div>
-                                            <div className="numbers">
-                                              <div>4</div>
-                                              <div>5</div>
-                                              <div>6</div>
-                                            </div>
-                                            <div className="numbers">
-                                              <div>1</div>
-                                              <div>2</div>
-                                              <div>3</div>
-                                            </div>
-                                            <div className="numbers">
-                                              <div>0</div>
-                                              <div>.</div>
-                                              <div id="clear">C</div>
-                                            </div>
-                                          </div>
-                                          <div className="equal" id="result">
-                                            =
-                                          </div>
-                                        </div>
-                                      </div>
+                                      {/* <div
+                                        className="calculator calculator-demo"
+                                        style={{
+                                          height: "24rem",
+                                          width: "15rem",
+                                        }}
+                                      >
+                                        <Calculator
+                                          onNewInput={handleInput}
+                                          onResultChange={onResultChange}
+                                        />
+                                      </div> */}
                                     </div>
                                   </div>
                                 </div>
