@@ -34,6 +34,7 @@ const FoodItemCrud = () => {
   let { loading, setLoading, dataPaginating } = useContext(SettingsContext);
 
   let {
+    setFoodForSearch,
     foodGroupForSearch,
     propertyGroupForSearch,
     variationForSearch,
@@ -160,7 +161,8 @@ const FoodItemCrud = () => {
       .post(url, formData, {
         headers: { Authorization: `Bearer ${getCookie()}` },
       })
-      .then(() => {
+      .then((res) => {
+        setFoodForSearch(res.data[1]);
         setNewItem({
           itemGroup: null,
           name: "",

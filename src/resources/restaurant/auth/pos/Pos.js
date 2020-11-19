@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 
 //functions
 import { _t } from "../../../../functions/Functions";
@@ -19,6 +19,7 @@ import Moment from "react-moment";
 import { UserContext } from "../../../../contexts/User";
 import { SettingsContext } from "../../../../contexts/Settings";
 import { RestaurantContext } from "../../../../contexts/Restaurant";
+import { FoodContext } from "../../../../contexts/Food";
 
 const Pos = () => {
   //getting context values here
@@ -30,40 +31,67 @@ const Pos = () => {
 
   const {
     authUserInfo,
-
     //customer
     customerForSearch,
     setCustomerForSearch,
-
     //waiter
     waiterForSearch,
     setWaiterForSearch,
   } = useContext(UserContext);
 
   const {
+    //food
+    foodForSearch,
+    //food group
+    foodGroupForSearch,
+  } = useContext(FoodContext);
+
+  const {
     //branch
     branchForSearch,
-
     //table
     tableForSearch,
-
     //dept-tag
     deptTagForSearch,
-
     //payment-type
     paymentTypeForSearch,
   } = useContext(RestaurantContext);
+
   const { t } = useTranslation();
 
-  const handleInput = (input) => {
-    console.log(
-      `${input.expression} is shown in the calculator, User clicked the ${input.key}`
-    );
-  };
-  const onResultChange = (newResult) => {
-    console.log(newResult);
-    console.log(`${newResult.expression} is validated as ${newResult.result} `);
-  };
+  // State hooks here
+  const [foodItem, setFoodItem] = useState({
+    foodGroup: null,
+    items: null,
+    selectedItem: null,
+    variations: null,
+    properties: null,
+  });
+
+  //useEffect- to get data on render
+  useEffect(() => {
+    if (foodGroupForSearch) {
+      let tempItems =
+        foodForSearch &&
+        foodForSearch.filter((tempItem) => {
+          return parseInt(tempItem.food_group_id) === foodGroupForSearch[0].id;
+        });
+      // initial group & item being active here, variations, properties
+      setFoodItem({
+        foodGroup: foodGroupForSearch[0],
+        items: tempItems,
+        selectedItem: tempItems && tempItems[0],
+        variations:
+          tempItems && parseInt(tempItems[0].has_variation) === 1
+            ? tempItems[0].variations
+            : null,
+        properties:
+          tempItems && parseInt(tempItems[0].has_property) === 1
+            ? tempItems[0].properties
+            : null,
+      });
+    }
+  }, [foodGroupForSearch, foodForSearch]);
 
   return (
     <>
@@ -804,24 +832,55 @@ const Pos = () => {
                   <div className="col-md-4 col-xl-3">
                     <div className="fk-scroll--pos-menu" data-simplebar>
                       <ul className="t-list fk-pos-nav list-group">
-                        <li className="fk-pos-nav__list">
-                          <a
-                            className="w-100 t-text-dark t-heading-font btn btn-outline-danger font-weight-bold text-uppercase active"
-                            href="#nav-1"
-                            data-toggle="list"
-                          >
-                            fried chicken
-                          </a>
-                        </li>
-                        <li className="fk-pos-nav__list">
-                          <a
-                            className="w-100 t-text-dark t-heading-font btn btn-outline-danger font-weight-bold text-uppercase"
-                            href="#nav-2"
-                            data-toggle="list"
-                          >
-                            curry
-                          </a>
-                        </li>
+                        {/* Food groups */}
+                        {foodGroupForSearch &&
+                          foodGroupForSearch.map((groupItem, groupIndex) => {
+                            return (
+                              <li className="fk-pos-nav__list" key={groupIndex}>
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    // set active group, group items, initial item active, todo:: set variations and properties
+                                    let tempItems =
+                                      foodForSearch &&
+                                      foodForSearch.filter((tempItem) => {
+                                        return (
+                                          parseInt(tempItem.food_group_id) ===
+                                          groupItem.id
+                                        );
+                                      });
+                                    setFoodItem({
+                                      ...foodItem,
+                                      foodGroup: groupItem,
+                                      items: tempItems,
+                                      selectedItem: tempItems && tempItems[0],
+                                      variations:
+                                        tempItems &&
+                                        parseInt(tempItems[0].has_variation) ===
+                                          1
+                                          ? tempItems[0].variations
+                                          : null,
+                                      properties:
+                                        tempItems &&
+                                        parseInt(tempItems[0].has_property) ===
+                                          1
+                                          ? tempItems[0].properties
+                                          : null,
+                                    });
+                                  }}
+                                  //set active or !
+                                  className={`w-100 t-text-dark t-heading-font btn btn-outline-danger font-weight-bold text-uppercase ${
+                                    foodItem.foodGroup &&
+                                    foodItem.foodGroup.id === groupItem.id &&
+                                    "active"
+                                  }`}
+                                >
+                                  {groupItem.name}
+                                </button>
+                              </li>
+                            );
+                          })}
+                        {/* Food groups */}
                       </ul>
                     </div>
                   </div>
@@ -829,124 +888,161 @@ const Pos = () => {
 
                   {/* Dish Addons   */}
                   <div className="col-md-8 col-xl-9">
-                    <div className="tab-content">
-                      <div className="tab-pane fade show active" id="nav-1">
+                    <div className="">
+                      <div className="active" id="nav-1">
                         <div className="row gx-1">
                           <div className="col-xl-6 col-xxl-5 order-xl-2">
                             <div className="tab-content t-mb-10 mb-xl-0">
-                              <div
-                                className="tab-pane fade show active"
-                                id="addons-1"
-                              >
+                              <div className="" id="addons-1">
                                 <div className="t-bg-white">
                                   <div
                                     className="fk-addons-variation"
                                     data-simplebar
                                   >
+                                    {/* Variations */}
                                     <div className="fk-addons-table">
                                       <div className="fk-addons-table__head text-center">
                                         variations
                                       </div>
-                                      <div className="fk-addons-table__info">
-                                        <div className="row g-0">
-                                          <div className="col-9 text-center border-right">
-                                            <span className="fk-addons-table__info-text text-capitalize">
-                                              name
-                                            </span>
-                                          </div>
-                                          <div className="col-3 text-center">
-                                            <span className="fk-addons-table__info-text text-capitalize">
-                                              price
-                                            </span>
-                                          </div>
-                                        </div>
-                                      </div>
-                                      <div className="fk-addons-table__body">
-                                        <div className="fk-addons-table__body-row">
-                                          <div className="row g-0">
-                                            <div className="col-9 border-right t-pl-10 t-pr-10">
-                                              <label className="mx-checkbox">
-                                                <input
-                                                  type="radio"
-                                                  className="mx-checkbox__input mx-checkbox__input-solid mx-checkbox__input-solid--danger mx-checkbox__input-sm"
-                                                  name="variation"
-                                                />
-                                                <span className="mx-checkbox__text text-capitalize t-text-heading t-ml-8 fk-addons-table__body-text">
-                                                  patty
+                                      {foodItem.variations ? (
+                                        <>
+                                          <div className="fk-addons-table__info">
+                                            <div className="row g-0">
+                                              <div className="col-9 pl-3 border-right">
+                                                <span className="fk-addons-table__info-text text-capitalize">
+                                                  name
                                                 </span>
-                                              </label>
-                                            </div>
-                                            <div className="col-3 text-center">
-                                              <span className="fk-addons-table__body-text sm-text">
-                                                50
-                                              </span>
-                                            </div>
-                                          </div>
-                                        </div>
-                                      </div>
-                                    </div>
-                                    <div className="fk-addons-table">
-                                      <div className="fk-addons-table__head text-center">
-                                        addons
-                                      </div>
-                                      <div className="fk-addons-table__info">
-                                        <div className="row g-0">
-                                          <div className="col-6 text-center border-right">
-                                            <span className="fk-addons-table__info-text text-capitalize">
-                                              name
-                                            </span>
-                                          </div>
-                                          <div className="col-3 text-center border-right">
-                                            <span className="fk-addons-table__info-text text-capitalize">
-                                              QTY
-                                            </span>
-                                          </div>
-                                          <div className="col-3 text-center">
-                                            <span className="fk-addons-table__info-text text-capitalize">
-                                              price
-                                            </span>
-                                          </div>
-                                        </div>
-                                      </div>
-                                      <div className="fk-addons-table__body">
-                                        <div className="fk-addons-table__body-row">
-                                          <div className="row g-0">
-                                            <div className="col-6 border-right t-pl-10 t-pr-10">
-                                              <label className="mx-checkbox">
-                                                <input
-                                                  type="checkbox"
-                                                  className="mx-checkbox__input mx-checkbox__input-solid mx-checkbox__input-solid--danger mx-checkbox__input-sm"
-                                                />
-                                                <span className="mx-checkbox__text text-capitalize t-text-heading t-ml-8 fk-addons-table__body-text">
-                                                  patty
-                                                </span>
-                                              </label>
-                                            </div>
-                                            <div className="col-3 text-center border-right">
-                                              <div className="fk-qty justify-content-center t-pt-10 t-pb-10">
-                                                <span className="fk-qty__icon fk-qty__deduct">
-                                                  <i className="las la-minus"></i>
-                                                </span>
-                                                <input
-                                                  type="text"
-                                                  value="0"
-                                                  className="fk-qty__input t-bg-clear"
-                                                />
-                                                <span className="fk-qty__icon fk-qty__add">
-                                                  <i className="las la-plus"></i>
+                                              </div>
+                                              <div className="col-3 text-center">
+                                                <span className="fk-addons-table__info-text text-capitalize">
+                                                  price
                                                 </span>
                                               </div>
                                             </div>
-                                            <div className="col-3 text-center">
-                                              <span className="fk-addons-table__body-text sm-text">
-                                                50
+                                          </div>
+                                          <div className="fk-addons-table__body">
+                                            {foodItem.variations.map(
+                                              (variationItem) => {
+                                                return (
+                                                  <div className="fk-addons-table__body-row">
+                                                    <div className="row g-0">
+                                                      <div className="col-9 border-right t-pl-10 t-pr-10">
+                                                        <label className="mx-checkbox">
+                                                          <input
+                                                            type="radio"
+                                                            className="mx-checkbox__input mx-checkbox__input-solid mx-checkbox__input-solid--danger mx-checkbox__input-sm"
+                                                            name="variation"
+                                                          />
+                                                          <span className="mx-checkbox__text text-capitalize t-text-heading t-ml-8 fk-addons-table__body-text">
+                                                            {
+                                                              variationItem.variation_name
+                                                            }
+                                                          </span>
+                                                        </label>
+                                                      </div>
+                                                      <div className="col-3 text-center">
+                                                        <span className="fk-addons-table__body-text sm-text">
+                                                          {
+                                                            variationItem.food_with_variation_price
+                                                          }
+                                                        </span>
+                                                      </div>
+                                                    </div>
+                                                  </div>
+                                                );
+                                              }
+                                            )}
+                                          </div>
+                                        </>
+                                      ) : (
+                                        <div className="fk-addons-table__info py-4">
+                                          <div className="row g-0">
+                                            <div className="col-12 text-center border-right">
+                                              <span className="fk-addons-table__info-text text-capitalize text-primary">
+                                                No variations
                                               </span>
                                             </div>
                                           </div>
                                         </div>
-                                      </div>
+                                      )}
                                     </div>
+                                    {/* Variations end*/}
 
+                                    <div
+                                      className={
+                                        foodItem.properties
+                                          ? "fk-addons-table"
+                                          : "d-none"
+                                      }
+                                    >
+                                      {/* Property group and items */}
+                                      {foodItem.properties && (
+                                        <>
+                                          <div className="fk-addons-table__head text-center">
+                                            addons
+                                          </div>
+                                          <div className="fk-addons-table__info">
+                                            <div className="row g-0">
+                                              <div className="col-6 pl-3 border-right">
+                                                <span className="fk-addons-table__info-text text-capitalize">
+                                                  name
+                                                </span>
+                                              </div>
+                                              <div className="col-3 text-center border-right">
+                                                <span className="fk-addons-table__info-text text-capitalize">
+                                                  QTY
+                                                </span>
+                                              </div>
+                                              <div className="col-3 text-center">
+                                                <span className="fk-addons-table__info-text text-capitalize">
+                                                  price
+                                                </span>
+                                              </div>
+                                            </div>
+                                          </div>
+                                          <div className="fk-addons-table__body">
+                                            <div className="fk-addons-table__body-row">
+                                              <div className="row g-0">
+                                                <div className="col-6 border-right t-pl-10 t-pr-10">
+                                                  <label className="mx-checkbox">
+                                                    <input
+                                                      type="checkbox"
+                                                      className="mx-checkbox__input mx-checkbox__input-solid mx-checkbox__input-solid--danger mx-checkbox__input-sm"
+                                                    />
+                                                    <span className="mx-checkbox__text text-capitalize t-text-heading t-ml-8 fk-addons-table__body-text">
+                                                      patty
+                                                    </span>
+                                                  </label>
+                                                </div>
+                                                <div className="col-3 text-center border-right">
+                                                  <div className="fk-qty justify-content-center t-pt-10 t-pb-10">
+                                                    <span className="fk-qty__icon fk-qty__deduct">
+                                                      <i className="las la-minus"></i>
+                                                    </span>
+                                                    <input
+                                                      type="text"
+                                                      value="0"
+                                                      className="fk-qty__input t-bg-clear"
+                                                    />
+                                                    <span className="fk-qty__icon fk-qty__add">
+                                                      <i className="las la-plus"></i>
+                                                    </span>
+                                                  </div>
+                                                </div>
+                                                <div className="col-3 text-center">
+                                                  <span className="fk-addons-table__body-text sm-text">
+                                                    50
+                                                  </span>
+                                                </div>
+                                              </div>
+                                            </div>
+                                          </div>
+                                        </>
+                                      )}
+                                    </div>
+                                    {/* Property group and items */}
+
+                                    {/* Add to cart */}
                                     <div className="t-bg-white fk-addons-variation__cart">
                                       <div className="container-fluid t-mb-10 t-mt-10">
                                         <div className="row">
@@ -961,6 +1057,7 @@ const Pos = () => {
                                         </div>
                                       </div>
                                     </div>
+                                    {/* Add to cart */}
                                   </div>
                                 </div>
                               </div>
@@ -969,61 +1066,56 @@ const Pos = () => {
                           <div className="col-xl-6 col-xxl-7 order-xl-1">
                             <div className="fk-dish--scroll" data-simplebar>
                               <div className="list-group fk-dish row gx-2">
-                                <a
-                                  href="#addons-1"
-                                  className="fk-dish__link t-mb-10 col-md-6 col-lg-4 col-xl-6 col-xxl-4 t-link active"
-                                  data-toggle="list"
-                                >
-                                  <div className="fk-dish-card">
-                                    <div className="fk-dish-card__img">
-                                      <img
-                                        src="/assets/img/b1.png"
-                                        alt="foodkhan"
-                                        className="img-fluid m-auto"
-                                      />
-                                    </div>
-                                    <span className="fk-dish-card__title text-center text-uppercase">
-                                      spicy chicken and more text to break
-                                      layout
-                                    </span>
-                                  </div>
-                                </a>
-                                <a
-                                  href="#addons-2"
-                                  className="fk-dish__link t-mb-10 col-md-6 col-lg-4 col-xl-6 col-xxl-4 t-link"
-                                  data-toggle="list"
-                                >
-                                  <div className="fk-dish-card">
-                                    <div className="fk-dish-card__img">
-                                      <img
-                                        src="/assets/img/b2.png"
-                                        alt="foodkhan"
-                                        className="img-fluid"
-                                      />
-                                    </div>
-                                    <span className="fk-dish-card__title text-center text-uppercase">
-                                      spicy chicken
-                                    </span>
-                                  </div>
-                                </a>
-                                <a
-                                  href="#addons-3"
-                                  className="fk-dish__link t-mb-10 col-md-6 col-lg-4 col-xl-6 col-xxl-4 t-link"
-                                  data-toggle="list"
-                                >
-                                  <div className="fk-dish-card">
-                                    <div className="fk-dish-card__img">
-                                      <img
-                                        src="/assets/img/b2.png"
-                                        alt="foodkhan"
-                                        className="img-fluid"
-                                      />
-                                    </div>
-                                    <span className="fk-dish-card__title text-center text-uppercase">
-                                      spicy chicken
-                                    </span>
-                                  </div>
-                                </a>
+                                {foodItem.items &&
+                                  foodItem.items.map(
+                                    (tempFoodItem, tempFoodItemIndex) => {
+                                      return (
+                                        <button
+                                          type="button"
+                                          onClick={() => {
+                                            // set variations, properties and selected items here
+                                            setFoodItem({
+                                              ...foodItem,
+                                              selectedItem: tempFoodItem,
+                                              variations:
+                                                tempFoodItem &&
+                                                parseInt(
+                                                  tempFoodItem.has_variation
+                                                ) === 1
+                                                  ? tempFoodItem.variations
+                                                  : null,
+                                              properties:
+                                                tempFoodItem &&
+                                                parseInt(
+                                                  tempFoodItem.has_property
+                                                ) === 1
+                                                  ? tempFoodItem.properties
+                                                  : null,
+                                            });
+                                          }}
+                                          className={`fk-dish__link t-mb-10 col-md-6 col-lg-4 col-xl-6 col-xxl-4 t-link border-0 ${
+                                            foodItem.selectedItem &&
+                                            foodItem.selectedItem.id ===
+                                              tempFoodItem.id &&
+                                            "active"
+                                          }`}
+                                        >
+                                          <div className="fk-dish-card">
+                                            <div className="fk-dish-card__img">
+                                              <img
+                                                src={tempFoodItem.image}
+                                                alt="foodkhan"
+                                                className="img-fluid m-auto"
+                                              />
+                                            </div>
+                                            <span className="fk-dish-card__title text-center text-uppercase">
+                                              {tempFoodItem.name}
+                                            </span>
+                                          </div>
+                                        </button>
+                                      );
+                                    }
+                                  )}
                               </div>
                             </div>
                           </div>

@@ -127,3 +127,9 @@ html {
 .payment-type-parent .select__indicator.select__clear-indicator {
   display: none !important;
 }
+
+/* Pos page group name shaddow remove */
+.btn-outline-danger:focus {
+  -webkit-box-shadow: none !important;
+  box-shadow: none !important;
+}
