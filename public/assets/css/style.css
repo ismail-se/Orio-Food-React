@@ -22969,7 +22969,7 @@ button.btn.t-bg-clear.t-text-dark--light-40.show {
   background: #fff; }
   @media screen and (min-width: 1200px) {
     .fk-table__body {
-      height: calc( 100vh - 525px); } }
+      height: calc( 100vh - 410px); } }
 
 /*---------------------------------------
     2.31 Calculator
@@ -23431,6 +23431,21 @@ div.equal:active {
     opacity: 0; }
   to {
     opacity: 1; } }
+
+/*---------------------------------------
+    2.38 Table Contain order
+-----------------------------------------*/
+.fk-table-container-order {
+  -webkit-transition: all .3s ease;
+  -o-transition: all .3s ease;
+  transition: all .3s ease; }
+  .fk-table-container-order:hover {
+    cursor: pointer; }
+  .fk-table-container-order.active {
+    background: #F64E60;
+    color: #fff; }
+    .fk-table-container-order.active .fk-qty__input {
+      color: #fff; }
 
 /*---------------------------------------
     0.3 Theme Style

@@ -7,7 +7,7 @@
         height: 135px;
         background: $white;
         @include xl-screen {
-            height: calc( 100vh - 525px);
+            height: calc( 100vh - 410px);
         }
     }
 }

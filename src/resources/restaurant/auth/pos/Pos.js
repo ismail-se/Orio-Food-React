@@ -1,7 +1,12 @@
 import React, { useContext, useEffect, useState } from "react";
 
 //functions
-import { _t } from "../../../../functions/Functions";
+import {
+  _t,
+  currencySymbolLeft,
+  formatPrice,
+  currencySymbolRight,
+} from "../../../../functions/Functions";
 import { useTranslation } from "react-i18next";
 
 //3rd party packages
@@ -44,6 +49,8 @@ const Pos = () => {
     foodForSearch,
     //food group
     foodGroupForSearch,
+    //property group
+    propertyGroupForSearch,
   } = useContext(FoodContext);
 
   const {
@@ -67,6 +74,35 @@ const Pos = () => {
     variations: null,
     properties: null,
   });
+
+  //new order
+  const [newOrder, setNewOrder] = useState(null);
+  const [activeItemInOrder, setActiveItemInOrder] = useState(null);
+  //checked variations
+  const [selectedVariation, setSelectedVariation] = useState(null);
+
+  //demo
+  // const [newOrder, setNewOrder] = useState([
+  //     {
+  //       item: null,       //item id
+  //       quantity: null,  //quantity
+  //       variation: null, //food_with_variation_id
+  //       properties: {
+  //item: null, //property item id
+  //quantity: null //quantity
+  //},
+  //     },
+  //     {
+  //       item: null,       //item id
+  //       quantity: null,  //quantity
+  //       variation: null, //food_with_variation_id
+  //       properties: {
+  //item: null, //property item id
+  //quantity: null //quantity
+  //},
+  //     },
+  //   ],
+  // );
 
   //useEffect- to get data on render
   useEffect(() => {
@@ -93,11 +129,89 @@ const Pos = () => {
     }
   }, [foodGroupForSearch, foodForSearch]);
 
+  // {
+  //   item: null,
+  //   quantity: null,
+  //   variation: null,
+  //   properties: { item: null, quantity: null },
+  // }
+  const handleOrderItem = (tempFoodItem) => {
+    let oldOrderItems = [];
+    let newOrderItem = null;
+    if (newOrder) {
+      newOrder.map((eachOldOrderItem) => {
+        oldOrderItems.push(eachOldOrderItem);
+      });
+      newOrderItem = {
+        item: tempFoodItem,
+        variation:
+          parseInt(tempFoodItem.has_variation) === 1
+            ? tempFoodItem.variations[0]
+            : null,
+      };
+      oldOrderItems.push(newOrderItem);
+    } else {
+      newOrderItem = {
+        item: tempFoodItem,
+        variation:
+          parseInt(tempFoodItem.has_variation) === 1
+            ? tempFoodItem.variations[0]
+            : null,
+      };
+      oldOrderItems.push(newOrderItem);
+    }
+    setNewOrder(oldOrderItems);
+    setActiveItemInOrder(oldOrderItems.length - 1);
+    let beep = document.getElementById("myAudio");
+    beep.play();
+  };
+
+  //set order item's variation
+  const handleOrderItemVariation = (tempFoodItemVariation) => {
+    if (activeItemInOrder !== null) {
+      if (newOrder) {
+        let oldOrderItems = [];
+        let newOrderItemTemp = null;
+        newOrder.map((newOrderItem, index) => {
+          if (index === activeItemInOrder) {
+            newOrderItemTemp = {
+              ...newOrderItem,
+              variation: tempFoodItemVariation,
+            };
+            oldOrderItems.push(newOrderItemTemp);
+          } else {
+            newOrderItemTemp = newOrderItem;
+            oldOrderItems.push(newOrderItemTemp);
+          }
+        });
+
+        setNewOrder(oldOrderItems);
+      }
+    }
+  };
+
+  // const checkVariationSelected = (variationItem) => {
+  //   let temp = [];
+  //   variationChecked &&
+  //     variationChecked.length > 0 &&
+  //     variationChecked.map((item) => {
+  //       temp.push(item);
+  //     });
+  //   if (!temp.includes(variationItem.food_with_variation_id)) {
+  //     temp.push(variationItem.food_with_variation_id);
+  //   }
+  //   setVariationChecked(temp);
+  // };
+
   return (
     <>
       <Helmet>
         <title>{_t(t("POS"))}</title>
       </Helmet>
+
+      <audio id="myAudio">
+        <source src="/assets/beep/beep.mp3" type="audio/mpeg" />
+      </audio>
 
       {/* Menu Addons  */}
       <div className="modal fade" id="menuAddons" aria-hidden="true">
@@ -908,12 +1022,12 @@ const Pos = () => {
                                         <>
                                           <div className="fk-addons-table__info">
                                             <div className="row g-0">
-                                              <div className="col-9 pl-3 border-right">
+                                              <div className="col-8 pl-3 border-right">
                                                 <span className="fk-addons-table__info-text text-capitalize">
                                                   name
                                                 </span>
                                               </div>
-                                              <div className="col-3 text-center">
+                                              <div className="col-4 text-center">
                                                 <span className="fk-addons-table__info-text text-capitalize">
                                                   price
                                                 </span>
@@ -926,12 +1040,25 @@ const Pos = () => {
                                                 return (
                                                   <div className="fk-addons-table__body-row">
                                                     <div className="row g-0">
-                                                      <div className="col-9 border-right t-pl-10 t-pr-10">
+                                                      <div
+                                                        className="col-8 border-right t-pl-10 t-pr-10"
+                                                        onClick={() => {
+                                                          handleOrderItemVariation(
+                                                            variationItem
+                                                          );
+                                                        }}
+                                                      >
                                                         <label className="mx-checkbox">
                                                           <input
                                                             type="radio"
                                                             className="mx-checkbox__input mx-checkbox__input-solid mx-checkbox__input-solid--danger mx-checkbox__input-sm"
                                                             name="variation"
+                                                            // checked={
+                                                            //   variationChecked &&
+                                                            //   variationChecked.includes(
+                                                            //     variationItem.food_with_variation_id
+                                                            //   )
+                                                            // }
                                                           />
                                                           <span className="mx-checkbox__text text-capitalize t-text-heading t-ml-8 fk-addons-table__body-text">
                                                             {
@@ -940,11 +1067,13 @@ const Pos = () => {
                                                           </span>
                                                         </label>
                                                       </div>
-                                                      <div className="col-3 text-center">
+                                                      <div className="col-4 text-center">
                                                         <span className="fk-addons-table__body-text sm-text">
-                                                          {
+                                                          {currencySymbolLeft()}
+                                                          {formatPrice(
                                                             variationItem.food_with_variation_price
-                                                          }
+                                                          )}
+                                                          {currencySymbolRight()}
                                                         </span>
                                                       </div>
                                                     </div>
@@ -970,94 +1099,108 @@ const Pos = () => {
 
                                     <div
                                       className={
-                                        foodItem.properties
-                                          ? "fk-addons-table"
-                                          : "d-none"
+                                        foodItem.properties ? "" : "d-none"
                                       }
                                     >
                                       {/* Property group and items */}
                                       {foodItem.properties && (
                                         <>
-                                          <div className="fk-addons-table__head text-center">
-                                            addons
-                                          </div>
-                                          <div className="fk-addons-table__info">
-                                            <div className="row g-0">
-                                              <div className="col-6 pl-3 border-right">
-                                                <span className="fk-addons-table__info-text text-capitalize">
-                                                  name
-                                                </span>
-                                              </div>
-                                              <div className="col-3 text-center border-right">
-                                                <span className="fk-addons-table__info-text text-capitalize">
-                                                  QTY
-                                                </span>
-                                              </div>
-                                              <div className="col-3 text-center">
-                                                <span className="fk-addons-table__info-text text-capitalize">
-                                                  price
-                                                </span>
-                                              </div>
-                                            </div>
-                                          </div>
-                                          <div className="fk-addons-table__body">
-                                            <div className="fk-addons-table__body-row">
-                                              <div className="row g-0">
-                                                <div className="col-6 border-right t-pl-10 t-pr-10">
-                                                  <label className="mx-checkbox">
-                                                    <input
-                                                      type="checkbox"
-                                                      className="mx-checkbox__input mx-checkbox__input-solid mx-checkbox__input-solid--danger mx-checkbox__input-sm"
-                                                    />
-                                                    <span className="mx-checkbox__text text-capitalize t-text-heading t-ml-8 fk-addons-table__body-text">
-                                                      patty
-                                                    </span>
-                                                  </label>
-                                                </div>
-                                                <div className="col-3 text-center border-right">
-                                                  <div className="fk-qty justify-content-center t-pt-10 t-pb-10">
-                                                    <span className="fk-qty__icon fk-qty__deduct">
-                                                      <i className="las la-minus"></i>
-                                                    </span>
-                                                    <input
-                                                      type="text"
-                                                      value="0"
-                                                      className="fk-qty__input t-bg-clear"
-                                                    />
-                                                    <span className="fk-qty__icon fk-qty__add">
-                                                      <i className="las la-plus"></i>
-                                                    </span>
+                                          {foodItem.properties.map(
+                                            (propertyItem) => {
+                                              //property group
+                                              let selectedGroup =
+                                                propertyGroupForSearch &&
+                                                propertyGroupForSearch.find(
+                                                  (singlePropertyGroup) => {
+                                                    return (
+                                                      singlePropertyGroup.id ===
+                                                      propertyItem[0]
+                                                        .property_group_id
+                                                    );
+                                                  }
+                                                );
+                                              return (
+                                                <div className="fk-addons-table">
+                                                  <div className="fk-addons-table__head text-center">
+                                                    {selectedGroup &&
+                                                      selectedGroup.name}
+                                                  </div>
+                                                  <div className="fk-addons-table__info">
+                                                    <div className="row g-0">
+                                                      <div className="col-5 pl-3 border-right">
+                                                        <span className="fk-addons-table__info-text text-capitalize">
+                                                          name
+                                                        </span>
+                                                      </div>
+                                                      <div className="col-3 text-center border-right">
+                                                        <span className="fk-addons-table__info-text text-capitalize">
+                                                          QTY
+                                                        </span>
+                                                      </div>
+                                                      <div className="col-4 text-center">
+                                                        <span className="fk-addons-table__info-text text-capitalize">
+                                                          price
+                                                        </span>
+                                                      </div>
+                                                    </div>
+                                                  </div>
+                                                  <div className="fk-addons-table__body">
+                                                    {propertyItem.map(
+                                                      (eachItem) => {
+                                                        return (
+                                                          <div className="fk-addons-table__body-row">
+                                                            <div className="row g-0">
+                                                              <div className="col-5 border-right t-pl-10 t-pr-10">
+                                                                <label className="mx-checkbox">
+                                                                  <input
+                                                                    type="checkbox"
+                                                                    className="mx-checkbox__input mx-checkbox__input-solid mx-checkbox__input-solid--danger mx-checkbox__input-sm"
+                                                                  />
+                                                                  <span className="mx-checkbox__text text-capitalize t-text-heading t-ml-8 fk-addons-table__body-text">
+                                                                    {
+                                                                      eachItem.name
+                                                                    }
+                                                                  </span>
+                                                                </label>
+                                                              </div>
+                                                              <div className="col-3 text-center border-right">
+                                                                <div className="fk-qty justify-content-center t-pt-10 t-pb-10">
+                                                                  <span className="fk-qty__icon fk-qty__deduct">
+                                                                    <i className="las la-minus"></i>
+                                                                  </span>
+                                                                  <input
+                                                                    type="text"
+                                                                    value="0"
+                                                                    className="fk-qty__input t-bg-clear"
+                                                                  />
+                                                                  <span className="fk-qty__icon fk-qty__add">
+                                                                    <i className="las la-plus"></i>
+                                                                  </span>
+                                                                </div>
+                                                              </div>
+                                                              <div className="col-4 text-center">
+                                                                <span className="fk-addons-table__body-text sm-text">
+                                                                  {currencySymbolLeft()}
+                                                                  {formatPrice(
+                                                                    eachItem.extra_price
+                                                                  )}
+                                                                  {currencySymbolRight()}
+                                                                </span>
+                                                              </div>
+                                                            </div>
+                                                          </div>
+                                                        );
+                                                      }
+                                                    )}
                                                   </div>
                                                 </div>
-                                                <div className="col-3 text-center">
-                                                  <span className="fk-addons-table__body-text sm-text">
-                                                    50
-                                                  </span>
-                                                </div>
-                                              </div>
-                                            </div>
-                                          </div>
+                                              );
+                                            }
+                                          )}
                                         </>
                                       )}
                                     </div>
                                     {/* Property group and items */}
-
-                                    {/* Add to cart */}
-                                    <div className="t-bg-white fk-addons-variation__cart">
-                                      <div className="container-fluid t-mb-10 t-mt-10">
-                                        <div className="row">
-                                          <div className="col">
-                                            <a
-                                              href="#"
-                                              className="t-link btn btn-danger sm-text text-uppercase"
-                                            >
-                                              add cart
-                                            </a>
-                                          </div>
-                                        </div>
-                                      </div>
-                                    </div>
-                                    {/* Add to cart */}
                                   </div>
                                 </div>
                               </div>
@@ -1092,6 +1235,7 @@ const Pos = () => {
                                                   ? tempFoodItem.properties
                                                   : null,
                                             });
+                                            handleOrderItem(tempFoodItem);
                                           }}
                                           className={`fk-dish__link t-mb-10 col-md-6 col-lg-4 col-xl-6 col-xxl-4 t-link border-0 ${
                                             foodItem.selectedItem &&
@@ -1750,107 +1894,14 @@ const Pos = () => {
                           <div className="fk-price-table__head">
                             <div className="row gx-0 align-items-center">
                               <div className="col-6">
-                                <img
-                                  src="/assets/img/logo-alt.png"
-                                  alt="foodkhan"
-                                  className="img-fluid"
-                                />
+                                <span className="d-block sm-text font-weight-bold text-uppercase font-italic">
+                                  token: R12548795
+                                </span>
                               </div>
                               <div className="col-6 text-right">
                                 <span className="d-block xsm-text text-uppercase">
                                   10/15/2020
                                 </span>
-                                <span className="d-block sm-text font-weight-bold text-uppercase font-italic">
-                                  token: R12548795
-                                </span>
-                              </div>
-                            </div>
-                            <div className="row gx-0 align-items-center t-mt-10">
-                              <div className="col-8">
-                                <div className="row gx-0">
-                                  <div className="col">
-                                    <span className="text-capitalize sm-text">
-                                      name
-                                    </span>
-                                  </div>
-                                  <div className="col text-center d-none d-xxl-block">
-                                    :
-                                  </div>
-                                  <div className="col">
-                                    <span className="text-capitalize sm-text font-weight-bold">
-                                      jhon doe
-                                    </span>
-                                  </div>
-                                </div>
-                                <div className="row gx-0">
-                                  <div className="col">
-                                    <span className="text-capitalize sm-text">
-                                      waiter
-                                    </span>
-                                  </div>
-                                  <div className="col text-center d-none d-xxl-block">
-                                    :
-                                  </div>
-                                  <div className="col">
-                                    <span className="text-capitalize sm-text font-weight-bold">
-                                      jhon doe
-                                    </span>
-                                  </div>
-                                </div>
-                                <div className="row gx-0">
-                                  <div className="col">
-                                    <span className="text-capitalize sm-text">
-                                      dept. tag
-                                    </span>
-                                  </div>
-                                  <div className="col text-center d-none d-xxl-block">
-                                    :
-                                  </div>
-                                  <div className="col">
-                                    <span className="text-capitalize sm-text font-weight-bold">
-                                      dine in
-                                    </span>
-                                  </div>
-                                </div>
-                              </div>
-                              <div className="col-4">
-                                <div className="row gx-0">
-                                  <div className="col">
-                                    <span className="text-capitalize sm-text">
-                                      guest:
-                                    </span>
-                                  </div>
-                                  <div className="col">
-                                    <span className="text-capitalize sm-text font-weight-bold">
-                                      05
-                                    </span>
-                                  </div>
-                                </div>
-                                <div className="row gx-0">
-                                  <div className="col">
-                                    <span className="text-capitalize sm-text">
-                                      table:
-                                    </span>
-                                  </div>
-
-                                  <div className="col">
-                                    <span className="text-capitalize sm-text font-weight-bold">
-                                      02
-                                    </span>
-                                  </div>
-                                </div>
-                                <div className="row gx-0">
-                                  <div className="col">
-                                    <span className="text-capitalize sm-text">
-                                      payment:
-                                    </span>
-                                  </div>
-                                  <div className="col">
-                                    <span className="text-capitalize sm-text font-weight-bold">
-                                      cash
-                                    </span>
-                                  </div>
-                                </div>
                               </div>
                             </div>
                           </div>
@@ -1880,121 +1931,190 @@ const Pos = () => {
                                   className="fk-table__body border-bottom"
                                   data-simplebar
                                 >
-                                  <div className="row g-0 border border-top-0">
-                                    <div className="col-7 border-right">
-                                      <span className="text-capitalize d-block t-pt-5 t-pb-5 t-pl-5 t-pr-5 sm-text font-weight-bold">
-                                        Spicy Chicken Pizza
-                                      </span>
-                                      <div className="row g-0">
-                                        <div className="col-12">
-                                          <div className="row g-2">
-                                            <div className="col-5 col-xxl-4">
-                                              <span className="text-capitalize sm-text d-inline-block font-weight-bold t-pr-5 t-pl-5">
-                                                addons :
-                                              </span>
+                                  <div className="sky-is-blue">
+                                    {newOrder && newOrder.length > 0 ? (
+                                      newOrder.map(
+                                        (orderListItem, orderListItemIndex) => {
+                                          return (
+                                            <div
+                                              className={`fk-table-container-order ${
+                                                orderListItemIndex ===
+                                                  activeItemInOrder && "active"
+                                              }`}
+                                              onClick={() => {
+                                                //orderListItem's group wise all items
+                                                let tempItems =
+                                                  foodForSearch &&
+                                                  foodForSearch.filter(
+                                                    (tempItem) => {
+                                                      return (
+                                                        tempItem.food_group_id ===
+                                                        orderListItem.item
+                                                          .food_group_id
+                                                      );
+                                                    }
+                                                  );
+
+                                                //orderListItem's group
+                                                let foodGroup =
+                                                  foodGroupForSearch &&
+                                                  foodGroupForSearch.find(
+                                                    (groupItem) => {
+                                                      return (
+                                                        groupItem.id ===
+                                                        parseInt(
+                                                          orderListItem.item
+                                                            .food_group_id
+                                                        )
+                                                      );
+                                                    }
+                                                  );
+
+                                                // selected pos item
+                                                let selectedItemTemp =
+                                                  tempItems &&
+                                                  tempItems.find(
+                                                    (tempSelectedItem) => {
+                                                      return (
+                                                        tempSelectedItem.id ===
+                                                        orderListItem.item.id
+                                                      );
+                                                    }
+                                                  );
+
+                                                // Set variations, properties, selected item
+                                                setFoodItem({
+                                                  ...foodItem,
+                                                  foodGroup: foodGroup,
+                                                  items: tempItems,
+                                                  selectedItem: selectedItemTemp,
+                                                  variations:
+                                                    selectedItemTemp &&
+                                                    parseInt(
+                                                      selectedItemTemp.has_variation
+                                                    ) === 1
+                                                      ? selectedItemTemp.variations
+                                                      : null,
+                                                  properties:
+                                                    selectedItemTemp &&
+                                                    parseInt(
+                                                      selectedItemTemp.has_property
+                                                    ) === 1
+                                                      ? selectedItemTemp.properties
+                                                      : null,
+                                                });
+
+                                                //set active order list index for background color of selected
+                                                setActiveItemInOrder(
+                                                  orderListItemIndex
+                                                );
+                                              }}
+                                            >
+                                              <div className="row g-0 border border-top-0">
+                                                <div className="col-7 border-right">
+                                                  <div className="d-flex justify-content-between">
+                                                    <span className="text-capitalize d-block t-pt-5 t-pb-5 t-pl-5 t-pr-5 sm-text font-weight-bold t-mr-8">
+                                                      {orderListItem.item.name}
+                                                    </span>
+                                                    <span className="text-capitalize d-block t-pt-5 t-pb-5 t-pl-5 t-pr-5 sm-text font-weight-bold">
+                                                      <span className="badge rounded-pill bg-secondary text-capitalize">
+                                                        remove
+                                                      </span>
+                                                    </span>
+                                                  </div>
+                                                  <div className="row g-0">
+                                                    {parseInt(
+                                                      orderListItem.item
+                                                        .has_variation
+                                                    ) === 1 && (
+                                                      <div className="col-12">
+                                                        <div className="row g-2">
+                                                          <div className="col-5 col-xxl-4">
+                                                            <span className="text-capitalize sm-text d-inline-block font-weight-bold t-pr-5 t-pl-5">
+                                                              variation :
+                                                            </span>
+                                                          </div>
+                                                          <div className="col-7 col-xxl-8">
+                                                            <span className="text-capitalize sm-text d-inline-block">
+                                                              {orderListItem.variation
+                                                                ? orderListItem
+                                                                    .variation
+                                                                    .variation_name
+                                                                : "-"}
+                                                            </span>
+                                                          </div>
+                                                        </div>
+                                                      </div>
+                                                    )}
+                                                    <div className="col-12">
+                                                      <div className="row g-2">
+                                                        <div className="col-5 col-xxl-4">
+                                                          <span className="text-capitalize sm-text d-inline-block font-weight-bold t-pr-5 t-pl-5">
+                                                            addons :
+                                                          </span>
+                                                        </div>
+                                                        <div className="col-7 col-xxl-8">
+                                                          <span className="text-capitalize sm-text d-inline-block">
+                                                            addons, variations,
+                                                            aan
+                                                          </span>
+                                                        </div>
+                                                      </div>
+                                                    </div>
+                                                  </div>
+                                                </div>
+                                                <div className="col-2 text-center border-right d-flex justify-content-center align-items-center">
+                                                  <div className="fk-qty t-pt-5 t-pb-5 justify-content-center">
+                                                    <span className="fk-qty__icon fk-qty__deduct">
+                                                      <i className="las la-minus"></i>
+                                                    </span>
+                                                    <input
+                                                      type="text"
+                                                      value="0"
+                                                      className="fk-qty__input t-bg-clear"
+                                                    />
+                                                    <span className="fk-qty__icon fk-qty__add">
+                                                      <i className="las la-plus"></i>
+                                                    </span>
+                                                  </div>
+                                                </div>
+                                                <div className="col-3 text-center border-right d-flex justify-content-center align-items-center">
+                                                  <span className="text-capitalize sm-text d-inline-block font-weight-bold t-pt-5 t-pb-5">
+                                                    {parseInt(
+                                                      orderListItem.item
+                                                        .has_variation
+                                                    ) === 1 ? (
+                                                      <>
+                                                        {currencySymbolLeft()}
+                                                        {formatPrice(
+                                                          orderListItem
+                                                            .variation
+                                                            .food_with_variation_price
+                                                        )}
+                                                        {currencySymbolRight()}
+                                                      </>
+                                                    ) : (
+                                                      <>
+                                                        {currencySymbolLeft()}
+                                                        {formatPrice(
+                                                          orderListItem.item
+                                                            .price
+                                                        )}
+                                                        {currencySymbolRight()}
+                                                      </>
+                                                    )}
+                                                  </span>
+                                                </div>
+                                              </div>
                                             </div>
-                                            <div className="col-7 col-xxl-8">
-                                              <span className="text-capitalize sm-text d-inline-block">
-                                                addons, variations, aan
-                                              </span>
-                                            </div>
-                                          </div>
-                                        </div>
-                                        <div className="col-12">
-                                          <div className="row g-2">
-                                            <div className="col-5 col-xxl-4">
-                                              <span className="text-capitalize sm-text d-inline-block font-weight-bold t-pr-5 t-pl-5">
-                                                variation :
-                                              </span>
-                                            </div>
-                                            <div className="col-7 col-xxl-8">
-                                              <span className="text-capitalize sm-text d-inline-block">
-                                                addons, variations, and, more,
-                                                and, dolore
-                                              </span>
-                                            </div>
-                                          </div>
-                                        </div>
+                                          );
+                                        }
+                                      )
+                                    ) : (
+                                      <div className="text-primary text-center pt-5 xsm-text text-uppercase">
+                                        Select food item to add to the list
                                       </div>
-                                    </div>
-                                    <div className="col-2 text-center border-right d-flex justify-content-center align-items-center">
-                                      <div className="fk-qty t-pt-5 t-pb-5 justify-content-center">
-                                        <span className="fk-qty__icon fk-qty__deduct">
-                                          <i className="las la-minus"></i>
-                                        </span>
-                                        <input
-                                          type="text"
-                                          value="0"
-                                          className="fk-qty__input t-bg-clear"
-                                        />
-                                        <span className="fk-qty__icon fk-qty__add">
-                                          <i className="las la-plus"></i>
-                                        </span>
-                                      </div>
-                                    </div>
-                                    <div className="col-3 text-center border-right d-flex justify-content-center align-items-center">
-                                      <span className="text-capitalize sm-text d-inline-block font-weight-bold t-pt-5 t-pb-5">
-                                        5000.00
-                                      </span>
-                                    </div>
-                                  </div>
-                                  <div className="row g-0 border border-top-0">
-                                    <div className="col-7 border-right">
-                                      <span className="text-capitalize d-block t-pt-5 t-pb-5 t-pl-5 t-pr-5 sm-text font-weight-bold">
-                                        Spicy Chicken Pizza
-                                      </span>
-                                      <div className="row g-0">
-                                        <div className="col-12">
-                                          <div className="row g-2">
-                                            <div className="col-5 col-xxl-4">
-                                              <span className="text-capitalize sm-text d-inline-block font-weight-bold t-pr-5 t-pl-5">
-                                                addons :
-                                              </span>
-                                            </div>
-                                            <div className="col-7 col-xxl-8">
-                                              <span className="text-capitalize sm-text d-inline-block">
-                                                addons, variations, aan
-                                              </span>
-                                            </div>
-                                          </div>
-                                        </div>
-                                        <div className="col-12">
-                                          <div className="row g-2">
-                                            <div className="col-5 col-xxl-4">
-                                              <span className="text-capitalize sm-text d-inline-block font-weight-bold t-pr-5 t-pl-5">
-                                                variation :
-                                              </span>
-                                            </div>
-                                            <div className="col-7 col-xxl-8">
-                                              <span className="text-capitalize sm-text d-inline-block">
-                                                addons, variations, and, more,
-                                                and, dolore
-                                              </span>
-                                            </div>
-                                          </div>
-                                        </div>
-                                      </div>
-                                    </div>
-                                    <div className="col-2 text-center border-right d-flex justify-content-center align-items-center">
-                                      <div className="fk-qty t-pt-5 t-pb-5 justify-content-center">
-                                        <span className="fk-qty__icon fk-qty__deduct">
-                                          <i className="las la-minus"></i>
-                                        </span>
-                                        <input
-                                          type="text"
-                                          value="0"
-                                          className="fk-qty__input t-bg-clear"
-                                        />
-                                        <span className="fk-qty__icon fk-qty__add">
-                                          <i className="las la-plus"></i>
-                                        </span>
-                                      </div>
-                                    </div>
-                                    <div className="col-3 text-center border-right d-flex justify-content-center align-items-center">
-                                      <span className="text-capitalize sm-text d-inline-block font-weight-bold t-pt-5 t-pb-5">
-                                        5000.00
-                                      </span>
-                                    </div>
+                                    )}
                                   </div>
                                 </div>
                               </div>
@@ -2115,18 +2235,42 @@ const Pos = () => {
                                       >
                                         <i className="fa fa-calculator"></i>
                                       </button>
-                                      {/* <div
-                                        className="calculator calculator-demo"
-                                        style={{
-                                          height: "24rem",
-                                          width: "15rem",
-                                        }}
-                                      >
-                                        <Calculator
-                                          onNewInput={handleInput}
-                                          onResultChange={onResultChange}
-                                        />
-                                      </div> */}
+                                      <div className="calculator">
+                                        <div className="input" id="input"></div>
+                                        <div className="buttons">
+                                          <div className="operators">
+                                            <div>+</div>
+                                            <div>-</div>
+                                            <div>&times;</div>
+                                            <div>&divide;</div>
+                                          </div>
+                                          <div className="leftPanel">
+                                            <div className="numbers">
+                                              <div>7</div>
+                                              <div>8</div>
+                                              <div>9</div>
+                                            </div>
+                                            <div className="numbers">
+                                              <div>4</div>
+                                              <div>5</div>
+                                              <div>6</div>
+                                            </div>
+                                            <div className="numbers">
+                                              <div>1</div>
+                                              <div>2</div>
+                                              <div>3</div>
+                                            </div>
+                                            <div className="numbers">
+                                              <div>0</div>
+                                              <div>.</div>
+                                              <div id="clear">C</div>
+                                            </div>
+                                          </div>
+                                          <div className="equal" id="result">
+                                            =
+                                          </div>
+                                        </div>
+                                      </div>
                                     </div>
                                   </div>
                                 </div>
