@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState, useRef } from "react";
 
 //functions
 import {
@@ -27,6 +27,7 @@ import { RestaurantContext } from "../../../../contexts/Restaurant";
 import { FoodContext } from "../../../../contexts/Food";
 
 const Pos = () => {
+  const myRef = useRef(null);
   //getting context values here
   const {
     //common
@@ -79,30 +80,7 @@ const Pos = () => {
   const [newOrder, setNewOrder] = useState(null);
   const [activeItemInOrder, setActiveItemInOrder] = useState(null);
   //checked variations
-  const [selectedVariation, setSelectedVariation] = useState(null);
-
-  //demo
-  // const [newOrder, setNewOrder] = useState([
-  //     {
-  //       item: null,       //item id
-  //       quantity: null,  //quantity
-  //       variation: null, //food_with_variation_id
-  //       properties: {
-  //item: null, //property item id
-  //quantity: null //quantity
-  //},
-  //     },
-  //     {
-  //       item: null,       //item id
-  //       quantity: null,  //quantity
-  //       variation: null, //food_with_variation_id
-  //       properties: {
-  //item: null, //property item id
-  //quantity: null //quantity
-  //},
-  //     },
-  //   ],
-  // );
+  const [selectedVariation, setSelectedVariation] = useState([]);
 
   //useEffect- to get data on render
   useEffect(() => {
@@ -138,9 +116,17 @@ const Pos = () => {
   const handleOrderItem = (tempFoodItem) => {
     let oldOrderItems = [];
     let newOrderItem = null;
+    let tempSelectedVariations = [];
     if (newOrder) {
       newOrder.map((eachOldOrderItem) => {
         oldOrderItems.push(eachOldOrderItem);
+        let tempArray = [];
+        if (eachOldOrderItem.variation !== null) {
+          tempArray.push(eachOldOrderItem.variation.food_with_variation_id);
+        } else {
+          tempArray.push(null);
+        }
+        tempSelectedVariations.push(tempArray);
       });
       newOrderItem = {
         item: tempFoodItem,
@@ -149,6 +135,13 @@ const Pos = () => {
             ? tempFoodItem.variations[0]
             : null,
       };
+      let tempArray = [];
+      if (parseInt(tempFoodItem.has_variation) === 1) {
+        tempArray.push(tempFoodItem.variations[0].food_with_variation_id);
+      } else {
+        tempArray.push(null);
+      }
+      tempSelectedVariations.push(tempArray);
       oldOrderItems.push(newOrderItem);
     } else {
       newOrderItem = {
@@ -158,12 +151,21 @@ const Pos = () => {
             ? tempFoodItem.variations[0]
             : null,
       };
+      let tempArray = [];
+      if (parseInt(tempFoodItem.has_variation) === 1) {
+        tempArray.push(tempFoodItem.variations[0].food_with_variation_id);
+      } else {
+        tempArray.push(null);
+      }
+      tempSelectedVariations.push(tempArray);
       oldOrderItems.push(newOrderItem);
     }
     setNewOrder(oldOrderItems);
     setActiveItemInOrder(oldOrderItems.length - 1);
+    setSelectedVariation(tempSelectedVariations);
     let beep = document.getElementById("myAudio");
     beep.play();
+    activeItemInOrder && myRef.current.scrollIntoViewIfNeeded();
   };
 
   //set order item's variation
@@ -172,36 +174,48 @@ const Pos = () => {
       if (newOrder) {
         let oldOrderItems = [];
         let newOrderItemTemp = null;
+
+        let tempSelectedVariations = [];
+
         newOrder.map((newOrderItem, index) => {
+          let tempArray = [];
           if (index === activeItemInOrder) {
             newOrderItemTemp = {
               ...newOrderItem,
               variation: tempFoodItemVariation,
             };
             oldOrderItems.push(newOrderItemTemp);
+            tempArray.push(tempFoodItemVariation.food_with_variation_id);
           } else {
             newOrderItemTemp = newOrderItem;
             oldOrderItems.push(newOrderItemTemp);
+            if (newOrderItemTemp.variation) {
+              tempArray.push(newOrderItemTemp.variation.food_with_variation_id);
+            }
           }
+          tempSelectedVariations.push(tempArray);
         });
-
+        setSelectedVariation(tempSelectedVariations);
         setNewOrder(oldOrderItems);
       }
     }
   };
 
-  // const checkVariationSelected = (variationItem) => {
-  //   let temp = [];
-  //   variationChecked &&
-  //     variationChecked.length > 0 &&
-  //     variationChecked.map((item) => {
-  //       temp.push(item);
-  //     });
-  //   if (!temp.includes(variationItem.food_with_variation_id)) {
-  //     temp.push(variationItem.food_with_variation_id);
-  //   }
-  //   setVariationChecked(temp);
-  // };
+  //to check which variation is selected
+  const checkChecked = (variationItem) => {
+    if (selectedVariation[activeItemInOrder] !== undefined) {
+      if (
+        selectedVariation[activeItemInOrder][0] ===
+        variationItem.food_with_variation_id
+      ) {
+        return true;
+      } else {
+        return false;
+      }
+    } else {
+      return false;
+    }
+  };
 
   return (
     <>
@@ -1040,25 +1054,20 @@ const Pos = () => {
                                                 return (
                                                   <div className="fk-addons-table__body-row">
                                                     <div className="row g-0">
-                                                      <div
-                                                        className="col-8 border-right t-pl-10 t-pr-10"
-                                                        onClick={() => {
-                                                          handleOrderItemVariation(
-                                                            variationItem
-                                                          );
-                                                        }}
-                                                      >
+                                                      <div className="col-8 border-right t-pl-10 t-pr-10">
                                                         <label className="mx-checkbox">
                                                           <input
                                                             type="radio"
                                                             className="mx-checkbox__input mx-checkbox__input-solid mx-checkbox__input-solid--danger mx-checkbox__input-sm"
                                                             name="variation"
-                                                            // checked={
-                                                            //   variationChecked &&
-                                                            //   variationChecked.includes(
-                                                            //     variationItem.food_with_variation_id
-                                                            //   )
-                                                            // }
+                                                            onChange={() => {
+                                                              handleOrderItemVariation(
+                                                                variationItem
+                                                              );
+                                                            }}
+                                                            checked={checkChecked(
+                                                              variationItem
+                                                            )}
                                                           />
                                                           <span className="mx-checkbox__text text-capitalize t-text-heading t-ml-8 fk-addons-table__body-text">
                                                             {
@@ -1920,7 +1929,7 @@ const Pos = () => {
                                         QTY
                                       </span>
                                     </div>
-                                    <div className="col-3 text-center border-right">
+                                    <div className="col-3 text-center">
                                       <span className="text-capitalize sm-text d-inline-block font-weight-bold t-pt-5 t-pb-5">
                                         price
                                       </span>
@@ -1940,7 +1949,7 @@ const Pos = () => {
                                               className={`fk-table-container-order ${
                                                 orderListItemIndex ===
                                                   activeItemInOrder && "active"
-                                              }`}
+                                              } `}
                                               onClick={() => {
                                                 //orderListItem's group wise all items
                                                 let tempItems =
@@ -2010,8 +2019,15 @@ const Pos = () => {
                                                 );
                                               }}
                                             >
-                                              <div className="row g-0 border border-top-0">
-                                                <div className="col-7 border-right">
+                                              <div
+                                                className={`row g-0 border-top-0 border-bottom`}
+                                              >
+                                                <div
+                                                  className={`col-7 border-left border-right py-2 ${
+                                                    orderListItemIndex === 0 &&
+                                                    "pt-3"
+                                                  }`}
+                                                >
                                                   <div className="d-flex justify-content-between">
                                                     <span className="text-capitalize d-block t-pt-5 t-pb-5 t-pl-5 t-pr-5 sm-text font-weight-bold t-mr-8">
                                                       {orderListItem.item.name}
@@ -2115,6 +2131,13 @@ const Pos = () => {
                                         Select food item to add to the list
                                       </div>
                                     )}
+                                    {/* for automatic scroll to here */}
+                                    <div className="pt-5">
+                                      <span
+                                        ref={myRef}
+                                        className="d-flex pt-5"
+                                      ></span>
+                                    </div>
                                   </div>
                                 </div>
                               </div>
