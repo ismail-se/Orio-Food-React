@@ -42,7 +42,6 @@ const Pos = () => {
     setCustomerForSearch,
     //waiter
     waiterForSearch,
-    setWaiterForSearch,
   } = useContext(UserContext);
 
   const {
@@ -180,8 +179,8 @@ const Pos = () => {
     setSelectedVariation(tempSelectedVariations);
 
     //sound
-    let beep = document.getElementById("myAudio");
-    beep.play();
+    // let beep = document.getElementById("myAudio");
+    // beep.play();
 
     //scroll to new item to the list
     activeItemInOrder && myRef.current.scrollIntoViewIfNeeded();
@@ -298,8 +297,45 @@ const Pos = () => {
     setNewOrder(oldOrderItems);
 
     //sound
-    let beep = document.getElementById("myAudio");
-    beep.play();
+    // let beep = document.getElementById("myAudio");
+    // beep.play();
+  };
+
+  //cancel order confirmation
+  const handleCancelConfirmation = () => {
+    confirmAlert({
+      customUI: ({ onClose }) => {
+        return (
+          <div className="card card-body bg-primary text-white">
+            <h1 className="text-white">{_t(t("Are you sure?"))}</h1>
+            <p className="text-center">
+              {_t(t("You want to cancel this order?"))}
+            </p>
+            <div className="d-flex justify-content-center">
+              <button
+                className="btn btn-warning text-dark"
+                onClick={() => {
+                  handleCancel();
+                  onClose();
+                }}
+              >
+                {_t(t("Yes!"))}
+              </button>
+              <button className="btn btn-success ml-2 px-3" onClick={onClose}>
+                {_t(t("No"))}
+              </button>
+            </div>
+          </div>
+        );
+      },
+    });
+  };
+
+  //cancel order
+  const handleCancel = () => {
+    setNewOrder(null);
+    setActiveItemInOrder(null);
+    setSelectedVariation([]);
   };
 
   // {
@@ -308,6 +344,41 @@ const Pos = () => {
   //   variation: null,
   //   properties: { item: null, quantity: null },
   // }
+
+  const handleProperties = (e, propertyItem) => {
+    e.preventDefault();
+    if (activeItemInOrder !== null) {
+      if (newOrder) {
+        let oldOrderItems = []; //array to push order items
+        let newOrderItemTemp = null; //to edit selected item
+
+        newOrder.map((newOrderItem, index) => {
+          if (index === activeItemInOrder) {
+            let tempPropertyArray = [];
+            if (newOrderItem.properties) {
+              newOrderItem.properties.map((eachPropertyItem) => {
+                tempPropertyArray.push(eachPropertyItem);
+              });
+              tempPropertyArray.push(propertyItem);
+            } else {
+              tempPropertyArray.push(propertyItem);
+            }
+
+            //changing properties of selected food item
+            newOrderItemTemp = {
+              ...newOrderItem,
+              properties: tempPropertyArray,
+            };
+            //push updated item to orderlist
+            oldOrderItems.push(newOrderItemTemp);
+          }
+        });
+
+        //set updated order list
+        setNewOrder(oldOrderItems);
+      }
+    }
+  };
 
   return (
     <>
@@ -1100,6 +1171,9 @@ const Pos = () => {
                                         properties: null,
                                       });
                                     }
+
+                                    //set active item in order list
+                                    setActiveItemInOrder(null);
                                   }}
                                   //set active or !
                                   className={`w-100 t-text-dark t-heading-font btn btn-outline-danger font-weight-bold text-uppercase ${
@@ -1265,7 +1339,17 @@ const Pos = () => {
                                                           <div className="fk-addons-table__body-row">
                                                             <div className="row g-0">
                                                               <div className="col-5 border-right t-pl-10 t-pr-10">
-                                                                <label className="mx-checkbox">
+                                                                <label
+                                                                  className="mx-checkbox"
+                                                                  onClick={(
+                                                                    e
+                                                                  ) => {
+                                                                    handleProperties(
+                                                                      e,
+                                                                      eachItem
+                                                                    );
+                                                                  }}
+                                                                >
                                                                   <input
                                                                     type="checkbox"
                                                                     className="mx-checkbox__input mx-checkbox__input-solid mx-checkbox__input-solid--danger mx-checkbox__input-sm"
@@ -1504,12 +1588,12 @@ const Pos = () => {
                               </a>
                             </div>
                             <div className="col-12">
-                              <a
+                              <button
                                 className="w-100 t-heading-font btn btn-primary font-weight-bold text-uppercase sm-text"
-                                href="#"
+                                onClick={handleCancelConfirmation}
                               >
                                 cancel
-                              </a>
+                              </button>
                             </div>
                           </div>
                         </div>
