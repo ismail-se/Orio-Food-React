@@ -107,19 +107,17 @@ const Pos = () => {
     }
   }, [foodGroupForSearch, foodForSearch]);
 
-  // {
-  //   item: null,
-  //   quantity: null,
-  //   variation: null,
-  //   properties: { item: null, quantity: null },
-  // }
+  //add new item to order list
   const handleOrderItem = (tempFoodItem) => {
     let oldOrderItems = [];
     let newOrderItem = null;
     let tempSelectedVariations = [];
     if (newOrder) {
       newOrder.map((eachOldOrderItem) => {
+        //push all old items to new array to setNewOrder
         oldOrderItems.push(eachOldOrderItem);
+
+        //set selected variations of each order item
         let tempArray = [];
         if (eachOldOrderItem.variation !== null) {
           tempArray.push(eachOldOrderItem.variation.food_with_variation_id);
@@ -128,6 +126,7 @@ const Pos = () => {
         }
         tempSelectedVariations.push(tempArray);
       });
+      //add new order item
       newOrderItem = {
         item: tempFoodItem,
         variation:
@@ -135,6 +134,7 @@ const Pos = () => {
             ? tempFoodItem.variations[0]
             : null,
       };
+      //set selected variations of new item
       let tempArray = [];
       if (parseInt(tempFoodItem.has_variation) === 1) {
         tempArray.push(tempFoodItem.variations[0].food_with_variation_id);
@@ -142,8 +142,11 @@ const Pos = () => {
         tempArray.push(null);
       }
       tempSelectedVariations.push(tempArray);
+      //push new item to new array to setNewOrder
       oldOrderItems.push(newOrderItem);
     } else {
+      //if no item in newOrder List
+      //add new order item
       newOrderItem = {
         item: tempFoodItem,
         variation:
@@ -151,6 +154,8 @@ const Pos = () => {
             ? tempFoodItem.variations[0]
             : null,
       };
+
+      //set selected variations of new item
       let tempArray = [];
       if (parseInt(tempFoodItem.has_variation) === 1) {
         tempArray.push(tempFoodItem.variations[0].food_with_variation_id);
@@ -158,44 +163,65 @@ const Pos = () => {
         tempArray.push(null);
       }
       tempSelectedVariations.push(tempArray);
+
+      //push new item to new array to setNewOrder
       oldOrderItems.push(newOrderItem);
     }
+
+    //set new order list with new array of all order items
     setNewOrder(oldOrderItems);
+
+    //set order list active item index to add class "actve"
     setActiveItemInOrder(oldOrderItems.length - 1);
+
+    //set selected variations
     setSelectedVariation(tempSelectedVariations);
+
+    //sound
     let beep = document.getElementById("myAudio");
     beep.play();
+
+    //scroll to new item to the list
     activeItemInOrder && myRef.current.scrollIntoViewIfNeeded();
   };
 
-  //set order item's variation
+  //set order item's variation on change of variation
   const handleOrderItemVariation = (tempFoodItemVariation) => {
     if (activeItemInOrder !== null) {
       if (newOrder) {
-        let oldOrderItems = [];
-        let newOrderItemTemp = null;
-
-        let tempSelectedVariations = [];
-
+        let oldOrderItems = []; //array to push order items
+        let newOrderItemTemp = null; //to edit selected item
+        let tempSelectedVariations = []; //to set selected variations array for order items
         newOrder.map((newOrderItem, index) => {
           let tempArray = [];
           if (index === activeItemInOrder) {
+            //changing variation of selected food item
             newOrderItemTemp = {
               ...newOrderItem,
               variation: tempFoodItemVariation,
             };
+            //push updated item to orderlist
             oldOrderItems.push(newOrderItemTemp);
+
+            //set updated variation for selected variation
             tempArray.push(tempFoodItemVariation.food_with_variation_id);
           } else {
+            //set other items as it was which are not selected to edit
             newOrderItemTemp = newOrderItem;
             oldOrderItems.push(newOrderItemTemp);
             if (newOrderItemTemp.variation) {
+              //set updated variation for selected variations
               tempArray.push(newOrderItemTemp.variation.food_with_variation_id);
             }
           }
+
+          //push to the array to set selectedVariations
           tempSelectedVariations.push(tempArray);
         });
+        //set variations here
         setSelectedVariation(tempSelectedVariations);
+
+        //set updated order list
         setNewOrder(oldOrderItems);
       }
     }
@@ -203,6 +229,7 @@ const Pos = () => {
 
   //to check which variation is selected
   const checkChecked = (variationItem) => {
+    //if variationItem.food_with_variation_id of selected item exist in selectedVariation - return true
     if (selectedVariation[activeItemInOrder] !== undefined) {
       if (
         selectedVariation[activeItemInOrder][0] ===
@@ -216,6 +243,13 @@ const Pos = () => {
       return false;
     }
   };
+
+  // {
+  //   item: null,
+  //   quantity: null,
+  //   variation: null,
+  //   properties: { item: null, quantity: null },
+  // }
 
   return (
     <>
@@ -1941,6 +1975,7 @@ const Pos = () => {
                                   data-simplebar
                                 >
                                   <div className="sky-is-blue">
+                                    {/* loop through order list items */}
                                     {newOrder && newOrder.length > 0 ? (
                                       newOrder.map(
                                         (orderListItem, orderListItemIndex) => {
@@ -2039,6 +2074,7 @@ const Pos = () => {
                                                     </span>
                                                   </div>
                                                   <div className="row g-0">
+                                                    {/* if item has variations show the selected in order list */}
                                                     {parseInt(
                                                       orderListItem.item
                                                         .has_variation
@@ -2062,6 +2098,8 @@ const Pos = () => {
                                                         </div>
                                                       </div>
                                                     )}
+
+                                                    {/* if item has properties show the selected in order list, loop here  */}
                                                     <div className="col-12">
                                                       <div className="row g-2">
                                                         <div className="col-5 col-xxl-4">
@@ -2077,8 +2115,10 @@ const Pos = () => {
                                                         </div>
                                                       </div>
                                                     </div>
+                                                    {/* if item has properties show the selected in order list  */}
                                                   </div>
                                                 </div>
+                                                {/* Quantity */}
                                                 <div className="col-2 text-center border-right d-flex justify-content-center align-items-center">
                                                   <div className="fk-qty t-pt-5 t-pb-5 justify-content-center">
                                                     <span className="fk-qty__icon fk-qty__deduct">
@@ -2094,6 +2134,9 @@ const Pos = () => {
                                                     </span>
                                                   </div>
                                                 </div>
+                                                {/* Quantity */}
+
+                                                {/* Price */}
                                                 <div className="col-3 text-center border-right d-flex justify-content-center align-items-center">
                                                   <span className="text-capitalize sm-text d-inline-block font-weight-bold t-pt-5 t-pb-5">
                                                     {parseInt(
@@ -2121,6 +2164,7 @@ const Pos = () => {
                                                     )}
                                                   </span>
                                                 </div>
+                                                {/* Price */}
                                               </div>
                                             </div>
                                           );
