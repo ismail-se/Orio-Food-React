@@ -90,20 +90,22 @@ const Pos = () => {
         foodForSearch.filter((tempItem) => {
           return parseInt(tempItem.food_group_id) === foodGroupForSearch[0].id;
         });
-      // initial group & item being active here, variations, properties
-      setFoodItem({
-        foodGroup: foodGroupForSearch[0],
-        items: tempItems,
-        selectedItem: tempItems && tempItems[0],
-        variations:
-          tempItems && parseInt(tempItems[0].has_variation) === 1
-            ? tempItems[0].variations
-            : null,
-        properties:
-          tempItems && parseInt(tempItems[0].has_property) === 1
-            ? tempItems[0].properties
-            : null,
-      });
+      if (tempItems && tempItems.length > 0) {
+        // initial group & item being active here, variations, properties
+        setFoodItem({
+          foodGroup: foodGroupForSearch[0],
+          items: tempItems,
+          selectedItem: tempItems[0],
+          variations:
+            parseInt(tempItems[0].has_variation) === 1
+              ? tempItems[0].variations
+              : null,
+          properties:
+            parseInt(tempItems[0].has_property) === 1
+              ? tempItems[0].properties
+              : null,
+        });
+      }
     }
   }, [foodGroupForSearch, foodForSearch]);
 
@@ -242,6 +244,62 @@ const Pos = () => {
     } else {
       return false;
     }
+  };
+
+  //delete confirmation modal of item from order list
+  const handleDeleteConfirmation = (removeIndex) => {
+    confirmAlert({
+      customUI: ({ onClose }) => {
+        return (
+          <div className="card card-body">
+            <h1>{_t(t("Are you sure?"))}</h1>
+            <p className="text-center">{_t(t("You want to delete this?"))}</p>
+            <div className="d-flex justify-content-center">
+              <button
+                className="btn btn-primary"
+                onClick={() => {
+                  handleRemoveItemFromOrderList(removeIndex);
+                  onClose();
+                }}
+              >
+                {_t(t("Yes, delete it!"))}
+              </button>
+              <button className="btn btn-success ml-2 px-3" onClick={onClose}>
+                {_t(t("No"))}
+              </button>
+            </div>
+          </div>
+        );
+      },
+    });
+  };
+
+  //remove item from order list
+  const handleRemoveItemFromOrderList = (removeIndex) => {
+    let oldOrderItems = []; //array to push order items
+    newOrder.map((newOrderItem, index) => {
+      if (index !== removeIndex) {
+        //push item to orderlist
+        oldOrderItems.push(newOrderItem);
+      }
+    });
+
+    //delete variations here
+    let tempSelectedVariations = selectedVariation.filter(
+      (selectedVariationItem, variationIndex) => {
+        return variationIndex !== removeIndex;
+      }
+    );
+
+    //set variations here
+    setSelectedVariation(tempSelectedVariations);
+
+    //set updated order list
+    setNewOrder(oldOrderItems);
+
+    //sound
+    let beep = document.getElementById("myAudio");
+    beep.play();
   };
 
   // {
@@ -1011,24 +1069,37 @@ const Pos = () => {
                                           groupItem.id
                                         );
                                       });
-                                    setFoodItem({
-                                      ...foodItem,
-                                      foodGroup: groupItem,
-                                      items: tempItems,
-                                      selectedItem: tempItems && tempItems[0],
-                                      variations:
-                                        tempItems &&
-                                        parseInt(tempItems[0].has_variation) ===
-                                          1
-                                          ? tempItems[0].variations
-                                          : null,
-                                      properties:
-                                        tempItems &&
-                                        parseInt(tempItems[0].has_property) ===
-                                          1
-                                          ? tempItems[0].properties
-                                          : null,
-                                    });
+
+                                    if (tempItems && tempItems.length > 0) {
+                                      setFoodItem({
+                                        ...foodItem,
+                                        foodGroup: groupItem,
+                                        items: tempItems,
+                                        selectedItem: tempItems && tempItems[0],
+                                        variations:
+                                          tempItems &&
+                                          parseInt(
+                                            tempItems[0].has_variation
+                                          ) === 1
+                                            ? tempItems[0].variations
+                                            : null,
+                                        properties:
+                                          tempItems &&
+                                          parseInt(
+                                            tempItems[0].has_property
+                                          ) === 1
+                                            ? tempItems[0].properties
+                                            : null,
+                                      });
+                                    } else {
+                                      setFoodItem({
+                                        foodGroup: groupItem,
+                                        items: null,
+                                        selectedItem: null,
+                                        variations: null,
+                                        properties: null,
+                                      });
+                                    }
                                   }}
                                   //set active or !
                                   className={`w-100 t-text-dark t-heading-font btn btn-outline-danger font-weight-bold text-uppercase ${
@@ -2067,7 +2138,14 @@ const Pos = () => {
                                                     <span className="text-capitalize d-block t-pt-5 t-pb-5 t-pl-5 t-pr-5 sm-text font-weight-bold t-mr-8">
                                                       {orderListItem.item.name}
                                                     </span>
-                                                    <span className="text-capitalize d-block t-pt-5 t-pb-5 t-pl-5 t-pr-5 sm-text font-weight-bold">
+                                                    <span
+                                                      className="text-capitalize d-block t-pt-5 t-pb-5 t-pl-5 t-pr-5 sm-text font-weight-bold"
+                                                      onClick={() => {
+                                                        handleDeleteConfirmation(
+                                                          orderListItemIndex
+                                                        );
+                                                      }}
+                                                    >
                                                       <span className="badge rounded-pill bg-secondary text-capitalize">
                                                         remove
                                                       </span>
