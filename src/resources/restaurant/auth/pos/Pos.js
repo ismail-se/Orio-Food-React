@@ -80,6 +80,8 @@ const Pos = () => {
   const [activeItemInOrder, setActiveItemInOrder] = useState(null);
   //checked variations
   const [selectedVariation, setSelectedVariation] = useState([]);
+  //selected groups
+  const [selectedPropertyGroup, setSelectedPropertyGroup] = useState([]);
   //checked properties
   const [selectedProperties, setSelectedProperties] = useState([]);
 
@@ -291,16 +293,36 @@ const Pos = () => {
         return variationIndex !== removeIndex;
       }
     );
+    //delete properties here
+    let tempSelectedProperties = selectedProperties.filter(
+      (selectedPropertyItem, propertyIndex) => {
+        return propertyIndex !== removeIndex;
+      }
+    );
+
+    //delete property group here
+    let tempSelectedPropertyGroup = selectedPropertyGroup.filter(
+      (selectedPropertyGroupItem, propertyGroupIndex) => {
+        return propertyGroupIndex !== removeIndex;
+      }
+    );
+
+    //set property group here
+    setSelectedPropertyGroup(tempSelectedPropertyGroup);
 
     //set variations here
     setSelectedVariation(tempSelectedVariations);
+    //set properties here
+    setSelectedProperties(tempSelectedProperties);
 
     //set updated order list
     setNewOrder(oldOrderItems);
 
+    //set active item in order list
+    setActiveItemInOrder(null);
     //sound
-    // let beep = document.getElementById("myAudio");
-    // beep.play();
+    let beep = document.getElementById("myAudio");
+    beep.play();
   };
 
   //cancel order confirmation
@@ -340,15 +362,8 @@ const Pos = () => {
     setSelectedVariation([]);
   };
 
-  // {
-  //   item: null,
-  //   quantity: null,
-  //   variation: null,
-  //   properties: { item: null, quantity: null },
-  // }
-
-  const handleAddProperties = (e, property) => {
-    e.preventDefault();
+  //add properties
+  const handleAddProperties = (property) => {
     let propertyItem = {
       item: property,
       quantity: 1,
@@ -358,25 +373,32 @@ const Pos = () => {
         let oldOrderItems = []; //array to push order items
         let newOrderItemTemp = null; //to edit selected item
 
+        let tempSelectedPropertyGroup = []; //to set selected variations array for order items
         let tempSelectedProperties = []; //to set selected variations array for order items
 
         newOrder.map((newOrderItem, index) => {
           let tempArray = [];
+          let tempArrayPropertyGroup = [];
 
           if (index === activeItemInOrder) {
             let tempPropertyArray = [];
             if (newOrderItem.properties) {
               newOrderItem.properties.map((eachPropertyItem) => {
                 tempPropertyArray.push(eachPropertyItem);
-
                 //set updated variation for selected variation
                 tempArray.push(eachPropertyItem.item.id);
+                tempArrayPropertyGroup.push(
+                  eachPropertyItem.item.property_group_id
+                );
               });
               tempPropertyArray.push(propertyItem);
               tempArray.push(propertyItem.item.id);
+              tempArrayPropertyGroup.push(propertyItem.item.property_group_id);
             } else {
               tempPropertyArray.push(propertyItem);
               tempArray.push(propertyItem.item.id);
+              tempArray.push(propertyItem.item.id);
+              tempArrayPropertyGroup.push(propertyItem.item.property_group_id);
             }
 
             //changing properties of selected food item
@@ -394,24 +416,35 @@ const Pos = () => {
               newOrderItem.properties.map((eachPropertyItem) => {
                 //set updated variation for selected variation
                 tempArray.push(eachPropertyItem.item.id);
+                tempArrayPropertyGroup.push(
+                  eachPropertyItem.item.property_group_id
+                );
               });
             }
           }
-
           //push to the array to set selectedVariations
           tempSelectedProperties.push(tempArray);
+          tempSelectedPropertyGroup.push(tempArrayPropertyGroup);
         });
 
         //set selected properties here
         setSelectedProperties(tempSelectedProperties);
+
+        let newSelectedPropertyGroup = [];
+        tempSelectedPropertyGroup.map((eachSelectedGroupArray) => {
+          let unique = [...new Set(eachSelectedGroupArray)];
+          newSelectedPropertyGroup.push(unique);
+        });
+
+        setSelectedPropertyGroup(newSelectedPropertyGroup);
         //set updated order list
         setNewOrder(oldOrderItems);
       }
     }
   };
 
-  const handleRemoveProperties = (e, propertyItem) => {
-    e.preventDefault();
+  //remove properties
+  const handleRemoveProperties = (propertyItem) => {
     if (activeItemInOrder !== null) {
       if (newOrder) {
         let oldOrderItems = []; //array to push order items
@@ -434,12 +467,11 @@ const Pos = () => {
                   let theProperties = selectedProperty.filter((filterThis) => {
                     return filterThis !== propertyItem.id;
                   });
-                  if (theProperties.length > 0) {
-                    newSelectedProperties.push(theProperties);
-                  }
+                  newSelectedProperties.push(theProperties);
                 }
               });
             }
+
             //changing properties of selected food item
             newOrderItemTemp = {
               ...newOrderItem,
@@ -448,22 +480,14 @@ const Pos = () => {
 
             //set selected properties here
             setSelectedProperties(newSelectedProperties);
-
             //push updated item to orderlist
             oldOrderItems.push(newOrderItemTemp);
           } else {
             // set other items as it was which are not selected to edit
             newOrderItemTemp = newOrderItem;
             oldOrderItems.push(newOrderItemTemp);
-            // if (newOrderItemTemp.properties) {
-            //   newOrderItemTemp.properties.map((eachPropertyItem) => {
-            //     //set updated variation for selected variation
-            //     tempArray.push(eachPropertyItem.id);
-            //   });
-            // }
           }
         });
-
         //set updated order list
         setNewOrder(oldOrderItems);
       }
@@ -483,6 +507,13 @@ const Pos = () => {
       return false;
     }
   };
+
+  // {
+  //   item: null,
+  //   quantity: null,
+  //   variation: null,
+  //   properties: { item: null, quantity: null },
+  // }
 
   return (
     <>
@@ -1443,65 +1474,58 @@ const Pos = () => {
                                                           <div className="fk-addons-table__body-row">
                                                             <div className="row g-0">
                                                               <div className="col-5 border-right t-pl-10 t-pr-10">
-                                                                <label
-                                                                  className="mx-checkbox"
-                                                                  onClick={(
-                                                                    e
-                                                                  ) => {
-                                                                    newOrder &&
-                                                                      newOrder.map(
-                                                                        (
-                                                                          newOrderItem,
-                                                                          index
-                                                                        ) => {
-                                                                          if (
-                                                                            index ===
-                                                                            activeItemInOrder
-                                                                          ) {
-                                                                            if (
-                                                                              newOrderItem.properties
-                                                                            ) {
-                                                                              let theItem = newOrderItem.properties.find(
-                                                                                (
-                                                                                  eachPropertyItem
-                                                                                ) => {
-                                                                                  return (
-                                                                                    eachPropertyItem
-                                                                                      .item
-                                                                                      .id ===
-                                                                                    eachItem.id
-                                                                                  );
-                                                                                }
-                                                                              );
-
-                                                                              if (
-                                                                                theItem ===
-                                                                                undefined
-                                                                              ) {
-                                                                                handleAddProperties(
-                                                                                  e,
-                                                                                  eachItem
-                                                                                );
-                                                                              } else {
-                                                                                handleRemoveProperties(
-                                                                                  e,
-                                                                                  eachItem
-                                                                                );
-                                                                              }
-                                                                            } else {
-                                                                              handleAddProperties(
-                                                                                e,
-                                                                                eachItem
-                                                                              );
-                                                                            }
-                                                                          }
-                                                                        }
-                                                                      );
-                                                                  }}
-                                                                >
+                                                                <label className="mx-checkbox">
                                                                   <input
                                                                     type="checkbox"
                                                                     className="mx-checkbox__input mx-checkbox__input-solid mx-checkbox__input-solid--danger mx-checkbox__input-sm"
+                                                                    onChange={() => {
+                                                                      newOrder &&
+                                                                        newOrder.map(
+                                                                          (
+                                                                            newOrderItem,
+                                                                            index
+                                                                          ) => {
+                                                                            if (
+                                                                              index ===
+                                                                              activeItemInOrder
+                                                                            ) {
+                                                                              if (
+                                                                                newOrderItem.properties
+                                                                              ) {
+                                                                                let theItem = newOrderItem.properties.find(
+                                                                                  (
+                                                                                    eachPropertyItem
+                                                                                  ) => {
+                                                                                    return (
+                                                                                      eachPropertyItem
+                                                                                        .item
+                                                                                        .id ===
+                                                                                      eachItem.id
+                                                                                    );
+                                                                                  }
+                                                                                );
+
+                                                                                if (
+                                                                                  theItem ===
+                                                                                  undefined
+                                                                                ) {
+                                                                                  handleAddProperties(
+                                                                                    eachItem
+                                                                                  );
+                                                                                } else {
+                                                                                  handleRemoveProperties(
+                                                                                    eachItem
+                                                                                  );
+                                                                                }
+                                                                              } else {
+                                                                                handleAddProperties(
+                                                                                  eachItem
+                                                                                );
+                                                                              }
+                                                                            }
+                                                                          }
+                                                                        );
+                                                                    }}
                                                                     checked={checkCheckedProperties(
                                                                       eachItem
                                                                     )}
@@ -2377,7 +2401,7 @@ const Pos = () => {
                                                     <span
                                                       className="text-capitalize d-block t-pt-5 t-pb-5 t-pl-5 t-pr-5 sm-text font-weight-bold"
                                                       onClick={() => {
-                                                        handleDeleteConfirmation(
+                                                        handleRemoveItemFromOrderList(
                                                           orderListItemIndex
                                                         );
                                                       }}
@@ -2401,7 +2425,7 @@ const Pos = () => {
                                                             </span>
                                                           </div>
                                                           <div className="col-7 col-xxl-8">
-                                                            <span className="text-capitalize sm-text d-inline-block">
+                                                            <span className="text-capitalize xsm-text d-inline-block badge rounded-pill bg-warning text-dark font-weight-md">
                                                               {orderListItem.variation
                                                                 ? orderListItem
                                                                     .variation
@@ -2414,21 +2438,68 @@ const Pos = () => {
                                                     )}
 
                                                     {/* if item has properties show the selected in order list, loop here  */}
-                                                    <div className="col-12">
-                                                      <div className="row g-2">
-                                                        <div className="col-5 col-xxl-4">
-                                                          <span className="text-capitalize sm-text d-inline-block font-weight-bold t-pr-5 t-pl-5">
-                                                            addons :
-                                                          </span>
-                                                        </div>
-                                                        <div className="col-7 col-xxl-8">
-                                                          <span className="text-capitalize sm-text d-inline-block">
-                                                            addons, variations,
-                                                            aan
-                                                          </span>
-                                                        </div>
-                                                      </div>
-                                                    </div>
+                                                    {orderListItem.properties &&
+                                                      orderListItem.properties
+                                                        .length > 0 &&
+                                                      selectedPropertyGroup[
+                                                        orderListItemIndex
+                                                      ] !== undefined &&
+                                                      selectedPropertyGroup[
+                                                        orderListItemIndex
+                                                      ].map((thisIsGroup) => {
+                                                        let theGroup =
+                                                          propertyGroupForSearch &&
+                                                          propertyGroupForSearch.find(
+                                                            (theItem) => {
+                                                              return (
+                                                                theItem.id ===
+                                                                thisIsGroup
+                                                              );
+                                                            }
+                                                          );
+                                                        return (
+                                                          <div className="col-12">
+                                                            <span className="text-capitalize sm-text d-inline-block font-weight-bold t-pr-5 t-pl-5">
+                                                              {theGroup &&
+                                                                theGroup.name}{" "}
+                                                              :
+                                                            </span>
+                                                            {orderListItem.properties.map(
+                                                              (
+                                                                propertyName
+                                                              ) => {
+                                                                if (
+                                                                  propertyName
+                                                                    .item
+                                                                    .property_group_id ===
+                                                                  theGroup.id
+                                                                ) {
+                                                                  return (
+                                                                    <span className="text-capitalize xsm-text d-inline-block badge rounded-pill bg-warning text-dark font-weight-md mr-1">
+                                                                      {
+                                                                        propertyName
+                                                                          .item
+                                                                          .name
+                                                                      }{" "}
+                                                                      <span>
+                                                                        {" "}
+                                                                        (
+                                                                        {
+                                                                          propertyName.quantity
+                                                                        }
+                                                                        )
+                                                                      </span>
+                                                                    </span>
+                                                                  );
+                                                                } else {
+                                                                  return true;
+                                                                }
+                                                              }
+                                                            )}
+                                                          </div>
+                                                        );
+                                                      })}
+
                                                     {/* if item has properties show the selected in order list  */}
                                                   </div>
                                                 </div>
