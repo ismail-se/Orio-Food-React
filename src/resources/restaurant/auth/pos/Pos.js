@@ -347,50 +347,12 @@ const Pos = () => {
   //   properties: { item: null, quantity: null },
   // }
 
-  //set order item's variation on change of variation
-  // const handleOrderItemVariation = (tempFoodItemVariation) => {
-  //   if (activeItemInOrder !== null) {
-  //     if (newOrder) {
-  //       let oldOrderItems = []; //array to push order items
-  //       let newOrderItemTemp = null; //to edit selected item
-  //       let tempSelectedVariations = []; //to set selected variations array for order items
-  //       newOrder.map((newOrderItem, index) => {
-  //         let tempArray = [];
-  //         if (index === activeItemInOrder) {
-  //           //changing variation of selected food item
-  //           newOrderItemTemp = {
-  //             ...newOrderItem,
-  //             variation: tempFoodItemVariation,
-  //           };
-  //           //push updated item to orderlist
-  //           oldOrderItems.push(newOrderItemTemp);
-
-  //           //set updated variation for selected variation
-  //           tempArray.push(tempFoodItemVariation.food_with_variation_id);
-  //         } else {
-  //           //set other items as it was which are not selected to edit
-  //           newOrderItemTemp = newOrderItem;
-  //           oldOrderItems.push(newOrderItemTemp);
-  //           if (newOrderItemTemp.variation) {
-  //             //set updated variation for selected variations
-  //             tempArray.push(newOrderItemTemp.variation.food_with_variation_id);
-  //           }
-  //         }
-
-  //         //push to the array to set selectedVariations
-  //         tempSelectedVariations.push(tempArray);
-  //       });
-  //       //set variations here
-  //       setSelectedVariation(tempSelectedVariations);
-
-  //       //set updated order list
-  //       setNewOrder(oldOrderItems);
-  //     }
-  //   }
-  // };
-
-  const handleAddProperties = (e, propertyItem) => {
+  const handleAddProperties = (e, property) => {
     e.preventDefault();
+    let propertyItem = {
+      item: property,
+      quantity: 1,
+    };
     if (activeItemInOrder !== null) {
       if (newOrder) {
         let oldOrderItems = []; //array to push order items
@@ -408,13 +370,13 @@ const Pos = () => {
                 tempPropertyArray.push(eachPropertyItem);
 
                 //set updated variation for selected variation
-                tempArray.push(eachPropertyItem.id);
+                tempArray.push(eachPropertyItem.item.id);
               });
               tempPropertyArray.push(propertyItem);
-              tempArray.push(propertyItem.id);
+              tempArray.push(propertyItem.item.id);
             } else {
               tempPropertyArray.push(propertyItem);
-              tempArray.push(propertyItem.id);
+              tempArray.push(propertyItem.item.id);
             }
 
             //changing properties of selected food item
@@ -431,7 +393,7 @@ const Pos = () => {
             if (newOrderItem.properties) {
               newOrderItem.properties.map((eachPropertyItem) => {
                 //set updated variation for selected variation
-                tempArray.push(eachPropertyItem.id);
+                tempArray.push(eachPropertyItem.item.id);
               });
             }
           }
@@ -454,14 +416,27 @@ const Pos = () => {
       if (newOrder) {
         let oldOrderItems = []; //array to push order items
         let newOrderItemTemp = null; //to edit selected item
+        let newSelectedProperties = [];
 
         newOrder.map((newOrderItem, index) => {
           if (index === activeItemInOrder) {
             let tempPropertyArray = [];
             if (newOrderItem.properties) {
               newOrderItem.properties.map((eachPropertyItem) => {
-                if (eachPropertyItem.id !== propertyItem.id) {
+                if (eachPropertyItem.item.id !== propertyItem.id) {
                   tempPropertyArray.push(eachPropertyItem);
+                }
+              });
+              selectedProperties.map((selectedProperty, propertyIndex) => {
+                if (propertyIndex !== activeItemInOrder) {
+                  newSelectedProperties.push(selectedProperty);
+                } else {
+                  let theProperties = selectedProperty.filter((filterThis) => {
+                    return filterThis !== propertyItem.id;
+                  });
+                  if (theProperties.length > 0) {
+                    newSelectedProperties.push(theProperties);
+                  }
                 }
               });
             }
@@ -470,6 +445,10 @@ const Pos = () => {
               ...newOrderItem,
               properties: tempPropertyArray,
             };
+
+            //set selected properties here
+            setSelectedProperties(newSelectedProperties);
+
             //push updated item to orderlist
             oldOrderItems.push(newOrderItemTemp);
           } else {
@@ -1487,7 +1466,9 @@ const Pos = () => {
                                                                                   eachPropertyItem
                                                                                 ) => {
                                                                                   return (
-                                                                                    eachPropertyItem.id ===
+                                                                                    eachPropertyItem
+                                                                                      .item
+                                                                                      .id ===
                                                                                     eachItem.id
                                                                                   );
                                                                                 }
