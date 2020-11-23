@@ -360,6 +360,9 @@ const Pos = () => {
     setNewOrder(null);
     setActiveItemInOrder(null);
     setSelectedVariation([]);
+    setSelectedVariation([]);
+    setSelectedPropertyGroup([]);
+    setSelectedProperties([]);
   };
 
   //add properties
@@ -451,6 +454,8 @@ const Pos = () => {
         let newOrderItemTemp = null; //to edit selected item
         let newSelectedProperties = [];
 
+        let allPropertyGroups = [];
+
         newOrder.map((newOrderItem, index) => {
           if (index === activeItemInOrder) {
             let tempPropertyArray = [];
@@ -482,12 +487,32 @@ const Pos = () => {
             setSelectedProperties(newSelectedProperties);
             //push updated item to orderlist
             oldOrderItems.push(newOrderItemTemp);
+
+            selectedPropertyGroup.map((groupItem, groupItemIndex) => {
+              if (index === groupItemIndex) {
+                let tempGroupArray = [];
+                groupItem.map((filterThisItem) => {
+                  if (filterThisItem !== propertyItem.property_group_id) {
+                    tempGroupArray.push(filterThisItem);
+                  }
+                });
+                tempPropertyArray.map((pushThis) => {
+                  tempGroupArray.push(pushThis.item.property_group_id);
+                });
+                let unique = [...new Set(tempGroupArray)];
+                allPropertyGroups.push(unique);
+              } else {
+                allPropertyGroups.push(groupItem);
+              }
+            });
           } else {
             // set other items as it was which are not selected to edit
             newOrderItemTemp = newOrderItem;
             oldOrderItems.push(newOrderItemTemp);
           }
         });
+
+        setSelectedPropertyGroup(allPropertyGroups);
         //set updated order list
         setNewOrder(oldOrderItems);
       }
@@ -2483,11 +2508,11 @@ const Pos = () => {
                                                                       }{" "}
                                                                       <span>
                                                                         {" "}
-                                                                        (
-                                                                        {
-                                                                          propertyName.quantity
-                                                                        }
-                                                                        )
+                                                                        {propertyName.quantity >
+                                                                          1 &&
+                                                                          "(" +
+                                                                            propertyName.quantity +
+                                                                            ")"}
                                                                       </span>
                                                                     </span>
                                                                   );
