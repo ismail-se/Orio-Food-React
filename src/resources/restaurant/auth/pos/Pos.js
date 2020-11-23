@@ -80,6 +80,8 @@ const Pos = () => {
   const [activeItemInOrder, setActiveItemInOrder] = useState(null);
   //checked variations
   const [selectedVariation, setSelectedVariation] = useState([]);
+  //checked properties
+  const [selectedProperties, setSelectedProperties] = useState([]);
 
   //useEffect- to get data on render
   useEffect(() => {
@@ -345,7 +347,108 @@ const Pos = () => {
   //   properties: { item: null, quantity: null },
   // }
 
-  const handleProperties = (e, propertyItem) => {
+  //set order item's variation on change of variation
+  // const handleOrderItemVariation = (tempFoodItemVariation) => {
+  //   if (activeItemInOrder !== null) {
+  //     if (newOrder) {
+  //       let oldOrderItems = []; //array to push order items
+  //       let newOrderItemTemp = null; //to edit selected item
+  //       let tempSelectedVariations = []; //to set selected variations array for order items
+  //       newOrder.map((newOrderItem, index) => {
+  //         let tempArray = [];
+  //         if (index === activeItemInOrder) {
+  //           //changing variation of selected food item
+  //           newOrderItemTemp = {
+  //             ...newOrderItem,
+  //             variation: tempFoodItemVariation,
+  //           };
+  //           //push updated item to orderlist
+  //           oldOrderItems.push(newOrderItemTemp);
+
+  //           //set updated variation for selected variation
+  //           tempArray.push(tempFoodItemVariation.food_with_variation_id);
+  //         } else {
+  //           //set other items as it was which are not selected to edit
+  //           newOrderItemTemp = newOrderItem;
+  //           oldOrderItems.push(newOrderItemTemp);
+  //           if (newOrderItemTemp.variation) {
+  //             //set updated variation for selected variations
+  //             tempArray.push(newOrderItemTemp.variation.food_with_variation_id);
+  //           }
+  //         }
+
+  //         //push to the array to set selectedVariations
+  //         tempSelectedVariations.push(tempArray);
+  //       });
+  //       //set variations here
+  //       setSelectedVariation(tempSelectedVariations);
+
+  //       //set updated order list
+  //       setNewOrder(oldOrderItems);
+  //     }
+  //   }
+  // };
+
+  const handleAddProperties = (e, propertyItem) => {
+    e.preventDefault();
+    if (activeItemInOrder !== null) {
+      if (newOrder) {
+        let oldOrderItems = []; //array to push order items
+        let newOrderItemTemp = null; //to edit selected item
+
+        let tempSelectedProperties = []; //to set selected variations array for order items
+
+        newOrder.map((newOrderItem, index) => {
+          let tempArray = [];
+
+          if (index === activeItemInOrder) {
+            let tempPropertyArray = [];
+            if (newOrderItem.properties) {
+              newOrderItem.properties.map((eachPropertyItem) => {
+                tempPropertyArray.push(eachPropertyItem);
+
+                //set updated variation for selected variation
+                tempArray.push(eachPropertyItem.id);
+              });
+              tempPropertyArray.push(propertyItem);
+              tempArray.push(propertyItem.id);
+            } else {
+              tempPropertyArray.push(propertyItem);
+              tempArray.push(propertyItem.id);
+            }
+
+            //changing properties of selected food item
+            newOrderItemTemp = {
+              ...newOrderItem,
+              properties: tempPropertyArray,
+            };
+            //push updated item to orderlist
+            oldOrderItems.push(newOrderItemTemp);
+          } else {
+            // set other items as it was which are not selected to edit
+            newOrderItemTemp = newOrderItem;
+            oldOrderItems.push(newOrderItemTemp);
+            if (newOrderItem.properties) {
+              newOrderItem.properties.map((eachPropertyItem) => {
+                //set updated variation for selected variation
+                tempArray.push(eachPropertyItem.id);
+              });
+            }
+          }
+
+          //push to the array to set selectedVariations
+          tempSelectedProperties.push(tempArray);
+        });
+
+        //set selected properties here
+        setSelectedProperties(tempSelectedProperties);
+        //set updated order list
+        setNewOrder(oldOrderItems);
+      }
+    }
+  };
+
+  const handleRemoveProperties = (e, propertyItem) => {
     e.preventDefault();
     if (activeItemInOrder !== null) {
       if (newOrder) {
@@ -357,13 +460,11 @@ const Pos = () => {
             let tempPropertyArray = [];
             if (newOrderItem.properties) {
               newOrderItem.properties.map((eachPropertyItem) => {
-                tempPropertyArray.push(eachPropertyItem);
+                if (eachPropertyItem.id !== propertyItem.id) {
+                  tempPropertyArray.push(eachPropertyItem);
+                }
               });
-              tempPropertyArray.push(propertyItem);
-            } else {
-              tempPropertyArray.push(propertyItem);
             }
-
             //changing properties of selected food item
             newOrderItemTemp = {
               ...newOrderItem,
@@ -371,12 +472,36 @@ const Pos = () => {
             };
             //push updated item to orderlist
             oldOrderItems.push(newOrderItemTemp);
+          } else {
+            // set other items as it was which are not selected to edit
+            newOrderItemTemp = newOrderItem;
+            oldOrderItems.push(newOrderItemTemp);
+            // if (newOrderItemTemp.properties) {
+            //   newOrderItemTemp.properties.map((eachPropertyItem) => {
+            //     //set updated variation for selected variation
+            //     tempArray.push(eachPropertyItem.id);
+            //   });
+            // }
           }
         });
 
         //set updated order list
         setNewOrder(oldOrderItems);
       }
+    }
+  };
+
+  //to check which variation is selected
+  const checkCheckedProperties = (propertyItem) => {
+    //if variationItem.food_with_variation_id of selected item exist in selectedVariation - return true
+    if (selectedProperties[activeItemInOrder] !== undefined) {
+      if (selectedProperties[activeItemInOrder].includes(propertyItem.id)) {
+        return true;
+      } else {
+        return false;
+      }
+    } else {
+      return false;
     }
   };
 
@@ -1344,15 +1469,61 @@ const Pos = () => {
                                                                   onClick={(
                                                                     e
                                                                   ) => {
-                                                                    handleProperties(
-                                                                      e,
-                                                                      eachItem
-                                                                    );
+                                                                    newOrder &&
+                                                                      newOrder.map(
+                                                                        (
+                                                                          newOrderItem,
+                                                                          index
+                                                                        ) => {
+                                                                          if (
+                                                                            index ===
+                                                                            activeItemInOrder
+                                                                          ) {
+                                                                            if (
+                                                                              newOrderItem.properties
+                                                                            ) {
+                                                                              let theItem = newOrderItem.properties.find(
+                                                                                (
+                                                                                  eachPropertyItem
+                                                                                ) => {
+                                                                                  return (
+                                                                                    eachPropertyItem.id ===
+                                                                                    eachItem.id
+                                                                                  );
+                                                                                }
+                                                                              );
+
+                                                                              if (
+                                                                                theItem ===
+                                                                                undefined
+                                                                              ) {
+                                                                                handleAddProperties(
+                                                                                  e,
+                                                                                  eachItem
+                                                                                );
+                                                                              } else {
+                                                                                handleRemoveProperties(
+                                                                                  e,
+                                                                                  eachItem
+                                                                                );
+                                                                              }
+                                                                            } else {
+                                                                              handleAddProperties(
+                                                                                e,
+                                                                                eachItem
+                                                                              );
+                                                                            }
+                                                                          }
+                                                                        }
+                                                                      );
                                                                   }}
                                                                 >
                                                                   <input
                                                                     type="checkbox"
                                                                     className="mx-checkbox__input mx-checkbox__input-solid mx-checkbox__input-solid--danger mx-checkbox__input-sm"
+                                                                    checked={checkCheckedProperties(
+                                                                      eachItem
+                                                                    )}
                                                                   />
                                                                   <span className="mx-checkbox__text text-capitalize t-text-heading t-ml-8 fk-addons-table__body-text">
                                                                     {
