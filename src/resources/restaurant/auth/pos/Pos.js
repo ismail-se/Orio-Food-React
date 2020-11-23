@@ -185,9 +185,6 @@ const Pos = () => {
     //sound
     // let beep = document.getElementById("myAudio");
     // beep.play();
-
-    //scroll to new item to the list
-    activeItemInOrder && myRef.current.scrollIntoViewIfNeeded();
   };
 
   //set order item's variation on change of variation
@@ -2309,7 +2306,12 @@ const Pos = () => {
                               <div className="fk-table">
                                 <div className="fk-table__head">
                                   <div className="row g-0 border">
-                                    <div className="col-7 text-center border-right">
+                                    <div className="col-1 text-center border-right">
+                                      <span className="text-capitalize sm-text d-inline-block font-weight-bold t-pt-5 t-pb-5">
+                                        S/L
+                                      </span>
+                                    </div>
+                                    <div className="col-6 text-center border-right">
                                       <span className="text-capitalize sm-text d-inline-block font-weight-bold t-pt-5 t-pb-5">
                                         food item
                                       </span>
@@ -2330,7 +2332,7 @@ const Pos = () => {
                                   className="fk-table__body border-bottom"
                                   data-simplebar
                                 >
-                                  <div className="sky-is-blue">
+                                  <div className="sky-is-blue reverse-this">
                                     {/* loop through order list items */}
                                     {newOrder && newOrder.length > 0 ? (
                                       newOrder.map(
@@ -2411,13 +2413,14 @@ const Pos = () => {
                                               }}
                                             >
                                               <div
-                                                className={`row g-0 border-top-0 border-bottom`}
+                                                className={`row g-0 border-top-0 border-bottom `}
                                               >
+                                                <div className="col-1 text-center border-left d-flex justify-content-center align-items-center">
+                                                  {newOrder.length -
+                                                    orderListItemIndex}
+                                                </div>
                                                 <div
-                                                  className={`col-7 border-left border-right py-2 ${
-                                                    orderListItemIndex === 0 &&
-                                                    "pt-3"
-                                                  }`}
+                                                  className={`col-6 border-left border-right py-2`}
                                                 >
                                                   <div className="d-flex justify-content-between">
                                                     <span className="text-capitalize d-block t-pt-5 t-pb-5 t-pl-5 t-pr-5 sm-text font-weight-bold t-mr-8">
@@ -2443,22 +2446,16 @@ const Pos = () => {
                                                         .has_variation
                                                     ) === 1 && (
                                                       <div className="col-12">
-                                                        <div className="row g-2">
-                                                          <div className="col-5 col-xxl-4">
-                                                            <span className="text-capitalize sm-text d-inline-block font-weight-bold t-pr-5 t-pl-5">
-                                                              variation :
-                                                            </span>
-                                                          </div>
-                                                          <div className="col-7 col-xxl-8">
-                                                            <span className="text-capitalize xsm-text d-inline-block badge rounded-pill bg-warning text-dark font-weight-md">
-                                                              {orderListItem.variation
-                                                                ? orderListItem
-                                                                    .variation
-                                                                    .variation_name
-                                                                : "-"}
-                                                            </span>
-                                                          </div>
-                                                        </div>
+                                                        <span className="text-capitalize sm-text d-inline-block font-weight-bold t-pr-5 t-pl-5">
+                                                          variation :
+                                                        </span>
+                                                        <span className="text-capitalize xsm-text d-inline-block badge rounded-pill bg-warning text-dark font-weight-md">
+                                                          {orderListItem.variation
+                                                            ? orderListItem
+                                                                .variation
+                                                                .variation_name
+                                                            : "-"}
+                                                        </span>
                                                       </div>
                                                     )}
 
@@ -2585,13 +2582,6 @@ const Pos = () => {
                                         Select food item to add to the list
                                       </div>
                                     )}
-                                    {/* for automatic scroll to here */}
-                                    <div className="pt-5">
-                                      <span
-                                        ref={myRef}
-                                        className="d-flex pt-5"
-                                      ></span>
-                                    </div>
                                   </div>
                                 </div>
                               </div>

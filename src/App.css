@@ -134,6 +134,8 @@ html {
   box-shadow: none !important;
 }
 
-.fk-table__body .simplebar-content {
-  overflow-x: hidden !important;
+/* reverse the ordre list items */
+.reverse-this {
+  display: flex;
+  flex-direction: column-reverse;
 }
