@@ -66,6 +66,7 @@ const PropertyItemCrud = () => {
   let [newPropertyItem, setNewPropertyItem] = useState({
     name: "",
     extraPrice: null,
+    allow_multi_quantity: false,
     edit: false,
     editSlug: null,
     uploading: false,
@@ -94,6 +95,13 @@ const PropertyItemCrud = () => {
     });
   };
 
+  const handleMultiQuantity = () => {
+    setNewPropertyItem({
+      ...newPropertyItem,
+      allow_multi_quantity: !newPropertyItem.allow_multi_quantity,
+    });
+  };
+
   //Save New property item
   const handleSaveNewPropertyItem = (e) => {
     e.preventDefault();
@@ -105,6 +113,10 @@ const PropertyItemCrud = () => {
     let formData = new FormData();
     formData.append("name", newPropertyItem.name);
     formData.append("extraPrice", newPropertyItem.extraPrice);
+    formData.append(
+      "allow_multi_quantity",
+      newPropertyItem.allow_multi_quantity === false ? 0 : 1
+    );
     formData.append("propertyGroupSlug", propertySlug.slug);
     return axios
       .post(propertyItemUrl, formData, {
@@ -160,6 +172,8 @@ const PropertyItemCrud = () => {
       ...newPropertyItem,
       name: variation[0].name,
       extraPrice: variation[0].extra_price,
+      allow_multi_quantity:
+        variation[0].allow_multi_quantity === 1 ? true : false,
       editSlug: variation[0].slug,
       edit: true,
     });
@@ -176,6 +190,10 @@ const PropertyItemCrud = () => {
     let formData = new FormData();
     formData.append("name", newPropertyItem.name);
     formData.append("extraPrice", newPropertyItem.extraPrice);
+    formData.append(
+      "allow_multi_quantity",
+      newPropertyItem.allow_multi_quantity === false ? 0 : 1
+    );
     formData.append("editSlug", newPropertyItem.editSlug);
     formData.append("propertyGroupSlug", propertySlug.slug);
     return axios
@@ -367,7 +385,7 @@ const PropertyItemCrud = () => {
                       />
                     </div>
 
-                    <div className="mt-2">
+                    <div className="mt-4">
                       <label htmlFor="extraPrice" className="form-label">
                         {_t(t("Price"))}{" "}
                         <small className="text-primary">* </small>
@@ -388,6 +406,22 @@ const PropertyItemCrud = () => {
                         required
                         onChange={handleSetNewPropertyItem}
                       />
+                    </div>
+
+                    <div className="form-check mt-4">
+                      <input
+                        type="checkbox"
+                        className="form-check-input"
+                        id="has_multiple_quantity"
+                        checked={newPropertyItem.allow_multi_quantity}
+                        onChange={handleMultiQuantity}
+                      />
+                      <label
+                        className="form-check-label"
+                        htmlFor="has_multiple_quantity"
+                      >
+                        {_t(t("Allow multiple quantity?"))}
+                      </label>
                     </div>
 
                     <div className="mt-4">

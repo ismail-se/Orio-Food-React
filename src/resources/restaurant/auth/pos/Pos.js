@@ -159,7 +159,6 @@ const Pos = () => {
           parseInt(tempFoodItem.has_variation) === 1
             ? tempFoodItem.variations[0]
             : null,
-
         quantity: 1,
       };
 
@@ -327,6 +326,47 @@ const Pos = () => {
     beep.play();
   };
 
+  //handle order item quantity
+  const handleorderItemQty = (action) => {
+    if (activeItemInOrder !== null) {
+      if (newOrder) {
+        let newOrderItemTemp = null; //to edit selected item
+        let oldOrderItems = []; //array to push order items
+        newOrder.map((newOrderItem, index) => {
+          if (index === activeItemInOrder) {
+            //update qty here
+            if (action === "+") {
+              //increase qty
+              newOrderItemTemp = {
+                ...newOrderItem,
+                quantity: newOrderItem.quantity + 1,
+              };
+            } else {
+              //if qty !==1 decrease
+              if (newOrderItem.quantity !== 1) {
+                newOrderItemTemp = {
+                  ...newOrderItem,
+                  quantity: newOrderItem.quantity - 1,
+                };
+              } else {
+                newOrderItemTemp = {
+                  ...newOrderItem,
+                  quantity: newOrderItem.quantity,
+                };
+              }
+            }
+            oldOrderItems.push(newOrderItemTemp);
+          } else {
+            // set other items as it was which are not selected to edit
+            oldOrderItems.push(newOrderItem);
+          }
+        });
+        //set updated order list
+        setNewOrder(oldOrderItems);
+      }
+    }
+  };
+
   //cancel order confirmation
   const handleCancelConfirmation = () => {
     confirmAlert({
@@ -390,7 +430,7 @@ const Pos = () => {
             if (newOrderItem.properties) {
               newOrderItem.properties.map((eachPropertyItem) => {
                 tempPropertyArray.push(eachPropertyItem);
-                //set updated variation for selected variation
+                //set updated property for selected variation
                 tempArray.push(eachPropertyItem.item.id);
 
                 //handle selected property group
@@ -541,9 +581,9 @@ const Pos = () => {
     }
   };
 
-  //to check which variation is selected
+  //to check which property is selected
   const checkCheckedProperties = (propertyItem) => {
-    //if variationItem.food_with_variation_id of selected item exist in selectedVariation - return true
+    //if property.id of selected item exist in selected properties - return true
     if (selectedProperties[activeItemInOrder] !== undefined) {
       if (selectedProperties[activeItemInOrder].includes(propertyItem.id)) {
         return true;
@@ -555,12 +595,132 @@ const Pos = () => {
     }
   };
 
+  //handle property quantity
+  const handlePropertyQty = (propertyItem, action) => {
+    if (activeItemInOrder !== null) {
+      if (newOrder) {
+        let newOrderItemTemp = null; //to edit selected item
+        let oldOrderItems = []; //array to push order items
+        let tempPropertyItemsArray = []; //for each property items
+        newOrder.map((newOrderItem, index) => {
+          if (index === activeItemInOrder) {
+            //if has property items
+            if (newOrderItem.properties) {
+              newOrderItem.properties.map((eachPropertyItem) => {
+                //loop through the properties to change the specific one's quantity and keep the rest as it was
+                if (eachPropertyItem.item.id !== propertyItem.id) {
+                  //keep others as it was
+                  tempPropertyItemsArray.push(eachPropertyItem);
+                } else {
+                  //coming here if the specific item's id === selected property item's id
+                  let newPropertyItemForQtyUpdate = null;
+                  //update qty here
+                  if (action === "+") {
+                    //increase qty
+                    newPropertyItemForQtyUpdate = {
+                      ...eachPropertyItem,
+                      quantity: eachPropertyItem.quantity + 1,
+                    };
+                    tempPropertyItemsArray.push(newPropertyItemForQtyUpdate);
+                  } else {
+                    //if qty !==1 decrease
+                    if (eachPropertyItem.quantity !== 1) {
+                      newPropertyItemForQtyUpdate = {
+                        ...eachPropertyItem,
+                        quantity: eachPropertyItem.quantity - 1,
+                      };
+                      tempPropertyItemsArray.push(newPropertyItemForQtyUpdate);
+                    } else {
+                      tempPropertyItemsArray.push(eachPropertyItem);
+                    }
+                  }
+                }
+              });
+              //changing properties of selected food item
+              newOrderItemTemp = {
+                ...newOrderItem,
+                properties: tempPropertyItemsArray,
+              };
+              //push updated item to orderlist
+              oldOrderItems.push(newOrderItemTemp);
+            } else {
+              //push updated item to orderlist
+              oldOrderItems.push(newOrderItem);
+            }
+          } else {
+            // set other items as it was which are not selected to edit
+            oldOrderItems.push(newOrderItem);
+          }
+        });
+        //set updated order list
+        setNewOrder(oldOrderItems);
+      }
+    }
+  };
+
+  //to check selected property item's quantity
+  const checkCheckedPropertyQuantity = (propertyItem) => {
+    //if propertyItem.id of selected item exist in selectedProperties - return the quantity of that property item from the order list item
+    if (selectedProperties[activeItemInOrder] !== undefined) {
+      if (selectedProperties[activeItemInOrder].includes(propertyItem.id)) {
+        //get order of activeItemInOrder index
+        if (newOrder) {
+          if (newOrder[activeItemInOrder] !== undefined) {
+            let orderItem = newOrder[activeItemInOrder];
+            let theItem = orderItem.properties.find((theItemTemp) => {
+              return theItemTemp.item.id === propertyItem.id;
+            });
+            return theItem.quantity;
+          } else {
+            return 1;
+          }
+        } else {
+          return 1;
+        }
+      } else {
+        return 1;
+      }
+    } else {
+      return 1;
+    }
+  };
+
+  //show price of each item in order list
+  const showPriceOfEachOrderItem = (itemIndex) => {
+    let price = 0;
+    if (newOrder) {
+      let orderItem = newOrder[itemIndex];
+
+      //check price * quantity (variation price / item price)
+      if (parseInt(orderItem.item.has_variation) === 1) {
+        price = parseInt(orderItem.variation.food_with_variation_price);
+      } else {
+        price = parseInt(orderItem.item.price);
+      }
+
+      //calculate total price of properties
+      if (orderItem.properties) {
+        if (orderItem.properties.length > 0) {
+          orderItem.properties.map((getEachItemPrice) => {
+            let totalPropertyPrice =
+              parseInt(getEachItemPrice.item.extra_price) *
+              getEachItemPrice.quantity;
+            price = price + totalPropertyPrice;
+          });
+        }
+      }
+
+      let formattedPrice = formatPrice(price * orderItem.quantity);
+      return formattedPrice;
+    }
+  };
+
   // {
   //   item: null,
   //   quantity: null,
   //   variation: null,
   //   properties: { item: null, quantity: null },
-  // }
+  // },
 
   return (
     <>
@@ -1586,17 +1746,47 @@ const Pos = () => {
                                                               </div>
                                                               <div className="col-3 text-center border-right">
                                                                 <div className="fk-qty justify-content-center t-pt-10 t-pb-10">
-                                                                  <span className="fk-qty__icon fk-qty__deduct">
-                                                                    <i className="las la-minus"></i>
-                                                                  </span>
-                                                                  <input
-                                                                    type="text"
-                                                                    value="0"
-                                                                    className="fk-qty__input t-bg-clear"
-                                                                  />
-                                                                  <span className="fk-qty__icon fk-qty__add">
-                                                                    <i className="las la-plus"></i>
-                                                                  </span>
+                                                                  {eachItem.allow_multi_quantity ===
+                                                                    1 && (
+                                                                    <span
+                                                                      className="fk-qty__icon fk-qty__deduct"
+                                                                      onClick={() => {
+                                                                        handlePropertyQty(
+                                                                          eachItem,
+                                                                          "-"
+                                                                        );
+                                                                      }}
+                                                                    >
+                                                                      <i className="las la-minus"></i>
+                                                                    </span>
+                                                                  )}
+                                                                  {eachItem.allow_multi_quantity ===
+                                                                  1 ? (
+                                                                    <input
+                                                                      type="text"
+                                                                      value={checkCheckedPropertyQuantity(
+                                                                        eachItem
+                                                                      )}
+                                                                      className="fk-qty__input t-bg-clear"
+                                                                      readOnly
+                                                                    />
+                                                                  ) : (
+                                                                    "-"
+                                                                  )}
+                                                                  {eachItem.allow_multi_quantity ===
+                                                                    1 && (
+                                                                    <span
+                                                                      className="fk-qty__icon fk-qty__add"
+                                                                      onClick={() => {
+                                                                        handlePropertyQty(
+                                                                          eachItem,
+                                                                          "+"
+                                                                        );
+                                                                      }}
+                                                                    >
+                                                                      <i className="las la-plus"></i>
+                                                                    </span>
+                                                                  )}
                                                                 </div>
                                                               </div>
                                                               <div className="col-4 text-center">
@@ -2559,7 +2749,14 @@ const Pos = () => {
                                                   {/* Quantity */}
                                                   <div className="col-2 text-center border-right d-flex justify-content-center align-items-center">
                                                     <div className="fk-qty t-pt-5 t-pb-5 justify-content-center">
-                                                      <span className="fk-qty__icon">
+                                                      <span
+                                                        className="fk-qty__icon"
+                                                        onClick={() => {
+                                                          handleorderItemQty(
+                                                            "-"
+                                                          );
+                                                        }}
+                                                      >
                                                         <i className="las la-minus"></i>
                                                       </span>
                                                       <input
@@ -2570,7 +2767,14 @@ const Pos = () => {
                                                         className="fk-qty__input t-bg-clear"
                                                         readOnly
                                                       />
-                                                      <span className="fk-qty__icon">
+                                                      <span
+                                                        className="fk-qty__icon"
+                                                        onClick={() => {
+                                                          handleorderItemQty(
+                                                            "+"
+                                                          );
+                                                        }}
+                                                      >
                                                         <i className="las la-plus"></i>
                                                       </span>
                                                     </div>
@@ -2586,19 +2790,17 @@ const Pos = () => {
                                                       ) === 1 ? (
                                                         <>
                                                           {currencySymbolLeft()}
-                                                          {formatPrice(
-                                                            orderListItem
-                                                              .variation
-                                                              .food_with_variation_price
+
+                                                          {showPriceOfEachOrderItem(
+                                                            orderListItemIndex
                                                           )}
                                                           {currencySymbolRight()}
                                                         </>
                                                       ) : (
                                                         <>
                                                           {currencySymbolLeft()}
-                                                          {formatPrice(
-                                                            orderListItem.item
-                                                              .price
+                                                          {showPriceOfEachOrderItem(
+                                                            orderListItemIndex
                                                           )}
                                                           {currencySymbolRight()}
                                                         </>
