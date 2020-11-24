@@ -6,6 +6,7 @@ import {
   currencySymbolLeft,
   formatPrice,
   currencySymbolRight,
+  getSystemSettings,
 } from "../../../../functions/Functions";
 import { useTranslation } from "react-i18next";
 
@@ -33,6 +34,7 @@ const Pos = () => {
     //common
     loading,
     setLoading,
+    generalSettings,
   } = useContext(SettingsContext);
 
   const {
@@ -85,6 +87,14 @@ const Pos = () => {
   //checked properties
   const [selectedProperties, setSelectedProperties] = useState([]);
 
+  //the sub total
+  const [theSubTotal, setTheSubTotal] = useState(0);
+  //vat
+  const [theVat, setTheVat] = useState(0);
+
+  //vat settings
+  let [newSettings, setNewSettings] = useState(null);
+
   //useEffect- to get data on render
   useEffect(() => {
     if (foodGroupForSearch) {
@@ -110,6 +120,10 @@ const Pos = () => {
         });
       }
     }
+    setNewSettings({
+      ...newSettings,
+      vat: generalSettings && getSystemSettings(generalSettings, "type_vat"),
+    });
   }, [foodGroupForSearch, foodForSearch]);
 
   //add new item to order list
@@ -184,6 +198,8 @@ const Pos = () => {
     //set selected variations
     setSelectedVariation(tempSelectedVariations);
 
+    //calculate subTotalPrice
+    totalPrice(oldOrderItems);
     //sound
     let beep = document.getElementById("myAudio");
     beep.play();
@@ -227,6 +243,9 @@ const Pos = () => {
 
         //set updated order list
         setNewOrder(oldOrderItems);
+
+        //calculate subTotalPrice
+        totalPrice(oldOrderItems);
       }
     }
   };
@@ -321,6 +340,8 @@ const Pos = () => {
     //set active item in order list
     setActiveItemInOrder(null);
 
+    //calculate subTotalPrice
+    totalPrice(oldOrderItems);
     //sound
     let beep = document.getElementById("myAudio");
     beep.play();
@@ -361,6 +382,9 @@ const Pos = () => {
             oldOrderItems.push(newOrderItem);
           }
         });
+
+        //calculate subTotalPrice
+        totalPrice(oldOrderItems);
         //set updated order list
         setNewOrder(oldOrderItems);
       }
@@ -405,6 +429,8 @@ const Pos = () => {
     setSelectedVariation([]);
     setSelectedPropertyGroup([]);
     setSelectedProperties([]);
+    setTheSubTotal(0);
+    setTheVat(0);
   };
 
   //add properties
@@ -491,6 +517,9 @@ const Pos = () => {
         });
         //set selected property groups here
         setSelectedPropertyGroup(newSelectedPropertyGroup);
+
+        //calculate subTotalPrice
+        totalPrice(oldOrderItems);
         //set updated order list
         setNewOrder(oldOrderItems);
       }
@@ -575,6 +604,10 @@ const Pos = () => {
 
         //set new selected property groups
         setSelectedPropertyGroup(allPropertyGroups);
+
+        //calculate subTotalPrice
+        totalPrice(oldOrderItems);
+
         //set updated order list
         setNewOrder(oldOrderItems);
       }
@@ -652,6 +685,9 @@ const Pos = () => {
             oldOrderItems.push(newOrderItem);
           }
         });
+
+        //calculate subTotalPrice
+        totalPrice(oldOrderItems);
         //set updated order list
         setNewOrder(oldOrderItems);
       }
@@ -687,15 +723,14 @@ const Pos = () => {
 
   //show price of each item in order list
   const showPriceOfEachOrderItem = (itemIndex) => {
-    let price = 0;
     if (newOrder) {
+      let price = 0;
       let orderItem = newOrder[itemIndex];
-
       //check price * quantity (variation price / item price)
       if (parseInt(orderItem.item.has_variation) === 1) {
-        price = parseInt(orderItem.variation.food_with_variation_price);
+        price = parseFloat(orderItem.variation.food_with_variation_price);
       } else {
-        price = parseInt(orderItem.item.price);
+        price = parseFloat(orderItem.item.price);
       }
 
       //calculate total price of properties
@@ -703,7 +738,7 @@ const Pos = () => {
         if (orderItem.properties.length > 0) {
           orderItem.properties.map((getEachItemPrice) => {
             let totalPropertyPrice =
-              parseInt(getEachItemPrice.item.extra_price) *
+              parseFloat(getEachItemPrice.item.extra_price) *
               getEachItemPrice.quantity;
             price = price + totalPropertyPrice;
           });
@@ -713,6 +748,38 @@ const Pos = () => {
       let formattedPrice = formatPrice(price * orderItem.quantity);
       return formattedPrice;
     }
+  };
+
+  //show total price
+  const totalPrice = (allOrderItems) => {
+    let subTotal = 0;
+    allOrderItems.map((orderItem) => {
+      let price = 0;
+      //check price * quantity (variation price / item price)
+      if (parseInt(orderItem.item.has_variation) === 1) {
+        price = parseFloat(orderItem.variation.food_with_variation_price);
+      } else {
+        price = parseFloat(orderItem.item.price);
+      }
+
+      //calculate total price of properties
+      if (orderItem.properties) {
+        if (orderItem.properties.length > 0) {
+          orderItem.properties.map((getEachItemPrice) => {
+            let totalPropertyPrice =
+              parseFloat(getEachItemPrice.item.extra_price) *
+              getEachItemPrice.quantity;
+            price = price + totalPropertyPrice;
+          });
+        }
+      }
+      subTotal = subTotal + price * orderItem.quantity;
+    });
+    if (newSettings) {
+      let tempVat = (subTotal * parseFloat(newSettings.vat)) / 100;
+      setTheVat(tempVat);
+    }
+    setTheSubTotal(subTotal);
   };
 
   // {
@@ -1074,7 +1141,19 @@ const Pos = () => {
                     <div className="col text-center">:</div>
                     <div className="col text-right">
                       <span className="text-capitalize sm-text font-weight-bold">
-                        1800.00
+                        {newOrder ? (
+                          <span className="text-capitalize xsm-text d-inline-block font-weight-bold t-pt-5 t-pb-5">
+                            {currencySymbolLeft()}
+                            {formatPrice(theSubTotal)}
+                            {currencySymbolRight()}
+                          </span>
+                        ) : (
+                          <span className="text-capitalize xsm-text d-inline-block font-weight-bold t-pt-5 t-pb-5">
+                            {currencySymbolLeft()}
+                            {formatPrice(0)}
+                            {currencySymbolRight()}
+                          </span>
+                        )}
                       </span>
                     </div>
                   </div>
@@ -1083,14 +1162,15 @@ const Pos = () => {
                   <div className="row">
                     <div className="col">
                       <span className="text-capitalize sm-text">
-                        {" "}
-                        TAX (15%){" "}
+                        VAT ({newSettings && newSettings.vat}%)
                       </span>
                     </div>
                     <div className="col text-center">:</div>
                     <div className="col text-right">
                       <span className="text-capitalize sm-text font-weight-bold">
-                        80.00
+                        {currencySymbolLeft()}
+                        {formatPrice(theVat)}
+                        {currencySymbolRight()}
                       </span>
                     </div>
                   </div>
@@ -1669,7 +1749,7 @@ const Pos = () => {
                                                       </div>
                                                       <div className="col-4 text-center">
                                                         <span className="fk-addons-table__info-text text-capitalize">
-                                                          price
+                                                          Unit price
                                                         </span>
                                                       </div>
                                                     </div>
@@ -2406,7 +2486,19 @@ const Pos = () => {
                                   <div className="col text-center">:</div>
                                   <div className="col text-right">
                                     <span className="text-capitalize sm-text font-weight-bold">
-                                      1800.00
+                                      {newOrder ? (
+                                        <span className="text-capitalize xsm-text d-inline-block font-weight-bold t-pt-5 t-pb-5">
+                                          {currencySymbolLeft()}
+                                          {formatPrice(theSubTotal)}
+                                          {currencySymbolRight()}
+                                        </span>
+                                      ) : (
+                                        <span className="text-capitalize xsm-text d-inline-block font-weight-bold t-pt-5 t-pb-5">
+                                          {currencySymbolLeft()}
+                                          {formatPrice(0)}
+                                          {currencySymbolRight()}
+                                        </span>
+                                      )}
                                     </span>
                                   </div>
                                 </div>
@@ -2415,13 +2507,15 @@ const Pos = () => {
                                 <div className="row">
                                   <div className="col">
                                     <span className="text-capitalize sm-text">
-                                      TAX (15%)
+                                      VAT ({newSettings && newSettings.vat}%)
                                     </span>
                                   </div>
                                   <div className="col text-center">:</div>
                                   <div className="col text-right">
                                     <span className="text-capitalize sm-text font-weight-bold">
-                                      80.00
+                                      {currencySymbolLeft()}
+                                      {formatPrice(theVat)}
+                                      {currencySymbolRight()}
                                     </span>
                                   </div>
                                 </div>
@@ -2846,9 +2940,19 @@ const Pos = () => {
                                         </span>
                                       </div>
                                       <div className="col-6">
-                                        <span className="text-capitalize xsm-text d-inline-block font-weight-bold t-pt-5 t-pb-5">
-                                          1879.00
-                                        </span>
+                                        {newOrder ? (
+                                          <span className="text-capitalize xsm-text d-inline-block font-weight-bold t-pt-5 t-pb-5">
+                                            {currencySymbolLeft()}
+                                            {formatPrice(theSubTotal)}
+                                            {currencySymbolRight()}
+                                          </span>
+                                        ) : (
+                                          <span className="text-capitalize xsm-text d-inline-block font-weight-bold t-pt-5 t-pb-5">
+                                            {currencySymbolLeft()}
+                                            {formatPrice(0)}
+                                            {currencySymbolRight()}
+                                          </span>
+                                        )}
                                       </div>
                                     </div>
                                   </div>
@@ -2856,12 +2960,15 @@ const Pos = () => {
                                     <div className="row g-0">
                                       <div className="col-6">
                                         <span className="text-uppercase xsm-text d-inline-block font-weight-bold t-pt-5 t-pb-5">
-                                          tax (15%)
+                                          VAT ({newSettings && newSettings.vat}
+                                          %)
                                         </span>
                                       </div>
                                       <div className="col-6">
                                         <span className="text-capitalize xsm-text d-inline-block font-weight-bold t-pt-5 t-pb-5">
-                                          109.00
+                                          {currencySymbolLeft()}
+                                          {formatPrice(theVat)}
+                                          {currencySymbolRight()}
                                         </span>
                                       </div>
                                     </div>
