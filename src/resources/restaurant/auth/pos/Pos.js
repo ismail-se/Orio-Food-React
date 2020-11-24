@@ -91,7 +91,6 @@ const Pos = () => {
   const [theSubTotal, setTheSubTotal] = useState(0);
   //vat
   const [theVat, setTheVat] = useState(0);
-
   //vat settings
   let [newSettings, setNewSettings] = useState(null);
 
@@ -782,12 +781,26 @@ const Pos = () => {
     setTheSubTotal(subTotal);
   };
 
-  // {
-  //   item: null,
-  //   quantity: null,
-  //   variation: null,
-  //   properties: { item: null, quantity: null },
-  // },
+  //search food here
+  const handleSearch = (e) => {
+    setActiveItemInOrder(null);
+    let searchInput = e.target.value.toLowerCase();
+    let searchedList = foodForSearch.filter((item) => {
+      let lowerCaseItemName = item.name.toLowerCase();
+      let lowerCaseItemGroup = item.food_group.toLowerCase();
+      return (
+        lowerCaseItemName.includes(searchInput) ||
+        lowerCaseItemGroup.includes(searchInput)
+      );
+    });
+    setFoodItem({
+      foodGroup: null,
+      items: searchedList.length > 0 ? searchedList : null,
+      selectedItem: null,
+      variations: null,
+      properties: null,
+    });
+  };
 
   return (
     <>
@@ -1531,7 +1544,8 @@ const Pos = () => {
                         <input
                           type="text"
                           className="form-control border-0 form-control--light-2 rounded-0"
-                          placeholder="Please Search Food"
+                          placeholder={_t(t("Search by name, group")) + ".."}
+                          onChange={handleSearch}
                         />
                       </div>
                       <button className="btn btn-primary" type="button">

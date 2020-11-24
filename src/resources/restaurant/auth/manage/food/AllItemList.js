@@ -450,7 +450,7 @@ const AllItemList = () => {
     }
   };
 
-  //search food group here
+  //search food here
   const handleSearch = (e) => {
     let searchInput = e.target.value.toLowerCase();
     if (searchInput.length === 0) {
