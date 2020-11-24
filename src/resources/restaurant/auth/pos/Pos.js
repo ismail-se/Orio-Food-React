@@ -2060,26 +2060,11 @@ const Pos = () => {
                                 />
                               </li>
                               <li className="addons-list__item mx-1">
-                                {/* Example single danger button  */}
-                                <div className="btn-group w-100 xsm-text">
-                                  <button
-                                    type="button"
-                                    className="fk-right-nav__guest-btn btn text-uppercase w-100 t-bg-white dropdown-toggle xsm-text"
-                                    data-toggle="dropdown"
-                                    aria-expanded="false"
-                                  >
-                                    total guest
-                                  </button>
-                                  <ul className="dropdown-menu w-100 border-0 xsm-text">
-                                    <li>
-                                      <input
-                                        type="number"
-                                        className="form-control xsm-text"
-                                        placeholder="Total guest.."
-                                      />
-                                    </li>
-                                  </ul>
-                                </div>
+                                <input
+                                  type="number"
+                                  className="form-control xsm-text py-2 pl-2"
+                                  placeholder={_t(t("Total guest")) + ".."}
+                                />
                               </li>
                             </ul>
                           </div>
@@ -2613,13 +2598,11 @@ const Pos = () => {
                           <div className="fk-price-table__head">
                             <div className="row gx-0 align-items-center">
                               <div className="col-6">
-                                <span className="d-block sm-text font-weight-bold text-uppercase font-italic">
-                                  token: R12548795
-                                </span>
+                                <span className="d-block xsm-text text-uppercase"></span>
                               </div>
                               <div className="col-6 text-right">
-                                <span className="d-block xsm-text text-uppercase">
-                                  10/15/2020
+                                <span className="d-block sm-text font-weight-bold text-uppercase font-italic">
+                                  token: R12548795
                                 </span>
                               </div>
                             </div>

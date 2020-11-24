@@ -159,98 +159,109 @@ const Footer = () => {
           </div>
         </footer>
       ) : (
-        <footer id="footer" className="sicky-bottom">
-          <div className="container-fluid">
-            <div className="row align-items-lg-center">
-              <div className="col-lg-2 t-mb-30 mb-lg-0">
-                <div className="fk-brand--footer fk-brand--footer-sqr mx-auto mr-lg-auto ml-lg-0">
-                  {getCookie() !== undefined
-                    ? [
-                        window.location.pathname === "/dashboard" ? (
-                          <NavLink
-                            to={{ pathname: "/refresh", state: "/dashboard" }}
-                            exact
-                            className="t-link w-100 t-h-50"
-                            key="footerlogo"
-                          >
-                            <span
-                              className="fk-brand--footer-img fk-brand__img--fk"
-                              style={style.logo}
-                            ></span>
-                          </NavLink>
-                        ) : (
-                          <NavLink
-                            to="/dashboard"
-                            className="t-link w-100 t-h-50"
-                            key="footerlogo"
-                          >
-                            <span
-                              className="fk-brand--footer-img fk-brand__img--fk"
-                              style={style.logo}
-                            ></span>
-                          </NavLink>
-                        ),
-                      ]
-                    : [
-                        window.location.pathname === "/" ? (
-                          <NavLink
-                            to={{ pathname: "/refresh", state: "/" }}
-                            exact
-                            className="t-link w-100 t-h-50"
-                          >
-                            <span
-                              className="fk-brand--footer-img fk-brand__img--fk"
-                              style={style.logo}
-                            ></span>
-                          </NavLink>
-                        ) : (
-                          <NavLink to="/" className="t-link w-100 t-h-50">
-                            <span
-                              className="fk-brand--footer-img fk-brand__img--fk"
-                              style={style.logo}
-                            ></span>
-                          </NavLink>
-                        ),
-                      ]}
-                </div>
-              </div>
-              <div className="col-lg-6 col-xl-7 t-mb-30 mb-lg-0">
-                <p className="mb-0 text-center sm-text">
-                  &copy;
-                  {generalSettings &&
-                    getSystemSettings(generalSettings, "type_footer")}
-                </p>
-              </div>
-              <div className="col-lg-4 col-xl-3">
-                <div className="clock" style={style.clock}>
-                  <div className="clock__icon t-mr-30" style={style.clockIcon}>
-                    <span
-                      className="fa fa-clock-o"
-                      style={style.clockIcon}
-                    ></span>
+        [
+          window.location.pathname === "/dashboard/pos" && (
+            <footer id="footer" className="sicky-bottom">
+              <div className="container-fluid">
+                <div className="row align-items-lg-center">
+                  <div className="col-lg-2 t-mb-30 mb-lg-0">
+                    <div className="fk-brand--footer fk-brand--footer-sqr mx-auto mr-lg-auto ml-lg-0">
+                      {getCookie() !== undefined
+                        ? [
+                            window.location.pathname === "/dashboard" ? (
+                              <NavLink
+                                to={{
+                                  pathname: "/refresh",
+                                  state: "/dashboard",
+                                }}
+                                exact
+                                className="t-link w-100 t-h-50"
+                                key="footerlogo"
+                              >
+                                <span
+                                  className="fk-brand--footer-img fk-brand__img--fk"
+                                  style={style.logo}
+                                ></span>
+                              </NavLink>
+                            ) : (
+                              <NavLink
+                                to="/dashboard"
+                                className="t-link w-100 t-h-50"
+                                key="footerlogo"
+                              >
+                                <span
+                                  className="fk-brand--footer-img fk-brand__img--fk"
+                                  style={style.logo}
+                                ></span>
+                              </NavLink>
+                            ),
+                          ]
+                        : [
+                            window.location.pathname === "/" ? (
+                              <NavLink
+                                to={{ pathname: "/refresh", state: "/" }}
+                                exact
+                                className="t-link w-100 t-h-50"
+                              >
+                                <span
+                                  className="fk-brand--footer-img fk-brand__img--fk"
+                                  style={style.logo}
+                                ></span>
+                              </NavLink>
+                            ) : (
+                              <NavLink to="/" className="t-link w-100 t-h-50">
+                                <span
+                                  className="fk-brand--footer-img fk-brand__img--fk"
+                                  style={style.logo}
+                                ></span>
+                              </NavLink>
+                            ),
+                          ]}
+                    </div>
                   </div>
-                  <div className="clock__content">
-                    <div
-                      id="MyClockDisplay"
-                      className="clockDisply"
-                      style={style.clockText}
-                      onLoad={() => {
-                        "showTime()";
-                      }}
-                    ></div>
-                    <p
-                      className="mb-0 font-10px font-weight-normal"
-                      style={style.clockText}
-                    >
-                      {weekday[new Date().getDay()]}, {new Date().getDate()}{" "}
-                      {month[new Date().getMonth()]}, {new Date().getFullYear()}
+                  <div className="col-lg-6 col-xl-7 t-mb-30 mb-lg-0">
+                    <p className="mb-0 text-center sm-text">
+                      &copy;
+                      {generalSettings &&
+                        getSystemSettings(generalSettings, "type_footer")}
                     </p>
                   </div>
+                  <div className="col-lg-4 col-xl-3">
+                    <div className="clock" style={style.clock}>
+                      <div
+                        className="clock__icon t-mr-30"
+                        style={style.clockIcon}
+                      >
+                        <span
+                          className="fa fa-clock-o"
+                          style={style.clockIcon}
+                        ></span>
+                      </div>
+                      <div className="clock__content">
+                        <div
+                          id="MyClockDisplay"
+                          className="clockDisply"
+                          style={style.clockText}
+                          onLoad={() => {
+                            "showTime()";
+                          }}
+                        ></div>
+                        <p
+                          className="mb-0 font-10px font-weight-normal"
+                          style={style.clockText}
+                        >
+                          {weekday[new Date().getDay()]}, {new Date().getDate()}{" "}
+                          {month[new Date().getMonth()]},{" "}
+                          {new Date().getFullYear()}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
-          </div>
-        </footer>
+            </footer>
+          ),
+        ]
       )}
     </>
   );
