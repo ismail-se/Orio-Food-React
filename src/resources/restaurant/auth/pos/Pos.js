@@ -320,7 +320,7 @@ const Pos = () => {
     setNewOrder(oldOrderItems);
 
     //set active item in order list
-    setActiveItemInOrder(48);
+    setActiveItemInOrder(null);
 
     //sound
     let beep = document.getElementById("myAudio");
@@ -2365,7 +2365,7 @@ const Pos = () => {
                                           return (
                                             <>
                                               <div
-                                                className={`fk-table-container-order make-this-relative ${
+                                                className={`fk-table-container-order ${
                                                   orderListItemIndex ===
                                                     activeItemInOrder &&
                                                   "active"
@@ -2608,15 +2608,15 @@ const Pos = () => {
                                                   {/* Price */}
                                                 </div>
                                               </div>
-                                              <span
-                                                className="text-capitalize d-block t-pt-5 t-pb-5 t-pl-5 t-pr-5 sm-text font-weight-bold make-this-absolute"
-                                                onClick={() => {
-                                                  handleRemoveItemFromOrderList(
-                                                    orderListItemIndex
-                                                  );
-                                                }}
-                                              >
-                                                <span className="badge rounded-pill bg-secondary text-capitalize">
+                                              <span className="text-capitalize  t-pt-5 t-pb-5 t-pl-5 t-pr-5 sm-text font-weight-bold make-this-relative">
+                                                <span
+                                                  className="badge rounded-pill bg-secondary text-capitalize"
+                                                  onClick={() => {
+                                                    handleRemoveItemFromOrderList(
+                                                      orderListItemIndex
+                                                    );
+                                                  }}
+                                                >
                                                   remove
                                                 </span>
                                               </span>

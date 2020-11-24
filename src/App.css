@@ -140,12 +140,13 @@ html {
   flex-direction: column-reverse;
 }
 
-/* .make-this-relative {
+/* for remove button from order list in POS */
+.make-this-relative {
   position: relative;
-} */
-
-.make-this-absolute {
-  position: relative;
-  top: 20px;
-  left: 30%;
+  top: 25px;
+  left: 0;
+  margin-top: -31px;
+  margin-left: 42%;
+  cursor: pointer;
+  max-width: 51.88px;
 }
