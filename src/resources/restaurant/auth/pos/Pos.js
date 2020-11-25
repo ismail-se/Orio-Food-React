@@ -160,7 +160,14 @@ const Pos = () => {
       theTables: tableForSearch ? tableForSearch : null,
       theWaiters: waiterForSearch ? waiterForSearch : null,
     });
-  }, [foodGroupForSearch, foodForSearch, authUserInfo]);
+  }, [
+    foodGroupForSearch,
+    foodForSearch,
+    authUserInfo,
+    customerForSearch,
+    tableForSearch,
+    waiterForSearch,
+  ]);
 
   //add new item to order list
   const handleOrderItem = (tempFoodItem) => {
