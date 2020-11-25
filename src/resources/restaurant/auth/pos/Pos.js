@@ -1918,8 +1918,7 @@ const Pos = () => {
                                   foodItem.items.map(
                                     (tempFoodItem, tempFoodItemIndex) => {
                                       return (
-                                        <button
-                                          type="button"
+                                        <div
                                           onClick={() => {
                                             // set variations, properties and selected items here
                                             setFoodItem({
@@ -1942,7 +1941,7 @@ const Pos = () => {
                                             });
                                             handleOrderItem(tempFoodItem);
                                           }}
-                                          className={`fk-dish__link t-mb-10 col-md-6 col-lg-4 col-xl-6 col-xxl-4 t-link border-0 ${
+                                          className={`fk-dish__link t-mb-10 col-md-6 col-lg-4 col-xl-6 col-xxl-4 t-link border-0 pointer-cursor ${
                                             foodItem.selectedItem &&
                                             foodItem.selectedItem.id ===
                                               tempFoodItem.id &&
@@ -1961,7 +1960,7 @@ const Pos = () => {
                                               {tempFoodItem.name}
                                             </span>
                                           </div>
-                                        </button>
+                                        </div>
                                       );
                                     }
                                   )}
@@ -1986,7 +1985,32 @@ const Pos = () => {
                         <div className="col-12 flex-grow-1">
                           <div className="fk-right-nav__scroll" data-simplebar>
                             <ul className="t-list addons-list">
-                              <li className="addons-list__item mt-1 mx-1">
+                              {authUserInfo.details &&
+                                authUserInfo.details.user_type !== "staff" && (
+                                  <li className="addons-list__item mt-1 mx-1">
+                                    <Select
+                                      options={
+                                        branchForSearch && branchForSearch
+                                      }
+                                      components={makeAnimated()}
+                                      getOptionLabel={(option) => option.name}
+                                      getOptionValue={(option) => option.name}
+                                      classNamePrefix="select"
+                                      className="xsm-text"
+                                      onChange={"handleSetBranchId"}
+                                      maxMenuHeight="200px"
+                                      placeholder={_t(t("Branch")) + ".."}
+                                    />
+                                  </li>
+                                )}
+
+                              <li
+                                className={`addons-list__item mx-1 ${
+                                  authUserInfo.details &&
+                                  authUserInfo.details.user_type === "staff" &&
+                                  "mt-1"
+                                }`}
+                              >
                                 <Select
                                   options={
                                     customerForSearch && customerForSearch
@@ -2738,18 +2762,6 @@ const Pos = () => {
                                                             .name
                                                         }
                                                       </span>
-                                                      {/* <span
-                                                      className="text-capitalize d-block t-pt-5 t-pb-5 t-pl-5 t-pr-5 sm-text font-weight-bold"
-                                                      onClick={() => {
-                                                        handleRemoveItemFromOrderList(
-                                                          orderListItemIndex
-                                                        );
-                                                      }}
-                                                    >
-                                                      <span className="badge rounded-pill bg-secondary text-capitalize">
-                                                        remove
-                                                      </span>
-                                                    </span> */}
                                                     </div>
                                                     <div className="row g-0">
                                                       {/* if item has variations show the selected in order list */}
@@ -2918,8 +2930,12 @@ const Pos = () => {
                                         }
                                       )
                                     ) : (
-                                      <div className="text-primary text-center pt-5 xsm-text text-uppercase">
-                                        Select food item to add to the list
+                                      <div className="text-primary text-center font-weight-bold pt-5 xsm-text text-uppercase">
+                                        {_t(
+                                          t(
+                                            "Select food item to add to the list"
+                                          )
+                                        )}
                                       </div>
                                     )}
                                   </div>

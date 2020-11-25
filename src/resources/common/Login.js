@@ -27,6 +27,7 @@ import Cookies from "universal-cookie";
 import { SettingsContext } from "../../contexts/Settings";
 import { UserContext } from "../../contexts/User";
 import { RestaurantContext } from "../../contexts/Restaurant";
+import { FoodContext } from "../../contexts/Food";
 
 const cookies = new Cookies();
 
@@ -44,6 +45,7 @@ const Login = () => {
   } = useContext(SettingsContext);
   let { getAuthUser, authUserInfo } = useContext(UserContext);
   let { getBranch } = useContext(RestaurantContext);
+  let { getFood, getFoodGroup, getPropertyGroup } = useContext(FoodContext);
 
   //state hooks here
   const [credentials, setCredentials] = useState({
@@ -132,13 +134,16 @@ const Login = () => {
           getPermissionGroups();
           getBranch();
 
-          //permission based
-          if (
-            authUserInfo.permissions !== null &&
-            authUserInfo.permissions.includes("Manage")
-          ) {
+          //permission based -data[3] permissions of this user
+          if (res.data[3] !== null && res.data[3].includes("Manage")) {
             getSmtp();
           }
+          if (res.data[3] !== null && res.data[3].includes("Customer")) {
+            getFood();
+            getFoodGroup();
+            getPropertyGroup();
+          }
+
           history.push("/dashboard");
         } else {
           setLoading(false);

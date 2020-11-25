@@ -143,10 +143,15 @@ html {
 /* for remove button from order list in POS */
 .make-this-relative {
   position: relative;
-  top: 25px;
+  top: 26px;
   left: 0;
   margin-top: -31px;
   margin-left: 42%;
   cursor: pointer;
   max-width: 51.88px;
+}
+
+/*  pointer-cursor */
+.pointer-cursor {
+  cursor: pointer;
 }
