@@ -44,6 +44,7 @@ const Pos = () => {
     setCustomerForSearch,
     //waiter
     waiterForSearch,
+    setWaiterForSearch,
   } = useContext(UserContext);
 
   const {
@@ -60,6 +61,7 @@ const Pos = () => {
     branchForSearch,
     //table
     tableForSearch,
+    setTableforSearch,
     //dept-tag
     deptTagForSearch,
     //payment-type
@@ -92,7 +94,26 @@ const Pos = () => {
   //vat
   const [theVat, setTheVat] = useState(0);
   //vat settings
-  let [newSettings, setNewSettings] = useState(null);
+  const [newSettings, setNewSettings] = useState(null);
+  //order details users
+  const [orderDetailUsers, setOrderDetailusers] = useState({
+    theCustomers: null,
+    theTables: null,
+    theWaiters: null,
+  });
+
+  //order details
+  const [orderDetails, setOrderDetails] = useState({
+    branch: null,
+    branch_change_loading: false,
+    customer: null,
+    table: null,
+    waiter: null,
+    dept_tag: null,
+    payment_type: null,
+    payment_amount: null,
+    total_guest: 1,
+  });
 
   //useEffect- to get data on render
   useEffect(() => {
@@ -123,7 +144,23 @@ const Pos = () => {
       ...newSettings,
       vat: generalSettings && getSystemSettings(generalSettings, "type_vat"),
     });
-  }, [foodGroupForSearch, foodForSearch]);
+    if (authUserInfo.details) {
+      let theBranch =
+        branchForSearch &&
+        branchForSearch.find((branch) => {
+          return authUserInfo.details.branch_id === branch.id;
+        });
+      setOrderDetails({
+        ...orderDetails,
+        branch: theBranch !== undefined ? theBranch : null,
+      });
+    }
+    setOrderDetailusers({
+      theCustomers: customerForSearch ? customerForSearch : null,
+      theTables: tableForSearch ? tableForSearch : null,
+      theWaiters: waiterForSearch ? waiterForSearch : null,
+    });
+  }, [foodGroupForSearch, foodForSearch, authUserInfo]);
 
   //add new item to order list
   const handleOrderItem = (tempFoodItem) => {
@@ -430,6 +467,29 @@ const Pos = () => {
     setSelectedProperties([]);
     setTheSubTotal(0);
     setTheVat(0);
+    if (authUserInfo.details && authUserInfo.details.user_type === "staff") {
+      setOrderDetails({
+        branch: orderDetails.branch,
+        customer: null,
+        table: null,
+        waiter: null,
+        dept_tag: null,
+        payment_type: null,
+        payment_amount: null,
+        total_guest: 1,
+      });
+    } else {
+      setOrderDetails({
+        branch: null,
+        customer: null,
+        table: null,
+        waiter: null,
+        dept_tag: null,
+        payment_type: null,
+        payment_amount: null,
+        total_guest: 1,
+      });
+    }
   };
 
   //add properties
@@ -799,6 +859,30 @@ const Pos = () => {
       selectedItem: null,
       variations: null,
       properties: null,
+    });
+  };
+
+  //set order detals additional info here
+  //set branch
+  const handleSetBranch = (branch) => {
+    let tempCustomers = customerForSearch.filter((eachCustomer) => {
+      return eachCustomer.branch_id === branch.id;
+    });
+    let tempTables = tableForSearch.filter((eachTable) => {
+      return eachTable.branch_id === branch.id;
+    });
+    let tempWaiters = customerForSearch.filter((eachWaiter) => {
+      return eachWaiter.branch_id === branch.id;
+    });
+    setOrderDetailusers({
+      theCustomers: tempCustomers,
+      theTables: tempTables,
+      theWaiters: tempWaiters,
+    });
+
+    setOrderDetails({
+      ...orderDetails,
+      branch,
     });
   };
 
@@ -1997,62 +2081,74 @@ const Pos = () => {
                                       getOptionValue={(option) => option.name}
                                       classNamePrefix="select"
                                       className="xsm-text"
-                                      onChange={"handleSetBranchId"}
+                                      onChange={handleSetBranch}
                                       maxMenuHeight="200px"
                                       placeholder={_t(t("Branch")) + ".."}
                                     />
                                   </li>
                                 )}
 
-                              <li
-                                className={`addons-list__item mx-1 ${
-                                  authUserInfo.details &&
-                                  authUserInfo.details.user_type === "staff" &&
-                                  "mt-1"
-                                }`}
-                              >
-                                <Select
-                                  options={
-                                    customerForSearch && customerForSearch
-                                  }
-                                  components={makeAnimated()}
-                                  getOptionLabel={(option) =>
-                                    option.name + " (" + option.phn_no + ")"
-                                  }
-                                  getOptionValue={(option) => option.name}
-                                  classNamePrefix="select"
-                                  className="xsm-text"
-                                  onChange={"handleSetBranchId"}
-                                  maxMenuHeight="200px"
-                                  placeholder={_t(t("Customer")) + ".."}
-                                />
-                              </li>
-                              <li className="addons-list__item mx-1">
-                                <Select
-                                  options={tableForSearch && tableForSearch}
-                                  components={makeAnimated()}
-                                  getOptionLabel={(option) => option.name}
-                                  getOptionValue={(option) => option.name}
-                                  classNamePrefix="select"
-                                  className="xsm-text"
-                                  onChange={"handleSetBranchId"}
-                                  maxMenuHeight="200px"
-                                  placeholder={_t(t("Table")) + ".."}
-                                />
-                              </li>
-                              <li className="addons-list__item mx-1">
-                                <Select
-                                  options={waiterForSearch && waiterForSearch}
-                                  components={makeAnimated()}
-                                  getOptionLabel={(option) => option.name}
-                                  getOptionValue={(option) => option.name}
-                                  classNamePrefix="select"
-                                  className="xsm-text"
-                                  onChange={"handleSetBranchId"}
-                                  maxMenuHeight="200px"
-                                  placeholder={_t(t("Waiter")) + ".."}
-                                />
-                              </li>
+                              {orderDetails.branch !== null && (
+                                <>
+                                  <li
+                                    className={`addons-list__item mx-1 ${
+                                      authUserInfo.details &&
+                                      authUserInfo.details.user_type ===
+                                        "staff" &&
+                                      "mt-1"
+                                    }`}
+                                  >
+                                    <Select
+                                      options={
+                                        orderDetailUsers.theCustomers !==
+                                          null && orderDetailUsers.theCustomers
+                                      }
+                                      components={makeAnimated()}
+                                      getOptionLabel={(option) =>
+                                        option.name + " (" + option.phn_no + ")"
+                                      }
+                                      getOptionValue={(option) => option.name}
+                                      classNamePrefix="select"
+                                      className="xsm-text"
+                                      onChange={"handleSetBranchId"}
+                                      maxMenuHeight="200px"
+                                      placeholder={_t(t("Customer")) + ".."}
+                                    />
+                                  </li>
+                                  <li className="addons-list__item mx-1">
+                                    <Select
+                                      options={
+                                        orderDetailUsers.theTables !== null &&
+                                        orderDetailUsers.theTables
+                                      }
+                                      components={makeAnimated()}
+                                      getOptionLabel={(option) => option.name}
+                                      getOptionValue={(option) => option.name}
+                                      classNamePrefix="select"
+                                      className="xsm-text"
+                                      onChange={"handleSetBranchId"}
+                                      maxMenuHeight="200px"
+                                      placeholder={_t(t("Table")) + ".."}
+                                    />
+                                  </li>
+                                  <li className="addons-list__item mx-1">
+                                    <Select
+                                      options={
+                                        orderDetailUsers.theWaiters !== null &&
+                                        orderDetailUsers.theWaiters
+                                      }
+                                      components={makeAnimated()}
+                                      getOptionLabel={(option) => option.name}
+                                      getOptionValue={(option) => option.name}
+                                      classNamePrefix="select"
+                                      className="xsm-text"
+                                      onChange={"handleSetBranchId"}
+                                      maxMenuHeight="200px"
+                                      placeholder={_t(t("Waiter")) + ".."}
+                                    />
+                                  </li>
+                                </>
+                              )}
                               <li className="addons-list__item mx-1">
                                 <Select
                                   options={deptTagForSearch && deptTagForSearch}
@@ -2622,7 +2718,15 @@ const Pos = () => {
                           <div className="fk-price-table__head">
                             <div className="row gx-0 align-items-center">
                               <div className="col-6">
-                                <span className="d-block xsm-text text-uppercase"></span>
+                                <span className="d-block xsm-text text-primary font-weight-bold fs-10px">
+                                  {orderDetails.branch === null && (
+                                    <span>
+                                      {_t(
+                                        t("Select branch to select customer")
+                                      )}
+                                    </span>
+                                  )}
+                                </span>
                               </div>
                               <div className="col-6 text-right">
                                 <span className="d-block sm-text font-weight-bold text-uppercase font-italic">
