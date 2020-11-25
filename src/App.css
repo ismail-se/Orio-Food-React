@@ -155,3 +155,14 @@ html {
 .pointer-cursor {
   cursor: pointer;
 }
+
+/*  change-background */
+.change-background {
+  background-color: #f64e60 !important;
+}
+
+/* new-customer-pos */
+.new-customer-pos {
+  font-weight: 450 !important;
+  font-size: 12px !important;
+}

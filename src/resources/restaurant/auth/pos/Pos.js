@@ -105,7 +105,6 @@ const Pos = () => {
   //order details
   const [orderDetails, setOrderDetails] = useState({
     branch: null,
-    branch_change_loading: false,
     customer: null,
     table: null,
     waiter: null,
@@ -113,6 +112,11 @@ const Pos = () => {
     payment_type: null,
     payment_amount: null,
     total_guest: 1,
+    newCustomer: false,
+    newCustomerInfo: {
+      name: "",
+      number: "",
+    },
   });
 
   //useEffect- to get data on render
@@ -484,6 +488,11 @@ const Pos = () => {
         payment_type: null,
         payment_amount: null,
         total_guest: 1,
+        newCustomer: false,
+        newCustomerInfo: {
+          name: "",
+          number: "",
+        },
       });
     } else {
       setOrderDetails({
@@ -495,6 +504,11 @@ const Pos = () => {
         payment_type: null,
         payment_amount: null,
         total_guest: 1,
+        newCustomer: false,
+        newCustomerInfo: {
+          name: "",
+          number: "",
+        },
       });
     }
   };
@@ -890,6 +904,100 @@ const Pos = () => {
     setOrderDetails({
       ...orderDetails,
       branch,
+    });
+  };
+
+  //customer
+  const handleSetCustomer = (customer) => {
+    setOrderDetails({
+      ...orderDetails,
+      customer,
+    });
+  };
+
+  //new Customer
+  const handleNewCustomer = (e) => {
+    //if name is not there, set new customer === false
+    if (e.target.name === "name") {
+      if (e.target.value.length > 0) {
+        setOrderDetails({
+          ...orderDetails,
+          newCustomer: true,
+          newCustomerInfo: {
+            ...orderDetails.newCustomerInfo,
+            [e.target.name]: e.target.value,
+          },
+        });
+      } else {
+        setOrderDetails({
+          ...orderDetails,
+          newCustomer: false,
+          newCustomerInfo: {
+            ...orderDetails.newCustomerInfo,
+            [e.target.name]: e.target.value,
+          },
+        });
+      }
+    } else {
+      //set phn number here
+      setOrderDetails({
+        ...orderDetails,
+        newCustomerInfo: {
+          ...orderDetails.newCustomerInfo,
+          [e.target.name]: e.target.value,
+        },
+      });
+    }
+  };
+
+  //  table
+  const handleSetTable = (table) => {
+    setOrderDetails({
+      ...orderDetails,
+      table,
+    });
+  };
+
+  // waiter
+  const handleSetWaiter = (waiter) => {
+    setOrderDetails({
+      ...orderDetails,
+      waiter,
+    });
+  };
+
+  // department tag
+  const handleSetDeptTag = (dept_tag) => {
+    setOrderDetails({
+      ...orderDetails,
+      dept_tag,
+    });
+  };
+
+  //payment type
+  const handleSetpaymentType = (payment_type) => {
+    setOrderDetails({
+      ...orderDetails,
+      payment_type,
+    });
+  };
+
+  //payment type
+  const handleTotalGuest = (e) => {
+    setOrderDetails({
+      ...orderDetails,
+      total_guest: e.target.value,
+    });
+  };
+
+  //payment type amount
+  const handlePaymentTypeAmount = (e) => {
+    setOrderDetails({
+      ...orderDetails,
+      payment_amount: {
+        ...orderDetails.payment_amount,
+        [e.target.name]: e.target.value,
+      },
     });
   };
 
@@ -2117,11 +2225,68 @@ const Pos = () => {
                                       getOptionValue={(option) => option.name}
                                       classNamePrefix="select"
                                       className="xsm-text"
-                                      onChange={"handleSetBranchId"}
+                                      onChange={handleSetCustomer}
                                       maxMenuHeight="200px"
                                       placeholder={_t(t("Customer")) + ".."}
                                     />
                                   </li>
+                                  <li className="addons-list__item mx-1 border border-2 rounded-lg">
+                                    <div className="btn-group w-100">
+                                      <button
+                                        type="button"
+                                        className="fk-right-nav__guest-btn btn w-100 t-bg-white dropdown-toggle new-customer-pos xsm-text pl-2"
+                                        data-toggle="dropdown"
+                                        aria-expanded="false"
+                                      >
+                                        + Cust..(opt)
+                                      </button>
+                                      <ul className="dropdown-menu w-100 border-0 pt-4 change-background">
+                                        <li>
+                                          <input
+                                            type="text"
+                                            name="name"
+                                            className="form-control font-10px rounded-lg"
+                                            placeholder="Name"
+                                            value={
+                                              orderDetails.newCustomerInfo.name
+                                            }
+                                            onChange={handleNewCustomer}
+                                          />
+                                        </li>
+                                        <li className="pb-2">
+                                          <input
+                                            type="text"
+                                            name="number"
+                                            className="form-control font-10px mt-2 rounded-lg"
+                                            placeholder="Number"
+                                            value={
+                                              orderDetails.newCustomerInfo
+                                                .number
+                                            }
+                                            onChange={handleNewCustomer}
+                                          />
+                                        </li>
+                                        <li className="pb-1 text-right">
+                                          <button
+                                            className="btn t-bg-white text-dark xsm-text text-uppercase btn-sm py-0 px-2 mr-1"
+                                            onClick={() => {
+                                              setOrderDetails({
+                                                ...orderDetails,
+                                                newCustomer: false,
+                                                newCustomerInfo: {
+                                                  name: "",
+                                                  number: "",
+                                                },
+                                              });
+                                            }}
+                                          >
+                                            Cancel
+                                          </button>
+                                        </li>
+                                      </ul>
+                                    </div>
+                                  </li>
+
                                   <li className="addons-list__item mx-1">
                                     <Select
                                       options={
@@ -2133,7 +2298,7 @@ const Pos = () => {
                                       getOptionValue={(option) => option.name}
                                       classNamePrefix="select"
                                       className="xsm-text"
-                                      onChange={"handleSetBranchId"}
+                                      onChange={handleSetTable}
                                       maxMenuHeight="200px"
                                       placeholder={_t(t("Table")) + ".."}
                                     />
@@ -2149,7 +2314,7 @@ const Pos = () => {
                                       getOptionValue={(option) => option.name}
                                       classNamePrefix="select"
                                       className="xsm-text"
-                                      onChange={"handleSetBranchId"}
+                                      onChange={handleSetWaiter}
                                       maxMenuHeight="200px"
                                       placeholder={_t(t("Waiter")) + ".."}
                                     />
@@ -2164,12 +2329,16 @@ const Pos = () => {
                                   getOptionValue={(option) => option.name}
                                   classNamePrefix="select"
                                   className="xsm-text"
-                                  onChange={"handleSetBranchId"}
+                                  onChange={handleSetDeptTag}
                                   maxMenuHeight="200px"
                                   placeholder={_t(t("Dept tag")) + ".."}
                                 />
                               </li>
-                              <li className="addons-list__item mx-1 payment-type-parent">
+                              <li
+                                className={`addons-list__item mx-1 payment-type-parent ${
+                                  orderDetails.payment_type !== null && "mb-1"
+                                }`}
+                              >
                                 <Select
                                   options={
                                     paymentTypeForSearch && paymentTypeForSearch
@@ -2179,17 +2348,43 @@ const Pos = () => {
                                   getOptionValue={(option) => option.name}
                                   classNamePrefix="select"
                                   className="xsm-text"
-                                  onChange={"handleSetBranchId"}
+                                  onChange={handleSetpaymentType}
                                   maxMenuHeight="200px"
                                   isMulti
                                   clearIndicator={null}
                                   placeholder={_t(t("Payment type")) + ".."}
                                 />
                               </li>
+                              {orderDetails.payment_type !== null && (
+                                <div className="border mt-0 mb-2 change-background mx-1 rounded-lg">
+                                  <div className="xsm-text text-center text-white pt-1">
+                                    Amount
+                                  </div>
+                                  {orderDetails.payment_type.map(
+                                    (eachPaymentType, paymentTypeIndex) => {
+                                      return (
+                                        <li className="addons-list__item mx-1 mb-1">
+                                          <input
+                                            type="number"
+                                            min="0"
+                                            step="0.01"
+                                            name={eachPaymentType.id}
+                                            className="form-control xsm-text pl-2"
+                                            onChange={handlePaymentTypeAmount}
+                                            placeholder={eachPaymentType.name}
+                                          />
+                                        </li>
+                                      );
+                                    }
+                                  )}
+                                </div>
+                              )}
                               <li className="addons-list__item mx-1">
                                 <input
                                   type="number"
                                   className="form-control xsm-text py-2 pl-2"
+                                  min="1"
+                                  onChange={handleTotalGuest}
                                   placeholder={_t(t("Total guest")) + ".."}
                                 />
                               </li>
@@ -2729,7 +2924,9 @@ const Pos = () => {
                                   {orderDetails.branch === null && (
                                     <span>
                                       {_t(
-                                        t("Select branch to select customer")
+                                        t(
+                                          "Admin needs to select branch to order"
+                                        )
                                       )}
                                     </span>
                                   )}
