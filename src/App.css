@@ -166,3 +166,24 @@ html {
   font-weight: 450 !important;
   font-size: 12px !important;
 }
+.fk-left-over {
+  position: relative;
+}
+.fk-left-overlay {
+  border-radius: 4px;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  display: flex;
+  background: #f64e5fa9;
+  z-index: 3;
+}
+
+.fk-left-overlay__content {
+  min-width: 400px;
+  background-color: #ffffffef;
+  padding: 20px;
+  border-radius: 4px;
+}

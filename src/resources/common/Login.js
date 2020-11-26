@@ -46,9 +46,13 @@ const Login = () => {
   let { getAuthUser, authUserInfo, getCustomer, getWaiter } = useContext(
     UserContext
   );
-  let { getBranch, getTable, getDeptTag, getPaymentType } = useContext(
-    RestaurantContext
-  );
+  let {
+    getBranch,
+    getTable,
+    getDeptTag,
+    getPaymentType,
+    getWorkPeriod,
+  } = useContext(RestaurantContext);
   let { getFood, getFoodGroup, getPropertyGroup } = useContext(FoodContext);
 
   //state hooks here
@@ -143,6 +147,7 @@ const Login = () => {
             getSmtp();
           }
           if (res.data[3] !== null && res.data[3].includes("Customer")) {
+            getWorkPeriod();
             getCustomer();
             getTable();
             getWaiter();
