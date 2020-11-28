@@ -1,9 +1,14 @@
 import React, { useContext, useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 
+//axios and base url
+import axios from "axios";
+import { BASE_URL } from "../../../../BaseUrl";
+
 //functions
 import {
   _t,
+  getCookie,
   currencySymbolLeft,
   formatPrice,
   currencySymbolRight,
@@ -443,7 +448,7 @@ const Pos = () => {
   };
 
   //handle order item quantity
-  const handleorderItemQty = (action) => {
+  const handleOrderItemQty = (action) => {
     if (activeItemInOrder !== null) {
       if (newOrder) {
         let newOrderItemTemp = null; //to edit selected item
@@ -526,6 +531,7 @@ const Pos = () => {
     setTheSubTotal(0);
     setTheVat(0);
     setTotalPaybale(0);
+    setReturnMoneyUsd(0);
     if (authUserInfo.details && authUserInfo.details.user_type === "staff") {
       setOrderDetails({
         branch: orderDetails.branch,
@@ -1129,6 +1135,57 @@ const Pos = () => {
       setReturnMoneyUsd(0);
     }
     setPaidMoney(paidAmount);
+  };
+
+  //send server req
+  const handleSubmitOrder = (e) => {
+    e.preventDefault();
+    if (newOrder && newOrder.length > 0) {
+      axiosRequest();
+    } else {
+      toast.error(`${_t(t("Please add items in order list"))}`, {
+        position: "bottom-center",
+        autoClose: 10000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        className: "text-center toast-notification",
+      });
+    }
+  };
+
+  //handle settle order
+  const handleSettleOrder = () => {
+    console.log("ok");
+  };
+
+  //axios request
+  const axiosRequest = () => {
+    let url = BASE_URL + "/settings/new-order";
+    let localCurrency = JSON.parse(localStorage.getItem("currency"));
+    let formData = {
+      branch: orderDetails.branch,
+      customer: orderDetails.customer,
+      table: orderDetails.table,
+      waiter: orderDetails.dept_tag,
+      payment_type: orderDetails.payment_type,
+      payment_amount: orderDetails.payment_amount,
+      newCustomer: orderDetails.newCustomer ? 1 : 0,
+      newCustomerInfo: orderDetails.newCustomerInfo,
+      token: orderDetails.token,
+      total_guest: orderDetails.total_guest,
+      oderitems: newOrder,
+      serviceCharge: orderDetails.serviceCharge / localCurrency.rate,
+      discount: orderDetails.discount / localCurrency.rate,
+      localCurrency: localCurrency,
+    };
+    axios
+      .post(url, formData, {
+        headers: { Authorization: `Bearer ${getCookie()}` },
+      })
+      .then((res) => {
+        console.log(res.data);
+      });
   };
 
   return (
@@ -1852,7 +1909,7 @@ const Pos = () => {
                         >
                           {authUserInfo.details &&
                           authUserInfo.details.user_type !== "staff"
-                            ? _t(t("Select branch to check workperiod"))
+                            ? _t(t("Select branch to active POS"))
                             : _t(t("start workperiod"))}
                         </h5>
                         {authUserInfo.details &&
@@ -3338,7 +3395,7 @@ const Pos = () => {
                                                       <span
                                                         className="fk-qty__icon"
                                                         onClick={() => {
-                                                          handleorderItemQty(
+                                                          handleOrderItemQty(
                                                             "-"
                                                           );
                                                         }}
@@ -3356,7 +3413,7 @@ const Pos = () => {
                                                       <span
                                                         className="fk-qty__icon"
                                                         onClick={() => {
-                                                          handleorderItemQty(
+                                                          handleOrderItemQty(
                                                             "+"
                                                           );
                                                         }}
@@ -3726,6 +3783,7 @@ const Pos = () => {
                                       <button
                                         type="button"
                                         className="btn btn-primary sm-text text-uppercase font-weight-bold"
+                                        onClick={handleSettleOrder}
                                       >
                                         settle
                                       </button>
@@ -3734,6 +3792,7 @@ const Pos = () => {
                                       <button
                                         type="button"
                                         className="btn btn-success sm-text text-uppercase font-weight-bold"
+                                        onClick={handleSubmitOrder}
                                       >
                                         submit
                                       </button>

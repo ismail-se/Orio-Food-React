@@ -166,6 +166,8 @@ html {
   font-weight: 450 !important;
   font-size: 12px !important;
 }
+
+/* pos page work period css */
 .fk-left-over {
   position: relative;
 }
@@ -180,7 +182,6 @@ html {
   background: #f64e5fa9;
   z-index: 3;
 }
-
 .fk-left-overlay__content {
   min-width: 400px;
   background-color: #ffffffef;
