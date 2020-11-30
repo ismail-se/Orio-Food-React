@@ -25,6 +25,7 @@ import "react-confirm-alert/src/react-confirm-alert.css";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Moment from "react-moment";
+import Skeleton from "react-loading-skeleton";
 // import Calculator from "awesome-react-calculator";
 
 //importing context consumer here
@@ -45,11 +46,10 @@ const Pos = () => {
   const {
     authUserInfo,
     //customer
+    getCustomer,
     customerForSearch,
-    setCustomerForSearch,
     //waiter
     waiterForSearch,
-    setWaiterForSearch,
   } = useContext(UserContext);
 
   const {
@@ -532,6 +532,8 @@ const Pos = () => {
     setTheVat(0);
     setTotalPaybale(0);
     setReturnMoneyUsd(0);
+    setPaidMoney(0);
+
     if (authUserInfo.details && authUserInfo.details.user_type === "staff") {
       setOrderDetails({
         branch: orderDetails.branch,
@@ -1154,12 +1156,7 @@ const Pos = () => {
     }
   };
 
-  //handle settle order
-  const handleSettleOrder = () => {
-    console.log("ok");
-  };
-
-  //axios request
+  //axios request for submit
   const axiosRequest = () => {
     let url = BASE_URL + "/settings/new-order";
     let localCurrency = JSON.parse(localStorage.getItem("currency"));
@@ -1167,25 +1164,232 @@ const Pos = () => {
       branch: orderDetails.branch,
       customer: orderDetails.customer,
       table: orderDetails.table,
-      waiter: orderDetails.dept_tag,
+      waiter: orderDetails.waiter,
+      dept_tag: orderDetails.dept_tag,
       payment_type: orderDetails.payment_type,
       payment_amount: orderDetails.payment_amount,
       newCustomer: orderDetails.newCustomer ? 1 : 0,
       newCustomerInfo: orderDetails.newCustomerInfo,
       token: orderDetails.token,
       total_guest: orderDetails.total_guest,
-      oderitems: newOrder,
+      orderItems: newOrder,
       serviceCharge: orderDetails.serviceCharge / localCurrency.rate,
       discount: orderDetails.discount / localCurrency.rate,
+      subTotal: theSubTotal,
+      totalPayable: totalPayable,
+      paidMoney: paidMoney,
+      theVat: theVat,
       localCurrency: localCurrency,
+      workPeriod: newSettings.workPeriod,
     };
+    setLoading(true);
     axios
       .post(url, formData, {
         headers: { Authorization: `Bearer ${getCookie()}` },
       })
       .then((res) => {
-        console.log(res.data);
+        if (res.data !== "ended") {
+          handleOrderSubmitSuccessful();
+          setLoading(false);
+        } else {
+          setLoading(false);
+          toast.error(`${_t(t("Please restart the work period"))}`, {
+            position: "bottom-center",
+            autoClose: 10000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            className: "text-center toast-notification",
+          });
+        }
+      })
+      .catch((error) => {
+        setLoading(false);
+        toast.error(`${_t(t("Please try again"))}`, {
+          position: "bottom-center",
+          autoClose: 10000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          className: "text-center toast-notification",
+        });
       });
+  };
+
+  //handle settle order
+  const handleSettleOrder = (e) => {
+    console.log("coming");
+    e.preventDefault();
+    if (newOrder && newOrder.length > 0) {
+      if (paidMoney < totalPayable) {
+        toast.error(
+          `${_t(
+            t("Please enter paid amount atleast equal to the total bill amount")
+          )}`,
+          {
+            position: "bottom-center",
+            autoClose: 10000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            className: "text-center toast-notification",
+          }
+        );
+      } else {
+        axiosRequestForSettle();
+      }
+    } else {
+      toast.error(`${_t(t("Please add items in order list"))}`, {
+        position: "bottom-center",
+        autoClose: 10000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        className: "text-center toast-notification",
+      });
+    }
+  };
+
+  //axios request for settlement
+  const axiosRequestForSettle = () => {
+    let url = BASE_URL + "/settings/settle-order";
+    let localCurrency = JSON.parse(localStorage.getItem("currency"));
+    let formData = {
+      branch: orderDetails.branch,
+      customer: orderDetails.customer,
+      table: orderDetails.table,
+      waiter: orderDetails.waiter,
+      dept_tag: orderDetails.dept_tag,
+      payment_type: orderDetails.payment_type,
+      payment_amount: orderDetails.payment_amount,
+      newCustomer: orderDetails.newCustomer ? 1 : 0,
+      newCustomerInfo: orderDetails.newCustomerInfo,
+      token: orderDetails.token,
+      total_guest: orderDetails.total_guest,
+      orderItems: newOrder,
+      serviceCharge: orderDetails.serviceCharge / localCurrency.rate,
+      discount: orderDetails.discount / localCurrency.rate,
+      subTotal: theSubTotal,
+      totalPayable: totalPayable,
+      paidMoney: paidMoney,
+      theVat: theVat,
+      localCurrency: localCurrency,
+      workPeriod: newSettings.workPeriod,
+    };
+    setLoading(true);
+    axios
+      .post(url, formData, {
+        headers: { Authorization: `Bearer ${getCookie()}` },
+      })
+      .then((res) => {
+        if (res.data !== "ended") {
+          if (res.data !== "paymentIssue") {
+            handleOrderSubmitSuccessful();
+            setLoading(false);
+          } else {
+            setLoading(false);
+            toast.error(
+              `${_t(
+                t(
+                  "Please enter paid amount atleast equal to the total bill amount"
+                )
+              )}`,
+              {
+                position: "bottom-center",
+                autoClose: 10000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                className: "text-center toast-notification",
+              }
+            );
+          }
+        } else {
+          setLoading(false);
+          toast.error(`${_t(t("Please restart the work period"))}`, {
+            position: "bottom-center",
+            autoClose: 10000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            className: "text-center toast-notification",
+          });
+        }
+      })
+      .catch((error) => {
+        setLoading(false);
+        toast.error(`${_t(t("Please try again"))}`, {
+          position: "bottom-center",
+          autoClose: 10000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          className: "text-center toast-notification",
+        });
+      });
+  };
+
+  //call after successful order submit and settle
+  const handleOrderSubmitSuccessful = () => {
+    setNewOrder(null);
+    setActiveItemInOrder(null);
+    setSelectedVariation([]);
+    setSelectedPropertyGroup([]);
+    setSelectedProperties([]);
+    setTheSubTotal(0);
+    setTheVat(0);
+    setTotalPaybale(0);
+    setReturnMoneyUsd(0);
+    setPaidMoney(0);
+    if (authUserInfo.details && authUserInfo.details.user_type === "staff") {
+      setOrderDetails({
+        branch: orderDetails.branch,
+        customer: null,
+        table: null,
+        waiter: null,
+        dept_tag: null,
+        payment_type: null,
+        payment_amount: null,
+        total_guest: 1,
+        newCustomer: false,
+        newCustomerInfo: {
+          name: "",
+          number: "",
+        },
+        token: null,
+        serviceCharge: 0,
+        discount: 0,
+      });
+    } else {
+      //if admin
+      setOrderDetails({
+        branch: orderDetails.branch,
+        customer: null,
+        table: null,
+        waiter: null,
+        dept_tag: null,
+        payment_type: null,
+        payment_amount: null,
+        total_guest: 1,
+        newCustomer: false,
+        newCustomerInfo: {
+          name: "",
+          number: "",
+        },
+        token: null,
+        serviceCharge: 0,
+        discount: 0,
+      });
+    }
+    toast.success(`${_t(t("Order has been taken"))}`, {
+      position: "bottom-center",
+      autoClose: 10000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      className: "text-center toast-notification",
+    });
+    getCustomer();
   };
 
   return (
@@ -1930,24 +2134,8 @@ const Pos = () => {
                   {/* Show start work period options here */}
 
                   <div className="row gx-2 align-items-center">
-                    <div className="col-md-9 col-lg-7 col-xl-6 col-xxl-5">
+                    <div className="col-md-9 col-lg-8 col-xl-7 col-xxl-6">
                       <div className="row align-items-center gx-2">
-                        <div className="col">
-                          <a
-                            href="order-history.html"
-                            className="t-link t-pt-8 t-pb-8 t-pl-12 t-pr-12 btn btn-primary xsm-text text-uppercase text-center w-100"
-                          >
-                            all order
-                          </a>
-                        </div>
-                        <div className="col">
-                          <a
-                            href="order-today.html"
-                            className="t-link t-pt-8 t-pb-8 t-pl-12 t-pr-12 btn btn-secondary xsm-text text-uppercase text-center w-100"
-                          >
-                            current
-                          </a>
-                        </div>
                         <div className="col">
                           <a
                             href="order-page.html"
@@ -1956,9 +2144,34 @@ const Pos = () => {
                             new order
                           </a>
                         </div>
+                        <div className="col">
+                          <a
+                            href="order-history.html"
+                            className="t-link t-pt-8 t-pb-8 t-pl-12 t-pr-12 btn btn-primary xsm-text text-uppercase text-center w-100"
+                          >
+                            Submitted
+                          </a>
+                        </div>
+                        <div className="col">
+                          <a
+                            href="order-today.html"
+                            className="t-link t-pt-8 t-pb-8 t-pl-12 t-pr-12 btn btn-success xsm-text text-uppercase text-center w-100"
+                          >
+                            Settled
+                          </a>
+                        </div>
+
+                        <div className="col">
+                          <a
+                            href="order-page.html"
+                            className="t-link t-pt-8 t-pb-8 t-pl-12 t-pr-12 btn btn-secondary xsm-text text-uppercase text-center w-100"
+                          >
+                            kitchen
+                          </a>
+                        </div>
                       </div>
                     </div>
-                    <div className="col-md-3 col-lg-5 col-xl-6 col-xxl-7">
+                    <div className="col-md-3 col-lg-4 col-xl-5 col-xxl-6">
                       <div className="input-group">
                         <div className="form-file">
                           <input
@@ -2580,7 +2793,7 @@ const Pos = () => {
                                   maxMenuHeight="200px"
                                   isMulti
                                   clearIndicator={null}
-                                  placeholder={_t(t("Payment type")) + ".."}
+                                  placeholder={_t(t("Payments")) + ".."}
                                 />
                               </li>
                               {orderDetails.payment_type !== null && (
@@ -3783,18 +3996,22 @@ const Pos = () => {
                                       <button
                                         type="button"
                                         className="btn btn-primary sm-text text-uppercase font-weight-bold"
-                                        onClick={handleSettleOrder}
+                                        onClick={!loading && handleSettleOrder}
                                       >
-                                        settle
+                                        {!loading
+                                          ? _t(t("settle"))
+                                          : _t(t("Please wait"))}
                                       </button>
                                     </div>
                                     <div>
                                       <button
                                         type="button"
                                         className="btn btn-success sm-text text-uppercase font-weight-bold"
-                                        onClick={handleSubmitOrder}
+                                        onClick={!loading && handleSubmitOrder}
                                       >
-                                        submit
+                                        {!loading
+                                          ? _t(t("submit"))
+                                          : _t(t("Please wait"))}
                                       </button>
                                     </div>
                                   </div>
