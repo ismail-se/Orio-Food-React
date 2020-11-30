@@ -24,7 +24,13 @@ import {
   //dashboard
   RestaurantHome,
   WorkPeriod,
+
+  //pos
   Pos,
+  Submitted,
+  Settled,
+  PosKitchen,
+  //
   OrderHistories,
   Customers,
   Kitchen,
@@ -114,8 +120,41 @@ function App() {
           </RestaurantRoute>
 
           <RestaurantRoute path="/dashboard/pos" exact>
-            <Pos />
+            {authUserInfo.permissions !== null &&
+            checkPermission(authUserInfo.permissions, "POS") ? (
+              <Pos />
+            ) : (
+              <NoPermission />
+            )}
           </RestaurantRoute>
+
+          <RestaurantRoute path="/dashboard/pos/submitted" exact>
+            {authUserInfo.permissions !== null &&
+            checkPermission(authUserInfo.permissions, "POS") ? (
+              <Submitted />
+            ) : (
+              <NoPermission />
+            )}
+          </RestaurantRoute>
+
+          <RestaurantRoute path="/dashboard/pos/settled" exact>
+            {authUserInfo.permissions !== null &&
+            checkPermission(authUserInfo.permissions, "POS") ? (
+              <Settled />
+            ) : (
+              <NoPermission />
+            )}
+          </RestaurantRoute>
+
+          <RestaurantRoute path="/dashboard/pos/kitchen-status" exact>
+            {authUserInfo.permissions !== null &&
+            checkPermission(authUserInfo.permissions, "POS") ? (
+              <PosKitchen />
+            ) : (
+              <NoPermission />
+            )}
+          </RestaurantRoute>
+
           <RestaurantRoute path="/dashboard/orders" exact>
             <OrderHistories />
           </RestaurantRoute>

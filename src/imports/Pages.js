@@ -20,6 +20,9 @@ import WorkPeriod from "../resources/restaurant/auth/workPeriod/WorkPeriod";
 import Customers from "../resources/restaurant/auth/customer/Customers";
 //pos
 import Pos from "../resources/restaurant/auth/pos/Pos";
+import Submitted from "../resources/restaurant/auth/pos/Submitted";
+import Settled from "../resources/restaurant/auth/pos/Settled";
+import PosKitchen from "../resources/restaurant/auth/pos/PosKitchen";
 
 //from restaurant-auth-manage
 //-food
@@ -61,7 +64,12 @@ export {
   //dashboard
   RestaurantHome,
   WorkPeriod,
+  //Pos
   Pos,
+  Submitted,
+  Settled,
+  PosKitchen,
+  //
   OrderHistories,
   Customers,
   Kitchen,

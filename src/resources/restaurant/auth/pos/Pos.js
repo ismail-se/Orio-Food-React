@@ -46,8 +46,8 @@ const Pos = () => {
   const {
     authUserInfo,
     //customer
-    getCustomer,
     customerForSearch,
+    setCustomerForSearch,
     //waiter
     waiterForSearch,
   } = useContext(UserContext);
@@ -209,7 +209,7 @@ const Pos = () => {
       theTables: tableForSearch ? tableForSearch : null,
       theWaiters: waiterForSearch ? waiterForSearch : null,
     });
-  }, [authUserInfo]);
+  }, [authUserInfo, waiterForSearch]);
 
   //add new item to order list
   const handleOrderItem = (tempFoodItem) => {
@@ -939,7 +939,7 @@ const Pos = () => {
     let tempTables = tableForSearch.filter((eachTable) => {
       return eachTable.branch_id === branch.id;
     });
-    let tempWaiters = customerForSearch.filter((eachWaiter) => {
+    let tempWaiters = waiterForSearch.filter((eachWaiter) => {
       return eachWaiter.branch_id === branch.id;
     });
     setOrderDetailusers({
@@ -1155,6 +1155,11 @@ const Pos = () => {
       .then((res) => {
         if (res.data !== "ended") {
           handleOrderSubmitSuccessful();
+          setCustomerForSearch(res.data[1]);
+          setOrderDetailusers({
+            ...orderDetailUsers,
+            theCustomers: res.data[1],
+          });
           setLoading(false);
         } else {
           setLoading(false);
@@ -1193,6 +1198,7 @@ const Pos = () => {
           )}`,
           {
             position: "bottom-center",
+            closeButton: false,
             autoClose: 10000,
             hideProgressBar: false,
             closeOnClick: true,
@@ -1206,6 +1212,7 @@ const Pos = () => {
     } else {
       toast.error(`${_t(t("Please add items in order list"))}`, {
         position: "bottom-center",
+        closeButton: false,
         autoClose: 10000,
         hideProgressBar: false,
         closeOnClick: true,
@@ -1250,6 +1257,11 @@ const Pos = () => {
         if (res.data !== "ended") {
           if (res.data !== "paymentIssue") {
             handleOrderSubmitSuccessful();
+            setCustomerForSearch(res.data[1]);
+            setOrderDetailusers({
+              ...orderDetailUsers,
+              theCustomers: res.data[1],
+            });
             setLoading(false);
           } else {
             setLoading(false);
@@ -1261,6 +1273,7 @@ const Pos = () => {
               )}`,
               {
                 position: "bottom-center",
+                closeButton: false,
                 autoClose: 10000,
                 hideProgressBar: false,
                 closeOnClick: true,
@@ -1273,6 +1286,7 @@ const Pos = () => {
           setLoading(false);
           toast.error(`${_t(t("Please restart the work period"))}`, {
             position: "bottom-center",
+            closeButton: false,
             autoClose: 10000,
             hideProgressBar: false,
             closeOnClick: true,
@@ -1285,6 +1299,7 @@ const Pos = () => {
         setLoading(false);
         toast.error(`${_t(t("Please try again"))}`, {
           position: "bottom-center",
+          closeButton: false,
           autoClose: 10000,
           hideProgressBar: false,
           closeOnClick: true,
@@ -1326,6 +1341,7 @@ const Pos = () => {
     });
     toast.success(`${_t(t("Order has been taken"))}`, {
       position: "bottom-center",
+      closeButton: false,
       autoClose: 10000,
       hideProgressBar: false,
       closeOnClick: true,
@@ -2079,29 +2095,59 @@ const Pos = () => {
                     <div className="col-md-9 col-lg-8 col-xl-7 col-xxl-6">
                       <div className="row align-items-center gx-2">
                         <div className="col">
-                          <a
-                            href="order-history.html"
-                            className="t-link t-pt-8 t-pb-8 t-pl-12 t-pr-12 btn btn-primary xsm-text text-uppercase text-center w-100"
-                          >
-                            Submitted
-                          </a>
+                          {window.location.pathname ===
+                          "/dashboard/pos/submitted" ? (
+                            <NavLink
+                              to="/refresh"
+                              className="t-link t-pt-8 t-pb-8 t-pl-12 t-pr-12 btn btn-primary xsm-text text-uppercase text-center w-100"
+                            >
+                              Submitted
+                            </NavLink>
+                          ) : (
+                            <NavLink
+                              to="/dashboard/pos/submitted"
+                              className="t-link t-pt-8 t-pb-8 t-pl-12 t-pr-12 btn btn-primary xsm-text text-uppercase text-center w-100"
+                            >
+                              Submitted
+                            </NavLink>
+                          )}
                         </div>
                         <div className="col">
-                          <a
-                            href="order-today.html"
-                            className="t-link t-pt-8 t-pb-8 t-pl-12 t-pr-12 btn btn-success xsm-text text-uppercase text-center w-100"
-                          >
-                            Settled
-                          </a>
+                          {window.location.pathname ===
+                          "/dashboard/pos/settled" ? (
+                            <NavLink
+                              to="/refresh"
+                              className="t-link t-pt-8 t-pb-8 t-pl-12 t-pr-12 btn btn-success xsm-text text-uppercase text-center w-100"
+                            >
+                              Settled
+                            </NavLink>
+                          ) : (
+                            <NavLink
+                              to="/dashboard/pos/settled"
+                              className="t-link t-pt-8 t-pb-8 t-pl-12 t-pr-12 btn btn-success xsm-text text-uppercase text-center w-100"
+                            >
+                              Settled
+                            </NavLink>
+                          )}
                         </div>
 
                         <div className="col">
-                          <a
-                            href="order-page.html"
-                            className="t-link t-pt-8 t-pb-8 t-pl-12 t-pr-12 btn btn-secondary xsm-text text-uppercase text-center w-100"
-                          >
-                            kitchen
-                          </a>
+                          {window.location.pathname ===
+                          "/dashboard/pos/kitchen-status" ? (
+                            <NavLink
+                              to="/refresh"
+                              className="t-link t-pt-8 t-pb-8 t-pl-12 t-pr-12 btn btn-secondary xsm-text text-uppercase text-center w-100"
+                            >
+                              kitchen
+                            </NavLink>
+                          ) : (
+                            <NavLink
+                              to="/dashboard/pos/kitchen-status"
+                              className="t-link t-pt-8 t-pb-8 t-pl-12 t-pr-12 btn btn-secondary xsm-text text-uppercase text-center w-100"
+                            >
+                              kitchen
+                            </NavLink>
+                          )}
                         </div>
                       </div>
                     </div>
@@ -2611,7 +2657,7 @@ const Pos = () => {
                                         data-toggle="dropdown"
                                         aria-expanded="false"
                                       >
-                                        + Customer
+                                        + Customer?
                                       </button>
                                       <ul className="dropdown-menu w-100 border-0 pt-4 change-background">
                                         <li>
@@ -2665,6 +2711,80 @@ const Pos = () => {
                                   <li className="addons-list__item mx-1">
                                     <Select
                                       options={
+                                        deptTagForSearch && deptTagForSearch
+                                      }
+                                      components={makeAnimated()}
+                                      getOptionLabel={(option) => option.name}
+                                      getOptionValue={(option) => option.name}
+                                      classNamePrefix="select"
+                                      className="xsm-text"
+                                      onChange={handleSetDeptTag}
+                                      maxMenuHeight="200px"
+                                      placeholder={_t(t("Dept tag")) + ".."}
+                                    />
+                                  </li>
+                                  <li
+                                    className={`addons-list__item mx-1 payment-type-parent ${
+                                      orderDetails.payment_type !== null &&
+                                      "mb-1"
+                                    }`}
+                                  >
+                                    <Select
+                                      options={
+                                        paymentTypeForSearch &&
+                                        paymentTypeForSearch
+                                      }
+                                      components={makeAnimated()}
+                                      getOptionLabel={(option) => option.name}
+                                      getOptionValue={(option) => option.name}
+                                      classNamePrefix="select"
+                                      className="xsm-text"
+                                      onChange={handleSetpaymentType}
+                                      maxMenuHeight="200px"
+                                      isMulti
+                                      clearIndicator={null}
+                                      placeholder={_t(t("Payments")) + ".."}
+                                    />
+                                  </li>
+                                  {orderDetails.payment_type !== null && (
+                                    <div className="border mt-0 mb-2 change-background mx-1 rounded-lg">
+                                      <div className="xsm-text text-center text-white pt-1">
+                                        Amount
+                                      </div>
+                                      {orderDetails.payment_type.map(
+                                        (eachPaymentType, paymentTypeIndex) => {
+                                          return (
+                                            <li className="addons-list__item mx-1 mb-1">
+                                              <input
+                                                type="number"
+                                                min="0"
+                                                step="0.01"
+                                                name={eachPaymentType.id}
+                                                autoComplete="off"
+                                                className="form-control xsm-text pl-2"
+                                                onChange={
+                                                  handlePaymentTypeAmount
+                                                }
+                                                placeholder={
+                                                  eachPaymentType.name
+                                                }
+                                                value={
+                                                  orderDetails.payment_amount &&
+                                                  orderDetails.payment_amount[
+                                                    eachPaymentType.id
+                                                  ]
+                                                }
+                                              />
+                                            </li>
+                                          );
+                                        }
+                                      )}
+                                    </div>
+                                  )}
+
+                                  <li className="addons-list__item mx-1">
+                                    <Select
+                                      options={
                                         orderDetailUsers.theTables !== null &&
                                         orderDetailUsers.theTables
                                       }
@@ -2696,72 +2816,11 @@ const Pos = () => {
                                   </li>
                                 </>
                               )}
-                              <li className="addons-list__item mx-1">
-                                <Select
-                                  options={deptTagForSearch && deptTagForSearch}
-                                  components={makeAnimated()}
-                                  getOptionLabel={(option) => option.name}
-                                  getOptionValue={(option) => option.name}
-                                  classNamePrefix="select"
-                                  className="xsm-text"
-                                  onChange={handleSetDeptTag}
-                                  maxMenuHeight="200px"
-                                  placeholder={_t(t("Dept tag")) + ".."}
-                                />
-                              </li>
+
                               <li
-                                className={`addons-list__item mx-1 payment-type-parent ${
-                                  orderDetails.payment_type !== null && "mb-1"
-                                }`}
+                                className="addons-list__item mx-1"
+                                style={{ paddingBottom: "100px" }}
                               >
-                                <Select
-                                  options={
-                                    paymentTypeForSearch && paymentTypeForSearch
-                                  }
-                                  components={makeAnimated()}
-                                  getOptionLabel={(option) => option.name}
-                                  getOptionValue={(option) => option.name}
-                                  classNamePrefix="select"
-                                  className="xsm-text"
-                                  onChange={handleSetpaymentType}
-                                  maxMenuHeight="200px"
-                                  isMulti
-                                  clearIndicator={null}
-                                  placeholder={_t(t("Payments")) + ".."}
-                                />
-                              </li>
-                              {orderDetails.payment_type !== null && (
-                                <div className="border mt-0 mb-2 change-background mx-1 rounded-lg">
-                                  <div className="xsm-text text-center text-white pt-1">
-                                    Amount
-                                  </div>
-                                  {orderDetails.payment_type.map(
-                                    (eachPaymentType, paymentTypeIndex) => {
-                                      return (
-                                        <li className="addons-list__item mx-1 mb-1">
-                                          <input
-                                            type="number"
-                                            min="0"
-                                            step="0.01"
-                                            name={eachPaymentType.id}
-                                            autoComplete="off"
-                                            className="form-control xsm-text pl-2"
-                                            onChange={handlePaymentTypeAmount}
-                                            placeholder={eachPaymentType.name}
-                                            value={
-                                              orderDetails.payment_amount &&
-                                              orderDetails.payment_amount[
-                                                eachPaymentType.id
-                                              ]
-                                            }
-                                          />
-                                        </li>
-                                      );
-                                    }
-                                  )}
-                                </div>
-                              )}
-                              <li className="addons-list__item mx-1">
                                 <input
                                   type="number"
                                   className="form-control xsm-text py-2 pl-2"

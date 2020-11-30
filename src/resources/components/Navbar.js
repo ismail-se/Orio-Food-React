@@ -342,16 +342,7 @@ const Navbar = (props) => {
                               {authUserInfo.details !== null &&
                                 authUserInfo.details.name}
                             </a>
-                            <ul className="dropdown-menu">
-                              <li>
-                                <a
-                                  className="dropdown-item sm-text text-capitalize"
-                                  href="#"
-                                >
-                                  profile
-                                </a>
-                              </li>
-
+                            <ul className="dropdown-menu dropdown-menu-right">
                               {window.location.pathname === "/" ? (
                                 <li>
                                   <Link
@@ -593,16 +584,7 @@ const Navbar = (props) => {
                                   {authUserInfo.details !== null &&
                                     authUserInfo.details.name}
                                 </a>
-                                <ul className="dropdown-menu">
-                                  <li>
-                                    <a
-                                      className="dropdown-item sm-text text-capitalize"
-                                      href="#"
-                                    >
-                                      profile
-                                    </a>
-                                  </li>
-
+                                <ul className="dropdown-menu dropdown-menu-right">
                                   {window.location.pathname === "/" ? (
                                     <li>
                                       <Link
