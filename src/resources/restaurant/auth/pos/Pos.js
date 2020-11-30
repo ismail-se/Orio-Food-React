@@ -209,14 +209,7 @@ const Pos = () => {
       theTables: tableForSearch ? tableForSearch : null,
       theWaiters: waiterForSearch ? waiterForSearch : null,
     });
-  }, [
-    foodGroupForSearch,
-    foodForSearch,
-    authUserInfo,
-    customerForSearch,
-    tableForSearch,
-    waiterForSearch,
-  ]);
+  }, [authUserInfo]);
 
   //add new item to order list
   const handleOrderItem = (tempFoodItem) => {
@@ -533,52 +526,24 @@ const Pos = () => {
     setTotalPaybale(0);
     setReturnMoneyUsd(0);
     setPaidMoney(0);
-
-    if (authUserInfo.details && authUserInfo.details.user_type === "staff") {
-      setOrderDetails({
-        branch: orderDetails.branch,
-        customer: null,
-        table: null,
-        waiter: null,
-        dept_tag: null,
-        payment_type: null,
-        payment_amount: null,
-        total_guest: 1,
-        newCustomer: false,
-        newCustomerInfo: {
-          name: "",
-          number: "",
-        },
-        token: null,
-        serviceCharge: 0,
-        discount: 0,
-      });
-    } else {
-      //if admin
-      setOrderDetails({
-        branch: null,
-        customer: null,
-        table: null,
-        waiter: null,
-        dept_tag: null,
-        payment_type: null,
-        payment_amount: null,
-        total_guest: 1,
-        newCustomer: false,
-        newCustomerInfo: {
-          name: "",
-          number: "",
-        },
-        token: null,
-        serviceCharge: 0,
-        discount: 0,
-      });
-      // null work peirod if user type admin
-      setNewSettings({
-        ...newSettings,
-        workPeriod: null,
-      });
-    }
+    setOrderDetails({
+      branch: orderDetails.branch,
+      customer: null,
+      table: null,
+      waiter: null,
+      dept_tag: null,
+      payment_type: null,
+      payment_amount: null,
+      total_guest: 1,
+      newCustomer: false,
+      newCustomerInfo: {
+        name: "",
+        number: "",
+      },
+      token: null,
+      serviceCharge: 0,
+      discount: 0,
+    });
   };
 
   //add properties
@@ -1341,46 +1306,24 @@ const Pos = () => {
     setTotalPaybale(0);
     setReturnMoneyUsd(0);
     setPaidMoney(0);
-    if (authUserInfo.details && authUserInfo.details.user_type === "staff") {
-      setOrderDetails({
-        branch: orderDetails.branch,
-        customer: null,
-        table: null,
-        waiter: null,
-        dept_tag: null,
-        payment_type: null,
-        payment_amount: null,
-        total_guest: 1,
-        newCustomer: false,
-        newCustomerInfo: {
-          name: "",
-          number: "",
-        },
-        token: null,
-        serviceCharge: 0,
-        discount: 0,
-      });
-    } else {
-      //if admin
-      setOrderDetails({
-        branch: orderDetails.branch,
-        customer: null,
-        table: null,
-        waiter: null,
-        dept_tag: null,
-        payment_type: null,
-        payment_amount: null,
-        total_guest: 1,
-        newCustomer: false,
-        newCustomerInfo: {
-          name: "",
-          number: "",
-        },
-        token: null,
-        serviceCharge: 0,
-        discount: 0,
-      });
-    }
+    setOrderDetails({
+      branch: orderDetails.branch,
+      customer: null,
+      table: null,
+      waiter: null,
+      dept_tag: null,
+      payment_type: null,
+      payment_amount: null,
+      total_guest: 1,
+      newCustomer: false,
+      newCustomerInfo: {
+        name: "",
+        number: "",
+      },
+      token: null,
+      serviceCharge: 0,
+      discount: 0,
+    });
     toast.success(`${_t(t("Order has been taken"))}`, {
       position: "bottom-center",
       autoClose: 10000,
@@ -1389,7 +1332,6 @@ const Pos = () => {
       pauseOnHover: true,
       className: "text-center toast-notification",
     });
-    getCustomer();
   };
 
   return (
@@ -2136,14 +2078,6 @@ const Pos = () => {
                   <div className="row gx-2 align-items-center">
                     <div className="col-md-9 col-lg-8 col-xl-7 col-xxl-6">
                       <div className="row align-items-center gx-2">
-                        <div className="col">
-                          <a
-                            href="order-page.html"
-                            className="t-link t-pt-8 t-pb-8 t-pl-12 t-pr-12 btn btn-info xsm-text text-uppercase text-center w-100"
-                          >
-                            new order
-                          </a>
-                        </div>
                         <div className="col">
                           <a
                             href="order-history.html"
