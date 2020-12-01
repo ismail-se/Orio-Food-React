@@ -38,6 +38,16 @@ const RestaurantProvider = ({ children }) => {
   const [workPeriodList, setWorkPeriodList] = useState(null);
   const [workPeriodForSearch, setWorkPeriodListForSearch] = useState(null);
 
+  //submitted orders
+  const [submittedOrders, setSubmittedOrders] = useState(null);
+  const [submittedOrdersForSearch, setSubmittedOrdersForSearch] = useState(
+    null
+  );
+
+  //settled orders
+  const [settledOrders, setSettledOrders] = useState(null);
+  const [settledOrdersForSearch, setSettledOrdersForSearch] = useState(null);
+
   //useEffect- to get data on render
   useEffect(() => {
     //call- unauthenticated
@@ -207,6 +217,68 @@ const RestaurantProvider = ({ children }) => {
       .catch(() => {});
   };
 
+  //get submitted orders- not settled
+  const getSubmittedOrders = () => {
+    setLoading(true);
+    const url = BASE_URL + "/settings/get-submitted-orders";
+    return axios
+      .get(url, {
+        headers: { Authorization: `Bearer ${getCookie()}` },
+      })
+      .then((res) => {
+        setSubmittedOrders(res.data[0]);
+        setSubmittedOrdersForSearch(res.data[1]);
+        setLoading(false);
+      });
+  };
+
+  // get paginated submitted orders- not settled
+  const setPaginatedSubmittedOrders = (pageNo) => {
+    setDataPaginating(true);
+    const url = BASE_URL + "/settings/get-submitted-orders?page=" + pageNo;
+    return axios
+      .get(url, {
+        headers: { Authorization: `Bearer ${getCookie()}` },
+      })
+      .then((res) => {
+        setSubmittedOrders(res.data[0]);
+        setSubmittedOrdersForSearch(res.data[1]);
+        setDataPaginating(false);
+      })
+      .catch(() => {});
+  };
+
+  //get settled orders
+  const getSettledOrders = () => {
+    setLoading(true);
+    const url = BASE_URL + "/settings/get-settled-orders";
+    return axios
+      .get(url, {
+        headers: { Authorization: `Bearer ${getCookie()}` },
+      })
+      .then((res) => {
+        setSettledOrders(res.data[0]);
+        setSettledOrdersForSearch(res.data[1]);
+        setLoading(false);
+      });
+  };
+
+  // get paginated settled orders
+  const setPaginatedSettledOrders = (pageNo) => {
+    setDataPaginating(true);
+    const url = BASE_URL + "/settings/get-settled-orders?page=" + pageNo;
+    return axios
+      .get(url, {
+        headers: { Authorization: `Bearer ${getCookie()}` },
+      })
+      .then((res) => {
+        setSettledOrders(res.data[0]);
+        setSettledOrdersForSearch(res.data[1]);
+        setDataPaginating(false);
+      })
+      .catch(() => {});
+  };
+
   return (
     <RestaurantContext.Provider
       value={{
@@ -249,6 +321,22 @@ const RestaurantProvider = ({ children }) => {
         setPaginatedWorkPeriod,
         workPeriodForSearch,
         setWorkPeriodListForSearch,
+
+        //submitted orders
+        getSubmittedOrders,
+        submittedOrders,
+        setSubmittedOrders,
+        setPaginatedSubmittedOrders,
+        submittedOrdersForSearch,
+        setSubmittedOrdersForSearch,
+
+        //settled orders
+        getSettledOrders,
+        settledOrders,
+        setSettledOrders,
+        setPaginatedSettledOrders,
+        settledOrdersForSearch,
+        setSettledOrdersForSearch,
 
         //pagination
         dataPaginating,

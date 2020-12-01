@@ -1,5 +1,5 @@
 import React, { useEffect, useContext, useState } from "react";
-
+import { NavLink } from "react-router-dom";
 //axios and base url
 import axios from "axios";
 import { BASE_URL } from "../../../../BaseUrl";
@@ -25,6 +25,7 @@ import { confirmAlert } from "react-confirm-alert";
 import "react-confirm-alert/src/react-confirm-alert.css";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Moment from "react-moment";
 
 //importing context consumer here
 import { UserContext } from "../../../../contexts/User";
@@ -39,24 +40,22 @@ const Settled = () => {
     setLoading,
   } = useContext(SettingsContext);
 
-  const {
-    authUserInfo,
-
-    //customer
-    getCustomer,
-    customerList,
-    setCustomerList,
-    setPaginatedCustomer,
-    customerForSearch,
-    setCustomerForSearch,
-
-    //pagination
-    dataPaginating,
-  } = useContext(UserContext);
+  const { authUserInfo } = useContext(UserContext);
 
   const {
     //branch
     branchForSearch,
+
+    //settled orders
+    getSettledOrders,
+    settledOrders,
+    setSettledOrders,
+    setPaginatedSettledOrders,
+    settledOrdersForSearch,
+    setsettledOrdersForSearch,
+
+    //pagination
+    dataPaginating,
   } = useContext(RestaurantContext);
 
   const { t } = useTranslation();
@@ -133,8 +132,8 @@ const Settled = () => {
               editSlug: null,
               uploading: false,
             });
-            setCustomerList(res.data[0]);
-            setCustomerForSearch(res.data[1]);
+            setSettledOrders(res.data[0]);
+            setsettledOrdersForSearch(res.data[1]);
             setLoading(false);
             toast.success(`${_t(t("Customer has been added"))}`, {
               position: "bottom-center",
@@ -211,8 +210,8 @@ const Settled = () => {
             editSlug: null,
             uploading: false,
           });
-          setCustomerList(res.data[0]);
-          setCustomerForSearch(res.data[1]);
+          setSettledOrders(res.data[0]);
+          setsettledOrdersForSearch(res.data[1]);
           setLoading(false);
           toast.success(`${_t(t("Customer has been added"))}`, {
             position: "bottom-center",
@@ -254,7 +253,7 @@ const Settled = () => {
 
   //set edit true & values
   const handleSetEdit = (slug) => {
-    let customer = customerForSearch.filter((item) => {
+    let customer = settledOrdersForSearch.filter((item) => {
       return item.slug === slug;
     });
 
@@ -316,8 +315,8 @@ const Settled = () => {
           editSlug: null,
           uploading: false,
         });
-        setCustomerList(res.data[0]);
-        setCustomerForSearch(res.data[1]);
+        setSettledOrders(res.data[0]);
+        setsettledOrdersForSearch(res.data[1]);
         setSearchedCustomer({
           ...searchedCustomer,
           list: res.data[1],
@@ -366,7 +365,7 @@ const Settled = () => {
     if (searchInput.length === 0) {
       setSearchedCustomer({ ...searchedCustomer, searched: false });
     } else {
-      let searchedList = customerForSearch.filter((item) => {
+      let searchedList = settledOrdersForSearch.filter((item) => {
         //name
         let lowerCaseItemName = item.name.toLowerCase();
 
@@ -439,8 +438,8 @@ const Settled = () => {
         headers: { Authorization: `Bearer ${getCookie()}` },
       })
       .then((res) => {
-        setCustomerList(res.data[0]);
-        setCustomerForSearch(res.data[1]);
+        setSettledOrders(res.data[0]);
+        setsettledOrdersForSearch(res.data[1]);
         setSearchedCustomer({
           ...searchedCustomer,
           list: res.data[1],
@@ -687,49 +686,46 @@ const Settled = () => {
                         <li className="fk-breadcrumb__list">
                           <span className="t-link fk-breadcrumb__link text-capitalize">
                             {!searchedCustomer.searched
-                              ? _t(t("Customers"))
+                              ? _t(t("Settled orders"))
                               : _t(t("Search Result"))}
                           </span>
                         </li>
                       </ul>
                     </div>
-                    <div className="col-md-6 col-lg-5">
-                      <div className="input-group">
-                        <button className="btn btn-primary" type="button">
-                          <i className="fa fa-search" aria-hidden="true"></i>
-                        </button>
-                        <div className="form-file">
-                          <input
-                            type="text"
-                            className="form-control border-0 form-control--light-1 rounded-0"
-                            placeholder={_t(t("Search")) + ".."}
-                            onChange={handleSearch}
-                          />
+                    <div className="col-md-6 col-lg-5 t-mb-15 mb-md-0">
+                      <ul className="t-list fk-sort align-items-center">
+                        <div className="input-group col">
+                          <div className="form-file">
+                            <input
+                              type="text"
+                              className="form-control border-0 form-control--light-1 rounded-0"
+                              placeholder="Please Search "
+                            />
+                          </div>
+                          <button className="btn btn-primary" type="button">
+                            <i className="fa fa-search" aria-hidden="true"></i>
+                          </button>
                         </div>
-                      </div>
+                      </ul>
                     </div>
-                    <div className="col-md-6 col-lg-7 t-mb-15 mb-md-0">
-                      <div className="row gx-2 align-items-center">
-                        <div className="col-12 col-md-5 ml-auto mt-2 mt-md-0">
-                          <ul className="t-list fk-sort align-items-center justify-content-center">
-                            <li className="fk-sort__list mb-0 flex-grow-1">
-                              <button
-                                className="w-100 btn btn-secondary sm-text text-uppercase"
-                                data-toggle="modal"
-                                data-target="#addCustomer"
-                                onClick={() => {
-                                  setNewCustomer({
-                                    ...newCustomer,
-                                    branch: null,
-                                    edit: false,
-                                    uploading: false,
-                                  });
-                                }}
-                              >
-                                {_t(t("add new"))}
-                              </button>
-                            </li>
-                          </ul>
+                    <div className="col-md-6 col-lg-7">
+                      <div className="row align-items-center gx-2">
+                        <div className="col"></div>
+                        <div className="col">
+                          <NavLink
+                            to="/dashboard/pos"
+                            className="t-link t-pt-8 t-pb-8 t-pl-12 t-pr-12 btn btn-secondary xsm-text text-uppercase text-center w-100"
+                          >
+                            Pos
+                          </NavLink>
+                        </div>
+                        <div className="col">
+                          <NavLink
+                            to="/dashboard/pos/submitted"
+                            className="t-link t-pt-8 t-pb-8 t-pl-12 t-pr-12 btn btn-primary xsm-text text-uppercase text-center w-100"
+                          >
+                            Submitted
+                          </NavLink>
                         </div>
                       </div>
                     </div>
@@ -751,25 +747,33 @@ const Settled = () => {
                                 scope="col"
                                 className="sm-text text-capitalize align-middle text-center border-1 border"
                               >
-                                {_t(t("Name"))}
+                                {_t(t("Token"))}
                               </th>
                               <th
                                 scope="col"
                                 className="sm-text text-capitalize align-middle text-center border-1 border"
                               >
-                                {_t(t("email"))}
+                                {_t(t("Time"))}
                               </th>
                               <th
                                 scope="col"
                                 className="sm-text text-capitalize align-middle text-center border-1 border"
                               >
-                                {_t(t("Phn no"))}
+                                {_t(t("Customer"))}
                               </th>
+
                               <th
                                 scope="col"
                                 className="sm-text text-capitalize align-middle text-center border-1 border"
                               >
-                                {_t(t("Address"))}
+                                {_t(t("Dept"))}.
+                              </th>
+
+                              <th
+                                scope="col"
+                                className="sm-text text-capitalize align-middle text-center border-1 border"
+                              >
+                                {_t(t("Table"))}
                               </th>
 
                               <th
@@ -791,8 +795,8 @@ const Settled = () => {
                             {/* loop here, logic === !search && haveData && haveDataLegnth > 0*/}
                             {!searchedCustomer.searched
                               ? [
-                                  customerList && [
-                                    customerList.data.length === 0 ? (
+                                  settledOrders && [
+                                    settledOrders.data.length === 0 ? (
                                       <tr className="align-middle">
                                         <td
                                           scope="row"
@@ -803,7 +807,7 @@ const Settled = () => {
                                         </td>
                                       </tr>
                                     ) : (
-                                      customerList.data.map((item, index) => {
+                                      settledOrders.data.map((item, index) => {
                                         return (
                                           <tr
                                             className="align-middle"
@@ -815,33 +819,31 @@ const Settled = () => {
                                             >
                                               {index +
                                                 1 +
-                                                (customerList.current_page -
+                                                (settledOrders.current_page -
                                                   1) *
-                                                  customerList.per_page}
+                                                  settledOrders.per_page}
                                             </th>
 
+                                            <td className="xsm-text text-capitalize align-middle text-center text-secondary">
+                                              #{item.token.id}
+                                            </td>
+
                                             <td className="xsm-text text-capitalize align-middle text-center">
-                                              {item.name}
+                                              <Moment format="LT">
+                                                {item.token.time}
+                                              </Moment>
                                             </td>
 
                                             <td className="xsm-text align-middle text-center">
-                                              {item.email || "-"}
+                                              {item.customer_name}
                                             </td>
 
-                                            <td className="xsm-text text-capitalize align-middle text-center">
-                                              {item.phn_no ? (
-                                                <a
-                                                  href={`tel:${item.phn_no}`}
-                                                  rel="noopener noreferrer"
-                                                >
-                                                  {item.phn_no}
-                                                </a>
-                                              ) : (
-                                                "-"
-                                              )}
+                                            <td className="xsm-text align-middle text-center">
+                                              {item.dept_tag_name}
                                             </td>
-                                            <td className="xsm-text text-capitalize align-middle text-center">
-                                              {item.address || "-"}
+
+                                            <td className="xsm-text align-middle text-center">
+                                              {item.table_name}
                                             </td>
 
                                             <td className="xsm-text align-middle text-center">
@@ -925,9 +927,9 @@ const Settled = () => {
                                               >
                                                 {index +
                                                   1 +
-                                                  (customerList.current_page -
+                                                  (settledOrders.current_page -
                                                     1) *
-                                                    customerList.per_page}
+                                                    settledOrders.per_page}
                                               </th>
 
                                               <td className="xsm-text text-capitalize align-middle text-center">
@@ -1029,13 +1031,16 @@ const Settled = () => {
                           <div className="row align-items-center t-pl-15 t-pr-15">
                             <div className="col-md-7 t-mb-15 mb-md-0">
                               {/* pagination function */}
-                              {pagination(customerList, setPaginatedCustomer)}
+                              {pagination(
+                                settledOrders,
+                                setPaginatedSettledOrders
+                              )}
                             </div>
                             <div className="col-md-5">
                               <ul className="t-list d-flex justify-content-md-end align-items-center">
                                 <li className="t-list__item">
                                   <span className="d-inline-block sm-text">
-                                    {showingData(customerList)}
+                                    {showingData(settledOrders)}
                                   </span>
                                 </li>
                               </ul>
@@ -1070,7 +1075,7 @@ const Settled = () => {
                                 <span className="d-inline-block sm-text">
                                   {searchedShowingData(
                                     searchedCustomer,
-                                    customerForSearch
+                                    settledOrdersForSearch
                                   )}
                                 </span>
                               </li>

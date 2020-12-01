@@ -25,7 +25,6 @@ import "react-confirm-alert/src/react-confirm-alert.css";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Moment from "react-moment";
-import Skeleton from "react-loading-skeleton";
 // import Calculator from "awesome-react-calculator";
 
 //importing context consumer here
@@ -2092,26 +2091,23 @@ const Pos = () => {
                   {/* Show start work period options here */}
 
                   <div className="row gx-2 align-items-center">
-                    <div className="col-md-9 col-lg-8 col-xl-7 col-xxl-6">
-                      <div className="row align-items-center gx-2">
-                        <div className="col">
-                          {window.location.pathname ===
-                          "/dashboard/pos/submitted" ? (
-                            <NavLink
-                              to="/refresh"
-                              className="t-link t-pt-8 t-pb-8 t-pl-12 t-pr-12 btn btn-primary xsm-text text-uppercase text-center w-100"
-                            >
-                              Submitted
-                            </NavLink>
-                          ) : (
-                            <NavLink
-                              to="/dashboard/pos/submitted"
-                              className="t-link t-pt-8 t-pb-8 t-pl-12 t-pr-12 btn btn-primary xsm-text text-uppercase text-center w-100"
-                            >
-                              Submitted
-                            </NavLink>
-                          )}
+                    <div className="col-md-4 col-lg-5 col-xl-6 col-xxl-7">
+                      <div className="input-group">
+                        <button className="btn btn-primary" type="button">
+                          <i className="fa fa-search" aria-hidden="true"></i>
+                        </button>
+                        <div className="form-file">
+                          <input
+                            type="text"
+                            className="form-control border-0 form-control--light-2 rounded-0"
+                            placeholder={_t(t("Search by name, group")) + ".."}
+                            onChange={handleSearch}
+                          />
                         </div>
+                      </div>
+                    </div>
+                    <div className="col-md-8 col-lg-7 col-xl-6 col-xxl-5">
+                      <div className="row align-items-center gx-2">
                         <div className="col">
                           {window.location.pathname ===
                           "/dashboard/pos/settled" ? (
@@ -2130,40 +2126,34 @@ const Pos = () => {
                             </NavLink>
                           )}
                         </div>
-
                         <div className="col">
                           {window.location.pathname ===
-                          "/dashboard/pos/kitchen-status" ? (
+                          "/dashboard/pos/submitted" ? (
                             <NavLink
                               to="/refresh"
-                              className="t-link t-pt-8 t-pb-8 t-pl-12 t-pr-12 btn btn-secondary xsm-text text-uppercase text-center w-100"
+                              className="t-link t-pt-8 t-pb-8 t-pl-12 t-pr-12 btn btn-primary xsm-text text-uppercase text-center w-100"
                             >
-                              kitchen
+                              Submitted
                             </NavLink>
                           ) : (
                             <NavLink
-                              to="/dashboard/pos/kitchen-status"
-                              className="t-link t-pt-8 t-pb-8 t-pl-12 t-pr-12 btn btn-secondary xsm-text text-uppercase text-center w-100"
+                              to="/dashboard/pos/submitted"
+                              className="t-link t-pt-8 t-pb-8 t-pl-12 t-pr-12 btn btn-primary xsm-text text-uppercase text-center w-100"
                             >
-                              kitchen
+                              Submitted
                             </NavLink>
                           )}
                         </div>
-                      </div>
-                    </div>
-                    <div className="col-md-3 col-lg-4 col-xl-5 col-xxl-6">
-                      <div className="input-group">
-                        <div className="form-file">
-                          <input
-                            type="text"
-                            className="form-control border-0 form-control--light-2 rounded-0"
-                            placeholder={_t(t("Search by name, group")) + ".."}
-                            onChange={handleSearch}
-                          />
-                        </div>
-                        <button className="btn btn-primary" type="button">
-                          <i className="fa fa-search" aria-hidden="true"></i>
-                        </button>
+
+                        {/* <div className="col">
+                          <NavLink
+                            to="/dashboard/pos"
+                            target="_blank"
+                            className="t-link t-pt-8 t-pb-8 t-pl-12 t-pr-12 btn btn-secondary xsm-text text-uppercase text-center w-100"
+                          >
+                            New pos page
+                          </NavLink>
+                        </div> */}
                       </div>
                     </div>
                   </div>

@@ -1,5 +1,5 @@
 import React, { useEffect, useContext, useState } from "react";
-
+import { NavLink } from "react-router-dom";
 //axios and base url
 import axios from "axios";
 import { BASE_URL } from "../../../../BaseUrl";
@@ -25,6 +25,7 @@ import { confirmAlert } from "react-confirm-alert";
 import "react-confirm-alert/src/react-confirm-alert.css";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Moment from "react-moment";
 
 //importing context consumer here
 import { UserContext } from "../../../../contexts/User";
@@ -39,44 +40,35 @@ const Submitted = () => {
     setLoading,
   } = useContext(SettingsContext);
 
-  const {
-    authUserInfo,
-
-    //customer
-    getCustomer,
-    customerList,
-    setCustomerList,
-    setPaginatedCustomer,
-    customerForSearch,
-    setCustomerForSearch,
-
-    //pagination
-    dataPaginating,
-  } = useContext(UserContext);
+  const { authUserInfo } = useContext(UserContext);
 
   const {
     //branch
     branchForSearch,
+
+    //submitted orders
+    getSubmittedOrders,
+    submittedOrders,
+    setSubmittedOrders,
+    setPaginatedSubmittedOrders,
+    submittedOrdersForSearch,
+    setSubmittedOrdersForSearch,
+
+    //pagination
+    dataPaginating,
   } = useContext(RestaurantContext);
 
   const { t } = useTranslation();
 
   // States hook here
   //new customer
-  let [newCustomer, setNewCustomer] = useState({
-    name: "",
-    email: "",
-    phn_no: "",
-    address: "",
-    branch: null,
-    selectedBranch: null,
-    edit: false,
-    editSlug: null,
+  let [checkOrderDetails, setCheckOrderDetails] = useState({
+    item: null,
     uploading: false,
   });
 
   //search result
-  let [searchedCustomer, setSearchedCustomer] = useState({
+  let [searchedOrder, setSearchedOrder] = useState({
     list: null,
     searched: false,
   });
@@ -84,289 +76,16 @@ const Submitted = () => {
   //useEffect == componentDidMount
   useEffect(() => {}, []);
 
-  //set name, phn no hook
-  const handleSetNewCustomer = (e) => {
-    setNewCustomer({ ...newCustomer, [e.target.name]: e.target.value });
-  };
-
-  //set branch hook
-  const handleSetBranch = (branch) => {
-    setNewCustomer({ ...newCustomer, branch });
-  };
-
-  //Save New customer
-  const handleSaveNewCustomer = (e) => {
-    e.preventDefault();
-    let checkBranch = false;
-    if (
-      authUserInfo.details !== null &&
-      authUserInfo.details.user_type !== "staff"
-    ) {
-      checkBranch = true;
-    }
-    if (checkBranch) {
-      if (newCustomer.branch !== null) {
-        setNewCustomer({
-          ...newCustomer,
-          uploading: true,
-        });
-        const customerUrl = BASE_URL + `/settings/new-customer`;
-        let formData = new FormData();
-        formData.append("name", newCustomer.name);
-        formData.append("phn_no", newCustomer.phn_no);
-        formData.append("email", newCustomer.email);
-        formData.append("address", newCustomer.address);
-        formData.append("branch_id", newCustomer.branch.id);
-        return axios
-          .post(customerUrl, formData, {
-            headers: { Authorization: `Bearer ${getCookie()}` },
-          })
-          .then((res) => {
-            setNewCustomer({
-              name: "",
-              email: "",
-              phn_no: "",
-              address: "",
-              branch: null,
-              selectedBranch: null,
-              edit: false,
-              editSlug: null,
-              uploading: false,
-            });
-            setCustomerList(res.data[0]);
-            setCustomerForSearch(res.data[1]);
-            setLoading(false);
-            toast.success(`${_t(t("Customer has been added"))}`, {
-              position: "bottom-center",
-              autoClose: 10000,
-              hideProgressBar: false,
-              closeOnClick: true,
-              pauseOnHover: true,
-              className: "text-center toast-notification",
-            });
-          })
-          .catch((error) => {
-            setLoading(false);
-            setNewCustomer({
-              ...newCustomer,
-              uploading: false,
-            });
-            if (error && error.response.data.errors) {
-              if (error.response.data.errors.phn_no) {
-                error.response.data.errors.phn_no.forEach((item) => {
-                  if (item === "A customer exists with this phone number") {
-                    toast.error(
-                      `${_t(t("A customer exists with this phone number"))}`,
-                      {
-                        position: "bottom-center",
-                        autoClose: 10000,
-                        hideProgressBar: false,
-                        closeOnClick: true,
-                        pauseOnHover: true,
-                        className: "text-center toast-notification",
-                      }
-                    );
-                  }
-                });
-              }
-            }
-          });
-      } else {
-        toast.error(`${_t(t("Please select a branch"))}`, {
-          position: "bottom-center",
-          autoClose: 10000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          className: "text-center toast-notification",
-        });
-      }
-    } else {
-      setNewCustomer({
-        ...newCustomer,
-        uploading: true,
-      });
-      const customerUrl = BASE_URL + `/settings/new-customer`;
-      let formData = new FormData();
-      formData.append("name", newCustomer.name);
-      formData.append("phn_no", newCustomer.phn_no);
-      formData.append("email", newCustomer.email);
-      formData.append("address", newCustomer.address);
-      if (authUserInfo.details !== null) {
-        formData.append("branch_id", authUserInfo.details.branch_id);
-      }
-      return axios
-        .post(customerUrl, formData, {
-          headers: { Authorization: `Bearer ${getCookie()}` },
-        })
-        .then((res) => {
-          setNewCustomer({
-            name: "",
-            email: "",
-            phn_no: "",
-            address: "",
-            branch: null,
-            selectedBranch: null,
-            edit: false,
-            editSlug: null,
-            uploading: false,
-          });
-          setCustomerList(res.data[0]);
-          setCustomerForSearch(res.data[1]);
-          setLoading(false);
-          toast.success(`${_t(t("Customer has been added"))}`, {
-            position: "bottom-center",
-            autoClose: 10000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            className: "text-center toast-notification",
-          });
-        })
-        .catch((error) => {
-          setLoading(false);
-          setNewCustomer({
-            ...newCustomer,
-            uploading: false,
-          });
-          if (error && error.response.data.errors) {
-            if (error.response.data.errors.phn_no) {
-              error.response.data.errors.phn_no.forEach((item) => {
-                if (item === "A customer exists with this phone number") {
-                  toast.error(
-                    `${_t(t("A customer exists with this phone number"))}`,
-                    {
-                      position: "bottom-center",
-                      autoClose: 10000,
-                      hideProgressBar: false,
-                      closeOnClick: true,
-                      pauseOnHover: true,
-                      className: "text-center toast-notification",
-                    }
-                  );
-                }
-              });
-            }
-          }
-        });
-    }
-  };
-
   //set edit true & values
-  const handleSetEdit = (slug) => {
-    let customer = customerForSearch.filter((item) => {
-      return item.slug === slug;
-    });
-
-    let selectedOptionForBranch = null;
-    if (
-      authUserInfo.details !== null &&
-      authUserInfo.details.user_type !== "staff"
-    ) {
-      if (customer[0].branch_id) {
-        selectedOptionForBranch = branchForSearch.filter((branchItem) => {
-          return branchItem.id === customer[0].branch_id;
-        });
-      }
-    }
-    setNewCustomer({
-      ...newCustomer,
-      name: customer[0].name,
-      email: customer[0].email,
-      phn_no: customer[0].phn_no,
-      address: customer[0].address,
-      selectedBranch: selectedOptionForBranch
-        ? selectedOptionForBranch[0]
-        : null,
-      editSlug: customer[0].slug,
-      edit: true,
-    });
-  };
-
-  //update customer
-  const handleUpdateCustomer = (e) => {
-    e.preventDefault();
-    setNewCustomer({
-      ...newCustomer,
-      uploading: true,
-    });
-    const customerUrl = BASE_URL + `/settings/update-customer`;
-    let formData = new FormData();
-    formData.append("name", newCustomer.name);
-    formData.append("phn_no", newCustomer.phn_no);
-    formData.append("email", newCustomer.email);
-    formData.append("address", newCustomer.address);
-    if (newCustomer.branch !== null) {
-      formData.append("branch_id", newCustomer.branch.id);
-    }
-    formData.append("editSlug", newCustomer.editSlug);
-    return axios
-      .post(customerUrl, formData, {
-        headers: { Authorization: `Bearer ${getCookie()}` },
-      })
-      .then((res) => {
-        setNewCustomer({
-          name: "",
-          email: "",
-          phn_no: "",
-          address: "",
-          branch: null,
-          selectedBranch: null,
-          edit: false,
-          editSlug: null,
-          uploading: false,
-        });
-        setCustomerList(res.data[0]);
-        setCustomerForSearch(res.data[1]);
-        setSearchedCustomer({
-          ...searchedCustomer,
-          list: res.data[1],
-        });
-        setLoading(false);
-        toast.success(`${_t(t("Customer has been updated"))}`, {
-          position: "bottom-center",
-          autoClose: 10000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          className: "text-center toast-notification",
-        });
-      })
-      .catch((error) => {
-        setLoading(false);
-        setNewCustomer({
-          ...newCustomer,
-          uploading: false,
-        });
-        if (error && error.response.data.errors) {
-          if (error.response.data.errors.phn_no) {
-            error.response.data.errors.phn_no.forEach((item) => {
-              if (item === "A customer exists with this phone number") {
-                toast.error(
-                  `${_t(t("A customer exists with this phone number"))}`,
-                  {
-                    position: "bottom-center",
-                    autoClose: 10000,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    className: "text-center toast-notification",
-                  }
-                );
-              }
-            });
-          }
-        }
-      });
-  };
+  const handleSetEdit = (id) => {};
 
   //search customers here
   const handleSearch = (e) => {
     let searchInput = e.target.value.toLowerCase();
     if (searchInput.length === 0) {
-      setSearchedCustomer({ ...searchedCustomer, searched: false });
+      setSearchedOrder({ ...searchedOrder, searched: false });
     } else {
-      let searchedList = customerForSearch.filter((item) => {
+      let searchedList = submittedOrdersForSearch.filter((item) => {
         //name
         let lowerCaseItemName = item.name.toLowerCase();
 
@@ -394,8 +113,8 @@ const Submitted = () => {
           (lowerCaseItemBranch && lowerCaseItemBranch.includes(searchInput))
         );
       });
-      setSearchedCustomer({
-        ...searchedCustomer,
+      setSearchedOrder({
+        ...searchedOrder,
         list: searchedList,
         searched: true,
       });
@@ -414,7 +133,7 @@ const Submitted = () => {
               <button
                 className="btn btn-primary"
                 onClick={() => {
-                  handleDeleteCustomer(slug);
+                  // handleDeleteCustomer(slug);
                   onClose();
                 }}
               >
@@ -430,44 +149,6 @@ const Submitted = () => {
     });
   };
 
-  //delete customer here
-  const handleDeleteCustomer = (slug) => {
-    setLoading(true);
-    const customerUrl = BASE_URL + `/settings/delete-customer/${slug}`;
-    return axios
-      .get(customerUrl, {
-        headers: { Authorization: `Bearer ${getCookie()}` },
-      })
-      .then((res) => {
-        setCustomerList(res.data[0]);
-        setCustomerForSearch(res.data[1]);
-        setSearchedCustomer({
-          ...searchedCustomer,
-          list: res.data[1],
-        });
-        setLoading(false);
-        toast.success(`${_t(t("Customer has been deleted successfully"))}`, {
-          position: "bottom-center",
-          autoClose: 10000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          className: "text-center toast-notification",
-        });
-      })
-      .catch(() => {
-        setLoading(false);
-        toast.error(`${_t(t("Please try again"))}`, {
-          position: "bottom-center",
-          autoClose: 10000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          className: "text-center toast-notification",
-        });
-      });
-  };
-
   return (
     <>
       <Helmet>
@@ -475,15 +156,13 @@ const Submitted = () => {
       </Helmet>
 
       {/* Add modal */}
-      <div className="modal fade" id="addCustomer" aria-hidden="true">
+      <div className="modal fade" id="orderDetails" aria-hidden="true">
         <div className="modal-dialog modal-lg">
           <div className="modal-content">
             <div className="modal-header align-items-center">
               <div className="fk-sm-card__content">
                 <h5 className="text-capitalize fk-sm-card__title">
-                  {!newCustomer.edit
-                    ? _t(t("Add new customer"))
-                    : _t(t("Update customer"))}
+                  {_t(t("Order details"))}
                 </h5>
               </div>
               <button
@@ -494,175 +173,135 @@ const Submitted = () => {
               ></button>
             </div>
             <div className="modal-body">
-              {/* show form or show saving loading */}
-              {newCustomer.uploading === false ? (
-                <div key="fragment-customer-1">
-                  <form
-                    onSubmit={
-                      !newCustomer.edit
-                        ? handleSaveNewCustomer
-                        : handleUpdateCustomer
-                    }
-                  >
-                    <div>
-                      <label htmlFor="name" className="form-label">
-                        {_t(t("Name"))}{" "}
-                        <small className="text-primary">*</small>
-                      </label>
-                      <input
-                        type="text"
-                        className="form-control"
-                        id="name"
-                        name="name"
-                        placeholder="e.g. Mr. John"
-                        value={newCustomer.name || ""}
-                        required
-                        onChange={handleSetNewCustomer}
-                      />
-                    </div>
-
-                    {authUserInfo.details !== null &&
-                      authUserInfo.details.user_type !== "staff" && (
-                        <div className="mt-3">
-                          <label className="form-label mb-0">
-                            {_t(t("Select a branch"))}{" "}
-                            {newCustomer.edit ? (
-                              <small className="text-primary">
-                                {"( "}
-                                {_t(
-                                  t(
-                                    "Leave empty if you do not want to change branch"
-                                  )
-                                )}
-                                {" )"}
-                              </small>
-                            ) : (
-                              <small className="text-primary">*</small>
-                            )}
-                          </label>
-                          {newCustomer.edit &&
-                            newCustomer.selectedBranch !== null && (
-                              <ul className="list-group list-group-horizontal-sm row col-12 mb-2 ml-md-1">
-                                <li className="list-group-item col-12 col-md-3 bg-success rounded-sm py-1 px-2 my-1 text-center">
-                                  {newCustomer.selectedBranch.name}
-                                </li>
-                              </ul>
-                            )}
-                          <Select
-                            options={branchForSearch}
-                            components={makeAnimated()}
-                            getOptionLabel={(option) => option.name}
-                            getOptionValue={(option) => option.name}
-                            className="basic-multi-select mt-2"
-                            classNamePrefix="select"
-                            onChange={handleSetBranch}
-                            placeholder={_t(t("Please select a branch"))}
-                          />
-                        </div>
-                      )}
-
-                    <div className="mt-3">
-                      <label htmlFor="email" className="form-label">
-                        {_t(t("Email"))}
-                      </label>
-                      <input
-                        type="email"
-                        className="form-control"
-                        id="email"
-                        name="email"
-                        placeholder="e.g. customer@example.com"
-                        value={newCustomer.email || ""}
-                        onChange={handleSetNewCustomer}
-                      />
-                    </div>
-
-                    <div className="mt-3">
-                      <label htmlFor="phn_no" className="form-label">
-                        {_t(t("Phone number"))}
-                      </label>
-                      <input
-                        type="text"
-                        className="form-control"
-                        id="phn_no"
-                        name="phn_no"
-                        placeholder="e.g. 01xxx xxx xxx"
-                        value={newCustomer.phn_no || ""}
-                        onChange={handleSetNewCustomer}
-                      />
-                    </div>
-
-                    <div className="mt-3">
-                      <label htmlFor="address" className="form-label">
-                        {_t(t("Address"))}
-                      </label>
-                      <textarea
-                        type="text"
-                        className="form-control"
-                        id="address"
-                        name="address"
-                        placeholder="Type customer address"
-                        value={newCustomer.address || ""}
-                        onChange={handleSetNewCustomer}
-                      />
-                    </div>
-
-                    <div className="mt-4">
-                      <div className="row">
-                        <div className="col-6">
-                          <button
-                            type="submit"
-                            className="btn btn-success w-100 xsm-text text-uppercase t-width-max"
-                          >
-                            {!newCustomer.edit
-                              ? _t(t("Save"))
-                              : _t(t("Update"))}
-                          </button>
-                        </div>
-                        <div className="col-6">
-                          <button
-                            type="button"
-                            className="btn btn-primary w-100 xsm-text text-uppercase t-width-max"
-                            data-dismiss="modal"
-                          >
-                            {_t(t("Close"))}
-                          </button>
+              <div class="col-12 filtr-item">
+                <div class="fk-order-token t-bg-white">
+                  <div class="fk-order-token__body">
+                    <div class="fk-addons-table">
+                      <div class="fk-addons-table__head text-center">
+                        order token: #
+                        {checkOrderDetails.item &&
+                          checkOrderDetails.item.token.id}
+                      </div>
+                      <div class="fk-addons-table__info">
+                        <div class="row g-0">
+                          <div class="col-2 text-center border-right">
+                            <span class="fk-addons-table__info-text text-capitalize">
+                              S/L
+                            </span>
+                          </div>
+                          <div class="col-3 text-center border-right">
+                            <span class="fk-addons-table__info-text text-capitalize">
+                              food
+                            </span>
+                          </div>
+                          <div class="col-4 text-left pl-2 border-right">
+                            <span class="fk-addons-table__info-text text-capitalize">
+                              Additional
+                            </span>
+                          </div>
+                          <div class="col-2 text-center border-right">
+                            <span class="fk-addons-table__info-text text-capitalize">
+                              QTY
+                            </span>
+                          </div>
+                          <div class="col-1 text-center">
+                            <span class="fk-addons-table__info-text text-capitalize">
+                              <i class="fa fa-check"></i>
+                            </span>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </form>
-                </div>
-              ) : (
-                <div key="fragment2">
-                  <div className="text-center text-primary font-weight-bold text-uppercase">
-                    {_t(t("Please wait"))}
-                  </div>
-                  {modalLoading(3)}
-                  <div className="mt-4">
-                    <div className="row">
-                      <div className="col-6">
-                        <button
-                          type="button"
-                          className="btn btn-success w-100 xsm-text text-uppercase t-width-max"
-                          onClick={(e) => {
-                            e.preventDefault();
-                          }}
-                        >
-                          {!newCustomer.edit ? _t(t("Save")) : _t(t("Update"))}
-                        </button>
-                      </div>
-                      <div className="col-6">
-                        <button
-                          type="button"
-                          className="btn btn-primary w-100 xsm-text text-uppercase t-width-max"
-                          data-dismiss="modal"
-                        >
-                          {_t(t("Close"))}
-                        </button>
-                      </div>
+                      {checkOrderDetails.item &&
+                        checkOrderDetails.item.orderedItems.map(
+                          (thisItem, indexThisItem) => {
+                            return (
+                              <div class="fk-addons-table__body-row">
+                                <div class="row g-0">
+                                  <div class="col-2 text-center border-right d-flex">
+                                    <span class="fk-addons-table__info-text text-capitalize m-auto">
+                                      {indexThisItem + 1}
+                                    </span>
+                                  </div>
+                                  <div class="col-3 text-center border-right d-flex">
+                                    <span class="fk-addons-table__info-text text-capitalize m-auto">
+                                      {thisItem.food_item}
+                                    </span>
+                                  </div>
+                                  <div class="col-4 text-center border-right t-pl-10 t-pr-10">
+                                    {thisItem.variation !== null && (
+                                      <span class="fk-addons-table__info-text text-capitalize d-block text-left t-pt-5">
+                                        <span class="font-weight-bold mr-1">
+                                          variation:
+                                        </span>
+                                        {thisItem.variation}
+                                      </span>
+                                    )}
+
+                                    {thisItem.properties !== null && (
+                                      <span class="fk-addons-table__info-text text-capitalize d-block text-left t-pb-5">
+                                        <span class="font-weight-bold mr-1">
+                                          properties:
+                                        </span>
+                                        {JSON.parse(thisItem.properties).map(
+                                          (propertyItem, thisIndex) => {
+                                            if (
+                                              thisIndex !==
+                                              JSON.parse(thisItem.properties)
+                                                .length -
+                                                1
+                                            ) {
+                                              return (
+                                                propertyItem.property + ", "
+                                              );
+                                            } else {
+                                              return propertyItem.property;
+                                            }
+                                          }
+                                        )}
+                                      </span>
+                                    )}
+                                  </div>
+                                  <div class="col-2 text-center border-right d-flex">
+                                    <span class="fk-addons-table__info-text text-capitalize m-auto">
+                                      {thisItem.quantity}
+                                    </span>
+                                  </div>
+
+                                  <div class="col-1 text-center d-flex">
+                                    <label class="mx-checkbox mx-checkbox--empty m-auto">
+                                      <span class="mx-checkbox__text text-capitalize t-text-heading fk-addons-table__body-text">
+                                        {thisItem.is_cooking === 1 ? (
+                                          [
+                                            thisItem.is_ready === 1 ? (
+                                              <i
+                                                className="fa fa-check text-success"
+                                                title={_t(t("Ready"))}
+                                              ></i>
+                                            ) : (
+                                              <i
+                                                className="fa fa-cutlery text-secondary"
+                                                title={_t(t("Cooking"))}
+                                              ></i>
+                                            ),
+                                          ]
+                                        ) : (
+                                          <i
+                                            className="fa fa-times text-primary"
+                                            title={_t(t("Pending"))}
+                                          ></i>
+                                        )}
+                                      </span>
+                                    </label>
+                                  </div>
+                                </div>
+                              </div>
+                            );
+                          }
+                        )}
                     </div>
                   </div>
                 </div>
-              )}
+              </div>
             </div>
           </div>
         </div>
@@ -674,7 +313,7 @@ const Submitted = () => {
         <div className="container">
           <div className="row t-mt-10 gx-2">
             <div className="col-12 t-mb-30 mb-lg-0">
-              {newCustomer.uploading === true || loading === true ? (
+              {checkOrderDetails.uploading === true || loading === true ? (
                 pageLoading()
               ) : (
                 <div className="t-bg-white ">
@@ -686,50 +325,47 @@ const Submitted = () => {
                       <ul className="t-list fk-breadcrumb">
                         <li className="fk-breadcrumb__list">
                           <span className="t-link fk-breadcrumb__link text-capitalize">
-                            {!searchedCustomer.searched
+                            {!searchedOrder.searched
                               ? _t(t("Submitted orders"))
                               : _t(t("Search Result"))}
                           </span>
                         </li>
                       </ul>
                     </div>
-                    <div className="col-md-6 col-lg-5">
-                      <div className="input-group">
-                        <button className="btn btn-primary" type="button">
-                          <i className="fa fa-search" aria-hidden="true"></i>
-                        </button>
-                        <div className="form-file">
-                          <input
-                            type="text"
-                            className="form-control border-0 form-control--light-1 rounded-0"
-                            placeholder={_t(t("Search")) + ".."}
-                            onChange={handleSearch}
-                          />
+                    <div className="col-md-6 col-lg-5 t-mb-15 mb-md-0">
+                      <ul className="t-list fk-sort align-items-center">
+                        <div className="input-group col">
+                          <div className="form-file">
+                            <input
+                              type="text"
+                              className="form-control border-0 form-control--light-1 rounded-0"
+                              placeholder="Please Search "
+                            />
+                          </div>
+                          <button className="btn btn-primary" type="button">
+                            <i className="fa fa-search" aria-hidden="true"></i>
+                          </button>
                         </div>
-                      </div>
+                      </ul>
                     </div>
-                    <div className="col-md-6 col-lg-7 t-mb-15 mb-md-0">
-                      <div className="row gx-2 align-items-center">
-                        <div className="col-12 col-md-5 ml-auto mt-2 mt-md-0">
-                          <ul className="t-list fk-sort align-items-center justify-content-center">
-                            <li className="fk-sort__list mb-0 flex-grow-1">
-                              <button
-                                className="w-100 btn btn-secondary sm-text text-uppercase"
-                                data-toggle="modal"
-                                data-target="#addCustomer"
-                                onClick={() => {
-                                  setNewCustomer({
-                                    ...newCustomer,
-                                    branch: null,
-                                    edit: false,
-                                    uploading: false,
-                                  });
-                                }}
-                              >
-                                {_t(t("add new"))}
-                              </button>
-                            </li>
-                          </ul>
+                    <div className="col-md-6 col-lg-7">
+                      <div className="row align-items-center gx-2">
+                        <div className="col"></div>
+                        <div className="col">
+                          <NavLink
+                            to="/dashboard/pos"
+                            className="t-link t-pt-8 t-pb-8 t-pl-12 t-pr-12 btn btn-secondary xsm-text text-uppercase text-center w-100"
+                          >
+                            POS
+                          </NavLink>
+                        </div>
+                        <div className="col">
+                          <NavLink
+                            to="/dashboard/pos/settled"
+                            className="t-link t-pt-8 t-pb-8 t-pl-12 t-pr-12 btn btn-success xsm-text text-uppercase text-center w-100"
+                          >
+                            Settled
+                          </NavLink>
                         </div>
                       </div>
                     </div>
@@ -751,25 +387,26 @@ const Submitted = () => {
                                 scope="col"
                                 className="sm-text text-capitalize align-middle text-center border-1 border"
                               >
-                                {_t(t("Name"))}
+                                {_t(t("Token"))}
                               </th>
                               <th
                                 scope="col"
                                 className="sm-text text-capitalize align-middle text-center border-1 border"
                               >
-                                {_t(t("email"))}
+                                {_t(t("Time"))}
                               </th>
                               <th
                                 scope="col"
                                 className="sm-text text-capitalize align-middle text-center border-1 border"
                               >
-                                {_t(t("Phn no"))}
+                                {_t(t("Customer"))}
                               </th>
+
                               <th
                                 scope="col"
                                 className="sm-text text-capitalize align-middle text-center border-1 border"
                               >
-                                {_t(t("Address"))}
+                                {_t(t("Table"))}
                               </th>
 
                               <th
@@ -783,136 +420,34 @@ const Submitted = () => {
                                 scope="col"
                                 className="sm-text text-capitalize align-middle text-center border-1 border"
                               >
+                                {_t(t("Status"))}
+                              </th>
+
+                              <th
+                                scope="col"
+                                className="sm-text text-capitalize align-middle text-center border-1 border"
+                              >
                                 {_t(t("Action"))}
                               </th>
                             </tr>
                           </thead>
                           <tbody className="align-middle">
                             {/* loop here, logic === !search && haveData && haveDataLegnth > 0*/}
-                            {!searchedCustomer.searched
+                            {!searchedOrder.searched
                               ? [
-                                  customerList && [
-                                    customerList.data.length === 0 ? (
+                                  submittedOrders && [
+                                    submittedOrders.data.length === 0 ? (
                                       <tr className="align-middle">
                                         <td
                                           scope="row"
-                                          colSpan="7"
+                                          colSpan="8"
                                           className="xsm-text align-middle text-center"
                                         >
                                           {_t(t("No data available"))}
                                         </td>
                                       </tr>
                                     ) : (
-                                      customerList.data.map((item, index) => {
-                                        return (
-                                          <tr
-                                            className="align-middle"
-                                            key={index}
-                                          >
-                                            <th
-                                              scope="row"
-                                              className="xsm-text text-capitalize align-middle text-center"
-                                            >
-                                              {index +
-                                                1 +
-                                                (customerList.current_page -
-                                                  1) *
-                                                  customerList.per_page}
-                                            </th>
-
-                                            <td className="xsm-text text-capitalize align-middle text-center">
-                                              {item.name}
-                                            </td>
-
-                                            <td className="xsm-text align-middle text-center">
-                                              {item.email || "-"}
-                                            </td>
-
-                                            <td className="xsm-text text-capitalize align-middle text-center">
-                                              {item.phn_no ? (
-                                                <a
-                                                  href={`tel:${item.phn_no}`}
-                                                  rel="noopener noreferrer"
-                                                >
-                                                  {item.phn_no}
-                                                </a>
-                                              ) : (
-                                                "-"
-                                              )}
-                                            </td>
-                                            <td className="xsm-text text-capitalize align-middle text-center">
-                                              {item.address || "-"}
-                                            </td>
-
-                                            <td className="xsm-text align-middle text-center">
-                                              {item.branch_name || "-"}
-                                            </td>
-
-                                            <td className="xsm-text text-capitalize align-middle text-center">
-                                              <div className="dropdown">
-                                                <button
-                                                  className="btn t-bg-clear t-text-dark--light-40"
-                                                  type="button"
-                                                  data-toggle="dropdown"
-                                                >
-                                                  <i className="fa fa-ellipsis-h"></i>
-                                                </button>
-                                                <div className="dropdown-menu">
-                                                  <button
-                                                    className="dropdown-item sm-text text-capitalize"
-                                                    onClick={() => {
-                                                      setNewCustomer({
-                                                        ...newCustomer,
-                                                        branch: null,
-                                                      });
-                                                      handleSetEdit(item.slug);
-                                                    }}
-                                                    data-toggle="modal"
-                                                    data-target="#addCustomer"
-                                                  >
-                                                    <span className="t-mr-8">
-                                                      <i className="fa fa-pencil"></i>
-                                                    </span>
-                                                    {_t(t("Edit"))}
-                                                  </button>
-
-                                                  <button
-                                                    className="dropdown-item sm-text text-capitalize"
-                                                    onClick={() => {
-                                                      handleDeleteConfirmation(
-                                                        item.slug
-                                                      );
-                                                    }}
-                                                  >
-                                                    <span className="t-mr-8">
-                                                      <i className="fa fa-trash"></i>
-                                                    </span>
-                                                    {_t(t("Delete"))}
-                                                  </button>
-                                                </div>
-                                              </div>
-                                            </td>
-                                          </tr>
-                                        );
-                                      })
-                                    ),
-                                  ],
-                                ]
-                              : [
-                                  /* searched data, logic === haveData*/
-                                  searchedCustomer && [
-                                    searchedCustomer.list.length === 0 ? (
-                                      <tr className="align-middle">
-                                        <td
-                                          scope="row"
-                                          colSpan="7"
-                                          className="xsm-text align-middle text-center"
-                                        >
-                                          {_t(t("No data available"))}
-                                        </td>
-                                      </tr>
-                                    ) : (
-                                      searchedCustomer.list.map(
+                                      submittedOrders.data.map(
                                         (item, index) => {
                                           return (
                                             <tr
@@ -925,40 +460,261 @@ const Submitted = () => {
                                               >
                                                 {index +
                                                   1 +
-                                                  (customerList.current_page -
+                                                  (submittedOrders.current_page -
                                                     1) *
-                                                    customerList.per_page}
+                                                    submittedOrders.per_page}
                                               </th>
 
-                                              <td className="xsm-text text-capitalize align-middle text-center">
-                                                {item.name}
-                                              </td>
-
-                                              <td className="xsm-text align-middle text-center">
-                                                {item.email || "-"}
+                                              <td className="xsm-text text-capitalize align-middle text-center text-secondary">
+                                                #{item.token.id}
                                               </td>
 
                                               <td className="xsm-text text-capitalize align-middle text-center">
-                                                {item.phn_no ? (
-                                                  <a
-                                                    href={`tel:${item.phn_no}`}
-                                                    rel="noopener noreferrer"
-                                                  >
-                                                    {item.phn_no}
-                                                  </a>
-                                                ) : (
-                                                  "-"
-                                                )}
+                                                <Moment format="LT">
+                                                  {item.token.time}
+                                                </Moment>
                                               </td>
+
                                               <td className="xsm-text align-middle text-center">
-                                                {item.address || "-"}
+                                                {item.customer_name}
+                                              </td>
+
+                                              <td className="xsm-text align-middle text-center">
+                                                {item.table_name}
                                               </td>
 
                                               <td className="xsm-text align-middle text-center">
                                                 {item.branch_name || "-"}
                                               </td>
 
+                                              <td class="xsm-text text-capitalize align-middle text-center">
+                                                {item.is_cancelled === 0 ? (
+                                                  [
+                                                    item.is_ready === 0 ? (
+                                                      <span
+                                                        class="btn btn-transparent btn-secondary xsm-text text-capitalize"
+                                                        onClick={() => {
+                                                          setCheckOrderDetails({
+                                                            ...checkOrderDetails,
+                                                            item: item,
+                                                          });
+                                                        }}
+                                                        data-toggle="modal"
+                                                        data-target="#orderDetails"
+                                                      >
+                                                        processing
+                                                      </span>
+                                                    ) : (
+                                                      <span
+                                                        class="btn btn-transparent btn-success xsm-text text-capitalize px-4"
+                                                        onClick={() => {
+                                                          setCheckOrderDetails({
+                                                            ...checkOrderDetails,
+                                                            item: item,
+                                                          });
+                                                        }}
+                                                        data-toggle="modal"
+                                                        data-target="#orderDetails"
+                                                      >
+                                                        Ready
+                                                      </span>
+                                                    ),
+                                                  ]
+                                                ) : (
+                                                  <span
+                                                    class="btn btn-transparent btn-warning xsm-text text-capitalize px-3"
+                                                    onClick={() => {
+                                                      setCheckOrderDetails({
+                                                        ...checkOrderDetails,
+                                                        item: item,
+                                                      });
+                                                    }}
+                                                    data-toggle="modal"
+                                                    data-target="#orderDetails"
+                                                  >
+                                                    Cancelled
+                                                  </span>
+                                                )}
+                                              </td>
+
                                               <td className="xsm-text text-capitalize align-middle text-center">
+                                                {item.is_cancelled === 0 ? (
+                                                  <div className="dropdown">
+                                                    <button
+                                                      className="btn t-bg-clear t-text-dark--light-40"
+                                                      type="button"
+                                                      data-toggle="dropdown"
+                                                    >
+                                                      <i className="fa fa-ellipsis-h"></i>
+                                                    </button>
+                                                    <div className="dropdown-menu">
+                                                      <button
+                                                        className="dropdown-item sm-text text-capitalize"
+                                                        onClick={() => {
+                                                          setCheckOrderDetails({
+                                                            ...checkOrderDetails,
+                                                            item: item,
+                                                          });
+                                                        }}
+                                                        data-toggle="modal"
+                                                        data-target="#orderDetails"
+                                                      >
+                                                        <span className="t-mr-8">
+                                                          <i className="fa fa-eye"></i>
+                                                        </span>
+                                                        {_t(t("Details"))}
+                                                      </button>
+                                                      {item.is_ready !== 1 && [
+                                                        item.is_accepted ===
+                                                        0 ? (
+                                                          <button
+                                                            className="dropdown-item sm-text text-capitalize"
+                                                            onClick={() => {
+                                                              handleDeleteConfirmation(
+                                                                item.slug
+                                                              );
+                                                            }}
+                                                          >
+                                                            <span className="t-mr-8">
+                                                              <i className="fa fa-trash"></i>
+                                                            </span>
+                                                            {_t(
+                                                              t("Cancel Order")
+                                                            )}
+                                                          </button>
+                                                        ) : (
+                                                          <button
+                                                            className="dropdown-item sm-text text-capitalize"
+                                                            onClick={() => {
+                                                              toast.error(
+                                                                `${_t(
+                                                                  t(
+                                                                    "This is being cooked, can not cancel now, try removing items"
+                                                                  )
+                                                                )}`,
+                                                                {
+                                                                  position:
+                                                                    "bottom-center",
+                                                                  closeButton: false,
+                                                                  autoClose: 10000,
+                                                                  hideProgressBar: false,
+                                                                  closeOnClick: true,
+                                                                  pauseOnHover: true,
+                                                                  className:
+                                                                    "text-center toast-notification",
+                                                                }
+                                                              );
+                                                            }}
+                                                          >
+                                                            <span className="t-mr-8">
+                                                              <i className="fa fa-trash text-primary"></i>
+                                                            </span>
+                                                            {_t(
+                                                              t("Cancel Order")
+                                                            )}
+                                                          </button>
+                                                        ),
+                                                      ]}
+                                                    </div>
+                                                  </div>
+                                                ) : (
+                                                  _t(t("Not allowed"))
+                                                )}
+                                              </td>
+                                            </tr>
+                                          );
+                                        }
+                                      )
+                                    ),
+                                  ],
+                                ]
+                              : [
+                                  /* searched data, logic === haveData*/
+                                  searchedOrder && [
+                                    searchedOrder.list.length === 0 ? (
+                                      <tr className="align-middle">
+                                        <td
+                                          scope="row"
+                                          colSpan="8"
+                                          className="xsm-text align-middle text-center"
+                                        >
+                                          {_t(t("No data available"))}
+                                        </td>
+                                      </tr>
+                                    ) : (
+                                      searchedOrder.list.map((item, index) => {
+                                        return (
+                                          <tr
+                                            className="align-middle"
+                                            key={index}
+                                          >
+                                            <th
+                                              scope="row"
+                                              className="xsm-text text-capitalize align-middle text-center"
+                                            >
+                                              {index +
+                                                1 +
+                                                (submittedOrders.current_page -
+                                                  1) *
+                                                  submittedOrders.per_page}
+                                            </th>
+
+                                            <td className="xsm-text text-capitalize align-middle text-center text-secondary">
+                                              #{item.token.id}
+                                            </td>
+
+                                            <td className="xsm-text text-capitalize align-middle text-center">
+                                              <Moment format="LT">
+                                                {item.token.time}
+                                              </Moment>
+                                            </td>
+
+                                            <td className="xsm-text align-middle text-center">
+                                              {item.customer_name}
+                                            </td>
+
+                                            <td className="xsm-text align-middle text-center">
+                                              {item.table_name}
+                                            </td>
+
+                                            <td className="xsm-text align-middle text-center">
+                                              {item.branch_name || "-"}
+                                            </td>
+
+                                            <td class="xsm-text text-capitalize align-middle text-center">
+                                              {item.is_cancelled === 0 ? (
+                                                <span
+                                                  class="btn btn-transparent btn-secondary xsm-text text-capitalize"
+                                                  onClick={() => {
+                                                    setCheckOrderDetails({
+                                                      ...checkOrderDetails,
+                                                      item: item,
+                                                    });
+                                                  }}
+                                                  data-toggle="modal"
+                                                  data-target="#orderDetails"
+                                                >
+                                                  processing
+                                                </span>
+                                              ) : (
+                                                <span
+                                                  class="btn btn-transparent btn-warning xsm-text text-capitalize px-3"
+                                                  onClick={() => {
+                                                    setCheckOrderDetails({
+                                                      ...checkOrderDetails,
+                                                      item: item,
+                                                    });
+                                                  }}
+                                                  data-toggle="modal"
+                                                  data-target="#orderDetails"
+                                                >
+                                                  Cancelled
+                                                </span>
+                                              )}
+                                            </td>
+
+                                            <td className="xsm-text text-capitalize align-middle text-center">
+                                              {item.is_cancelled === 0 ? (
                                                 <div className="dropdown">
                                                   <button
                                                     className="btn t-bg-clear t-text-dark--light-40"
@@ -971,23 +727,19 @@ const Submitted = () => {
                                                     <button
                                                       className="dropdown-item sm-text text-capitalize"
                                                       onClick={() => {
-                                                        setNewCustomer({
-                                                          ...newCustomer,
-                                                          branch: null,
+                                                        setCheckOrderDetails({
+                                                          ...checkOrderDetails,
+                                                          item: item,
                                                         });
-                                                        handleSetEdit(
-                                                          item.slug
-                                                        );
                                                       }}
                                                       data-toggle="modal"
-                                                      data-target="#addCustomer"
+                                                      data-target="#orderDetails"
                                                     >
                                                       <span className="t-mr-8">
-                                                        <i className="fa fa-pencil"></i>
+                                                        <i className="fa fa-eye"></i>
                                                       </span>
-                                                      {_t(t("Edit"))}
+                                                      {_t(t("Details"))}
                                                     </button>
-
                                                     <button
                                                       className="dropdown-item sm-text text-capitalize"
                                                       onClick={() => {
@@ -999,15 +751,17 @@ const Submitted = () => {
                                                       <span className="t-mr-8">
                                                         <i className="fa fa-trash"></i>
                                                       </span>
-                                                      {_t(t("Delete"))}
+                                                      {_t(t("Cancel Order"))}
                                                     </button>
                                                   </div>
                                                 </div>
-                                              </td>
-                                            </tr>
-                                          );
-                                        }
-                                      )
+                                              ) : (
+                                                _t(t("Not allowed"))
+                                              )}
+                                            </td>
+                                          </tr>
+                                        );
+                                      })
                                     ),
                                   ],
                                 ]}
@@ -1019,23 +773,26 @@ const Submitted = () => {
                 </div>
               )}
               {/* pagination loading effect */}
-              {newCustomer.uploading === true || loading === true
+              {checkOrderDetails.uploading === true || loading === true
                 ? paginationLoading()
                 : [
                     // logic === !searched
-                    !searchedCustomer.searched ? (
+                    !searchedOrder.searched ? (
                       <div key="fragment4">
                         <div className="t-bg-white mt-1 t-pt-5 t-pb-5">
                           <div className="row align-items-center t-pl-15 t-pr-15">
                             <div className="col-md-7 t-mb-15 mb-md-0">
                               {/* pagination function */}
-                              {pagination(customerList, setPaginatedCustomer)}
+                              {pagination(
+                                submittedOrders,
+                                setPaginatedSubmittedOrders
+                              )}
                             </div>
                             <div className="col-md-5">
                               <ul className="t-list d-flex justify-content-md-end align-items-center">
                                 <li className="t-list__item">
                                   <span className="d-inline-block sm-text">
-                                    {showingData(customerList)}
+                                    {showingData(submittedOrders)}
                                   </span>
                                 </li>
                               </ul>
@@ -1053,8 +810,8 @@ const Submitted = () => {
                                 <button
                                   className="btn btn-primary btn-sm"
                                   onClick={() =>
-                                    setSearchedCustomer({
-                                      ...searchedCustomer,
+                                    setSearchedOrder({
+                                      ...searchedOrder,
                                       searched: false,
                                     })
                                   }
@@ -1069,8 +826,8 @@ const Submitted = () => {
                               <li className="t-list__item">
                                 <span className="d-inline-block sm-text">
                                   {searchedShowingData(
-                                    searchedCustomer,
-                                    customerForSearch
+                                    searchedOrder,
+                                    submittedOrdersForSearch
                                   )}
                                 </span>
                               </li>
