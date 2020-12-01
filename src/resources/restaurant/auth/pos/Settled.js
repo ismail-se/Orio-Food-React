@@ -800,7 +800,7 @@ const Settled = () => {
                                       <tr className="align-middle">
                                         <td
                                           scope="row"
-                                          colSpan="7"
+                                          colSpan="8"
                                           className="xsm-text align-middle text-center"
                                         >
                                           {_t(t("No data available"))}
@@ -907,7 +907,7 @@ const Settled = () => {
                                       <tr className="align-middle">
                                         <td
                                           scope="row"
-                                          colSpan="7"
+                                          colSpan="8"
                                           className="xsm-text align-middle text-center"
                                         >
                                           {_t(t("No data available"))}

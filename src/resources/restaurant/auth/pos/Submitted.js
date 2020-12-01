@@ -8,6 +8,9 @@ import { BASE_URL } from "../../../../BaseUrl";
 import {
   _t,
   getCookie,
+  currencySymbolLeft,
+  formatPrice,
+  currencySymbolRight,
   modalLoading,
   pageLoading,
   paginationLoading,
@@ -54,6 +57,9 @@ const Submitted = () => {
     submittedOrdersForSearch,
     setSubmittedOrdersForSearch,
 
+    //payment-type
+    paymentTypeForSearch,
+
     //pagination
     dataPaginating,
   } = useContext(RestaurantContext);
@@ -61,14 +67,23 @@ const Submitted = () => {
   const { t } = useTranslation();
 
   // States hook here
+
+  // paidMoney
+  const [paidMoney, setPaidMoney] = useState(0);
+  //return
+  const [returnMoneyUsd, setReturnMoneyUsd] = useState(0);
+
   //new customer
-  let [checkOrderDetails, setCheckOrderDetails] = useState({
+  const [checkOrderDetails, setCheckOrderDetails] = useState({
     item: null,
+    settle: false,
     uploading: false,
+    payment_type: null,
+    payment_amount: null,
   });
 
   //search result
-  let [searchedOrder, setSearchedOrder] = useState({
+  const [searchedOrder, setSearchedOrder] = useState({
     list: null,
     searched: false,
   });
@@ -78,6 +93,68 @@ const Submitted = () => {
 
   //set edit true & values
   const handleSetEdit = (id) => {};
+
+  //payment type
+  const handleSetpaymentType = (payment_type) => {
+    setCheckOrderDetails({
+      ...checkOrderDetails,
+      payment_type,
+    });
+
+    //calculate paid amount to set return amount
+    handleCalculatePaid(checkOrderDetails.payment_amount, payment_type);
+  };
+
+  //payment type amount
+  const handlePaymentTypeAmount = (e) => {
+    let tempPaymentAmount = {
+      ...checkOrderDetails.payment_amount,
+      [e.target.name]: e.target.value,
+    };
+
+    setCheckOrderDetails({
+      ...checkOrderDetails,
+      payment_amount: tempPaymentAmount,
+    });
+
+    //calculate paid amount to set return amount
+    handleCalculatePaid(tempPaymentAmount, checkOrderDetails.payment_type);
+  };
+
+  //calculate paid amount
+  const handleCalculatePaid = (paymentAmount, paymentType) => {
+    let paidAmount = 0;
+    if (paymentAmount !== null && paymentType !== null) {
+      let thePaymentArray = [];
+      if (paymentAmount) {
+        thePaymentArray = Object.entries(paymentAmount);
+      }
+      thePaymentArray.map((eachPaymentItem) => {
+        let thePaymentType = paymentType.find((paymentTypeItem) => {
+          return paymentTypeItem.id === parseInt(eachPaymentItem[0]);
+        });
+        if (eachPaymentItem[1] !== "") {
+          if (
+            thePaymentType &&
+            thePaymentType.id === parseInt(eachPaymentItem[0])
+          ) {
+            paidAmount = paidAmount + parseFloat(eachPaymentItem[1]);
+          }
+        }
+      });
+      let localCurrency = JSON.parse(localStorage.getItem("currency"));
+      paidAmount = paidAmount / localCurrency.rate;
+      let theReturnMoney = 0;
+      if (checkOrderDetails.item) {
+        theReturnMoney =
+          paidAmount - parseFloat(checkOrderDetails.item.total_payable);
+      }
+      setReturnMoneyUsd(theReturnMoney);
+    } else {
+      setReturnMoneyUsd(0);
+    }
+    setPaidMoney(paidAmount);
+  };
 
   //search customers here
   const handleSearch = (e) => {
@@ -173,133 +250,355 @@ const Submitted = () => {
               ></button>
             </div>
             <div className="modal-body">
-              <div class="col-12 filtr-item">
-                <div class="fk-order-token t-bg-white">
-                  <div class="fk-order-token__body">
-                    <div class="fk-addons-table">
-                      <div class="fk-addons-table__head text-center">
-                        order token: #
-                        {checkOrderDetails.item &&
-                          checkOrderDetails.item.token.id}
-                      </div>
-                      <div class="fk-addons-table__info">
-                        <div class="row g-0">
-                          <div class="col-2 text-center border-right">
-                            <span class="fk-addons-table__info-text text-capitalize">
-                              S/L
-                            </span>
-                          </div>
-                          <div class="col-3 text-center border-right">
-                            <span class="fk-addons-table__info-text text-capitalize">
-                              food
-                            </span>
-                          </div>
-                          <div class="col-4 text-left pl-2 border-right">
-                            <span class="fk-addons-table__info-text text-capitalize">
-                              Additional
-                            </span>
-                          </div>
-                          <div class="col-2 text-center border-right">
-                            <span class="fk-addons-table__info-text text-capitalize">
-                              QTY
-                            </span>
-                          </div>
-                          <div class="col-1 text-center">
-                            <span class="fk-addons-table__info-text text-capitalize">
-                              <i class="fa fa-check"></i>
-                            </span>
+              {checkOrderDetails.item &&
+                checkOrderDetails.item.is_cancelled !== 1 && (
+                  <div className="text-right">
+                    {checkOrderDetails.settle &&
+                      paidMoney >
+                        parseFloat(checkOrderDetails.item.total_payable) && (
+                        <span className="mr-2 text-secondary font-weight-bold">
+                          Return: {currencySymbolLeft()}
+                          {formatPrice(returnMoneyUsd)}
+                          {currencySymbolRight()}{" "}
+                        </span>
+                      )}
+                    {checkOrderDetails.settle ? (
+                      <button
+                        className="btn btn-primary px-3 rounded-md text-uppercase"
+                        onClick={() => {
+                          setCheckOrderDetails({
+                            ...checkOrderDetails,
+                            settle: false,
+                            payment_amount: null,
+                            payment_type: null,
+                          });
+                          setReturnMoneyUsd(0);
+                          setPaidMoney(0);
+                        }}
+                      >
+                        {_t(t("Cancel"))}
+                      </button>
+                    ) : (
+                      <button
+                        className="btn btn-success px-3 rounded-md text-uppercase"
+                        onClick={() => {
+                          setCheckOrderDetails({
+                            ...checkOrderDetails,
+                            settle: true,
+                            payment_amount: null,
+                            payment_type: null,
+                          });
+                          setReturnMoneyUsd(0);
+                          setPaidMoney(0);
+                        }}
+                      >
+                        {_t(t("Settle order"))}
+                      </button>
+                    )}
+                  </div>
+                )}
+              {!checkOrderDetails.settle ? (
+                <div class="col-12 filtr-item">
+                  <div class="fk-order-token t-bg-white">
+                    <div class="fk-order-token__body">
+                      <div class="fk-addons-table">
+                        <div class="fk-addons-table__head text-center">
+                          order token: #
+                          {checkOrderDetails.item &&
+                            checkOrderDetails.item.token.id}
+                        </div>
+                        <div class="fk-addons-table__info">
+                          <div class="row g-0">
+                            <div class="col-2 text-center border-right">
+                              <span class="fk-addons-table__info-text text-capitalize">
+                                S/L
+                              </span>
+                            </div>
+                            <div class="col-3 text-center border-right">
+                              <span class="fk-addons-table__info-text text-capitalize">
+                                food
+                              </span>
+                            </div>
+                            <div class="col-4 text-left pl-2 border-right">
+                              <span class="fk-addons-table__info-text text-capitalize">
+                                Additional Info
+                              </span>
+                            </div>
+                            <div class="col-2 text-center border-right">
+                              <span class="fk-addons-table__info-text text-capitalize">
+                                QTY
+                              </span>
+                            </div>
+                            <div class="col-1 text-center">
+                              <span class="fk-addons-table__info-text text-capitalize">
+                                <i class="fa fa-check"></i>
+                              </span>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                      {checkOrderDetails.item &&
-                        checkOrderDetails.item.orderedItems.map(
-                          (thisItem, indexThisItem) => {
-                            return (
-                              <div class="fk-addons-table__body-row">
-                                <div class="row g-0">
-                                  <div class="col-2 text-center border-right d-flex">
-                                    <span class="fk-addons-table__info-text text-capitalize m-auto">
-                                      {indexThisItem + 1}
-                                    </span>
-                                  </div>
-                                  <div class="col-3 text-center border-right d-flex">
-                                    <span class="fk-addons-table__info-text text-capitalize m-auto">
-                                      {thisItem.food_item}
-                                    </span>
-                                  </div>
-                                  <div class="col-4 text-center border-right t-pl-10 t-pr-10">
-                                    {thisItem.variation !== null && (
-                                      <span class="fk-addons-table__info-text text-capitalize d-block text-left t-pt-5">
-                                        <span class="font-weight-bold mr-1">
-                                          variation:
-                                        </span>
-                                        {thisItem.variation}
+                        {checkOrderDetails.item &&
+                          checkOrderDetails.item.orderedItems.map(
+                            (thisItem, indexThisItem) => {
+                              return (
+                                <div class="fk-addons-table__body-row">
+                                  <div class="row g-0">
+                                    <div class="col-2 text-center border-right d-flex">
+                                      <span class="fk-addons-table__info-text text-capitalize m-auto">
+                                        {indexThisItem + 1}
                                       </span>
-                                    )}
-
-                                    {thisItem.properties !== null && (
-                                      <span class="fk-addons-table__info-text text-capitalize d-block text-left t-pb-5">
-                                        <span class="font-weight-bold mr-1">
-                                          properties:
+                                    </div>
+                                    <div class="col-3 text-center border-right d-flex">
+                                      <span class="fk-addons-table__info-text text-capitalize m-auto">
+                                        {thisItem.food_item} (
+                                        {thisItem.food_group})
+                                      </span>
+                                    </div>
+                                    <div class="col-4 text-center border-right t-pl-10 t-pr-10">
+                                      {thisItem.variation !== null && (
+                                        <span class="fk-addons-table__info-text text-capitalize d-block text-left t-pt-5">
+                                          <span class="font-weight-bold mr-1">
+                                            variation:
+                                          </span>
+                                          {thisItem.variation}
                                         </span>
-                                        {JSON.parse(thisItem.properties).map(
-                                          (propertyItem, thisIndex) => {
-                                            if (
-                                              thisIndex !==
-                                              JSON.parse(thisItem.properties)
-                                                .length -
-                                                1
-                                            ) {
-                                              return (
-                                                propertyItem.property + ", "
-                                              );
-                                            } else {
-                                              return propertyItem.property;
+                                      )}
+
+                                      {thisItem.properties !== null && (
+                                        <span class="fk-addons-table__info-text text-capitalize d-block text-left t-pb-5">
+                                          <span class="font-weight-bold mr-1">
+                                            properties:
+                                          </span>
+                                          {JSON.parse(thisItem.properties).map(
+                                            (propertyItem, thisIndex) => {
+                                              if (
+                                                thisIndex !==
+                                                JSON.parse(thisItem.properties)
+                                                  .length -
+                                                  1
+                                              ) {
+                                                return (
+                                                  propertyItem.property + ", "
+                                                );
+                                              } else {
+                                                return propertyItem.property;
+                                              }
                                             }
-                                          }
-                                        )}
+                                          )}
+                                        </span>
+                                      )}
+                                    </div>
+                                    <div class="col-2 text-center border-right d-flex">
+                                      <span class="fk-addons-table__info-text text-capitalize m-auto">
+                                        {thisItem.quantity}
                                       </span>
-                                    )}
-                                  </div>
-                                  <div class="col-2 text-center border-right d-flex">
-                                    <span class="fk-addons-table__info-text text-capitalize m-auto">
-                                      {thisItem.quantity}
-                                    </span>
-                                  </div>
+                                    </div>
 
-                                  <div class="col-1 text-center d-flex">
-                                    <label class="mx-checkbox mx-checkbox--empty m-auto">
-                                      <span class="mx-checkbox__text text-capitalize t-text-heading fk-addons-table__body-text">
-                                        {thisItem.is_cooking === 1 ? (
-                                          [
-                                            thisItem.is_ready === 1 ? (
-                                              <i
-                                                className="fa fa-check text-success"
-                                                title={_t(t("Ready"))}
-                                              ></i>
-                                            ) : (
-                                              <i
-                                                className="fa fa-cutlery text-secondary"
-                                                title={_t(t("Cooking"))}
-                                              ></i>
-                                            ),
-                                          ]
-                                        ) : (
-                                          <i
-                                            className="fa fa-times text-primary"
-                                            title={_t(t("Pending"))}
-                                          ></i>
-                                        )}
-                                      </span>
-                                    </label>
+                                    <div class="col-1 text-center d-flex">
+                                      <label class="mx-checkbox mx-checkbox--empty m-auto">
+                                        <span class="mx-checkbox__text text-capitalize t-text-heading fk-addons-table__body-text">
+                                          {thisItem.is_cooking === 1 ? (
+                                            [
+                                              thisItem.is_ready === 1 ? (
+                                                <i
+                                                  className="fa fa-check text-success"
+                                                  title={_t(t("Ready"))}
+                                                ></i>
+                                              ) : (
+                                                <i
+                                                  className="fa fa-cutlery text-secondary"
+                                                  title={_t(t("Cooking"))}
+                                                ></i>
+                                              ),
+                                            ]
+                                          ) : (
+                                            <i
+                                              className="fa fa-times text-primary"
+                                              title={_t(t("Pending"))}
+                                            ></i>
+                                          )}
+                                        </span>
+                                      </label>
+                                    </div>
                                   </div>
                                 </div>
-                              </div>
-                            );
-                          }
-                        )}
+                              );
+                            }
+                          )}
+                      </div>
                     </div>
                   </div>
+                </div>
+              ) : (
+                <div className="my-2 payment-type-parent">
+                  <Select
+                    options={paymentTypeForSearch && paymentTypeForSearch}
+                    components={makeAnimated()}
+                    getOptionLabel={(option) => option.name}
+                    getOptionValue={(option) => option.name}
+                    classNamePrefix="select"
+                    className="xsm-text"
+                    onChange={handleSetpaymentType}
+                    maxMenuHeight="200px"
+                    isMulti
+                    clearIndicator={null}
+                    placeholder={_t(t("Payments")) + ".."}
+                  />
+                  {checkOrderDetails.payment_type !== null && (
+                    <div className="border my-2 change-background rounded-lg">
+                      <div className="xsm-text text-center text-white pt-1">
+                        Amount
+                      </div>
+                      {checkOrderDetails.payment_type.map(
+                        (eachPaymentType, paymentTypeIndex) => {
+                          return (
+                            <div className="addons-list__item mx-1 mb-1">
+                              <input
+                                type="number"
+                                min="0"
+                                step="0.01"
+                                name={eachPaymentType.id}
+                                autoComplete="off"
+                                className="form-control xsm-text pl-2"
+                                onChange={handlePaymentTypeAmount}
+                                placeholder={eachPaymentType.name}
+                                value={
+                                  checkOrderDetails.payment_amount &&
+                                  checkOrderDetails.payment_amount[
+                                    eachPaymentType.id
+                                  ]
+                                }
+                              />
+                            </div>
+                          );
+                        }
+                      )}
+                      {checkOrderDetails.payment_type !== null &&
+                        checkOrderDetails.payment_amount !== null && (
+                          <div className="text-center pb-2 pl-1 mt-2">
+                            <button className="btn btn-sm btn-warning text-dark px-3 text-uppercase">
+                              Settle order
+                            </button>
+                          </div>
+                        )}
+                    </div>
+                  )}
+                </div>
+              )}
+              <div className="bg-warning text-dark p-2 rounded-lg">
+                <div>
+                  {_t(t("Received by"))}
+                  {": "}
+                  <span className="text-capitalize">
+                    {checkOrderDetails.item && checkOrderDetails.item.user_name}
+                  </span>
+                </div>
+                <div className="text-capitalize">
+                  {_t(t("Customer"))}
+                  {": "}
+                  {checkOrderDetails.item &&
+                    checkOrderDetails.item.customer_name}
+                </div>
+                <div className="text-capitalize">
+                  {_t(t("Branch"))}
+                  {": "}
+                  {checkOrderDetails.item && checkOrderDetails.item.branch_name}
+                </div>
+                <div>
+                  {_t(t("Subtotal"))}
+                  {": "}
+                  <span className="text-capitalize">
+                    {checkOrderDetails.item && (
+                      <>
+                        {currencySymbolLeft()}
+                        {formatPrice(checkOrderDetails.item.order_bill)}
+                        {currencySymbolRight()}
+                      </>
+                    )}
+                  </span>
+                </div>
+
+                <div>
+                  {_t(t("Vat"))}
+                  {": "}
+                  <span className="text-capitalize">
+                    {checkOrderDetails.item && (
+                      <>
+                        {currencySymbolLeft()}
+                        {formatPrice(checkOrderDetails.item.vat)}
+                        {currencySymbolRight()}
+                      </>
+                    )}
+                  </span>
+                </div>
+                <div>
+                  {_t(t("Service charge"))}
+                  {": "}
+                  <span className="text-capitalize">
+                    {checkOrderDetails.item && (
+                      <>
+                        {currencySymbolLeft()}
+                        {formatPrice(checkOrderDetails.item.service_charge)}
+                        {currencySymbolRight()}
+                      </>
+                    )}
+                  </span>
+                </div>
+                <div>
+                  {_t(t("Discount"))}
+                  {": "}
+                  <span className="text-capitalize">
+                    {checkOrderDetails.item && (
+                      <>
+                        {currencySymbolLeft()}
+                        {formatPrice(checkOrderDetails.item.discount)}
+                        {currencySymbolRight()}
+                      </>
+                    )}
+                  </span>
+                </div>
+                <div>
+                  {_t(t("Total bill"))}
+                  {": "}
+                  <span className="text-capitalize">
+                    {checkOrderDetails.item && (
+                      <>
+                        {currencySymbolLeft()}
+                        {formatPrice(checkOrderDetails.item.total_payable)}
+                        {currencySymbolRight()}
+                      </>
+                    )}
+                  </span>
+                </div>
+                <div>
+                  {_t(t("Paid amount"))}
+                  {": "}
+                  <span className="text-capitalize">
+                    {checkOrderDetails.item && (
+                      <>
+                        {currencySymbolLeft()}
+                        {formatPrice(checkOrderDetails.item.paid_amount)}
+                        {currencySymbolRight()}
+                      </>
+                    )}
+                  </span>
+                </div>
+                <div>
+                  {_t(t("Due amount"))}
+                  {": "}
+                  <span className="text-capitalize">
+                    {checkOrderDetails.item && (
+                      <>
+                        {currencySymbolLeft()}
+                        {formatPrice(
+                          parseFloat(
+                            checkOrderDetails.item.total_payable -
+                              checkOrderDetails.item.paid_amount
+                          )
+                        )}
+                        {currencySymbolRight()}
+                      </>
+                    )}
+                  </span>
                 </div>
               </div>
             </div>
@@ -497,7 +796,10 @@ const Submitted = () => {
                                                           setCheckOrderDetails({
                                                             ...checkOrderDetails,
                                                             item: item,
+                                                            settle: false,
                                                           });
+                                                          setReturnMoneyUsd(0);
+                                                          setPaidMoney(0);
                                                         }}
                                                         data-toggle="modal"
                                                         data-target="#orderDetails"
@@ -511,7 +813,10 @@ const Submitted = () => {
                                                           setCheckOrderDetails({
                                                             ...checkOrderDetails,
                                                             item: item,
+                                                            settle: false,
                                                           });
+                                                          setReturnMoneyUsd(0);
+                                                          setPaidMoney(0);
                                                         }}
                                                         data-toggle="modal"
                                                         data-target="#orderDetails"
@@ -522,12 +827,15 @@ const Submitted = () => {
                                                   ]
                                                 ) : (
                                                   <span
-                                                    class="btn btn-transparent btn-warning xsm-text text-capitalize px-3"
+                                                    class="btn btn-transparent btn-primary xsm-text text-capitalize px-3"
                                                     onClick={() => {
                                                       setCheckOrderDetails({
                                                         ...checkOrderDetails,
                                                         item: item,
+                                                        settle: false,
                                                       });
+                                                      setReturnMoneyUsd(0);
+                                                      setPaidMoney(0);
                                                     }}
                                                     data-toggle="modal"
                                                     data-target="#orderDetails"
@@ -548,22 +856,40 @@ const Submitted = () => {
                                                       <i className="fa fa-ellipsis-h"></i>
                                                     </button>
                                                     <div className="dropdown-menu">
+                                                      <NavLink
+                                                        // send state- order group id
+                                                        to="/dashboard/pos/edit-order"
+                                                        className="dropdown-item sm-text text-capitalize"
+                                                      >
+                                                        <span className="t-mr-8">
+                                                          <i className="fa fa-pencil"></i>
+                                                        </span>
+                                                        {_t(t("Edit"))}
+                                                      </NavLink>
+
                                                       <button
+                                                        // send state- order group id
                                                         className="dropdown-item sm-text text-capitalize"
                                                         onClick={() => {
                                                           setCheckOrderDetails({
                                                             ...checkOrderDetails,
                                                             item: item,
+                                                            settle: true,
+                                                            payment_amount: null,
+                                                            payment_type: null,
                                                           });
+                                                          setReturnMoneyUsd(0);
+                                                          setPaidMoney(0);
                                                         }}
                                                         data-toggle="modal"
                                                         data-target="#orderDetails"
                                                       >
                                                         <span className="t-mr-8">
-                                                          <i className="fa fa-eye"></i>
+                                                          <i className="fa fa-refresh"></i>
                                                         </span>
-                                                        {_t(t("Details"))}
+                                                        {_t(t("Settle order"))}
                                                       </button>
+
                                                       {item.is_ready !== 1 && [
                                                         item.is_accepted ===
                                                         0 ? (
@@ -607,7 +933,7 @@ const Submitted = () => {
                                                             }}
                                                           >
                                                             <span className="t-mr-8">
-                                                              <i className="fa fa-trash text-primary"></i>
+                                                              <i className="fa fa-trash"></i>
                                                             </span>
                                                             {_t(
                                                               t("Cancel Order")
