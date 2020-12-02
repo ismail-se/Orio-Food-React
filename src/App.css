@@ -129,7 +129,14 @@ html {
 }
 .payment-type-parent .select__multi-value__remove {
   display: none !important;
-  padding-right: 2px;
+}
+.payment-type-parent .select__multi-value {
+  min-width: 60px !important;
+  text-align: center !important;
+}
+.payment-type-parent .select__multi-value__label {
+  padding-right: 6px !important;
+  padding-left: 6px !important;
 }
 
 /* Pos page group name shaddow remove */

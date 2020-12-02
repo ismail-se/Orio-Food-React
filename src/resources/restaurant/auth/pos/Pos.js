@@ -1111,7 +1111,24 @@ const Pos = () => {
   const handleSubmitOrder = (e) => {
     e.preventDefault();
     if (newOrder && newOrder.length > 0) {
-      axiosRequest();
+      if (paidMoney !== 0) {
+        toast.error(
+          `${_t(
+            t("Settle order to add payments, or remove payment's amount")
+          )}`,
+          {
+            position: "bottom-center",
+            closeButton: false,
+            autoClose: 10000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            className: "text-center toast-notification",
+          }
+        );
+      } else {
+        axiosRequest();
+      }
     } else {
       toast.error(`${_t(t("Please add items in order list"))}`, {
         position: "bottom-center",
@@ -1191,7 +1208,6 @@ const Pos = () => {
 
   //handle settle order
   const handleSettleOrder = (e) => {
-    console.log("coming");
     e.preventDefault();
     if (newOrder && newOrder.length > 0) {
       if (paidMoney < totalPayable) {

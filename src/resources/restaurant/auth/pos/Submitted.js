@@ -156,6 +156,95 @@ const Submitted = () => {
     setPaidMoney(paidAmount);
   };
 
+  // handleSettleOrder
+  const handleSettleOrder = (e) => {
+    e.preventDefault();
+    if (
+      paidMoney <
+      parseFloat(
+        checkOrderDetails.item.total_payable -
+          checkOrderDetails.item.paid_amount
+      )
+    ) {
+      toast.error(
+        `${_t(
+          t("Please enter paid amount atleast equal to the total due amount")
+        )}`,
+        {
+          position: "bottom-center",
+          closeButton: false,
+          autoClose: 10000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          className: "text-center toast-notification",
+        }
+      );
+    } else {
+      handleSettleOrderAxiosReq();
+    }
+  };
+
+  const handleSettleOrderAxiosReq = () => {
+    let url = BASE_URL + "/settings/settle-submitted-order";
+    let localCurrency = JSON.parse(localStorage.getItem("currency"));
+    let formData = {
+      order_group_id: checkOrderDetails.item.id,
+      payment_type: checkOrderDetails.payment_type,
+      payment_amount: checkOrderDetails.payment_amount,
+      paidMoney: paidMoney,
+      localCurrency: localCurrency,
+    };
+    setLoading(true);
+    axios
+      .post(url, formData, {
+        headers: { Authorization: `Bearer ${getCookie()}` },
+      })
+      .then((res) => {
+        if (res.data !== "paymentIssue") {
+          console.log(res.data);
+          setCheckOrderDetails({
+            ...checkOrderDetails,
+            item: res.data[2],
+            payment_type: null,
+            payment_amount: null,
+            settle: false,
+          });
+          setLoading(false);
+        } else {
+          setLoading(false);
+          toast.error(
+            `${_t(
+              t(
+                "Please enter paid amount atleast equal to the total due amount"
+              )
+            )}`,
+            {
+              position: "bottom-center",
+              closeButton: false,
+              autoClose: 10000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              className: "text-center toast-notification",
+            }
+          );
+        }
+      })
+      .catch((error) => {
+        setLoading(false);
+        toast.error(`${_t(t("Please try again"))}`, {
+          position: "bottom-center",
+          closeButton: false,
+          autoClose: 10000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          className: "text-center toast-notification",
+        });
+      });
+  };
+
   //search customers here
   const handleSearch = (e) => {
     let searchInput = e.target.value.toLowerCase();
@@ -232,14 +321,15 @@ const Submitted = () => {
         <title>{_t(t("Submitted orders"))}</title>
       </Helmet>
 
-      {/* Add modal */}
+      {/* Settle modal */}
       <div className="modal fade" id="orderDetails" aria-hidden="true">
         <div className="modal-dialog modal-lg">
           <div className="modal-content">
             <div className="modal-header align-items-center">
               <div className="fk-sm-card__content">
                 <h5 className="text-capitalize fk-sm-card__title">
-                  {_t(t("Order details"))}
+                  {_t(t("Order details, Token"))}: #
+                  {checkOrderDetails.item && checkOrderDetails.item.token.id}
                 </h5>
               </div>
               <button
@@ -249,127 +339,148 @@ const Submitted = () => {
                 aria-label="Close"
               ></button>
             </div>
-            <div className="modal-body">
-              {checkOrderDetails.item &&
-                checkOrderDetails.item.is_cancelled !== 1 && (
-                  <div className="text-right">
-                    {checkOrderDetails.settle &&
-                      paidMoney >
-                        parseFloat(checkOrderDetails.item.total_payable) && (
-                        <span className="mr-2 text-secondary font-weight-bold">
-                          Return: {currencySymbolLeft()}
-                          {formatPrice(returnMoneyUsd)}
-                          {currencySymbolRight()}{" "}
-                        </span>
+            {loading ? (
+              <div className="modal-body">{modalLoading(5)}</div>
+            ) : (
+              <div className="modal-body">
+                {checkOrderDetails.item &&
+                checkOrderDetails.item.is_settled === 0 ? (
+                  <>
+                    {checkOrderDetails.item &&
+                      checkOrderDetails.item.is_cancelled !== 1 && (
+                        <div className="text-right">
+                          {checkOrderDetails.settle &&
+                            paidMoney >
+                              parseFloat(
+                                checkOrderDetails.item.total_payable
+                              ) && (
+                              <span className="mr-2 text-secondary font-weight-bold">
+                                Return: {currencySymbolLeft()}
+                                {formatPrice(returnMoneyUsd)}
+                                {currencySymbolRight()}{" "}
+                              </span>
+                            )}
+                          {checkOrderDetails.settle ? (
+                            <button
+                              className="btn btn-primary px-3 rounded-md text-uppercase"
+                              onClick={() => {
+                                setCheckOrderDetails({
+                                  ...checkOrderDetails,
+                                  settle: false,
+                                  payment_amount: null,
+                                  payment_type: null,
+                                });
+                                setReturnMoneyUsd(0);
+                                setPaidMoney(0);
+                              }}
+                            >
+                              {_t(t("Cancel"))}
+                            </button>
+                          ) : (
+                            <button
+                              className="btn btn-success px-3 rounded-md text-uppercase"
+                              onClick={() => {
+                                setCheckOrderDetails({
+                                  ...checkOrderDetails,
+                                  settle: true,
+                                  payment_amount: null,
+                                  payment_type: null,
+                                });
+                                setReturnMoneyUsd(0);
+                                setPaidMoney(0);
+                              }}
+                            >
+                              {_t(t("Settle order"))}
+                            </button>
+                          )}
+                        </div>
                       )}
-                    {checkOrderDetails.settle ? (
-                      <button
-                        className="btn btn-primary px-3 rounded-md text-uppercase"
-                        onClick={() => {
-                          setCheckOrderDetails({
-                            ...checkOrderDetails,
-                            settle: false,
-                            payment_amount: null,
-                            payment_type: null,
-                          });
-                          setReturnMoneyUsd(0);
-                          setPaidMoney(0);
-                        }}
-                      >
-                        {_t(t("Cancel"))}
-                      </button>
-                    ) : (
-                      <button
-                        className="btn btn-success px-3 rounded-md text-uppercase"
-                        onClick={() => {
-                          setCheckOrderDetails({
-                            ...checkOrderDetails,
-                            settle: true,
-                            payment_amount: null,
-                            payment_type: null,
-                          });
-                          setReturnMoneyUsd(0);
-                          setPaidMoney(0);
-                        }}
-                      >
-                        {_t(t("Settle order"))}
-                      </button>
-                    )}
+                  </>
+                ) : (
+                  <div className="text-center bg-success text-white py-2">
+                    {_t(t("Order has been settled, you can close this now"))}
                   </div>
                 )}
-              {!checkOrderDetails.settle ? (
-                <div class="col-12 filtr-item">
-                  <div class="fk-order-token t-bg-white">
-                    <div class="fk-order-token__body">
-                      <div class="fk-addons-table">
-                        <div class="fk-addons-table__head text-center">
-                          order token: #
-                          {checkOrderDetails.item &&
-                            checkOrderDetails.item.token.id}
-                        </div>
-                        <div class="fk-addons-table__info">
-                          <div class="row g-0">
-                            <div class="col-2 text-center border-right">
-                              <span class="fk-addons-table__info-text text-capitalize">
-                                S/L
-                              </span>
-                            </div>
-                            <div class="col-3 text-center border-right">
-                              <span class="fk-addons-table__info-text text-capitalize">
-                                food
-                              </span>
-                            </div>
-                            <div class="col-4 text-left pl-2 border-right">
-                              <span class="fk-addons-table__info-text text-capitalize">
-                                Additional Info
-                              </span>
-                            </div>
-                            <div class="col-2 text-center border-right">
-                              <span class="fk-addons-table__info-text text-capitalize">
-                                QTY
-                              </span>
-                            </div>
-                            <div class="col-1 text-center">
-                              <span class="fk-addons-table__info-text text-capitalize">
-                                <i class="fa fa-check"></i>
-                              </span>
+                {checkOrderDetails.item &&
+                  checkOrderDetails.item.is_cancelled === 1 && (
+                    <div className="text-center bg-secondary text-white py-2">
+                      {_t(t("This order has been cancelled"))}
+                    </div>
+                  )}
+                {!checkOrderDetails.settle ? (
+                  <div class="col-12 filtr-item">
+                    <div class="fk-order-token t-bg-white">
+                      <div class="fk-order-token__body">
+                        <div class="fk-addons-table">
+                          <div class="fk-addons-table__head text-center">
+                            order token: #
+                            {checkOrderDetails.item &&
+                              checkOrderDetails.item.token.id}
+                          </div>
+                          <div class="fk-addons-table__info">
+                            <div class="row g-0">
+                              <div class="col-2 text-center border-right">
+                                <span class="fk-addons-table__info-text text-capitalize">
+                                  S/L
+                                </span>
+                              </div>
+                              <div class="col-3 text-center border-right">
+                                <span class="fk-addons-table__info-text text-capitalize">
+                                  food
+                                </span>
+                              </div>
+                              <div class="col-4 text-left pl-2 border-right">
+                                <span class="fk-addons-table__info-text text-capitalize">
+                                  Additional Info
+                                </span>
+                              </div>
+                              <div class="col-2 text-center border-right">
+                                <span class="fk-addons-table__info-text text-capitalize">
+                                  QTY
+                                </span>
+                              </div>
+                              <div class="col-1 text-center">
+                                <span class="fk-addons-table__info-text text-capitalize">
+                                  {_t(t("Status"))}
+                                </span>
+                              </div>
                             </div>
                           </div>
-                        </div>
-                        {checkOrderDetails.item &&
-                          checkOrderDetails.item.orderedItems.map(
-                            (thisItem, indexThisItem) => {
-                              return (
-                                <div class="fk-addons-table__body-row">
-                                  <div class="row g-0">
-                                    <div class="col-2 text-center border-right d-flex">
-                                      <span class="fk-addons-table__info-text text-capitalize m-auto">
-                                        {indexThisItem + 1}
-                                      </span>
-                                    </div>
-                                    <div class="col-3 text-center border-right d-flex">
-                                      <span class="fk-addons-table__info-text text-capitalize m-auto">
-                                        {thisItem.food_item} (
-                                        {thisItem.food_group})
-                                      </span>
-                                    </div>
-                                    <div class="col-4 text-center border-right t-pl-10 t-pr-10">
-                                      {thisItem.variation !== null && (
-                                        <span class="fk-addons-table__info-text text-capitalize d-block text-left t-pt-5">
-                                          <span class="font-weight-bold mr-1">
-                                            variation:
-                                          </span>
-                                          {thisItem.variation}
+                          {checkOrderDetails.item &&
+                            checkOrderDetails.item.orderedItems.map(
+                              (thisItem, indexThisItem) => {
+                                return (
+                                  <div class="fk-addons-table__body-row">
+                                    <div class="row g-0">
+                                      <div class="col-2 text-center border-right d-flex">
+                                        <span class="fk-addons-table__info-text text-capitalize m-auto">
+                                          {indexThisItem + 1}
                                         </span>
-                                      )}
-
-                                      {thisItem.properties !== null && (
-                                        <span class="fk-addons-table__info-text text-capitalize d-block text-left t-pb-5">
-                                          <span class="font-weight-bold mr-1">
-                                            properties:
+                                      </div>
+                                      <div class="col-3 text-center border-right d-flex">
+                                        <span class="fk-addons-table__info-text text-capitalize m-auto">
+                                          {thisItem.food_item} (
+                                          {thisItem.food_group})
+                                        </span>
+                                      </div>
+                                      <div class="col-4 text-center border-right t-pl-10 t-pr-10">
+                                        {thisItem.variation !== null && (
+                                          <span class="fk-addons-table__info-text text-capitalize d-block text-left t-pt-5">
+                                            <span class="font-weight-bold mr-1">
+                                              variation:
+                                            </span>
+                                            {thisItem.variation}
                                           </span>
-                                          {JSON.parse(thisItem.properties).map(
-                                            (propertyItem, thisIndex) => {
+                                        )}
+
+                                        {thisItem.properties !== null && (
+                                          <span class="fk-addons-table__info-text text-capitalize d-block text-left t-pb-5">
+                                            <span class="font-weight-bold mr-1">
+                                              properties:
+                                            </span>
+                                            {JSON.parse(
+                                              thisItem.properties
+                                            ).map((propertyItem, thisIndex) => {
                                               if (
                                                 thisIndex !==
                                                 JSON.parse(thisItem.properties)
@@ -382,231 +493,232 @@ const Submitted = () => {
                                               } else {
                                                 return propertyItem.property;
                                               }
-                                            }
-                                          )}
+                                            })}
+                                          </span>
+                                        )}
+                                      </div>
+                                      <div class="col-2 text-center border-right d-flex">
+                                        <span class="fk-addons-table__info-text text-capitalize m-auto">
+                                          {thisItem.quantity}
                                         </span>
-                                      )}
-                                    </div>
-                                    <div class="col-2 text-center border-right d-flex">
-                                      <span class="fk-addons-table__info-text text-capitalize m-auto">
-                                        {thisItem.quantity}
-                                      </span>
-                                    </div>
+                                      </div>
 
-                                    <div class="col-1 text-center d-flex">
-                                      <label class="mx-checkbox mx-checkbox--empty m-auto">
-                                        <span class="mx-checkbox__text text-capitalize t-text-heading fk-addons-table__body-text">
-                                          {thisItem.is_cooking === 1 ? (
-                                            [
-                                              thisItem.is_ready === 1 ? (
-                                                <i
-                                                  className="fa fa-check text-success"
-                                                  title={_t(t("Ready"))}
-                                                ></i>
-                                              ) : (
-                                                <i
-                                                  className="fa fa-cutlery text-secondary"
-                                                  title={_t(t("Cooking"))}
-                                                ></i>
-                                              ),
-                                            ]
-                                          ) : (
-                                            <i
-                                              className="fa fa-times text-primary"
-                                              title={_t(t("Pending"))}
-                                            ></i>
-                                          )}
-                                        </span>
-                                      </label>
+                                      <div class="col-1 text-center d-flex">
+                                        <label class="mx-checkbox mx-checkbox--empty m-auto">
+                                          <span class="mx-checkbox__text text-capitalize t-text-heading fk-addons-table__body-text">
+                                            {thisItem.is_cooking === 1 ? (
+                                              [
+                                                thisItem.is_ready === 1 ? (
+                                                  <i
+                                                    className="fa fa-check text-success"
+                                                    title={_t(t("Ready"))}
+                                                  ></i>
+                                                ) : (
+                                                  <i
+                                                    className="fa fa-cutlery text-secondary"
+                                                    title={_t(t("Cooking"))}
+                                                  ></i>
+                                                ),
+                                              ]
+                                            ) : (
+                                              <i
+                                                className="fa fa-times text-primary"
+                                                title={_t(t("Pending"))}
+                                              ></i>
+                                            )}
+                                          </span>
+                                        </label>
+                                      </div>
                                     </div>
                                   </div>
-                                </div>
-                              );
-                            }
-                          )}
+                                );
+                              }
+                            )}
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              ) : (
-                <div className="my-2 payment-type-parent">
-                  <Select
-                    options={paymentTypeForSearch && paymentTypeForSearch}
-                    components={makeAnimated()}
-                    getOptionLabel={(option) => option.name}
-                    getOptionValue={(option) => option.name}
-                    classNamePrefix="select"
-                    className="xsm-text"
-                    onChange={handleSetpaymentType}
-                    maxMenuHeight="200px"
-                    isMulti
-                    multiValueRemove={false}
-                    clearIndicator={null}
-                    placeholder={_t(t("Payments")) + ".."}
-                  />
-                  {checkOrderDetails.payment_type !== null && (
-                    <div className="border my-2 change-background rounded-lg">
-                      <div className="xsm-text text-center text-white pt-1">
-                        Amount
+                ) : (
+                  <div className="my-2 payment-type-parent">
+                    <Select
+                      options={paymentTypeForSearch && paymentTypeForSearch}
+                      components={makeAnimated()}
+                      getOptionLabel={(option) => option.name}
+                      getOptionValue={(option) => option.name}
+                      classNamePrefix="select"
+                      className="xsm-text"
+                      onChange={handleSetpaymentType}
+                      maxMenuHeight="200px"
+                      isMulti
+                      clearIndicator={null}
+                      placeholder={_t(t("Select payment methods")) + ".."}
+                    />
+                    {checkOrderDetails.payment_type !== null && (
+                      <div className="border my-2 change-background rounded-lg">
+                        <div className="sm-text text-center text-white py-2">
+                          Amount
+                        </div>
+                        {checkOrderDetails.payment_type.map(
+                          (eachPaymentType, paymentTypeIndex) => {
+                            return (
+                              <div className="addons-list__item mx-2 mb-1">
+                                <input
+                                  type="number"
+                                  min="0"
+                                  step="0.01"
+                                  name={eachPaymentType.id}
+                                  autoComplete="off"
+                                  className="form-control xsm-text pl-2"
+                                  onChange={handlePaymentTypeAmount}
+                                  placeholder={eachPaymentType.name}
+                                  value={
+                                    checkOrderDetails.payment_amount &&
+                                    checkOrderDetails.payment_amount[
+                                      eachPaymentType.id
+                                    ]
+                                  }
+                                />
+                              </div>
+                            );
+                          }
+                        )}
+                        <div className="pb-2 pl-2 my-2">
+                          <button
+                            className="btn btn-sm btn-warning text-dark px-3 text-uppercase"
+                            onClick={handleSettleOrder}
+                          >
+                            Settle order
+                          </button>
+                        </div>
                       </div>
-                      {checkOrderDetails.payment_type.map(
-                        (eachPaymentType, paymentTypeIndex) => {
-                          return (
-                            <div className="addons-list__item mx-1 mb-1">
-                              <input
-                                type="number"
-                                min="0"
-                                step="0.01"
-                                name={eachPaymentType.id}
-                                autoComplete="off"
-                                className="form-control xsm-text pl-2"
-                                onChange={handlePaymentTypeAmount}
-                                placeholder={eachPaymentType.name}
-                                value={
-                                  checkOrderDetails.payment_amount &&
-                                  checkOrderDetails.payment_amount[
-                                    eachPaymentType.id
-                                  ]
-                                }
-                              />
-                            </div>
-                          );
-                        }
+                    )}
+                  </div>
+                )}
+                <div className="bg-warning text-dark p-2 rounded-lg">
+                  <div>
+                    {_t(t("Received by"))}
+                    {": "}
+                    <span className="text-capitalize">
+                      {checkOrderDetails.item &&
+                        checkOrderDetails.item.user_name}
+                    </span>
+                  </div>
+                  <div className="text-capitalize">
+                    {_t(t("Customer"))}
+                    {": "}
+                    {checkOrderDetails.item &&
+                      checkOrderDetails.item.customer_name}
+                  </div>
+                  <div className="text-capitalize">
+                    {_t(t("Branch"))}
+                    {": "}
+                    {checkOrderDetails.item &&
+                      checkOrderDetails.item.branch_name}
+                  </div>
+                  <div>
+                    {_t(t("Subtotal"))}
+                    {": "}
+                    <span className="text-capitalize">
+                      {checkOrderDetails.item && (
+                        <>
+                          {currencySymbolLeft()}
+                          {formatPrice(checkOrderDetails.item.order_bill)}
+                          {currencySymbolRight()}
+                        </>
                       )}
-                      {checkOrderDetails.payment_type !== null &&
-                        checkOrderDetails.payment_amount !== null && (
-                          <div className="text-center pb-2 pl-1 mt-2">
-                            <button className="btn btn-sm btn-warning text-dark px-3 text-uppercase">
-                              Settle order
-                            </button>
-                          </div>
-                        )}
-                    </div>
-                  )}
-                </div>
-              )}
-              <div className="bg-warning text-dark p-2 rounded-lg">
-                <div>
-                  {_t(t("Received by"))}
-                  {": "}
-                  <span className="text-capitalize">
-                    {checkOrderDetails.item && checkOrderDetails.item.user_name}
-                  </span>
-                </div>
-                <div className="text-capitalize">
-                  {_t(t("Customer"))}
-                  {": "}
-                  {checkOrderDetails.item &&
-                    checkOrderDetails.item.customer_name}
-                </div>
-                <div className="text-capitalize">
-                  {_t(t("Branch"))}
-                  {": "}
-                  {checkOrderDetails.item && checkOrderDetails.item.branch_name}
-                </div>
-                <div>
-                  {_t(t("Subtotal"))}
-                  {": "}
-                  <span className="text-capitalize">
-                    {checkOrderDetails.item && (
-                      <>
-                        {currencySymbolLeft()}
-                        {formatPrice(checkOrderDetails.item.order_bill)}
-                        {currencySymbolRight()}
-                      </>
-                    )}
-                  </span>
-                </div>
+                    </span>
+                  </div>
 
-                <div>
-                  {_t(t("Vat"))}
-                  {": "}
-                  <span className="text-capitalize">
-                    {checkOrderDetails.item && (
-                      <>
-                        {currencySymbolLeft()}
-                        {formatPrice(checkOrderDetails.item.vat)}
-                        {currencySymbolRight()}
-                      </>
-                    )}
-                  </span>
-                </div>
-                <div>
-                  {_t(t("Service charge"))}
-                  {": "}
-                  <span className="text-capitalize">
-                    {checkOrderDetails.item && (
-                      <>
-                        {currencySymbolLeft()}
-                        {formatPrice(checkOrderDetails.item.service_charge)}
-                        {currencySymbolRight()}
-                      </>
-                    )}
-                  </span>
-                </div>
-                <div>
-                  {_t(t("Discount"))}
-                  {": "}
-                  <span className="text-capitalize">
-                    {checkOrderDetails.item && (
-                      <>
-                        {currencySymbolLeft()}
-                        {formatPrice(checkOrderDetails.item.discount)}
-                        {currencySymbolRight()}
-                      </>
-                    )}
-                  </span>
-                </div>
-                <div>
-                  {_t(t("Total bill"))}
-                  {": "}
-                  <span className="text-capitalize">
-                    {checkOrderDetails.item && (
-                      <>
-                        {currencySymbolLeft()}
-                        {formatPrice(checkOrderDetails.item.total_payable)}
-                        {currencySymbolRight()}
-                      </>
-                    )}
-                  </span>
-                </div>
-                <div>
-                  {_t(t("Paid amount"))}
-                  {": "}
-                  <span className="text-capitalize">
-                    {checkOrderDetails.item && (
-                      <>
-                        {currencySymbolLeft()}
-                        {formatPrice(checkOrderDetails.item.paid_amount)}
-                        {currencySymbolRight()}
-                      </>
-                    )}
-                  </span>
-                </div>
-                <div>
-                  {_t(t("Due amount"))}
-                  {": "}
-                  <span className="text-capitalize">
-                    {checkOrderDetails.item && (
-                      <>
-                        {currencySymbolLeft()}
-                        {formatPrice(
-                          parseFloat(
-                            checkOrderDetails.item.total_payable -
-                              checkOrderDetails.item.paid_amount
-                          )
-                        )}
-                        {currencySymbolRight()}
-                      </>
-                    )}
-                  </span>
+                  <div>
+                    {_t(t("Vat"))}
+                    {": "}
+                    <span className="text-capitalize">
+                      {checkOrderDetails.item && (
+                        <>
+                          {currencySymbolLeft()}
+                          {formatPrice(checkOrderDetails.item.vat)}
+                          {currencySymbolRight()}
+                        </>
+                      )}
+                    </span>
+                  </div>
+                  <div>
+                    {_t(t("Service charge"))}
+                    {": "}
+                    <span className="text-capitalize">
+                      {checkOrderDetails.item && (
+                        <>
+                          {currencySymbolLeft()}
+                          {formatPrice(checkOrderDetails.item.service_charge)}
+                          {currencySymbolRight()}
+                        </>
+                      )}
+                    </span>
+                  </div>
+                  <div>
+                    {_t(t("Discount"))}
+                    {": "}
+                    <span className="text-capitalize">
+                      {checkOrderDetails.item && (
+                        <>
+                          {currencySymbolLeft()}
+                          {formatPrice(checkOrderDetails.item.discount)}
+                          {currencySymbolRight()}
+                        </>
+                      )}
+                    </span>
+                  </div>
+                  <div>
+                    {_t(t("Total bill"))}
+                    {": "}
+                    <span className="text-capitalize">
+                      {checkOrderDetails.item && (
+                        <>
+                          {currencySymbolLeft()}
+                          {formatPrice(checkOrderDetails.item.total_payable)}
+                          {currencySymbolRight()}
+                        </>
+                      )}
+                    </span>
+                  </div>
+                  <div>
+                    {_t(t("Paid amount"))}
+                    {": "}
+                    <span className="text-capitalize">
+                      {checkOrderDetails.item && (
+                        <>
+                          {currencySymbolLeft()}
+                          {formatPrice(checkOrderDetails.item.paid_amount)}
+                          {currencySymbolRight()}
+                        </>
+                      )}
+                    </span>
+                  </div>
+                  <div>
+                    {_t(t("Due amount"))}
+                    {": "}
+                    <span className="text-capitalize">
+                      {checkOrderDetails.item && (
+                        <>
+                          {currencySymbolLeft()}
+                          {formatPrice(
+                            parseFloat(
+                              checkOrderDetails.item.total_payable -
+                                checkOrderDetails.item.paid_amount
+                            )
+                          )}
+                          {currencySymbolRight()}
+                        </>
+                      )}
+                    </span>
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
           </div>
         </div>
       </div>
-      {/* Add modal Ends*/}
+      {/* Settle modal Ends*/}
 
       {/* main body */}
       <main id="main" data-simplebar>
@@ -846,9 +958,9 @@ const Submitted = () => {
                                                 )}
                                               </td>
 
-                                              <td className="xsm-text text-capitalize align-middle text-center">
+                                              <td className="xsm-text align-middle text-center">
                                                 {item.is_cancelled === 0 ? (
-                                                  <div className="dropdown">
+                                                  <div className="dropdown text-capitalize">
                                                     <button
                                                       className="btn t-bg-clear t-text-dark--light-40"
                                                       type="button"
