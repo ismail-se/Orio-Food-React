@@ -127,6 +127,10 @@ html {
 .payment-type-parent .select__indicator.select__clear-indicator {
   display: none !important;
 }
+.payment-type-parent .select__multi-value__remove {
+  display: none !important;
+  padding-right: 2px;
+}
 
 /* Pos page group name shaddow remove */
 .btn-outline-danger:focus {

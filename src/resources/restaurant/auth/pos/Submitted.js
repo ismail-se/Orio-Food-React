@@ -440,6 +440,7 @@ const Submitted = () => {
                     onChange={handleSetpaymentType}
                     maxMenuHeight="200px"
                     isMulti
+                    multiValueRemove={false}
                     clearIndicator={null}
                     placeholder={_t(t("Payments")) + ".."}
                   />

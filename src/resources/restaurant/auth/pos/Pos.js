@@ -515,6 +515,7 @@ const Pos = () => {
 
   //cancel order
   const handleCancel = () => {
+    setLoading(true);
     setNewOrder(null);
     setActiveItemInOrder(null);
     setSelectedVariation([]);
@@ -543,6 +544,9 @@ const Pos = () => {
       serviceCharge: 0,
       discount: 0,
     });
+    setTimeout(() => {
+      setLoading(false);
+    }, 200);
   };
 
   //add properties
@@ -1137,8 +1141,8 @@ const Pos = () => {
       token: orderDetails.token,
       total_guest: orderDetails.total_guest,
       orderItems: newOrder,
-      serviceCharge: orderDetails.serviceCharge / localCurrency.rate,
-      discount: orderDetails.discount / localCurrency.rate,
+      serviceCharge: orderDetails.serviceCharge,
+      discount: orderDetails.discount,
       subTotal: theSubTotal,
       totalPayable: totalPayable,
       paidMoney: paidMoney,
@@ -1238,8 +1242,8 @@ const Pos = () => {
       token: orderDetails.token,
       total_guest: orderDetails.total_guest,
       orderItems: newOrder,
-      serviceCharge: orderDetails.serviceCharge / localCurrency.rate,
-      discount: orderDetails.discount / localCurrency.rate,
+      serviceCharge: orderDetails.serviceCharge,
+      discount: orderDetails.discount,
       subTotal: theSubTotal,
       totalPayable: totalPayable,
       paidMoney: paidMoney,
@@ -2713,29 +2717,31 @@ const Pos = () => {
                                       placeholder={_t(t("Dept tag")) + ".."}
                                     />
                                   </li>
-                                  <li
-                                    className={`addons-list__item mx-1 payment-type-parent ${
-                                      orderDetails.payment_type !== null &&
-                                      "mb-1"
-                                    }`}
-                                  >
-                                    <Select
-                                      options={
-                                        paymentTypeForSearch &&
-                                        paymentTypeForSearch
-                                      }
-                                      components={makeAnimated()}
-                                      getOptionLabel={(option) => option.name}
-                                      getOptionValue={(option) => option.name}
-                                      classNamePrefix="select"
-                                      className="xsm-text"
-                                      onChange={handleSetpaymentType}
-                                      maxMenuHeight="200px"
-                                      isMulti
-                                      clearIndicator={null}
-                                      placeholder={_t(t("Payments")) + ".."}
-                                    />
-                                  </li>
+                                  {!loading && (
+                                    <li
+                                      className={`addons-list__item mx-1 payment-type-parent ${
+                                        orderDetails.payment_type !== null &&
+                                        "mb-1"
+                                      }`}
+                                    >
+                                      <Select
+                                        options={
+                                          paymentTypeForSearch &&
+                                          paymentTypeForSearch
+                                        }
+                                        components={makeAnimated()}
+                                        getOptionLabel={(option) => option.name}
+                                        getOptionValue={(option) => option.name}
+                                        classNamePrefix="select"
+                                        className="xsm-text"
+                                        onChange={handleSetpaymentType}
+                                        maxMenuHeight="200px"
+                                        isMulti
+                                        clearIndicator={null}
+                                        placeholder={_t(t("Payments")) + ".."}
+                                      />
+                                    </li>
+                                  )}
                                   {orderDetails.payment_type !== null && (
                                     <div className="border mt-0 mb-2 change-background mx-1 rounded-lg">
                                       <div className="xsm-text text-center text-white pt-1">
