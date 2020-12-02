@@ -29,7 +29,6 @@ import {
   Pos,
   Submitted,
   Settled,
-  PosKitchen,
   //
   OrderHistories,
   Customers,
@@ -141,15 +140,6 @@ function App() {
             {authUserInfo.permissions !== null &&
             checkPermission(authUserInfo.permissions, "POS") ? (
               <Settled />
-            ) : (
-              <NoPermission />
-            )}
-          </RestaurantRoute>
-
-          <RestaurantRoute path="/dashboard/pos/kitchen-status" exact>
-            {authUserInfo.permissions !== null &&
-            checkPermission(authUserInfo.permissions, "POS") ? (
-              <PosKitchen />
             ) : (
               <NoPermission />
             )}

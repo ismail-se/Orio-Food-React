@@ -43,19 +43,11 @@ const Submitted = () => {
     setLoading,
   } = useContext(SettingsContext);
 
-  const { authUserInfo } = useContext(UserContext);
-
   const {
-    //branch
-    branchForSearch,
-
     //submitted orders
-    getSubmittedOrders,
     submittedOrders,
-    setSubmittedOrders,
     setPaginatedSubmittedOrders,
     submittedOrdersForSearch,
-    setSubmittedOrdersForSearch,
 
     //payment-type
     paymentTypeForSearch,
@@ -67,13 +59,12 @@ const Submitted = () => {
   const { t } = useTranslation();
 
   // States hook here
-
   // paidMoney
   const [paidMoney, setPaidMoney] = useState(0);
   //return
   const [returnMoneyUsd, setReturnMoneyUsd] = useState(0);
 
-  //new customer
+  //settle order
   const [checkOrderDetails, setCheckOrderDetails] = useState({
     item: null,
     settle: false,
@@ -90,9 +81,6 @@ const Submitted = () => {
 
   //useEffect == componentDidMount
   useEffect(() => {}, []);
-
-  //set edit true & values
-  const handleSetEdit = (id) => {};
 
   //payment type
   const handleSetpaymentType = (payment_type) => {
@@ -185,6 +173,7 @@ const Submitted = () => {
     }
   };
 
+  //settle order server request
   const handleSettleOrderAxiosReq = () => {
     let url = BASE_URL + "/settings/settle-submitted-order";
     let localCurrency = JSON.parse(localStorage.getItem("currency"));
@@ -231,7 +220,7 @@ const Submitted = () => {
           );
         }
       })
-      .catch((error) => {
+      .catch(() => {
         setLoading(false);
         toast.error(`${_t(t("Please try again"))}`, {
           position: "bottom-center",
@@ -245,37 +234,28 @@ const Submitted = () => {
       });
   };
 
-  //search customers here
+  //search submitted orders here
   const handleSearch = (e) => {
     let searchInput = e.target.value.toLowerCase();
     if (searchInput.length === 0) {
       setSearchedOrder({ ...searchedOrder, searched: false });
     } else {
       let searchedList = submittedOrdersForSearch.filter((item) => {
-        //name
-        let lowerCaseItemName = item.name.toLowerCase();
+        //token
+        let lowerCaseItemToken = JSON.stringify(item.token.id);
 
-        //email
-        let lowerCaseItemEmail =
-          item.email !== null && item.email.toLowerCase();
+        //customer
+        let lowerCaseItemCustomer = item.customer_name.toLowerCase();
 
-        //phn no
-        let lowerCaseItemPhnNo =
-          item.phn_no !== null && item.phn_no.toLowerCase();
-
-        //address
-        let lowerCaseItemAddress =
-          item.address !== null && item.address.toLowerCase();
+        //table
+        let lowerCaseItemTable = item.table_name.toLowerCase();
 
         //branch
-        let lowerCaseItemBranch =
-          item.branch_name !== null && item.branch_name.toLowerCase();
+        let lowerCaseItemBranch = item.branch_name.toLowerCase();
         return (
-          lowerCaseItemName.includes(searchInput) ||
-          (lowerCaseItemEmail && lowerCaseItemEmail.includes(searchInput)) ||
-          (lowerCaseItemPhnNo && lowerCaseItemPhnNo.includes(searchInput)) ||
-          (lowerCaseItemAddress &&
-            lowerCaseItemAddress.includes(searchInput)) ||
+          lowerCaseItemToken.includes(searchInput) ||
+          lowerCaseItemCustomer.includes(searchInput) ||
+          lowerCaseItemTable.includes(searchInput) ||
           (lowerCaseItemBranch && lowerCaseItemBranch.includes(searchInput))
         );
       });
@@ -287,23 +267,26 @@ const Submitted = () => {
     }
   };
 
-  //delete confirmation modal of waiter
-  const handleDeleteConfirmation = (slug) => {
+  //cancel order confirmation modal
+  const handleCancelOrderConfirmation = (orderGroup) => {
+    console.log(orderGroup);
     confirmAlert({
       customUI: ({ onClose }) => {
         return (
           <div className="card card-body">
             <h1>{_t(t("Are you sure?"))}</h1>
-            <p className="text-center">{_t(t("You want to delete this?"))}</p>
+            <p className="text-center">
+              {_t(t("You want to cancel this order?"))}
+            </p>
             <div className="d-flex justify-content-center">
               <button
                 className="btn btn-primary"
                 onClick={() => {
-                  // handleDeleteCustomer(slug);
+                  handleCancelOrder(orderGroup);
                   onClose();
                 }}
               >
-                {_t(t("Yes, delete it!"))}
+                {_t(t("Yes, cancel it!"))}
               </button>
               <button className="btn btn-success ml-2 px-3" onClick={onClose}>
                 {_t(t("No"))}
@@ -313,6 +296,49 @@ const Submitted = () => {
         );
       },
     });
+  };
+
+  //cancel order here
+  const handleCancelOrder = (orderGroup) => {
+    if (orderGroup.is_accepted === 0) {
+      let url = BASE_URL + "/settings/cancel-submitted-order";
+      let formData = {
+        id: orderGroup.id,
+      };
+      setLoading(true);
+      axios
+        .post(url, formData, {
+          headers: { Authorization: `Bearer ${getCookie()}` },
+        })
+        .then(() => {
+          setLoading(false);
+        })
+        .catch(() => {
+          setLoading(false);
+          toast.error(`${_t(t("Please try again"))}`, {
+            position: "bottom-center",
+            closeButton: false,
+            autoClose: 10000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            className: "text-center toast-notification",
+          });
+        });
+    } else {
+      toast.error(
+        `${_t(t("Can not cancel this order, this is being cooked"))}`,
+        {
+          position: "bottom-center",
+          closeButton: false,
+          autoClose: 10000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          className: "text-center toast-notification",
+        }
+      );
+    }
   };
 
   return (
@@ -328,6 +354,7 @@ const Submitted = () => {
             <div className="modal-header align-items-center">
               <div className="fk-sm-card__content">
                 <h5 className="text-capitalize fk-sm-card__title">
+                  {/* show order token on modal header */}
                   {_t(t("Order details, Token"))}: #
                   {checkOrderDetails.item && checkOrderDetails.item.token.id}
                 </h5>
@@ -339,12 +366,14 @@ const Submitted = () => {
                 aria-label="Close"
               ></button>
             </div>
+            {/* if loading true show loading effect */}
             {loading ? (
               <div className="modal-body">{modalLoading(5)}</div>
             ) : (
               <div className="modal-body">
                 {checkOrderDetails.item &&
                 checkOrderDetails.item.is_settled === 0 ? (
+                  // if this item is not settled then show settle-cancel button
                   <>
                     {checkOrderDetails.item &&
                       checkOrderDetails.item.is_cancelled !== 1 && (
@@ -397,16 +426,19 @@ const Submitted = () => {
                       )}
                   </>
                 ) : (
+                  // if this item is not settled then show settle-cancel button else, show this notification
                   <div className="text-center bg-success text-white py-2">
                     {_t(t("Order has been settled, you can close this now"))}
                   </div>
                 )}
                 {checkOrderDetails.item &&
+                  //show this if order is cancelled
                   checkOrderDetails.item.is_cancelled === 1 && (
                     <div className="text-center bg-secondary text-white py-2">
                       {_t(t("This order has been cancelled"))}
                     </div>
                   )}
+                {/* show this if order settle is not true, if true show payment input field */}
                 {!checkOrderDetails.settle ? (
                   <div class="col-12 filtr-item">
                     <div class="fk-order-token t-bg-white">
@@ -554,7 +586,10 @@ const Submitted = () => {
                       placeholder={_t(t("Select payment methods")) + ".."}
                     />
                     {checkOrderDetails.payment_type !== null && (
-                      <div className="border my-2 change-background rounded-lg">
+                      <form
+                        className="border my-2 change-background rounded-lg"
+                        onSubmit={handleSettleOrder}
+                      >
                         <div className="sm-text text-center text-white py-2">
                           Amount
                         </div>
@@ -585,12 +620,12 @@ const Submitted = () => {
                         <div className="pb-2 pl-2 my-2">
                           <button
                             className="btn btn-sm btn-warning text-dark px-3 text-uppercase"
-                            onClick={handleSettleOrder}
+                            type="submit"
                           >
                             Settle order
                           </button>
                         </div>
-                      </div>
+                      </form>
                     )}
                   </div>
                 )}
@@ -614,6 +649,24 @@ const Submitted = () => {
                     {": "}
                     {checkOrderDetails.item &&
                       checkOrderDetails.item.branch_name}
+                  </div>
+                  <div className="text-capitalize">
+                    {_t(t("Department"))}
+                    {": "}
+                    {checkOrderDetails.item &&
+                      checkOrderDetails.item.dept_tag_name}
+                  </div>
+                  <div className="text-capitalize">
+                    {_t(t("Table"))}
+                    {": "}
+                    {checkOrderDetails.item &&
+                      checkOrderDetails.item.table_name}
+                  </div>
+                  <div className="text-capitalize">
+                    {_t(t("Waiter"))}
+                    {": "}
+                    {checkOrderDetails.item &&
+                      checkOrderDetails.item.waiter_name}
                   </div>
                   <div>
                     {_t(t("Subtotal"))}
@@ -694,24 +747,49 @@ const Submitted = () => {
                       )}
                     </span>
                   </div>
-                  <div>
-                    {_t(t("Due amount"))}
-                    {": "}
-                    <span className="text-capitalize">
-                      {checkOrderDetails.item && (
-                        <>
-                          {currencySymbolLeft()}
-                          {formatPrice(
-                            parseFloat(
-                              checkOrderDetails.item.total_payable -
-                                checkOrderDetails.item.paid_amount
-                            )
-                          )}
-                          {currencySymbolRight()}
-                        </>
-                      )}
-                    </span>
-                  </div>
+                  {checkOrderDetails.item &&
+                  parseFloat(
+                    checkOrderDetails.item.total_payable -
+                      checkOrderDetails.item.paid_amount
+                  ) >= 0 ? (
+                    <div>
+                      {_t(t("Due amount"))}
+                      {": "}
+                      <span className="text-capitalize">
+                        {checkOrderDetails.item && (
+                          <>
+                            {currencySymbolLeft()}
+                            {formatPrice(
+                              parseFloat(
+                                checkOrderDetails.item.total_payable -
+                                  checkOrderDetails.item.paid_amount
+                              )
+                            )}
+                            {currencySymbolRight()}
+                          </>
+                        )}
+                      </span>
+                    </div>
+                  ) : (
+                    <div>
+                      {_t(t("Return amount"))}
+                      {": "}
+                      <span className="text-capitalize">
+                        {checkOrderDetails.item && (
+                          <>
+                            {currencySymbolLeft()}
+                            {formatPrice(
+                              parseFloat(
+                                checkOrderDetails.item.paid_amount -
+                                  checkOrderDetails.item.total_payable
+                              )
+                            )}
+                            {currencySymbolRight()}
+                          </>
+                        )}
+                      </span>
+                    </div>
+                  )}
                 </div>
               </div>
             )}
@@ -751,7 +829,11 @@ const Submitted = () => {
                             <input
                               type="text"
                               className="form-control border-0 form-control--light-1 rounded-0"
-                              placeholder="Please Search "
+                              placeholder={
+                                _t(t("Search by token, customer, branch")) +
+                                ".."
+                              }
+                              onChange={handleSearch}
                             />
                           </div>
                           <button className="btn btn-primary" type="button">
@@ -1009,8 +1091,8 @@ const Submitted = () => {
                                                           <button
                                                             className="dropdown-item sm-text text-capitalize"
                                                             onClick={() => {
-                                                              handleDeleteConfirmation(
-                                                                item.slug
+                                                              handleCancelOrderConfirmation(
+                                                                item
                                                               );
                                                             }}
                                                           >
@@ -1122,27 +1204,54 @@ const Submitted = () => {
 
                                             <td class="xsm-text text-capitalize align-middle text-center">
                                               {item.is_cancelled === 0 ? (
-                                                <span
-                                                  class="btn btn-transparent btn-secondary xsm-text text-capitalize"
-                                                  onClick={() => {
-                                                    setCheckOrderDetails({
-                                                      ...checkOrderDetails,
-                                                      item: item,
-                                                    });
-                                                  }}
-                                                  data-toggle="modal"
-                                                  data-target="#orderDetails"
-                                                >
-                                                  processing
-                                                </span>
+                                                [
+                                                  item.is_ready === 0 ? (
+                                                    <span
+                                                      class="btn btn-transparent btn-secondary xsm-text text-capitalize"
+                                                      onClick={() => {
+                                                        setCheckOrderDetails({
+                                                          ...checkOrderDetails,
+                                                          item: item,
+                                                          settle: false,
+                                                        });
+                                                        setReturnMoneyUsd(0);
+                                                        setPaidMoney(0);
+                                                      }}
+                                                      data-toggle="modal"
+                                                      data-target="#orderDetails"
+                                                    >
+                                                      processing
+                                                    </span>
+                                                  ) : (
+                                                    <span
+                                                      class="btn btn-transparent btn-success xsm-text text-capitalize px-4"
+                                                      onClick={() => {
+                                                        setCheckOrderDetails({
+                                                          ...checkOrderDetails,
+                                                          item: item,
+                                                          settle: false,
+                                                        });
+                                                        setReturnMoneyUsd(0);
+                                                        setPaidMoney(0);
+                                                      }}
+                                                      data-toggle="modal"
+                                                      data-target="#orderDetails"
+                                                    >
+                                                      Ready
+                                                    </span>
+                                                  ),
+                                                ]
                                               ) : (
                                                 <span
-                                                  class="btn btn-transparent btn-warning xsm-text text-capitalize px-3"
+                                                  class="btn btn-transparent btn-primary xsm-text text-capitalize px-3"
                                                   onClick={() => {
                                                     setCheckOrderDetails({
                                                       ...checkOrderDetails,
                                                       item: item,
+                                                      settle: false,
                                                     });
+                                                    setReturnMoneyUsd(0);
+                                                    setPaidMoney(0);
                                                   }}
                                                   data-toggle="modal"
                                                   data-target="#orderDetails"
@@ -1152,9 +1261,9 @@ const Submitted = () => {
                                               )}
                                             </td>
 
-                                            <td className="xsm-text text-capitalize align-middle text-center">
+                                            <td className="xsm-text align-middle text-center">
                                               {item.is_cancelled === 0 ? (
-                                                <div className="dropdown">
+                                                <div className="dropdown text-capitalize">
                                                   <button
                                                     className="btn t-bg-clear t-text-dark--light-40"
                                                     type="button"
@@ -1163,35 +1272,90 @@ const Submitted = () => {
                                                     <i className="fa fa-ellipsis-h"></i>
                                                   </button>
                                                   <div className="dropdown-menu">
+                                                    <NavLink
+                                                      // send state- order group id
+                                                      to="/dashboard/pos/edit-order"
+                                                      className="dropdown-item sm-text text-capitalize"
+                                                    >
+                                                      <span className="t-mr-8">
+                                                        <i className="fa fa-pencil"></i>
+                                                      </span>
+                                                      {_t(t("Edit"))}
+                                                    </NavLink>
+
                                                     <button
+                                                      // send state- order group id
                                                       className="dropdown-item sm-text text-capitalize"
                                                       onClick={() => {
                                                         setCheckOrderDetails({
                                                           ...checkOrderDetails,
                                                           item: item,
+                                                          settle: true,
+                                                          payment_amount: null,
+                                                          payment_type: null,
                                                         });
+                                                        setReturnMoneyUsd(0);
+                                                        setPaidMoney(0);
                                                       }}
                                                       data-toggle="modal"
                                                       data-target="#orderDetails"
                                                     >
                                                       <span className="t-mr-8">
-                                                        <i className="fa fa-eye"></i>
+                                                        <i className="fa fa-refresh"></i>
                                                       </span>
-                                                      {_t(t("Details"))}
+                                                      {_t(t("Settle order"))}
                                                     </button>
-                                                    <button
-                                                      className="dropdown-item sm-text text-capitalize"
-                                                      onClick={() => {
-                                                        handleDeleteConfirmation(
-                                                          item.slug
-                                                        );
-                                                      }}
-                                                    >
-                                                      <span className="t-mr-8">
-                                                        <i className="fa fa-trash"></i>
-                                                      </span>
-                                                      {_t(t("Cancel Order"))}
-                                                    </button>
+
+                                                    {item.is_ready !== 1 && [
+                                                      item.is_accepted === 0 ? (
+                                                        <button
+                                                          className="dropdown-item sm-text text-capitalize"
+                                                          onClick={() => {
+                                                            handleCancelOrderConfirmation(
+                                                              item
+                                                            );
+                                                          }}
+                                                        >
+                                                          <span className="t-mr-8">
+                                                            <i className="fa fa-trash"></i>
+                                                          </span>
+                                                          {_t(
+                                                            t("Cancel Order")
+                                                          )}
+                                                        </button>
+                                                      ) : (
+                                                        <button
+                                                          className="dropdown-item sm-text text-capitalize"
+                                                          onClick={() => {
+                                                            toast.error(
+                                                              `${_t(
+                                                                t(
+                                                                  "This is being cooked, can not cancel now, try removing items"
+                                                                )
+                                                              )}`,
+                                                              {
+                                                                position:
+                                                                  "bottom-center",
+                                                                closeButton: false,
+                                                                autoClose: 10000,
+                                                                hideProgressBar: false,
+                                                                closeOnClick: true,
+                                                                pauseOnHover: true,
+                                                                className:
+                                                                  "text-center toast-notification",
+                                                              }
+                                                            );
+                                                          }}
+                                                        >
+                                                          <span className="t-mr-8">
+                                                            <i className="fa fa-trash"></i>
+                                                          </span>
+                                                          {_t(
+                                                            t("Cancel Order")
+                                                          )}
+                                                        </button>
+                                                      ),
+                                                    ]}
                                                   </div>
                                                 </div>
                                               ) : (

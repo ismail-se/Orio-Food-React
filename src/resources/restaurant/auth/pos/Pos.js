@@ -2631,216 +2631,247 @@ const Pos = () => {
                                     />
                                   </li>
                                 )}
-
-                              {orderDetails.branch !== null && (
+                              {!loading && (
                                 <>
-                                  <li
-                                    className={`addons-list__item mx-1 ${
-                                      authUserInfo.details &&
-                                      authUserInfo.details.user_type ===
-                                        "staff" &&
-                                      "mt-1"
-                                    }`}
-                                  >
-                                    <Select
-                                      options={
-                                        orderDetailUsers.theCustomers !==
-                                          null && orderDetailUsers.theCustomers
-                                      }
-                                      components={makeAnimated()}
-                                      getOptionLabel={(option) =>
-                                        option.name + " (" + option.phn_no + ")"
-                                      }
-                                      getOptionValue={(option) => option.name}
-                                      classNamePrefix="select"
-                                      className="xsm-text"
-                                      onChange={handleSetCustomer}
-                                      maxMenuHeight="200px"
-                                      placeholder={_t(t("Customer")) + ".."}
-                                    />
-                                  </li>
-                                  <li className="addons-list__item mx-1 border border-2 rounded-lg">
-                                    <div className="btn-group w-100">
-                                      <button
-                                        type="button"
-                                        className="fk-right-nav__guest-btn btn w-100 t-bg-white dropdown-toggle new-customer-pos xsm-text pl-2"
-                                        data-toggle="dropdown"
-                                        aria-expanded="false"
+                                  {orderDetails.branch !== null && (
+                                    <>
+                                      <li
+                                        className={`addons-list__item mx-1 ${
+                                          authUserInfo.details &&
+                                          authUserInfo.details.user_type ===
+                                            "staff" &&
+                                          "mt-1"
+                                        }`}
                                       >
-                                        + Customer?
-                                      </button>
-                                      <ul className="dropdown-menu w-100 border-0 pt-4 change-background">
-                                        <li>
-                                          <input
-                                            type="text"
-                                            name="name"
-                                            className="form-control font-10px rounded-lg"
-                                            placeholder="Name"
-                                            autoComplete="off"
-                                            value={
-                                              orderDetails.newCustomerInfo.name
-                                            }
-                                            onChange={handleNewCustomer}
-                                          />
-                                        </li>
-                                        <li className="pb-2">
-                                          <input
-                                            type="text"
-                                            name="number"
-                                            className="form-control font-10px mt-2 rounded-lg"
-                                            autoComplete="off"
-                                            placeholder="Number"
-                                            value={
-                                              orderDetails.newCustomerInfo
-                                                .number
-                                            }
-                                            onChange={handleNewCustomer}
-                                          />
-                                        </li>
-                                        <li className="pb-1 text-right">
+                                        <Select
+                                          options={
+                                            orderDetailUsers.theCustomers !==
+                                              null &&
+                                            orderDetailUsers.theCustomers
+                                          }
+                                          components={makeAnimated()}
+                                          getOptionLabel={(option) =>
+                                            option.name +
+                                            " (" +
+                                            option.phn_no +
+                                            ")"
+                                          }
+                                          getOptionValue={(option) =>
+                                            option.name
+                                          }
+                                          classNamePrefix="select"
+                                          className="xsm-text"
+                                          onChange={handleSetCustomer}
+                                          maxMenuHeight="200px"
+                                          placeholder={_t(t("Customer")) + ".."}
+                                        />
+                                      </li>
+                                      <li className="addons-list__item mx-1 border border-2 rounded-lg">
+                                        <div className="btn-group w-100">
                                           <button
-                                            className="btn t-bg-white text-dark xsm-text text-uppercase btn-sm py-0 px-2 mr-1"
-                                            onClick={() => {
-                                              setOrderDetails({
-                                                ...orderDetails,
-                                                newCustomer: false,
-                                                newCustomerInfo: {
-                                                  name: "",
-                                                  number: "",
-                                                },
-                                              });
-                                            }}
+                                            type="button"
+                                            className="fk-right-nav__guest-btn btn w-100 t-bg-white dropdown-toggle new-customer-pos xsm-text pl-2"
+                                            data-toggle="dropdown"
+                                            aria-expanded="false"
                                           >
-                                            Cancel
+                                            + Customer?
                                           </button>
-                                        </li>
-                                      </ul>
-                                    </div>
-                                  </li>
-
-                                  <li className="addons-list__item mx-1">
-                                    <Select
-                                      options={
-                                        deptTagForSearch && deptTagForSearch
-                                      }
-                                      components={makeAnimated()}
-                                      getOptionLabel={(option) => option.name}
-                                      getOptionValue={(option) => option.name}
-                                      classNamePrefix="select"
-                                      className="xsm-text"
-                                      onChange={handleSetDeptTag}
-                                      maxMenuHeight="200px"
-                                      placeholder={_t(t("Dept tag")) + ".."}
-                                    />
-                                  </li>
-                                  {!loading && (
-                                    <li
-                                      className={`addons-list__item mx-1 payment-type-parent ${
-                                        orderDetails.payment_type !== null &&
-                                        "mb-1"
-                                      }`}
-                                    >
-                                      <Select
-                                        options={
-                                          paymentTypeForSearch &&
-                                          paymentTypeForSearch
-                                        }
-                                        components={makeAnimated()}
-                                        getOptionLabel={(option) => option.name}
-                                        getOptionValue={(option) => option.name}
-                                        classNamePrefix="select"
-                                        className="xsm-text"
-                                        onChange={handleSetpaymentType}
-                                        maxMenuHeight="200px"
-                                        isMulti
-                                        clearIndicator={null}
-                                        placeholder={_t(t("Payments")) + ".."}
-                                      />
-                                    </li>
-                                  )}
-                                  {orderDetails.payment_type !== null && (
-                                    <div className="border mt-0 mb-2 change-background mx-1 rounded-lg">
-                                      <div className="xsm-text text-center text-white pt-1">
-                                        Amount
-                                      </div>
-                                      {orderDetails.payment_type.map(
-                                        (eachPaymentType, paymentTypeIndex) => {
-                                          return (
-                                            <li className="addons-list__item mx-1 mb-1">
+                                          <ul className="dropdown-menu w-100 border-0 pt-4 change-background">
+                                            <li>
                                               <input
-                                                type="number"
-                                                min="0"
-                                                step="0.01"
-                                                name={eachPaymentType.id}
+                                                type="text"
+                                                name="name"
+                                                className="form-control font-10px rounded-lg"
+                                                placeholder="Name"
                                                 autoComplete="off"
-                                                className="form-control xsm-text pl-2"
-                                                onChange={
-                                                  handlePaymentTypeAmount
-                                                }
-                                                placeholder={
-                                                  eachPaymentType.name
-                                                }
                                                 value={
-                                                  orderDetails.payment_amount &&
-                                                  orderDetails.payment_amount[
-                                                    eachPaymentType.id
-                                                  ]
+                                                  orderDetails.newCustomerInfo
+                                                    .name
                                                 }
+                                                onChange={handleNewCustomer}
                                               />
                                             </li>
-                                          );
-                                        }
-                                      )}
-                                    </div>
-                                  )}
+                                            <li className="pb-2">
+                                              <input
+                                                type="text"
+                                                name="number"
+                                                className="form-control font-10px mt-2 rounded-lg"
+                                                autoComplete="off"
+                                                placeholder="Number"
+                                                value={
+                                                  orderDetails.newCustomerInfo
+                                                    .number
+                                                }
+                                                onChange={handleNewCustomer}
+                                              />
+                                            </li>
+                                            <li className="pb-1 text-right">
+                                              <button
+                                                className="btn t-bg-white text-dark xsm-text text-uppercase btn-sm py-0 px-2 mr-1"
+                                                onClick={() => {
+                                                  setOrderDetails({
+                                                    ...orderDetails,
+                                                    newCustomer: false,
+                                                    newCustomerInfo: {
+                                                      name: "",
+                                                      number: "",
+                                                    },
+                                                  });
+                                                }}
+                                              >
+                                                Cancel
+                                              </button>
+                                            </li>
+                                          </ul>
+                                        </div>
+                                      </li>
 
-                                  <li className="addons-list__item mx-1">
-                                    <Select
-                                      options={
-                                        orderDetailUsers.theTables !== null &&
-                                        orderDetailUsers.theTables
-                                      }
-                                      components={makeAnimated()}
-                                      getOptionLabel={(option) => option.name}
-                                      getOptionValue={(option) => option.name}
-                                      classNamePrefix="select"
-                                      className="xsm-text"
-                                      onChange={handleSetTable}
-                                      maxMenuHeight="200px"
-                                      placeholder={_t(t("Table")) + ".."}
-                                    />
-                                  </li>
-                                  <li className="addons-list__item mx-1">
-                                    <Select
-                                      options={
-                                        orderDetailUsers.theWaiters !== null &&
-                                        orderDetailUsers.theWaiters
-                                      }
-                                      components={makeAnimated()}
-                                      getOptionLabel={(option) => option.name}
-                                      getOptionValue={(option) => option.name}
-                                      classNamePrefix="select"
-                                      className="xsm-text"
-                                      onChange={handleSetWaiter}
-                                      maxMenuHeight="200px"
-                                      placeholder={_t(t("Waiter")) + ".."}
-                                    />
-                                  </li>
+                                      <li className="addons-list__item mx-1">
+                                        <Select
+                                          options={
+                                            deptTagForSearch && deptTagForSearch
+                                          }
+                                          components={makeAnimated()}
+                                          getOptionLabel={(option) =>
+                                            option.name
+                                          }
+                                          getOptionValue={(option) =>
+                                            option.name
+                                          }
+                                          classNamePrefix="select"
+                                          className="xsm-text"
+                                          onChange={handleSetDeptTag}
+                                          maxMenuHeight="200px"
+                                          placeholder={_t(t("Dept tag")) + ".."}
+                                        />
+                                      </li>
+                                      <li
+                                        className={`addons-list__item mx-1 payment-type-parent ${
+                                          orderDetails.payment_type !== null &&
+                                          "mb-1"
+                                        }`}
+                                      >
+                                        <Select
+                                          options={
+                                            paymentTypeForSearch &&
+                                            paymentTypeForSearch
+                                          }
+                                          components={makeAnimated()}
+                                          getOptionLabel={(option) =>
+                                            option.name
+                                          }
+                                          getOptionValue={(option) =>
+                                            option.name
+                                          }
+                                          classNamePrefix="select"
+                                          className="xsm-text"
+                                          onChange={handleSetpaymentType}
+                                          maxMenuHeight="200px"
+                                          isMulti
+                                          clearIndicator={null}
+                                          placeholder={_t(t("Payments")) + ".."}
+                                        />
+                                      </li>
+                                      {orderDetails.payment_type !== null && (
+                                        <div className="border mt-0 mb-2 change-background mx-1 rounded-lg">
+                                          <div className="xsm-text text-center text-white pt-1">
+                                            Amount
+                                          </div>
+                                          {orderDetails.payment_type.map(
+                                            (
+                                              eachPaymentType,
+                                              paymentTypeIndex
+                                            ) => {
+                                              return (
+                                                <li className="addons-list__item mx-1 mb-1">
+                                                  <input
+                                                    type="number"
+                                                    min="0"
+                                                    step="0.01"
+                                                    name={eachPaymentType.id}
+                                                    autoComplete="off"
+                                                    className="form-control xsm-text pl-2"
+                                                    onChange={
+                                                      handlePaymentTypeAmount
+                                                    }
+                                                    placeholder={
+                                                      eachPaymentType.name
+                                                    }
+                                                    value={
+                                                      orderDetails.payment_amount &&
+                                                      orderDetails
+                                                        .payment_amount[
+                                                        eachPaymentType.id
+                                                      ]
+                                                    }
+                                                  />
+                                                </li>
+                                              );
+                                            }
+                                          )}
+                                        </div>
+                                      )}
+
+                                      <li className="addons-list__item mx-1">
+                                        <Select
+                                          options={
+                                            orderDetailUsers.theTables !==
+                                              null && orderDetailUsers.theTables
+                                          }
+                                          components={makeAnimated()}
+                                          getOptionLabel={(option) =>
+                                            option.name
+                                          }
+                                          getOptionValue={(option) =>
+                                            option.name
+                                          }
+                                          classNamePrefix="select"
+                                          className="xsm-text"
+                                          onChange={handleSetTable}
+                                          maxMenuHeight="200px"
+                                          placeholder={_t(t("Table")) + ".."}
+                                        />
+                                      </li>
+                                      <li className="addons-list__item mx-1">
+                                        <Select
+                                          options={
+                                            orderDetailUsers.theWaiters !==
+                                              null &&
+                                            orderDetailUsers.theWaiters
+                                          }
+                                          components={makeAnimated()}
+                                          getOptionLabel={(option) =>
+                                            option.name
+                                          }
+                                          getOptionValue={(option) =>
+                                            option.name
+                                          }
+                                          classNamePrefix="select"
+                                          className="xsm-text"
+                                          onChange={handleSetWaiter}
+                                          maxMenuHeight="200px"
+                                          placeholder={_t(t("Waiter")) + ".."}
+                                        />
+                                      </li>
+
+                                      <li
+                                        className="addons-list__item mx-1"
+                                        style={{ paddingBottom: "100px" }}
+                                      >
+                                        <input
+                                          type="number"
+                                          className="form-control xsm-text py-2 pl-2"
+                                          min="1"
+                                          onChange={handleTotalGuest}
+                                          placeholder={
+                                            _t(t("Total guest")) + ".."
+                                          }
+                                        />
+                                      </li>
+                                    </>
+                                  )}
                                 </>
                               )}
-
-                              <li
-                                className="addons-list__item mx-1"
-                                style={{ paddingBottom: "100px" }}
-                              >
-                                <input
-                                  type="number"
-                                  className="form-control xsm-text py-2 pl-2"
-                                  min="1"
-                                  onChange={handleTotalGuest}
-                                  placeholder={_t(t("Total guest")) + ".."}
-                                />
-                              </li>
                             </ul>
                           </div>
                         </div>

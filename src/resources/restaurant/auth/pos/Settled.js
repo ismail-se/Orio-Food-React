@@ -8,6 +8,9 @@ import { BASE_URL } from "../../../../BaseUrl";
 import {
   _t,
   getCookie,
+  currencySymbolLeft,
+  formatPrice,
+  currencySymbolRight,
   modalLoading,
   pageLoading,
   paginationLoading,
@@ -40,19 +43,14 @@ const Settled = () => {
     setLoading,
   } = useContext(SettingsContext);
 
-  const { authUserInfo } = useContext(UserContext);
-
   const {
-    //branch
-    branchForSearch,
-
-    //settled orders
-    getSettledOrders,
+    //submitted orders
     settledOrders,
-    setSettledOrders,
     setPaginatedSettledOrders,
     settledOrdersForSearch,
-    setsettledOrdersForSearch,
+
+    //payment-type
+    paymentTypeForSearch,
 
     //pagination
     dataPaginating,
@@ -61,21 +59,22 @@ const Settled = () => {
   const { t } = useTranslation();
 
   // States hook here
-  //new customer
-  let [newCustomer, setNewCustomer] = useState({
-    name: "",
-    email: "",
-    phn_no: "",
-    address: "",
-    branch: null,
-    selectedBranch: null,
-    edit: false,
-    editSlug: null,
+  // paidMoney
+  const [paidMoney, setPaidMoney] = useState(0);
+  //return
+  const [returnMoneyUsd, setReturnMoneyUsd] = useState(0);
+
+  //settle order
+  const [checkOrderDetails, setCheckOrderDetails] = useState({
+    item: null,
+    settle: false,
     uploading: false,
+    payment_type: null,
+    payment_amount: null,
   });
 
   //search result
-  let [searchedCustomer, setSearchedCustomer] = useState({
+  const [searchedOrder, setSearchedOrder] = useState({
     list: null,
     searched: false,
   });
@@ -83,388 +82,37 @@ const Settled = () => {
   //useEffect == componentDidMount
   useEffect(() => {}, []);
 
-  //set name, phn no hook
-  const handleSetNewCustomer = (e) => {
-    setNewCustomer({ ...newCustomer, [e.target.name]: e.target.value });
-  };
-
-  //set branch hook
-  const handleSetBranch = (branch) => {
-    setNewCustomer({ ...newCustomer, branch });
-  };
-
-  //Save New customer
-  const handleSaveNewCustomer = (e) => {
-    e.preventDefault();
-    let checkBranch = false;
-    if (
-      authUserInfo.details !== null &&
-      authUserInfo.details.user_type !== "staff"
-    ) {
-      checkBranch = true;
-    }
-    if (checkBranch) {
-      if (newCustomer.branch !== null) {
-        setNewCustomer({
-          ...newCustomer,
-          uploading: true,
-        });
-        const customerUrl = BASE_URL + `/settings/new-customer`;
-        let formData = new FormData();
-        formData.append("name", newCustomer.name);
-        formData.append("phn_no", newCustomer.phn_no);
-        formData.append("email", newCustomer.email);
-        formData.append("address", newCustomer.address);
-        formData.append("branch_id", newCustomer.branch.id);
-        return axios
-          .post(customerUrl, formData, {
-            headers: { Authorization: `Bearer ${getCookie()}` },
-          })
-          .then((res) => {
-            setNewCustomer({
-              name: "",
-              email: "",
-              phn_no: "",
-              address: "",
-              branch: null,
-              selectedBranch: null,
-              edit: false,
-              editSlug: null,
-              uploading: false,
-            });
-            setSettledOrders(res.data[0]);
-            setsettledOrdersForSearch(res.data[1]);
-            setLoading(false);
-            toast.success(`${_t(t("Customer has been added"))}`, {
-              position: "bottom-center",
-              autoClose: 10000,
-              hideProgressBar: false,
-              closeOnClick: true,
-              pauseOnHover: true,
-              className: "text-center toast-notification",
-            });
-          })
-          .catch((error) => {
-            setLoading(false);
-            setNewCustomer({
-              ...newCustomer,
-              uploading: false,
-            });
-            if (error && error.response.data.errors) {
-              if (error.response.data.errors.phn_no) {
-                error.response.data.errors.phn_no.forEach((item) => {
-                  if (item === "A customer exists with this phone number") {
-                    toast.error(
-                      `${_t(t("A customer exists with this phone number"))}`,
-                      {
-                        position: "bottom-center",
-                        autoClose: 10000,
-                        hideProgressBar: false,
-                        closeOnClick: true,
-                        pauseOnHover: true,
-                        className: "text-center toast-notification",
-                      }
-                    );
-                  }
-                });
-              }
-            }
-          });
-      } else {
-        toast.error(`${_t(t("Please select a branch"))}`, {
-          position: "bottom-center",
-          autoClose: 10000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          className: "text-center toast-notification",
-        });
-      }
-    } else {
-      setNewCustomer({
-        ...newCustomer,
-        uploading: true,
-      });
-      const customerUrl = BASE_URL + `/settings/new-customer`;
-      let formData = new FormData();
-      formData.append("name", newCustomer.name);
-      formData.append("phn_no", newCustomer.phn_no);
-      formData.append("email", newCustomer.email);
-      formData.append("address", newCustomer.address);
-      if (authUserInfo.details !== null) {
-        formData.append("branch_id", authUserInfo.details.branch_id);
-      }
-      return axios
-        .post(customerUrl, formData, {
-          headers: { Authorization: `Bearer ${getCookie()}` },
-        })
-        .then((res) => {
-          setNewCustomer({
-            name: "",
-            email: "",
-            phn_no: "",
-            address: "",
-            branch: null,
-            selectedBranch: null,
-            edit: false,
-            editSlug: null,
-            uploading: false,
-          });
-          setSettledOrders(res.data[0]);
-          setsettledOrdersForSearch(res.data[1]);
-          setLoading(false);
-          toast.success(`${_t(t("Customer has been added"))}`, {
-            position: "bottom-center",
-            autoClose: 10000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            className: "text-center toast-notification",
-          });
-        })
-        .catch((error) => {
-          setLoading(false);
-          setNewCustomer({
-            ...newCustomer,
-            uploading: false,
-          });
-          if (error && error.response.data.errors) {
-            if (error.response.data.errors.phn_no) {
-              error.response.data.errors.phn_no.forEach((item) => {
-                if (item === "A customer exists with this phone number") {
-                  toast.error(
-                    `${_t(t("A customer exists with this phone number"))}`,
-                    {
-                      position: "bottom-center",
-                      autoClose: 10000,
-                      hideProgressBar: false,
-                      closeOnClick: true,
-                      pauseOnHover: true,
-                      className: "text-center toast-notification",
-                    }
-                  );
-                }
-              });
-            }
-          }
-        });
-    }
-  };
-
-  //set edit true & values
-  const handleSetEdit = (slug) => {
-    let customer = settledOrdersForSearch.filter((item) => {
-      return item.slug === slug;
-    });
-
-    let selectedOptionForBranch = null;
-    if (
-      authUserInfo.details !== null &&
-      authUserInfo.details.user_type !== "staff"
-    ) {
-      if (customer[0].branch_id) {
-        selectedOptionForBranch = branchForSearch.filter((branchItem) => {
-          return branchItem.id === customer[0].branch_id;
-        });
-      }
-    }
-    setNewCustomer({
-      ...newCustomer,
-      name: customer[0].name,
-      email: customer[0].email,
-      phn_no: customer[0].phn_no,
-      address: customer[0].address,
-      selectedBranch: selectedOptionForBranch
-        ? selectedOptionForBranch[0]
-        : null,
-      editSlug: customer[0].slug,
-      edit: true,
-    });
-  };
-
-  //update customer
-  const handleUpdateCustomer = (e) => {
-    e.preventDefault();
-    setNewCustomer({
-      ...newCustomer,
-      uploading: true,
-    });
-    const customerUrl = BASE_URL + `/settings/update-customer`;
-    let formData = new FormData();
-    formData.append("name", newCustomer.name);
-    formData.append("phn_no", newCustomer.phn_no);
-    formData.append("email", newCustomer.email);
-    formData.append("address", newCustomer.address);
-    if (newCustomer.branch !== null) {
-      formData.append("branch_id", newCustomer.branch.id);
-    }
-    formData.append("editSlug", newCustomer.editSlug);
-    return axios
-      .post(customerUrl, formData, {
-        headers: { Authorization: `Bearer ${getCookie()}` },
-      })
-      .then((res) => {
-        setNewCustomer({
-          name: "",
-          email: "",
-          phn_no: "",
-          address: "",
-          branch: null,
-          selectedBranch: null,
-          edit: false,
-          editSlug: null,
-          uploading: false,
-        });
-        setSettledOrders(res.data[0]);
-        setsettledOrdersForSearch(res.data[1]);
-        setSearchedCustomer({
-          ...searchedCustomer,
-          list: res.data[1],
-        });
-        setLoading(false);
-        toast.success(`${_t(t("Customer has been updated"))}`, {
-          position: "bottom-center",
-          autoClose: 10000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          className: "text-center toast-notification",
-        });
-      })
-      .catch((error) => {
-        setLoading(false);
-        setNewCustomer({
-          ...newCustomer,
-          uploading: false,
-        });
-        if (error && error.response.data.errors) {
-          if (error.response.data.errors.phn_no) {
-            error.response.data.errors.phn_no.forEach((item) => {
-              if (item === "A customer exists with this phone number") {
-                toast.error(
-                  `${_t(t("A customer exists with this phone number"))}`,
-                  {
-                    position: "bottom-center",
-                    autoClose: 10000,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    className: "text-center toast-notification",
-                  }
-                );
-              }
-            });
-          }
-        }
-      });
-  };
-
-  //search customers here
+  //search submitted orders here
   const handleSearch = (e) => {
     let searchInput = e.target.value.toLowerCase();
     if (searchInput.length === 0) {
-      setSearchedCustomer({ ...searchedCustomer, searched: false });
+      setSearchedOrder({ ...searchedOrder, searched: false });
     } else {
       let searchedList = settledOrdersForSearch.filter((item) => {
-        //name
-        let lowerCaseItemName = item.name.toLowerCase();
+        //token
+        let lowerCaseItemToken = JSON.stringify(item.token.id);
 
-        //email
-        let lowerCaseItemEmail =
-          item.email !== null && item.email.toLowerCase();
+        //customer
+        let lowerCaseItemCustomer = item.customer_name.toLowerCase();
 
-        //phn no
-        let lowerCaseItemPhnNo =
-          item.phn_no !== null && item.phn_no.toLowerCase();
-
-        //address
-        let lowerCaseItemAddress =
-          item.address !== null && item.address.toLowerCase();
+        //table
+        let lowerCaseItemTable = item.table_name.toLowerCase();
 
         //branch
-        let lowerCaseItemBranch =
-          item.branch_name !== null && item.branch_name.toLowerCase();
+        let lowerCaseItemBranch = item.branch_name.toLowerCase();
         return (
-          lowerCaseItemName.includes(searchInput) ||
-          (lowerCaseItemEmail && lowerCaseItemEmail.includes(searchInput)) ||
-          (lowerCaseItemPhnNo && lowerCaseItemPhnNo.includes(searchInput)) ||
-          (lowerCaseItemAddress &&
-            lowerCaseItemAddress.includes(searchInput)) ||
+          lowerCaseItemToken.includes(searchInput) ||
+          lowerCaseItemCustomer.includes(searchInput) ||
+          lowerCaseItemTable.includes(searchInput) ||
           (lowerCaseItemBranch && lowerCaseItemBranch.includes(searchInput))
         );
       });
-      setSearchedCustomer({
-        ...searchedCustomer,
+      setSearchedOrder({
+        ...searchedOrder,
         list: searchedList,
         searched: true,
       });
     }
-  };
-
-  //delete confirmation modal of waiter
-  const handleDeleteConfirmation = (slug) => {
-    confirmAlert({
-      customUI: ({ onClose }) => {
-        return (
-          <div className="card card-body">
-            <h1>{_t(t("Are you sure?"))}</h1>
-            <p className="text-center">{_t(t("You want to delete this?"))}</p>
-            <div className="d-flex justify-content-center">
-              <button
-                className="btn btn-primary"
-                onClick={() => {
-                  handleDeleteCustomer(slug);
-                  onClose();
-                }}
-              >
-                {_t(t("Yes, delete it!"))}
-              </button>
-              <button className="btn btn-success ml-2 px-3" onClick={onClose}>
-                {_t(t("No"))}
-              </button>
-            </div>
-          </div>
-        );
-      },
-    });
-  };
-
-  //delete customer here
-  const handleDeleteCustomer = (slug) => {
-    setLoading(true);
-    const customerUrl = BASE_URL + `/settings/delete-customer/${slug}`;
-    return axios
-      .get(customerUrl, {
-        headers: { Authorization: `Bearer ${getCookie()}` },
-      })
-      .then((res) => {
-        setSettledOrders(res.data[0]);
-        setsettledOrdersForSearch(res.data[1]);
-        setSearchedCustomer({
-          ...searchedCustomer,
-          list: res.data[1],
-        });
-        setLoading(false);
-        toast.success(`${_t(t("Customer has been deleted successfully"))}`, {
-          position: "bottom-center",
-          autoClose: 10000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          className: "text-center toast-notification",
-        });
-      })
-      .catch(() => {
-        setLoading(false);
-        toast.error(`${_t(t("Please try again"))}`, {
-          position: "bottom-center",
-          autoClose: 10000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          className: "text-center toast-notification",
-        });
-      });
   };
 
   return (
@@ -473,16 +121,16 @@ const Settled = () => {
         <title>{_t(t("Settled orders"))}</title>
       </Helmet>
 
-      {/* Add modal */}
-      <div className="modal fade" id="addCustomer" aria-hidden="true">
+      {/* Settle modal */}
+      <div className="modal fade" id="orderDetails" aria-hidden="true">
         <div className="modal-dialog modal-lg">
           <div className="modal-content">
             <div className="modal-header align-items-center">
               <div className="fk-sm-card__content">
                 <h5 className="text-capitalize fk-sm-card__title">
-                  {!newCustomer.edit
-                    ? _t(t("Add new customer"))
-                    : _t(t("Update customer"))}
+                  {/* show order token on modal header */}
+                  {_t(t("Order details, Token"))}: #
+                  {checkOrderDetails.item && checkOrderDetails.item.token.id}
                 </h5>
               </div>
               <button
@@ -492,188 +140,386 @@ const Settled = () => {
                 aria-label="Close"
               ></button>
             </div>
-            <div className="modal-body">
-              {/* show form or show saving loading */}
-              {newCustomer.uploading === false ? (
-                <div key="fragment-customer-1">
-                  <form
-                    onSubmit={
-                      !newCustomer.edit
-                        ? handleSaveNewCustomer
-                        : handleUpdateCustomer
-                    }
-                  >
-                    <div>
-                      <label htmlFor="name" className="form-label">
-                        {_t(t("Name"))}{" "}
-                        <small className="text-primary">*</small>
-                      </label>
-                      <input
-                        type="text"
-                        className="form-control"
-                        id="name"
-                        name="name"
-                        placeholder="e.g. Mr. John"
-                        value={newCustomer.name || ""}
-                        required
-                        onChange={handleSetNewCustomer}
-                      />
-                    </div>
-
-                    {authUserInfo.details !== null &&
-                      authUserInfo.details.user_type !== "staff" && (
-                        <div className="mt-3">
-                          <label className="form-label mb-0">
-                            {_t(t("Select a branch"))}{" "}
-                            {newCustomer.edit ? (
-                              <small className="text-primary">
-                                {"( "}
-                                {_t(
-                                  t(
-                                    "Leave empty if you do not want to change branch"
-                                  )
-                                )}
-                                {" )"}
-                              </small>
-                            ) : (
-                              <small className="text-primary">*</small>
+            {/* if loading true show loading effect */}
+            {loading ? (
+              <div className="modal-body">{modalLoading(5)}</div>
+            ) : (
+              <div className="modal-body">
+                {checkOrderDetails.item &&
+                checkOrderDetails.item.is_settled === 0 ? (
+                  // if this item is not settled then show settle-cancel button
+                  <>
+                    {checkOrderDetails.item &&
+                      checkOrderDetails.item.is_cancelled !== 1 && (
+                        <div className="text-right">
+                          {checkOrderDetails.settle &&
+                            paidMoney >
+                              parseFloat(
+                                checkOrderDetails.item.total_payable
+                              ) && (
+                              <span className="mr-2 text-secondary font-weight-bold">
+                                Return: {currencySymbolLeft()}
+                                {formatPrice(returnMoneyUsd)}
+                                {currencySymbolRight()}{" "}
+                              </span>
                             )}
-                          </label>
-                          {newCustomer.edit &&
-                            newCustomer.selectedBranch !== null && (
-                              <ul className="list-group list-group-horizontal-sm row col-12 mb-2 ml-md-1">
-                                <li className="list-group-item col-12 col-md-3 bg-success rounded-sm py-1 px-2 my-1 text-center">
-                                  {newCustomer.selectedBranch.name}
-                                </li>
-                              </ul>
-                            )}
-                          <Select
-                            options={branchForSearch}
-                            components={makeAnimated()}
-                            getOptionLabel={(option) => option.name}
-                            getOptionValue={(option) => option.name}
-                            className="basic-multi-select mt-2"
-                            classNamePrefix="select"
-                            onChange={handleSetBranch}
-                            placeholder={_t(t("Please select a branch"))}
-                          />
+                          {checkOrderDetails.settle ? (
+                            <button
+                              className="btn btn-primary px-3 rounded-md text-uppercase"
+                              onClick={() => {
+                                setCheckOrderDetails({
+                                  ...checkOrderDetails,
+                                  settle: false,
+                                  payment_amount: null,
+                                  payment_type: null,
+                                });
+                                setReturnMoneyUsd(0);
+                                setPaidMoney(0);
+                              }}
+                            >
+                              {_t(t("Cancel"))}
+                            </button>
+                          ) : (
+                            <button
+                              className="btn btn-success px-3 rounded-md text-uppercase"
+                              onClick={() => {
+                                setCheckOrderDetails({
+                                  ...checkOrderDetails,
+                                  settle: true,
+                                  payment_amount: null,
+                                  payment_type: null,
+                                });
+                                setReturnMoneyUsd(0);
+                                setPaidMoney(0);
+                              }}
+                            >
+                              {_t(t("Settle order"))}
+                            </button>
+                          )}
                         </div>
                       )}
-
-                    <div className="mt-3">
-                      <label htmlFor="email" className="form-label">
-                        {_t(t("Email"))}
-                      </label>
-                      <input
-                        type="email"
-                        className="form-control"
-                        id="email"
-                        name="email"
-                        placeholder="e.g. customer@example.com"
-                        value={newCustomer.email || ""}
-                        onChange={handleSetNewCustomer}
-                      />
+                  </>
+                ) : (
+                  // if this item is not settled then show settle-cancel button else, show this notification
+                  ""
+                )}
+                {checkOrderDetails.item &&
+                  //show this if order is cancelled
+                  checkOrderDetails.item.is_cancelled === 1 && (
+                    <div className="text-center bg-secondary text-white py-2">
+                      {_t(t("This order has been cancelled"))}
                     </div>
+                  )}
+                {/* show this if order settle is not true, if true show payment input field */}
+                {!checkOrderDetails.settle ? (
+                  <div class="col-12 filtr-item">
+                    <div class="fk-order-token t-bg-white">
+                      <div class="fk-order-token__body">
+                        <div class="fk-addons-table">
+                          <div class="fk-addons-table__head text-center">
+                            order token: #
+                            {checkOrderDetails.item &&
+                              checkOrderDetails.item.token.id}
+                          </div>
+                          <div class="fk-addons-table__info">
+                            <div class="row g-0">
+                              <div class="col-2 text-center border-right">
+                                <span class="fk-addons-table__info-text text-capitalize">
+                                  S/L
+                                </span>
+                              </div>
+                              <div class="col-3 text-center border-right">
+                                <span class="fk-addons-table__info-text text-capitalize">
+                                  food
+                                </span>
+                              </div>
+                              <div class="col-4 text-left pl-2 border-right">
+                                <span class="fk-addons-table__info-text text-capitalize">
+                                  Additional Info
+                                </span>
+                              </div>
+                              <div class="col-2 text-center border-right">
+                                <span class="fk-addons-table__info-text text-capitalize">
+                                  QTY
+                                </span>
+                              </div>
+                              <div class="col-1 text-center">
+                                <span class="fk-addons-table__info-text text-capitalize">
+                                  {_t(t("Status"))}
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                          {checkOrderDetails.item &&
+                            checkOrderDetails.item.orderedItems.map(
+                              (thisItem, indexThisItem) => {
+                                return (
+                                  <div class="fk-addons-table__body-row">
+                                    <div class="row g-0">
+                                      <div class="col-2 text-center border-right d-flex">
+                                        <span class="fk-addons-table__info-text text-capitalize m-auto">
+                                          {indexThisItem + 1}
+                                        </span>
+                                      </div>
+                                      <div class="col-3 text-center border-right d-flex">
+                                        <span class="fk-addons-table__info-text text-capitalize m-auto">
+                                          {thisItem.food_item} (
+                                          {thisItem.food_group})
+                                        </span>
+                                      </div>
+                                      <div class="col-4 text-center border-right t-pl-10 t-pr-10">
+                                        {thisItem.variation !== null && (
+                                          <span class="fk-addons-table__info-text text-capitalize d-block text-left t-pt-5">
+                                            <span class="font-weight-bold mr-1">
+                                              variation:
+                                            </span>
+                                            {thisItem.variation}
+                                          </span>
+                                        )}
 
-                    <div className="mt-3">
-                      <label htmlFor="phn_no" className="form-label">
-                        {_t(t("Phone number"))}
-                      </label>
-                      <input
-                        type="text"
-                        className="form-control"
-                        id="phn_no"
-                        name="phn_no"
-                        placeholder="e.g. 01xxx xxx xxx"
-                        value={newCustomer.phn_no || ""}
-                        onChange={handleSetNewCustomer}
-                      />
-                    </div>
+                                        {thisItem.properties !== null && (
+                                          <span class="fk-addons-table__info-text text-capitalize d-block text-left t-pb-5">
+                                            <span class="font-weight-bold mr-1">
+                                              properties:
+                                            </span>
+                                            {JSON.parse(
+                                              thisItem.properties
+                                            ).map((propertyItem, thisIndex) => {
+                                              if (
+                                                thisIndex !==
+                                                JSON.parse(thisItem.properties)
+                                                  .length -
+                                                  1
+                                              ) {
+                                                return (
+                                                  propertyItem.property + ", "
+                                                );
+                                              } else {
+                                                return propertyItem.property;
+                                              }
+                                            })}
+                                          </span>
+                                        )}
+                                      </div>
+                                      <div class="col-2 text-center border-right d-flex">
+                                        <span class="fk-addons-table__info-text text-capitalize m-auto">
+                                          {thisItem.quantity}
+                                        </span>
+                                      </div>
 
-                    <div className="mt-3">
-                      <label htmlFor="address" className="form-label">
-                        {_t(t("Address"))}
-                      </label>
-                      <textarea
-                        type="text"
-                        className="form-control"
-                        id="address"
-                        name="address"
-                        placeholder="Type customer address"
-                        value={newCustomer.address || ""}
-                        onChange={handleSetNewCustomer}
-                      />
-                    </div>
-
-                    <div className="mt-4">
-                      <div className="row">
-                        <div className="col-6">
-                          <button
-                            type="submit"
-                            className="btn btn-success w-100 xsm-text text-uppercase t-width-max"
-                          >
-                            {!newCustomer.edit
-                              ? _t(t("Save"))
-                              : _t(t("Update"))}
-                          </button>
+                                      <div class="col-1 text-center d-flex">
+                                        <label class="mx-checkbox mx-checkbox--empty m-auto">
+                                          <span class="mx-checkbox__text text-capitalize t-text-heading fk-addons-table__body-text">
+                                            {thisItem.is_cooking === 1 ? (
+                                              [
+                                                thisItem.is_ready === 1 ? (
+                                                  <i
+                                                    className="fa fa-check text-success"
+                                                    title={_t(t("Ready"))}
+                                                  ></i>
+                                                ) : (
+                                                  <i
+                                                    className="fa fa-cutlery text-secondary"
+                                                    title={_t(t("Cooking"))}
+                                                  ></i>
+                                                ),
+                                              ]
+                                            ) : (
+                                              <i
+                                                className="fa fa-times text-primary"
+                                                title={_t(t("Pending"))}
+                                              ></i>
+                                            )}
+                                          </span>
+                                        </label>
+                                      </div>
+                                    </div>
+                                  </div>
+                                );
+                              }
+                            )}
                         </div>
-                        <div className="col-6">
-                          <button
-                            type="button"
-                            className="btn btn-primary w-100 xsm-text text-uppercase t-width-max"
-                            data-dismiss="modal"
-                          >
-                            {_t(t("Close"))}
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  </form>
-                </div>
-              ) : (
-                <div key="fragment2">
-                  <div className="text-center text-primary font-weight-bold text-uppercase">
-                    {_t(t("Please wait"))}
-                  </div>
-                  {modalLoading(3)}
-                  <div className="mt-4">
-                    <div className="row">
-                      <div className="col-6">
-                        <button
-                          type="button"
-                          className="btn btn-success w-100 xsm-text text-uppercase t-width-max"
-                          onClick={(e) => {
-                            e.preventDefault();
-                          }}
-                        >
-                          {!newCustomer.edit ? _t(t("Save")) : _t(t("Update"))}
-                        </button>
-                      </div>
-                      <div className="col-6">
-                        <button
-                          type="button"
-                          className="btn btn-primary w-100 xsm-text text-uppercase t-width-max"
-                          data-dismiss="modal"
-                        >
-                          {_t(t("Close"))}
-                        </button>
                       </div>
                     </div>
                   </div>
+                ) : (
+                  ""
+                )}
+                <div className="bg-warning text-dark p-2 rounded-lg">
+                  <div>
+                    {_t(t("Received by"))}
+                    {": "}
+                    <span className="text-capitalize">
+                      {checkOrderDetails.item &&
+                        checkOrderDetails.item.user_name}
+                    </span>
+                  </div>
+                  <div className="text-capitalize">
+                    {_t(t("Customer"))}
+                    {": "}
+                    {checkOrderDetails.item &&
+                      checkOrderDetails.item.customer_name}
+                  </div>
+                  <div className="text-capitalize">
+                    {_t(t("Branch"))}
+                    {": "}
+                    {checkOrderDetails.item &&
+                      checkOrderDetails.item.branch_name}
+                  </div>
+                  <div className="text-capitalize">
+                    {_t(t("Department"))}
+                    {": "}
+                    {checkOrderDetails.item &&
+                      checkOrderDetails.item.dept_tag_name}
+                  </div>
+                  <div className="text-capitalize">
+                    {_t(t("Table"))}
+                    {": "}
+                    {checkOrderDetails.item &&
+                      checkOrderDetails.item.table_name}
+                  </div>
+                  <div className="text-capitalize">
+                    {_t(t("Waiter"))}
+                    {": "}
+                    {checkOrderDetails.item &&
+                      checkOrderDetails.item.waiter_name}
+                  </div>
+                  <div>
+                    {_t(t("Subtotal"))}
+                    {": "}
+                    <span className="text-capitalize">
+                      {checkOrderDetails.item && (
+                        <>
+                          {currencySymbolLeft()}
+                          {formatPrice(checkOrderDetails.item.order_bill)}
+                          {currencySymbolRight()}
+                        </>
+                      )}
+                    </span>
+                  </div>
+
+                  <div>
+                    {_t(t("Vat"))}
+                    {": "}
+                    <span className="text-capitalize">
+                      {checkOrderDetails.item && (
+                        <>
+                          {currencySymbolLeft()}
+                          {formatPrice(checkOrderDetails.item.vat)}
+                          {currencySymbolRight()}
+                        </>
+                      )}
+                    </span>
+                  </div>
+                  <div>
+                    {_t(t("Service charge"))}
+                    {": "}
+                    <span className="text-capitalize">
+                      {checkOrderDetails.item && (
+                        <>
+                          {currencySymbolLeft()}
+                          {formatPrice(checkOrderDetails.item.service_charge)}
+                          {currencySymbolRight()}
+                        </>
+                      )}
+                    </span>
+                  </div>
+                  <div>
+                    {_t(t("Discount"))}
+                    {": "}
+                    <span className="text-capitalize">
+                      {checkOrderDetails.item && (
+                        <>
+                          {currencySymbolLeft()}
+                          {formatPrice(checkOrderDetails.item.discount)}
+                          {currencySymbolRight()}
+                        </>
+                      )}
+                    </span>
+                  </div>
+                  <div>
+                    {_t(t("Total bill"))}
+                    {": "}
+                    <span className="text-capitalize">
+                      {checkOrderDetails.item && (
+                        <>
+                          {currencySymbolLeft()}
+                          {formatPrice(checkOrderDetails.item.total_payable)}
+                          {currencySymbolRight()}
+                        </>
+                      )}
+                    </span>
+                  </div>
+                  <div>
+                    {_t(t("Paid amount"))}
+                    {": "}
+                    <span className="text-capitalize">
+                      {checkOrderDetails.item && (
+                        <>
+                          {currencySymbolLeft()}
+                          {formatPrice(checkOrderDetails.item.paid_amount)}
+                          {currencySymbolRight()}
+                        </>
+                      )}
+                    </span>
+                  </div>
+                  {checkOrderDetails.item &&
+                  parseFloat(
+                    checkOrderDetails.item.total_payable -
+                      checkOrderDetails.item.paid_amount
+                  ) >= 0 ? (
+                    <div>
+                      {_t(t("Due amount"))}
+                      {": "}
+                      <span className="text-capitalize">
+                        {checkOrderDetails.item && (
+                          <>
+                            {currencySymbolLeft()}
+                            {formatPrice(
+                              parseFloat(
+                                checkOrderDetails.item.total_payable -
+                                  checkOrderDetails.item.paid_amount
+                              )
+                            )}
+                            {currencySymbolRight()}
+                          </>
+                        )}
+                      </span>
+                    </div>
+                  ) : (
+                    <div>
+                      {_t(t("Return amount"))}
+                      {": "}
+                      <span className="text-capitalize">
+                        {checkOrderDetails.item && (
+                          <>
+                            {currencySymbolLeft()}
+                            {formatPrice(
+                              parseFloat(
+                                checkOrderDetails.item.paid_amount -
+                                  checkOrderDetails.item.total_payable
+                              )
+                            )}
+                            {currencySymbolRight()}
+                          </>
+                        )}
+                      </span>
+                    </div>
+                  )}
                 </div>
-              )}
-            </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
-      {/* Add modal Ends*/}
+      {/* Settle modal Ends*/}
 
       {/* main body */}
       <main id="main" data-simplebar>
         <div className="container">
           <div className="row t-mt-10 gx-2">
             <div className="col-12 t-mb-30 mb-lg-0">
-              {newCustomer.uploading === true || loading === true ? (
+              {checkOrderDetails.uploading === true || loading === true ? (
                 pageLoading()
               ) : (
                 <div className="t-bg-white ">
@@ -685,7 +531,7 @@ const Settled = () => {
                       <ul className="t-list fk-breadcrumb">
                         <li className="fk-breadcrumb__list">
                           <span className="t-link fk-breadcrumb__link text-capitalize">
-                            {!searchedCustomer.searched
+                            {!searchedOrder.searched
                               ? _t(t("Settled orders"))
                               : _t(t("Search Result"))}
                           </span>
@@ -699,7 +545,11 @@ const Settled = () => {
                             <input
                               type="text"
                               className="form-control border-0 form-control--light-1 rounded-0"
-                              placeholder="Please Search "
+                              placeholder={
+                                _t(t("Search by token, customer, branch")) +
+                                ".."
+                              }
+                              onChange={handleSearch}
                             />
                           </div>
                           <button className="btn btn-primary" type="button">
@@ -716,7 +566,7 @@ const Settled = () => {
                             to="/dashboard/pos"
                             className="t-link t-pt-8 t-pb-8 t-pl-12 t-pr-12 btn btn-secondary xsm-text text-uppercase text-center w-100"
                           >
-                            Pos
+                            POS
                           </NavLink>
                         </div>
                         <div className="col">
@@ -766,13 +616,6 @@ const Settled = () => {
                                 scope="col"
                                 className="sm-text text-capitalize align-middle text-center border-1 border"
                               >
-                                {_t(t("Dept"))}.
-                              </th>
-
-                              <th
-                                scope="col"
-                                className="sm-text text-capitalize align-middle text-center border-1 border"
-                              >
                                 {_t(t("Table"))}
                               </th>
 
@@ -787,13 +630,13 @@ const Settled = () => {
                                 scope="col"
                                 className="sm-text text-capitalize align-middle text-center border-1 border"
                               >
-                                {_t(t("Action"))}
+                                {_t(t("Status"))}
                               </th>
                             </tr>
                           </thead>
                           <tbody className="align-middle">
                             {/* loop here, logic === !search && haveData && haveDataLegnth > 0*/}
-                            {!searchedCustomer.searched
+                            {!searchedOrder.searched
                               ? [
                                   settledOrders && [
                                     settledOrders.data.length === 0 ? (
@@ -839,10 +682,6 @@ const Settled = () => {
                                             </td>
 
                                             <td className="xsm-text align-middle text-center">
-                                              {item.dept_tag_name}
-                                            </td>
-
-                                            <td className="xsm-text align-middle text-center">
                                               {item.table_name}
                                             </td>
 
@@ -850,49 +689,63 @@ const Settled = () => {
                                               {item.branch_name || "-"}
                                             </td>
 
-                                            <td className="xsm-text text-capitalize align-middle text-center">
-                                              <div className="dropdown">
-                                                <button
-                                                  className="btn t-bg-clear t-text-dark--light-40"
-                                                  type="button"
-                                                  data-toggle="dropdown"
+                                            <td class="xsm-text text-capitalize align-middle text-center">
+                                              {item.is_cancelled === 0 ? (
+                                                [
+                                                  item.is_ready === 0 ? (
+                                                    <span
+                                                      class="btn btn-transparent btn-secondary xsm-text text-capitalize"
+                                                      onClick={() => {
+                                                        setCheckOrderDetails({
+                                                          ...checkOrderDetails,
+                                                          item: item,
+                                                          settle: false,
+                                                        });
+                                                        setReturnMoneyUsd(0);
+                                                        setPaidMoney(0);
+                                                      }}
+                                                      data-toggle="modal"
+                                                      data-target="#orderDetails"
+                                                    >
+                                                      processing
+                                                    </span>
+                                                  ) : (
+                                                    <span
+                                                      class="btn btn-transparent btn-success xsm-text text-capitalize px-4"
+                                                      onClick={() => {
+                                                        setCheckOrderDetails({
+                                                          ...checkOrderDetails,
+                                                          item: item,
+                                                          settle: false,
+                                                        });
+                                                        setReturnMoneyUsd(0);
+                                                        setPaidMoney(0);
+                                                      }}
+                                                      data-toggle="modal"
+                                                      data-target="#orderDetails"
+                                                    >
+                                                      Ready
+                                                    </span>
+                                                  ),
+                                                ]
+                                              ) : (
+                                                <span
+                                                  class="btn btn-transparent btn-primary xsm-text text-capitalize px-3"
+                                                  onClick={() => {
+                                                    setCheckOrderDetails({
+                                                      ...checkOrderDetails,
+                                                      item: item,
+                                                      settle: false,
+                                                    });
+                                                    setReturnMoneyUsd(0);
+                                                    setPaidMoney(0);
+                                                  }}
+                                                  data-toggle="modal"
+                                                  data-target="#orderDetails"
                                                 >
-                                                  <i className="fa fa-ellipsis-h"></i>
-                                                </button>
-                                                <div className="dropdown-menu">
-                                                  <button
-                                                    className="dropdown-item sm-text text-capitalize"
-                                                    onClick={() => {
-                                                      setNewCustomer({
-                                                        ...newCustomer,
-                                                        branch: null,
-                                                      });
-                                                      handleSetEdit(item.slug);
-                                                    }}
-                                                    data-toggle="modal"
-                                                    data-target="#addCustomer"
-                                                  >
-                                                    <span className="t-mr-8">
-                                                      <i className="fa fa-pencil"></i>
-                                                    </span>
-                                                    {_t(t("Edit"))}
-                                                  </button>
-
-                                                  <button
-                                                    className="dropdown-item sm-text text-capitalize"
-                                                    onClick={() => {
-                                                      handleDeleteConfirmation(
-                                                        item.slug
-                                                      );
-                                                    }}
-                                                  >
-                                                    <span className="t-mr-8">
-                                                      <i className="fa fa-trash"></i>
-                                                    </span>
-                                                    {_t(t("Delete"))}
-                                                  </button>
-                                                </div>
-                                              </div>
+                                                  Cancelled
+                                                </span>
+                                              )}
                                             </td>
                                           </tr>
                                         );
@@ -902,8 +755,8 @@ const Settled = () => {
                                 ]
                               : [
                                   /* searched data, logic === haveData*/
-                                  searchedCustomer && [
-                                    searchedCustomer.list.length === 0 ? (
+                                  searchedOrder && [
+                                    searchedOrder.list.length === 0 ? (
                                       <tr className="align-middle">
                                         <td
                                           scope="row"
@@ -914,102 +767,106 @@ const Settled = () => {
                                         </td>
                                       </tr>
                                     ) : (
-                                      searchedCustomer.list.map(
-                                        (item, index) => {
-                                          return (
-                                            <tr
-                                              className="align-middle"
-                                              key={index}
+                                      searchedOrder.list.map((item, index) => {
+                                        return (
+                                          <tr
+                                            className="align-middle"
+                                            key={index}
+                                          >
+                                            <th
+                                              scope="row"
+                                              className="xsm-text text-capitalize align-middle text-center"
                                             >
-                                              <th
-                                                scope="row"
-                                                className="xsm-text text-capitalize align-middle text-center"
-                                              >
-                                                {index +
-                                                  1 +
-                                                  (settledOrders.current_page -
-                                                    1) *
-                                                    settledOrders.per_page}
-                                              </th>
+                                              {index +
+                                                1 +
+                                                (settledOrders.current_page -
+                                                  1) *
+                                                  settledOrders.per_page}
+                                            </th>
 
-                                              <td className="xsm-text text-capitalize align-middle text-center">
-                                                {item.name}
-                                              </td>
+                                            <td className="xsm-text text-capitalize align-middle text-center text-secondary">
+                                              #{item.token.id}
+                                            </td>
 
-                                              <td className="xsm-text align-middle text-center">
-                                                {item.email || "-"}
-                                              </td>
+                                            <td className="xsm-text text-capitalize align-middle text-center">
+                                              <Moment format="LT">
+                                                {item.token.time}
+                                              </Moment>
+                                            </td>
 
-                                              <td className="xsm-text text-capitalize align-middle text-center">
-                                                {item.phn_no ? (
-                                                  <a
-                                                    href={`tel:${item.phn_no}`}
-                                                    rel="noopener noreferrer"
-                                                  >
-                                                    {item.phn_no}
-                                                  </a>
-                                                ) : (
-                                                  "-"
-                                                )}
-                                              </td>
-                                              <td className="xsm-text align-middle text-center">
-                                                {item.address || "-"}
-                                              </td>
+                                            <td className="xsm-text align-middle text-center">
+                                              {item.customer_name}
+                                            </td>
 
-                                              <td className="xsm-text align-middle text-center">
-                                                {item.branch_name || "-"}
-                                              </td>
+                                            <td className="xsm-text align-middle text-center">
+                                              {item.table_name}
+                                            </td>
 
-                                              <td className="xsm-text text-capitalize align-middle text-center">
-                                                <div className="dropdown">
-                                                  <button
-                                                    className="btn t-bg-clear t-text-dark--light-40"
-                                                    type="button"
-                                                    data-toggle="dropdown"
-                                                  >
-                                                    <i className="fa fa-ellipsis-h"></i>
-                                                  </button>
-                                                  <div className="dropdown-menu">
-                                                    <button
-                                                      className="dropdown-item sm-text text-capitalize"
+                                            <td className="xsm-text align-middle text-center">
+                                              {item.branch_name || "-"}
+                                            </td>
+
+                                            <td class="xsm-text text-capitalize align-middle text-center">
+                                              {item.is_cancelled === 0 ? (
+                                                [
+                                                  item.is_ready === 0 ? (
+                                                    <span
+                                                      class="btn btn-transparent btn-secondary xsm-text text-capitalize"
                                                       onClick={() => {
-                                                        setNewCustomer({
-                                                          ...newCustomer,
-                                                          branch: null,
+                                                        setCheckOrderDetails({
+                                                          ...checkOrderDetails,
+                                                          item: item,
+                                                          settle: false,
                                                         });
-                                                        handleSetEdit(
-                                                          item.slug
-                                                        );
+                                                        setReturnMoneyUsd(0);
+                                                        setPaidMoney(0);
                                                       }}
                                                       data-toggle="modal"
-                                                      data-target="#addCustomer"
+                                                      data-target="#orderDetails"
                                                     >
-                                                      <span className="t-mr-8">
-                                                        <i className="fa fa-pencil"></i>
-                                                      </span>
-                                                      {_t(t("Edit"))}
-                                                    </button>
-
-                                                    <button
-                                                      className="dropdown-item sm-text text-capitalize"
+                                                      processing
+                                                    </span>
+                                                  ) : (
+                                                    <span
+                                                      class="btn btn-transparent btn-success xsm-text text-capitalize px-4"
                                                       onClick={() => {
-                                                        handleDeleteConfirmation(
-                                                          item.slug
-                                                        );
+                                                        setCheckOrderDetails({
+                                                          ...checkOrderDetails,
+                                                          item: item,
+                                                          settle: false,
+                                                        });
+                                                        setReturnMoneyUsd(0);
+                                                        setPaidMoney(0);
                                                       }}
+                                                      data-toggle="modal"
+                                                      data-target="#orderDetails"
                                                     >
-                                                      <span className="t-mr-8">
-                                                        <i className="fa fa-trash"></i>
-                                                      </span>
-                                                      {_t(t("Delete"))}
-                                                    </button>
-                                                  </div>
-                                                </div>
-                                              </td>
-                                            </tr>
-                                          );
-                                        }
-                                      )
+                                                      Ready
+                                                    </span>
+                                                  ),
+                                                ]
+                                              ) : (
+                                                <span
+                                                  class="btn btn-transparent btn-primary xsm-text text-capitalize px-3"
+                                                  onClick={() => {
+                                                    setCheckOrderDetails({
+                                                      ...checkOrderDetails,
+                                                      item: item,
+                                                      settle: false,
+                                                    });
+                                                    setReturnMoneyUsd(0);
+                                                    setPaidMoney(0);
+                                                  }}
+                                                  data-toggle="modal"
+                                                  data-target="#orderDetails"
+                                                >
+                                                  Cancelled
+                                                </span>
+                                              )}
+                                            </td>
+                                          </tr>
+                                        );
+                                      })
                                     ),
                                   ],
                                 ]}
@@ -1021,11 +878,11 @@ const Settled = () => {
                 </div>
               )}
               {/* pagination loading effect */}
-              {newCustomer.uploading === true || loading === true
+              {checkOrderDetails.uploading === true || loading === true
                 ? paginationLoading()
                 : [
                     // logic === !searched
-                    !searchedCustomer.searched ? (
+                    !searchedOrder.searched ? (
                       <div key="fragment4">
                         <div className="t-bg-white mt-1 t-pt-5 t-pb-5">
                           <div className="row align-items-center t-pl-15 t-pr-15">
@@ -1058,8 +915,8 @@ const Settled = () => {
                                 <button
                                   className="btn btn-primary btn-sm"
                                   onClick={() =>
-                                    setSearchedCustomer({
-                                      ...searchedCustomer,
+                                    setSearchedOrder({
+                                      ...searchedOrder,
                                       searched: false,
                                     })
                                   }
@@ -1074,7 +931,7 @@ const Settled = () => {
                               <li className="t-list__item">
                                 <span className="d-inline-block sm-text">
                                   {searchedShowingData(
-                                    searchedCustomer,
+                                    searchedOrder,
                                     settledOrdersForSearch
                                   )}
                                 </span>

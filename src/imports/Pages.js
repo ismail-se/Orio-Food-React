@@ -22,7 +22,6 @@ import Customers from "../resources/restaurant/auth/customer/Customers";
 import Pos from "../resources/restaurant/auth/pos/Pos";
 import Submitted from "../resources/restaurant/auth/pos/Submitted";
 import Settled from "../resources/restaurant/auth/pos/Settled";
-import PosKitchen from "../resources/restaurant/auth/pos/PosKitchen";
 
 //from restaurant-auth-manage
 //-food
@@ -68,7 +67,6 @@ export {
   Pos,
   Submitted,
   Settled,
-  PosKitchen,
   //
   OrderHistories,
   Customers,
