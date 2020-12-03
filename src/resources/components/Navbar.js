@@ -145,11 +145,20 @@ const Navbar = (props) => {
   return (
     <>
       {props.location.pathname !== "/login" &&
+      props.location.pathname !== "/login/" &&
       props.location.pathname !== "/dashboard/pos" &&
+      props.location.pathname !== "/dashboard/pos/" &&
       props.location.pathname !== "/reset-password" &&
+      props.location.pathname !== "/reset-password/" &&
       !props.location.pathname.includes("/set-new-password") ? (
         <header id="header" className="sticky-top">
-          <div className="container">
+          <div
+            className={`${
+              props.location.pathname.includes("/dashboard/kitchen")
+                ? "container-fluid"
+                : "container"
+            }`}
+          >
             <div className="row align-items-center">
               <div className="col-6 col-lg-2">
                 <div className="fk-brand fk-brand--sr-lg">
