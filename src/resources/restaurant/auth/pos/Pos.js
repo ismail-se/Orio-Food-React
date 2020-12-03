@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState, useRef } from "react";
 import { NavLink } from "react-router-dom";
 
 //axios and base url
@@ -25,6 +25,7 @@ import "react-confirm-alert/src/react-confirm-alert.css";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Moment from "react-moment";
+import { useReactToPrint } from "react-to-print";
 // import Calculator from "awesome-react-calculator";
 
 //importing context consumer here
@@ -74,6 +75,19 @@ const Pos = () => {
   } = useContext(RestaurantContext);
 
   const { t } = useTranslation();
+
+  const componentRef = useRef();
+  const component2Ref = useRef();
+
+  const handlePrint = useReactToPrint({
+    content: () => componentRef.current,
+    onAfterPrint: () => {
+      handlePrint2();
+    },
+  });
+  const handlePrint2 = useReactToPrint({
+    content: () => component2Ref.current,
+  });
 
   // State hooks here
   const [foodItem, setFoodItem] = useState({
@@ -2878,12 +2892,20 @@ const Pos = () => {
                         <div className="col-12">
                           <div className="row">
                             <div className="col-12 t-mb-10">
-                              <a
+                              <button
+                                onClick={() => {
+                                  handlePrint();
+                                }}
                                 className="w-100 t-heading-font btn btn-outline-danger font-weight-bold text-uppercase sm-text"
-                                href="#"
                               >
                                 print bill
-                              </a>
+                              </button>
+                              <div className="d-none">
+                                <div ref={componentRef}>Print this</div>
+                              </div>
+                              <div className="d-none">
+                                <div ref={component2Ref}>Print this 2</div>
+                              </div>
                             </div>
                             <div className="col-12">
                               <button

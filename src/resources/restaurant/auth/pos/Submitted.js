@@ -310,8 +310,22 @@ const Submitted = () => {
         .post(url, formData, {
           headers: { Authorization: `Bearer ${getCookie()}` },
         })
-        .then(() => {
+        .then((res) => {
           setLoading(false);
+          if (res.data === "accepted") {
+            toast.error(
+              `${_t(t("Can not cancel this order, this is being cooked"))}`,
+              {
+                position: "bottom-center",
+                closeButton: false,
+                autoClose: 10000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                className: "text-center toast-notification",
+              }
+            );
+          }
         })
         .catch(() => {
           setLoading(false);
@@ -1051,17 +1065,6 @@ const Submitted = () => {
                                                       <i className="fa fa-ellipsis-h"></i>
                                                     </button>
                                                     <div className="dropdown-menu">
-                                                      <NavLink
-                                                        // send state- order group id
-                                                        to="/dashboard/pos/edit-order"
-                                                        className="dropdown-item sm-text text-capitalize"
-                                                      >
-                                                        <span className="t-mr-8">
-                                                          <i className="fa fa-pencil"></i>
-                                                        </span>
-                                                        {_t(t("Edit"))}
-                                                      </NavLink>
-
                                                       <button
                                                         // send state- order group id
                                                         className="dropdown-item sm-text text-capitalize"
@@ -1272,17 +1275,6 @@ const Submitted = () => {
                                                     <i className="fa fa-ellipsis-h"></i>
                                                   </button>
                                                   <div className="dropdown-menu">
-                                                    <NavLink
-                                                      // send state- order group id
-                                                      to="/dashboard/pos/edit-order"
-                                                      className="dropdown-item sm-text text-capitalize"
-                                                    >
-                                                      <span className="t-mr-8">
-                                                        <i className="fa fa-pencil"></i>
-                                                      </span>
-                                                      {_t(t("Edit"))}
-                                                    </NavLink>
-
                                                     <button
                                                       // send state- order group id
                                                       className="dropdown-item sm-text text-capitalize"
