@@ -303,30 +303,46 @@ const WorkPeriod = () => {
         headers: { Authorization: `Bearer ${getCookie()}` },
       })
       .then((res) => {
-        authUserInfo.details &&
-          setNewWorkPeriod({
-            branch_id: authUserInfo.details.branch_id
-              ? authUserInfo.details.branch_id
-              : null,
-            user_type: authUserInfo.details.user_type,
+        if (res.data !== "orderExist") {
+          authUserInfo.details &&
+            setNewWorkPeriod({
+              branch_id: authUserInfo.details.branch_id
+                ? authUserInfo.details.branch_id
+                : null,
+              user_type: authUserInfo.details.user_type,
 
+              uploading: false,
+            });
+          setWorkPeriodList(res.data[0]);
+          setWorkPeriodListForSearch(res.data[1]);
+          setSearchedWorkPeriod({
+            ...searchedWorkPeriod,
+            list: res.data[1],
+          });
+          setLoading(false);
+          toast.success(`${_t(t("Work period has been ended"))}`, {
+            position: "bottom-center",
+            autoClose: 10000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            className: "text-center toast-notification",
+          });
+        } else {
+          setLoading(false);
+          setNewWorkPeriod({
+            ...newWorkPeriod,
             uploading: false,
           });
-        setWorkPeriodList(res.data[0]);
-        setWorkPeriodListForSearch(res.data[1]);
-        setSearchedWorkPeriod({
-          ...searchedWorkPeriod,
-          list: res.data[1],
-        });
-        setLoading(false);
-        toast.success(`${_t(t("Work period has been ended"))}`, {
-          position: "bottom-center",
-          autoClose: 10000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          className: "text-center toast-notification",
-        });
+          toast.error(`${_t(t("Please settle the submitted orders first"))}`, {
+            position: "bottom-center",
+            autoClose: 10000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            className: "text-center toast-notification",
+          });
+        }
       })
       .catch(() => {
         setLoading(false);

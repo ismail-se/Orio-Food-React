@@ -2161,9 +2161,20 @@ const Pos = () => {
                         </h5>
                         {authUserInfo.details &&
                           authUserInfo.details.user_type !== "staff" && (
-                            <h6 className="mt-1 text-uppercase xsm-text">
-                              {_t(t("Start workperiod if it is not started"))}
-                            </h6>
+                            <>
+                              <h6 className="mt-1 text-uppercase xsm-text mb-1">
+                                {_t(t("Start workperiod if it is not started"))}
+                              </h6>
+                              <small className="d-flex justify-content-center text-lowercase xsm-text mt-0 mb-2">
+                                (
+                                {_t(
+                                  t(
+                                    "Use staff account not to see this multiple times"
+                                  )
+                                )}
+                                )
+                              </small>
+                            </>
                           )}
                         <NavLink
                           to="/dashboard"
@@ -4043,7 +4054,7 @@ const Pos = () => {
                                     <div className="row gx-2 align-items-center">
                                       <div className="col-6 text-left">
                                         <span className="text-capitalize font-weight-bold d-block">
-                                          Return
+                                          {currencySymbolLeft()}Return
                                         </span>
                                       </div>
                                       <div className="col-6">

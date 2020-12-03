@@ -191,13 +191,16 @@ const Submitted = () => {
       })
       .then((res) => {
         if (res.data !== "paymentIssue") {
-          console.log(res.data);
           setCheckOrderDetails({
             ...checkOrderDetails,
             item: res.data[2],
             payment_type: null,
             payment_amount: null,
             settle: false,
+          });
+          setSearchedOrder({
+            ...searchedOrder,
+            searched: false,
           });
           setLoading(false);
         } else {
