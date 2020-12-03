@@ -76,19 +76,6 @@ const Pos = () => {
 
   const { t } = useTranslation();
 
-  const componentRef = useRef();
-  const component2Ref = useRef();
-
-  const handlePrint = useReactToPrint({
-    content: () => componentRef.current,
-    onAfterPrint: () => {
-      handlePrint2();
-    },
-  });
-  const handlePrint2 = useReactToPrint({
-    content: () => component2Ref.current,
-  });
-
   // State hooks here
   const [foodItem, setFoodItem] = useState({
     foodGroup: null,
@@ -307,8 +294,10 @@ const Pos = () => {
     //calculate subTotalPrice
     totalPrice(oldOrderItems);
     //sound
-    let beep = document.getElementById("myAudio");
-    beep.play();
+    if (getSystemSettings(generalSettings, "play_sound") === "1") {
+      let beep = document.getElementById("myAudio");
+      beep.play();
+    }
   };
 
   //set order item's variation on change of variation
@@ -449,8 +438,10 @@ const Pos = () => {
     //calculate subTotalPrice
     totalPrice(oldOrderItems);
     //sound
-    let beep = document.getElementById("myAudio");
-    beep.play();
+    if (getSystemSettings(generalSettings, "play_sound") === "1") {
+      let beep = document.getElementById("myAudio");
+      beep.play();
+    }
   };
 
   //handle order item quantity
@@ -1188,7 +1179,7 @@ const Pos = () => {
       })
       .then((res) => {
         if (res.data !== "ended") {
-          handleOrderSubmitSuccessful();
+          handlePrint();
           setCustomerForSearch(res.data[1]);
           setOrderDetailusers({
             ...orderDetailUsers,
@@ -1207,7 +1198,7 @@ const Pos = () => {
           });
         }
       })
-      .catch((error) => {
+      .catch(() => {
         setLoading(false);
         toast.error(`${_t(t("Please try again"))}`, {
           position: "bottom-center",
@@ -1289,7 +1280,7 @@ const Pos = () => {
       .then((res) => {
         if (res.data !== "ended") {
           if (res.data !== "paymentIssue") {
-            handleOrderSubmitSuccessful();
+            handlePrint();
             setCustomerForSearch(res.data[1]);
             setOrderDetailusers({
               ...orderDetailUsers,
@@ -1328,7 +1319,7 @@ const Pos = () => {
           });
         }
       })
-      .catch((error) => {
+      .catch(() => {
         setLoading(false);
         toast.error(`${_t(t("Please try again"))}`, {
           position: "bottom-center",
@@ -1341,6 +1332,47 @@ const Pos = () => {
         });
       });
   };
+
+  //print bills
+  const componentRef = useRef();
+  const component2Ref = useRef();
+
+  // only print bill
+  //for pos manager
+  const handleOnlyPrint = useReactToPrint({
+    content: () => componentRef.current,
+    onAfterPrint: () => {
+      if (getSystemSettings(generalSettings, "print_kitchen_bill") === "1") {
+        handleOnlyPrint2();
+      }
+    },
+  });
+
+  //for kithcen
+  const handleOnlyPrint2 = useReactToPrint({
+    content: () => component2Ref.current,
+  });
+
+  //after order submit or settle
+  //for pos manager
+  const handlePrint = useReactToPrint({
+    content: () => componentRef.current,
+    onAfterPrint: () => {
+      if (getSystemSettings(generalSettings, "print_kitchen_bill") === "1") {
+        handlePrint2();
+      } else {
+        handleOrderSubmitSuccessful();
+      }
+    },
+  });
+
+  //for kithcen
+  const handlePrint2 = useReactToPrint({
+    content: () => component2Ref.current,
+    onAfterPrint: () => {
+      handleOrderSubmitSuccessful();
+    },
+  });
 
   //call after successful order submit and settle
   const handleOrderSubmitSuccessful = () => {
@@ -1381,6 +1413,11 @@ const Pos = () => {
       pauseOnHover: true,
       className: "text-center toast-notification",
     });
+    //sound
+    if (getSystemSettings(generalSettings, "play_sound") === "1") {
+      let beep = document.getElementById("myAudio");
+      beep.play();
+    }
   };
 
   return (
@@ -1389,9 +1426,24 @@ const Pos = () => {
         <title>{_t(t("POS"))}</title>
       </Helmet>
 
+      {/* beep sound */}
       <audio id="myAudio">
         <source src="/assets/beep/beep.mp3" type="audio/mpeg" />
       </audio>
+
+      {/* Print bill */}
+      <div className="d-none">
+        <div ref={componentRef}>
+          {newOrder ? "New order not empty" : "New order Null"}
+        </div>
+      </div>
+
+      {/* Print bill kitchen */}
+      <div className="d-none">
+        <div ref={component2Ref}>
+          {newOrder ? "New order not empty" : "New order Null"}
+        </div>
+      </div>
 
       {/* Menu Addons  */}
       <div className="modal fade" id="menuAddons" aria-hidden="true">
@@ -2894,18 +2946,32 @@ const Pos = () => {
                             <div className="col-12 t-mb-10">
                               <button
                                 onClick={() => {
-                                  handlePrint();
+                                  if (newOrder) {
+                                    handleOnlyPrint();
+                                  } else {
+                                    toast.error(
+                                      `${_t(
+                                        t(
+                                          "Please add items in order list to print bill"
+                                        )
+                                      )}`,
+                                      {
+                                        position: "bottom-center",
+                                        closeButton: false,
+                                        autoClose: 10000,
+                                        hideProgressBar: false,
+                                        closeOnClick: true,
+                                        pauseOnHover: true,
+                                        className:
+                                          "text-center toast-notification",
+                                      }
+                                    );
+                                  }
                                 }}
                                 className="w-100 t-heading-font btn btn-outline-danger font-weight-bold text-uppercase sm-text"
                               >
                                 print bill
                               </button>
-                              <div className="d-none">
-                                <div ref={componentRef}>Print this</div>
-                              </div>
-                              <div className="d-none">
-                                <div ref={component2Ref}>Print this 2</div>
-                              </div>
                             </div>
                             <div className="col-12">
                               <button

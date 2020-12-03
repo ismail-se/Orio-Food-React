@@ -56,6 +56,10 @@ const General = () => {
     footerText: getSystemSettings(generalSettings, "type_footer"),
     vat: getSystemSettings(generalSettings, "type_vat"),
     image: null,
+    print_kitchen_bill:
+      getSystemSettings(generalSettings, "print_kitchen_bill") === "1" ? 1 : 0,
+    play_sound:
+      getSystemSettings(generalSettings, "play_sound") === "1" ? 1 : 0,
   });
 
   //useEffect == componentDidMount()
@@ -112,6 +116,8 @@ const General = () => {
     formData.append("type_color", colorTextPick.color);
     formData.append("type_footer", newSettings.footerText);
     formData.append("type_vat", newSettings.vat);
+    formData.append("print_kitchen_bill", newSettings.print_kitchen_bill);
+    formData.append("play_sound", newSettings.play_sound);
     const url = BASE_URL + "/settings/general-settings";
     return axios
       .post(url, formData, {
@@ -123,6 +129,9 @@ const General = () => {
           footerText: getSystemSettings(res.data, "type_footer"),
           vat: getSystemSettings(res.data, "type_vat"),
           image: null,
+          print_kitchen_bill:
+            getSystemSettings(res.data, "print_kitchen_bill") === "1" ? 1 : 0,
+          play_sound: getSystemSettings(res.data, "play_sound") === "1" ? 1 : 0,
         });
         setLoading(false);
         toast.success(`${_t(t("Settings has been updated"))}`, {
@@ -370,7 +379,7 @@ const General = () => {
                             <div className="form-group mt-4">
                               <div className="mb-2">
                                 <label htmlFor="vat" className="control-label">
-                                  {_t(t("Vat"))}
+                                  {_t(t("Vat"))} (%)
                                   <span className="text-danger">*</span>{" "}
                                 </label>
                               </div>
@@ -388,6 +397,54 @@ const General = () => {
                                   required
                                 />
                               </div>
+                            </div>
+
+                            <div className="form-check mt-4">
+                              <input
+                                type="checkbox"
+                                className="form-check-input pointer-cursor"
+                                id="print_kitchen_bill"
+                                name="print_kitchen_bill"
+                                onChange={() => {
+                                  setNewSettings({
+                                    ...newSettings,
+                                    print_kitchen_bill:
+                                      newSettings.print_kitchen_bill === 0
+                                        ? 1
+                                        : 0,
+                                  });
+                                }}
+                                checked={newSettings.print_kitchen_bill === 1}
+                              />
+                              <label
+                                className="form-check-label  pointer-cursor"
+                                htmlFor="print_kitchen_bill"
+                              >
+                                {_t(t("Print order details in kitchen?"))}
+                              </label>
+                            </div>
+
+                            <div className="form-check mt-4">
+                              <input
+                                type="checkbox"
+                                className="form-check-input pointer-cursor"
+                                id="play_sound"
+                                name="play_sound"
+                                onChange={() => {
+                                  setNewSettings({
+                                    ...newSettings,
+                                    play_sound:
+                                      newSettings.play_sound === 0 ? 1 : 0,
+                                  });
+                                }}
+                                checked={newSettings.play_sound === 1}
+                              />
+                              <label
+                                className="form-check-label pointer-cursor"
+                                htmlFor="play_sound"
+                              >
+                                {_t(t("Play beep sound in POS?"))}
+                              </label>
                             </div>
 
                             <div className="form-group mt-4">
