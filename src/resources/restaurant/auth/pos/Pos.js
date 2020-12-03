@@ -941,6 +941,7 @@ const Pos = () => {
   //set order detals additional info here
   //set branch
   const handleSetBranch = (branch) => {
+    setLoading(true);
     let tempCustomers = customerForSearch.filter((eachCustomer) => {
       return eachCustomer.branch_id === branch.id;
     });
@@ -956,11 +957,34 @@ const Pos = () => {
       theWaiters: tempWaiters,
     });
 
+    setNewOrder(null);
+    setActiveItemInOrder(null);
+    setSelectedVariation([]);
+    setSelectedPropertyGroup([]);
+    setSelectedProperties([]);
+    setTheSubTotal(0);
+    setTheVat(0);
+    setTotalPaybale(0);
+    setReturnMoneyUsd(0);
+    setPaidMoney(0);
     setOrderDetails({
-      ...orderDetails,
-      branch,
+      branch: branch,
+      customer: null,
+      table: null,
+      waiter: null,
+      dept_tag: null,
+      payment_type: null,
+      payment_amount: null,
+      total_guest: 1,
+      newCustomer: false,
+      newCustomerInfo: {
+        name: "",
+        number: "",
+      },
+      token: null,
+      serviceCharge: 0,
+      discount: 0,
     });
-
     // set work period according to branch for admin on branch change
     let theWorkPeriod = null;
     theWorkPeriod =
@@ -977,6 +1001,10 @@ const Pos = () => {
       workPeriod: theWorkPeriod !== undefined ? theWorkPeriod : null,
       vat: newSettings.vat,
     });
+
+    setTimeout(() => {
+      setLoading(false);
+    }, 300);
   };
 
   //customer

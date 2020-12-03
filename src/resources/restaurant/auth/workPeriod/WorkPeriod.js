@@ -334,7 +334,7 @@ const WorkPeriod = () => {
             ...newWorkPeriod,
             uploading: false,
           });
-          toast.error(`${_t(t("Please settle the submitted orders first"))}`, {
+          toast.error(`${_t(t("Please settle all the submitted orders"))}`, {
             position: "bottom-center",
             autoClose: 10000,
             hideProgressBar: false,
