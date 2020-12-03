@@ -2641,12 +2641,12 @@ const Pos = () => {
                                               "active"
                                             }`}
                                           >
-                                            <div className="fk-dish-card">
-                                              <div className="fk-dish-card__img">
+                                            <div className="fk-dish-card w-100">
+                                              <div className="fk-dish-card__img w-100">
                                                 <img
                                                   src={tempFoodItem.image}
                                                   alt="foodkhan"
-                                                  className="img-fluid m-auto"
+                                                  className="img-fluid m-auto w-100"
                                                 />
                                               </div>
                                               <span className="fk-dish-card__title text-center text-uppercase">
