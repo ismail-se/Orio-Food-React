@@ -2873,6 +2873,7 @@ const Pos = () => {
                                           onChange={handleSetpaymentType}
                                           maxMenuHeight="200px"
                                           isMulti
+                                          backspaceRemovesValue={false}
                                           clearIndicator={null}
                                           placeholder={_t(t("Payments")) + ".."}
                                         />

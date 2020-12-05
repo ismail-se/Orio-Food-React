@@ -596,6 +596,7 @@ const Submitted = () => {
                       getOptionValue={(option) => option.name}
                       classNamePrefix="select"
                       className="xsm-text"
+                      backspaceRemovesValue={false}
                       onChange={handleSetpaymentType}
                       maxMenuHeight="200px"
                       isMulti
@@ -1116,7 +1117,7 @@ const Submitted = () => {
                                                               toast.error(
                                                                 `${_t(
                                                                   t(
-                                                                    "This is being cooked, can not cancel now, try removing items"
+                                                                    "This is being cooked, can not cancel now"
                                                                   )
                                                                 )}`,
                                                                 {
@@ -1325,7 +1326,7 @@ const Submitted = () => {
                                                             toast.error(
                                                               `${_t(
                                                                 t(
-                                                                  "This is being cooked, can not cancel now, try removing items"
+                                                                  "This is being cooked, can not cancel now"
                                                                 )
                                                               )}`,
                                                               {

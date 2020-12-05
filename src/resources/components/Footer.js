@@ -63,11 +63,20 @@ const Footer = () => {
   return (
     <>
       {window.location.pathname !== "/login" &&
+      window.location.pathname !== "/login/" &&
       window.location.pathname !== "/dashboard/pos" &&
+      window.location.pathname !== "/dashboard/pos/" &&
       window.location.pathname !== "/reset-password" &&
+      window.location.pathname !== "/reset-password/" &&
       !window.location.pathname.includes("/set-new-password") ? (
         <footer id="footer" className="sicky-bottom">
-          <div className="container">
+          <div
+            className={`${
+              window.location.pathname.includes("/dashboard/kitchen")
+                ? "container-fluid"
+                : "container"
+            }`}
+          >
             <div className="row align-items-lg-center">
               <div className="col-lg-2 t-mb-30 mb-lg-0">
                 <div className="fk-brand--footer fk-brand--footer-sqr mx-auto mr-lg-auto ml-lg-0">

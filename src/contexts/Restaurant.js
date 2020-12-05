@@ -299,6 +299,9 @@ const RestaurantProvider = ({ children }) => {
   return (
     <RestaurantContext.Provider
       value={{
+        //common
+        loading,
+        setLoading,
         //branch
         getBranch,
         branchList,
