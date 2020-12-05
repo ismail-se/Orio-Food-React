@@ -159,7 +159,12 @@ function App() {
           </RestaurantRoute>
 
           <RestaurantRoute path="/dashboard/kitchen" exact>
-            <Kitchen />
+            {authUserInfo.permissions !== null &&
+            checkPermission(authUserInfo.permissions, "Kitchen") ? (
+              <Kitchen />
+            ) : (
+              <NoPermission />
+            )}
           </RestaurantRoute>
 
           {/* <RestaurantRoute path="/dashboard/branches" exact>

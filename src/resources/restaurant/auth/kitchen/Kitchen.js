@@ -151,10 +151,10 @@ const Kitchen = () => {
                   onClose();
                 }}
               >
-                {_t(t("Yes, delete it!"))}
+                {_t(t("YES, COOKED"))}
               </button>
               <button className="btn btn-success ml-2 px-3" onClick={onClose}>
-                {_t(t("No"))}
+                {_t(t("NO"))}
               </button>
             </div>
           </div>
@@ -200,7 +200,6 @@ const Kitchen = () => {
     let orderGroup = kithcenNewOrders.find((orderItem) => {
       return orderItem.id === orderGroupId;
     });
-
     let newItems = orderGroup.orderedItems.map((eachItem) =>
       eachItem.id === itemId
         ? { ...eachItem, is_cooking: eachItem.is_cooking === 0 ? 1 : 0 }
