@@ -8,7 +8,6 @@
     "@testing-library/user-event": "^7.2.1",
     "awesome-react-calculator": "^1.0.9",
     "axios": "^0.20.0",
-    "filterizr": "^2.2.4",
     "i18next": "^19.8.2",
     "i18next-browser-languagedetector": "^6.0.1",
     "i18next-http-backend": "^1.0.21",

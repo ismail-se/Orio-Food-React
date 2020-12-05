@@ -48,6 +48,9 @@ const RestaurantProvider = ({ children }) => {
   const [settledOrders, setSettledOrders] = useState(null);
   const [settledOrdersForSearch, setSettledOrdersForSearch] = useState(null);
 
+  //kitchen new orders
+  const [kithcenNewOrders, setKithcenNewOrders] = useState(null);
+
   //useEffect- to get data on render
   useEffect(() => {
     //call- unauthenticated
@@ -279,6 +282,20 @@ const RestaurantProvider = ({ children }) => {
       .catch(() => {});
   };
 
+  //get kithcen new orders
+  const getKitchenNewOrders = () => {
+    setLoading(true);
+    const url = BASE_URL + "/settings/get-new-orders";
+    return axios
+      .get(url, {
+        headers: { Authorization: `Bearer ${getCookie()}` },
+      })
+      .then((res) => {
+        setKithcenNewOrders(res.data[0]);
+        setLoading(false);
+      });
+  };
+
   return (
     <RestaurantContext.Provider
       value={{
@@ -337,6 +354,11 @@ const RestaurantProvider = ({ children }) => {
         setPaginatedSettledOrders,
         settledOrdersForSearch,
         setSettledOrdersForSearch,
+
+        //kitchen dashboard
+        getKitchenNewOrders,
+        kithcenNewOrders,
+        setKithcenNewOrders,
 
         //pagination
         dataPaginating,
