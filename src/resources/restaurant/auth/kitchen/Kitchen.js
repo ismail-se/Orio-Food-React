@@ -53,7 +53,10 @@ const Kitchen = () => {
   });
 
   useEffect(() => {
+    //get all orders when coming to kithcen
     getKitchenNewOrders();
+
+    //add "All" option to group filter
     let tempFoodGroups = [];
     foodGroupForSearch &&
       foodGroupForSearch.map((item) => {
@@ -102,6 +105,7 @@ const Kitchen = () => {
 
   //accept or reject
   const handleAcceptOrReject = (id) => {
+    //front end accept-reject view update
     let newState = kithcenNewOrders.map((orderItem) =>
       orderItem.id === id
         ? { ...orderItem, is_accepted: orderItem.is_accepted === 0 ? 1 : 0 }
@@ -109,6 +113,7 @@ const Kitchen = () => {
     );
     setKithcenNewOrders(newState);
 
+    //front end accept-reject view update for searched
     if (searchedOrder.searched) {
       let newStateSearched = searchedOrder.list.map((orderItemSearched) =>
         orderItemSearched.id === id
@@ -124,6 +129,7 @@ const Kitchen = () => {
       });
     }
 
+    //set on server
     const url = BASE_URL + "/settings/accept-new-order";
     let formData = {
       id,
@@ -134,12 +140,14 @@ const Kitchen = () => {
       })
       .then(() => {})
       .catch(() => {
+        //undo if any error happened
         newState = newState.map((orderItem) =>
           orderItem.id === id
             ? { ...orderItem, is_accepted: orderItem.is_accepted === 0 ? 1 : 0 }
             : orderItem
         );
         setKithcenNewOrders(newState);
+        //undo if any error happened for searched
         if (searchedOrder.searched) {
           let newStateSearched = searchedOrder.list.map((orderItemSearched) =>
             orderItemSearched.id === id
@@ -181,7 +189,7 @@ const Kitchen = () => {
                   onClose();
                 }}
               >
-                {_t(t("YES, COOKED"))}
+                {_t(t("YES, COOKED!"))}
               </button>
               <button className="btn btn-success ml-2 px-3" onClick={onClose}>
                 {_t(t("NO"))}
@@ -205,10 +213,13 @@ const Kitchen = () => {
         headers: { Authorization: `Bearer ${getCookie()}` },
       })
       .then(() => {
+        //remove ready item from order list
         let newState = kithcenNewOrders.filter((orderItem) => {
           return orderItem.id !== id;
         });
         setKithcenNewOrders(newState);
+
+        //remove ready item from search list
         if (searchedOrder.searched) {
           let newSearchState = searchedOrder.list.filter(
             (orderItemSearched) => {
@@ -239,19 +250,21 @@ const Kitchen = () => {
   const handleEachItemReady = (orderGroupId, itemId) => {
     //to redo the action
     let oldState = kithcenNewOrders;
-
     let oldSearchedState = searchedOrder.list;
 
     //new state
     let orderGroup = kithcenNewOrders.find((orderItem) => {
       return orderItem.id === orderGroupId;
     });
+
+    //updating the item's cooking status
     let newItems = orderGroup.orderedItems.map((eachItem) =>
       eachItem.id === itemId
         ? { ...eachItem, is_cooking: eachItem.is_cooking === 0 ? 1 : 0 }
         : eachItem
     );
 
+    //set updated order list with item's status change
     let newState = kithcenNewOrders.map((orderItem) =>
       orderItem.id === orderGroupId
         ? { ...orderItem, is_accepted: 1, orderedItems: newItems }
@@ -259,6 +272,7 @@ const Kitchen = () => {
     );
     setKithcenNewOrders(newState);
 
+    //searched list update
     if (searchedOrder.searched) {
       //new searched state
       let orderGroup = searchedOrder.list.find((orderItem) => {
@@ -282,6 +296,7 @@ const Kitchen = () => {
       });
     }
 
+    //set server's item status
     const url = BASE_URL + "/settings/mark-order-item-ready";
     let formData = {
       orderGroupId: orderGroupId,
@@ -293,6 +308,7 @@ const Kitchen = () => {
       })
       .then(() => {})
       .catch(() => {
+        //undo if any error occured
         setKithcenNewOrders(oldState);
         setSearchedOrder({
           ...searchedOrder,
@@ -336,6 +352,10 @@ const Kitchen = () => {
                     type="button"
                     onClick={() => {
                       getKitchenNewOrders();
+                      setSearchedOrder({
+                        ...searchedOrder,
+                        searched: false,
+                      });
                     }}
                     className="btn btn-primary btn-block sm-text text-uppercase mb-2 mb-md-0 text-truncate"
                   >
