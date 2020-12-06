@@ -83,61 +83,22 @@ const OrderHistories = () => {
   //useEffect == componentDidMount
   useEffect(() => {}, []);
 
-  //search customers here
-  const handleSearch = (e) => {
-    let searchInput = e.target.value.toLowerCase();
-    if (searchInput.length === 0) {
-      setSearchedOrders({ ...searchedOrders, searched: false });
-    } else {
-      let searchedList = allOrdersForSearch.filter((item) => {
-        //name
-        let lowerCaseItemName = item.name.toLowerCase();
-
-        //email
-        let lowerCaseItemEmail =
-          item.email !== null && item.email.toLowerCase();
-
-        //phn no
-        let lowerCaseItemPhnNo =
-          item.phn_no !== null && item.phn_no.toLowerCase();
-
-        //address
-        let lowerCaseItemAddress =
-          item.address !== null && item.address.toLowerCase();
-
-        //branch
-        let lowerCaseItemBranch =
-          item.branch_name !== null && item.branch_name.toLowerCase();
-        return (
-          lowerCaseItemName.includes(searchInput) ||
-          (lowerCaseItemEmail && lowerCaseItemEmail.includes(searchInput)) ||
-          (lowerCaseItemPhnNo && lowerCaseItemPhnNo.includes(searchInput)) ||
-          (lowerCaseItemAddress &&
-            lowerCaseItemAddress.includes(searchInput)) ||
-          (lowerCaseItemBranch && lowerCaseItemBranch.includes(searchInput))
-        );
-      });
-      setSearchedOrders({
-        ...searchedOrders,
-        list: searchedList,
-        searched: true,
-      });
-    }
-  };
-
-  //delete confirmation modal of waiter
-  const handleDeleteConfirmation = (slug) => {
+  //cancel order confirmation modal
+  const handleDeleteOrderConfirmation = (orderGroup) => {
+    console.log(orderGroup);
     confirmAlert({
       customUI: ({ onClose }) => {
         return (
           <div className="card card-body">
             <h1>{_t(t("Are you sure?"))}</h1>
-            <p className="text-center">{_t(t("You want to delete this?"))}</p>
+            <p className="text-center">
+              {_t(t("You want to cancel this order?"))}
+            </p>
             <div className="d-flex justify-content-center">
               <button
                 className="btn btn-primary"
                 onClick={() => {
-                  handleDeleteCustomer(slug);
+                  handleDeleteOrder(orderGroup);
                   onClose();
                 }}
               >
@@ -153,24 +114,22 @@ const OrderHistories = () => {
     });
   };
 
-  //delete customer here
-  const handleDeleteCustomer = (slug) => {
+  //cancel order here
+  const handleDeleteOrder = (orderGroup) => {
+    let url = BASE_URL + "/settings/delete-order-from-history";
+    let formData = {
+      id: orderGroup.id,
+    };
     setLoading(true);
-    const customerUrl = BASE_URL + `/settings/delete-customer/${slug}`;
-    return axios
-      .get(customerUrl, {
+    axios
+      .post(url, formData, {
         headers: { Authorization: `Bearer ${getCookie()}` },
       })
-      .then((res) => {
-        setAllOrders(res.data[0]);
-        setAllOrdersForSearch(res.data[1]);
-        setSearchedOrders({
-          ...searchedOrders,
-          list: res.data[1],
-        });
+      .then(() => {
         setLoading(false);
-        toast.success(`${_t(t("Customer has been deleted successfully"))}`, {
+        toast.success(`${_t(t("Deleted successfully"))}`, {
           position: "bottom-center",
+          closeButton: false,
           autoClose: 10000,
           hideProgressBar: false,
           closeOnClick: true,
@@ -182,6 +141,7 @@ const OrderHistories = () => {
         setLoading(false);
         toast.error(`${_t(t("Please try again"))}`, {
           position: "bottom-center",
+          closeButton: false,
           autoClose: 10000,
           hideProgressBar: false,
           closeOnClick: true,
@@ -189,94 +149,6 @@ const OrderHistories = () => {
           className: "text-center toast-notification",
         });
       });
-  };
-
-  //cancel order confirmation modal
-  const handleCancelOrderConfirmation = (orderGroup) => {
-    console.log(orderGroup);
-    confirmAlert({
-      customUI: ({ onClose }) => {
-        return (
-          <div className="card card-body">
-            <h1>{_t(t("Are you sure?"))}</h1>
-            <p className="text-center">
-              {_t(t("You want to cancel this order?"))}
-            </p>
-            <div className="d-flex justify-content-center">
-              <button
-                className="btn btn-primary"
-                onClick={() => {
-                  handleCancelOrder(orderGroup);
-                  onClose();
-                }}
-              >
-                {_t(t("Yes, cancel it!"))}
-              </button>
-              <button className="btn btn-success ml-2 px-3" onClick={onClose}>
-                {_t(t("No"))}
-              </button>
-            </div>
-          </div>
-        );
-      },
-    });
-  };
-
-  //cancel order here
-  const handleCancelOrder = (orderGroup) => {
-    if (orderGroup.is_accepted === 0) {
-      let url = BASE_URL + "/settings/cancel-submitted-order";
-      let formData = {
-        id: orderGroup.id,
-      };
-      setLoading(true);
-      axios
-        .post(url, formData, {
-          headers: { Authorization: `Bearer ${getCookie()}` },
-        })
-        .then((res) => {
-          setLoading(false);
-          if (res.data === "accepted") {
-            toast.error(
-              `${_t(t("Can not cancel this order, this is being cooked"))}`,
-              {
-                position: "bottom-center",
-                closeButton: false,
-                autoClose: 10000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                className: "text-center toast-notification",
-              }
-            );
-          }
-        })
-        .catch(() => {
-          setLoading(false);
-          toast.error(`${_t(t("Please try again"))}`, {
-            position: "bottom-center",
-            closeButton: false,
-            autoClose: 10000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            className: "text-center toast-notification",
-          });
-        });
-    } else {
-      toast.error(
-        `${_t(t("Can not cancel this order, this is being cooked"))}`,
-        {
-          position: "bottom-center",
-          closeButton: false,
-          autoClose: 10000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          className: "text-center toast-notification",
-        }
-      );
-    }
   };
 
   return (
@@ -967,7 +839,7 @@ const OrderHistories = () => {
                                                   <button
                                                     className="dropdown-item sm-text text-capitalize"
                                                     onClick={() => {
-                                                      handleCancelOrderConfirmation(
+                                                      handleDeleteOrderConfirmation(
                                                         item
                                                       );
                                                     }}
@@ -1103,7 +975,7 @@ const OrderHistories = () => {
                                                   <button
                                                     className="dropdown-item sm-text text-capitalize"
                                                     onClick={() => {
-                                                      handleCancelOrderConfirmation(
+                                                      handleDeleteOrderConfirmation(
                                                         item
                                                       );
                                                     }}
