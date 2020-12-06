@@ -418,6 +418,7 @@ const WorkPeriod = () => {
                                 getOptionLabel={(option) => option.name}
                                 getOptionValue={(option) => option.name}
                                 classNamePrefix="select"
+                                className="xsm-text"
                                 onChange={handleSetBranchId}
                                 maxMenuHeight="200px"
                                 placeholder={

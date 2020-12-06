@@ -51,6 +51,10 @@ const RestaurantProvider = ({ children }) => {
   //kitchen new orders
   const [kithcenNewOrders, setKithcenNewOrders] = useState(null);
 
+  //settled orders
+  const [allOrders, setAllOrders] = useState(null);
+  const [allOrdersForSearch, setAllOrdersForSearch] = useState(null);
+
   //useEffect- to get data on render
   useEffect(() => {
     //call- unauthenticated
@@ -296,6 +300,37 @@ const RestaurantProvider = ({ children }) => {
       });
   };
 
+  //get all orders for order history
+  const getAllOrders = () => {
+    setLoading(true);
+    const url = BASE_URL + "/settings/get-order-history";
+    return axios
+      .get(url, {
+        headers: { Authorization: `Bearer ${getCookie()}` },
+      })
+      .then((res) => {
+        setAllOrders(res.data[0]);
+        setAllOrdersForSearch(res.data[0]);
+        setLoading(false);
+      });
+  };
+
+  // get paginated settled orders
+  const setPaginatedAllOrders = (pageNo) => {
+    setDataPaginating(true);
+    const url = BASE_URL + "/settings/get-order-history?page=" + pageNo;
+    return axios
+      .get(url, {
+        headers: { Authorization: `Bearer ${getCookie()}` },
+      })
+      .then((res) => {
+        setAllOrders(res.data[0]);
+        setAllOrdersForSearch(res.data[0]);
+        setDataPaginating(false);
+      })
+      .catch(() => {});
+  };
+
   return (
     <RestaurantContext.Provider
       value={{
@@ -362,6 +397,14 @@ const RestaurantProvider = ({ children }) => {
         getKitchenNewOrders,
         kithcenNewOrders,
         setKithcenNewOrders,
+
+        //order histories
+        getAllOrders,
+        allOrders,
+        setAllOrders,
+        setPaginatedAllOrders,
+        allOrdersForSearch,
+        setAllOrdersForSearch,
 
         //pagination
         dataPaginating,

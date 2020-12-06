@@ -1,5 +1,5 @@
 import React, { useEffect, useContext, useState } from "react";
-import { NavLink } from "react-router-dom";
+
 //axios and base url
 import axios from "axios";
 import { BASE_URL } from "../../../../BaseUrl";
@@ -7,10 +7,10 @@ import { BASE_URL } from "../../../../BaseUrl";
 //functions
 import {
   _t,
-  getCookie,
   currencySymbolLeft,
   formatPrice,
   currencySymbolRight,
+  getCookie,
   modalLoading,
   pageLoading,
   paginationLoading,
@@ -28,28 +28,33 @@ import { confirmAlert } from "react-confirm-alert";
 import "react-confirm-alert/src/react-confirm-alert.css";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 import Moment from "react-moment";
 
 //importing context consumer here
-import { SettingsContext } from "../../../../contexts/Settings";
+import { UserContext } from "../../../../contexts/User";
 import { RestaurantContext } from "../../../../contexts/Restaurant";
 
-const Settled = () => {
+const OrderHistories = () => {
   //getting context values here
+  const { authUserInfo } = useContext(UserContext);
+
   const {
+    //branch
+    branchForSearch,
+
+    //order histories
+    getAllOrders,
+    allOrders,
+    setAllOrders,
+    setPaginatedAllOrders,
+    allOrdersForSearch,
+    setAllOrdersForSearch,
+
     //common
     loading,
     setLoading,
-  } = useContext(SettingsContext);
-
-  const {
-    //submitted orders
-    settledOrders,
-    setPaginatedSettledOrders,
-    settledOrdersForSearch,
-
-    //payment-type
-    paymentTypeForSearch,
 
     //pagination
     dataPaginating,
@@ -58,11 +63,6 @@ const Settled = () => {
   const { t } = useTranslation();
 
   // States hook here
-  // paidMoney
-  const [paidMoney, setPaidMoney] = useState(0);
-  //return
-  const [returnMoneyUsd, setReturnMoneyUsd] = useState(0);
-
   //settle order
   const [checkOrderDetails, setCheckOrderDetails] = useState({
     item: null,
@@ -71,53 +71,218 @@ const Settled = () => {
     payment_type: null,
     payment_amount: null,
   });
-
   //search result
-  const [searchedOrder, setSearchedOrder] = useState({
+  let [searchedOrders, setSearchedOrders] = useState({
     list: null,
     searched: false,
   });
 
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
+
   //useEffect == componentDidMount
   useEffect(() => {}, []);
 
-  //search submitted orders here
+  //search customers here
   const handleSearch = (e) => {
     let searchInput = e.target.value.toLowerCase();
     if (searchInput.length === 0) {
-      setSearchedOrder({ ...searchedOrder, searched: false });
+      setSearchedOrders({ ...searchedOrders, searched: false });
     } else {
-      let searchedList = settledOrdersForSearch.filter((item) => {
-        //token
-        let lowerCaseItemToken = JSON.stringify(item.token.id);
+      let searchedList = allOrdersForSearch.filter((item) => {
+        //name
+        let lowerCaseItemName = item.name.toLowerCase();
 
-        //customer
-        let lowerCaseItemCustomer = item.customer_name.toLowerCase();
+        //email
+        let lowerCaseItemEmail =
+          item.email !== null && item.email.toLowerCase();
 
-        //table
-        let lowerCaseItemTable = item.table_name.toLowerCase();
+        //phn no
+        let lowerCaseItemPhnNo =
+          item.phn_no !== null && item.phn_no.toLowerCase();
+
+        //address
+        let lowerCaseItemAddress =
+          item.address !== null && item.address.toLowerCase();
 
         //branch
-        let lowerCaseItemBranch = item.branch_name.toLowerCase();
+        let lowerCaseItemBranch =
+          item.branch_name !== null && item.branch_name.toLowerCase();
         return (
-          lowerCaseItemToken.includes(searchInput) ||
-          lowerCaseItemCustomer.includes(searchInput) ||
-          lowerCaseItemTable.includes(searchInput) ||
+          lowerCaseItemName.includes(searchInput) ||
+          (lowerCaseItemEmail && lowerCaseItemEmail.includes(searchInput)) ||
+          (lowerCaseItemPhnNo && lowerCaseItemPhnNo.includes(searchInput)) ||
+          (lowerCaseItemAddress &&
+            lowerCaseItemAddress.includes(searchInput)) ||
           (lowerCaseItemBranch && lowerCaseItemBranch.includes(searchInput))
         );
       });
-      setSearchedOrder({
-        ...searchedOrder,
+      setSearchedOrders({
+        ...searchedOrders,
         list: searchedList,
         searched: true,
       });
     }
   };
 
+  //delete confirmation modal of waiter
+  const handleDeleteConfirmation = (slug) => {
+    confirmAlert({
+      customUI: ({ onClose }) => {
+        return (
+          <div className="card card-body">
+            <h1>{_t(t("Are you sure?"))}</h1>
+            <p className="text-center">{_t(t("You want to delete this?"))}</p>
+            <div className="d-flex justify-content-center">
+              <button
+                className="btn btn-primary"
+                onClick={() => {
+                  handleDeleteCustomer(slug);
+                  onClose();
+                }}
+              >
+                {_t(t("Yes, delete it!"))}
+              </button>
+              <button className="btn btn-success ml-2 px-3" onClick={onClose}>
+                {_t(t("No"))}
+              </button>
+            </div>
+          </div>
+        );
+      },
+    });
+  };
+
+  //delete customer here
+  const handleDeleteCustomer = (slug) => {
+    setLoading(true);
+    const customerUrl = BASE_URL + `/settings/delete-customer/${slug}`;
+    return axios
+      .get(customerUrl, {
+        headers: { Authorization: `Bearer ${getCookie()}` },
+      })
+      .then((res) => {
+        setAllOrders(res.data[0]);
+        setAllOrdersForSearch(res.data[1]);
+        setSearchedOrders({
+          ...searchedOrders,
+          list: res.data[1],
+        });
+        setLoading(false);
+        toast.success(`${_t(t("Customer has been deleted successfully"))}`, {
+          position: "bottom-center",
+          autoClose: 10000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          className: "text-center toast-notification",
+        });
+      })
+      .catch(() => {
+        setLoading(false);
+        toast.error(`${_t(t("Please try again"))}`, {
+          position: "bottom-center",
+          autoClose: 10000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          className: "text-center toast-notification",
+        });
+      });
+  };
+
+  //cancel order confirmation modal
+  const handleCancelOrderConfirmation = (orderGroup) => {
+    console.log(orderGroup);
+    confirmAlert({
+      customUI: ({ onClose }) => {
+        return (
+          <div className="card card-body">
+            <h1>{_t(t("Are you sure?"))}</h1>
+            <p className="text-center">
+              {_t(t("You want to cancel this order?"))}
+            </p>
+            <div className="d-flex justify-content-center">
+              <button
+                className="btn btn-primary"
+                onClick={() => {
+                  handleCancelOrder(orderGroup);
+                  onClose();
+                }}
+              >
+                {_t(t("Yes, cancel it!"))}
+              </button>
+              <button className="btn btn-success ml-2 px-3" onClick={onClose}>
+                {_t(t("No"))}
+              </button>
+            </div>
+          </div>
+        );
+      },
+    });
+  };
+
+  //cancel order here
+  const handleCancelOrder = (orderGroup) => {
+    if (orderGroup.is_accepted === 0) {
+      let url = BASE_URL + "/settings/cancel-submitted-order";
+      let formData = {
+        id: orderGroup.id,
+      };
+      setLoading(true);
+      axios
+        .post(url, formData, {
+          headers: { Authorization: `Bearer ${getCookie()}` },
+        })
+        .then((res) => {
+          setLoading(false);
+          if (res.data === "accepted") {
+            toast.error(
+              `${_t(t("Can not cancel this order, this is being cooked"))}`,
+              {
+                position: "bottom-center",
+                closeButton: false,
+                autoClose: 10000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                className: "text-center toast-notification",
+              }
+            );
+          }
+        })
+        .catch(() => {
+          setLoading(false);
+          toast.error(`${_t(t("Please try again"))}`, {
+            position: "bottom-center",
+            closeButton: false,
+            autoClose: 10000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            className: "text-center toast-notification",
+          });
+        });
+    } else {
+      toast.error(
+        `${_t(t("Can not cancel this order, this is being cooked"))}`,
+        {
+          position: "bottom-center",
+          closeButton: false,
+          autoClose: 10000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          className: "text-center toast-notification",
+        }
+      );
+    }
+  };
+
   return (
     <>
       <Helmet>
-        <title>{_t(t("Settled orders"))}</title>
+        <title>{_t(t("Order history"))}</title>
       </Helmet>
 
       {/* Settle modal */}
@@ -144,64 +309,6 @@ const Settled = () => {
               <div className="modal-body">{modalLoading(5)}</div>
             ) : (
               <div className="modal-body">
-                {checkOrderDetails.item &&
-                checkOrderDetails.item.is_settled === 0 ? (
-                  // if this item is not settled then show settle-cancel button
-                  <>
-                    {checkOrderDetails.item &&
-                      checkOrderDetails.item.is_cancelled !== 1 && (
-                        <div className="text-right">
-                          {checkOrderDetails.settle &&
-                            paidMoney >
-                              parseFloat(
-                                checkOrderDetails.item.total_payable
-                              ) && (
-                              <span className="mr-2 text-secondary font-weight-bold">
-                                Return: {currencySymbolLeft()}
-                                {formatPrice(returnMoneyUsd)}
-                                {currencySymbolRight()}{" "}
-                              </span>
-                            )}
-                          {checkOrderDetails.settle ? (
-                            <button
-                              className="btn btn-primary px-3 rounded-md text-uppercase"
-                              onClick={() => {
-                                setCheckOrderDetails({
-                                  ...checkOrderDetails,
-                                  settle: false,
-                                  payment_amount: null,
-                                  payment_type: null,
-                                });
-                                setReturnMoneyUsd(0);
-                                setPaidMoney(0);
-                              }}
-                            >
-                              {_t(t("Cancel"))}
-                            </button>
-                          ) : (
-                            <button
-                              className="btn btn-success px-3 rounded-md text-uppercase"
-                              onClick={() => {
-                                setCheckOrderDetails({
-                                  ...checkOrderDetails,
-                                  settle: true,
-                                  payment_amount: null,
-                                  payment_type: null,
-                                });
-                                setReturnMoneyUsd(0);
-                                setPaidMoney(0);
-                              }}
-                            >
-                              {_t(t("Settle order"))}
-                            </button>
-                          )}
-                        </div>
-                      )}
-                  </>
-                ) : (
-                  // if this item is not settled then show settle-cancel button else, show this notification
-                  ""
-                )}
                 {checkOrderDetails.item &&
                   //show this if order is cancelled
                   checkOrderDetails.item.is_cancelled === 1 && (
@@ -518,7 +625,7 @@ const Settled = () => {
         <div className="container">
           <div className="row t-mt-10 gx-2">
             <div className="col-12 t-mb-30 mb-lg-0">
-              {checkOrderDetails.uploading === true || loading === true ? (
+              {loading === true ? (
                 pageLoading()
               ) : (
                 <div className="t-bg-white ">
@@ -529,54 +636,154 @@ const Settled = () => {
                     <div className="col-12 t-mb-15">
                       <ul className="t-list fk-breadcrumb">
                         <li className="fk-breadcrumb__list">
-                          <span className="t-link fk-breadcrumb__link text-capitalize">
-                            {!searchedOrder.searched
-                              ? _t(t("Settled orders"))
-                              : _t(t("Search Result"))}
-                          </span>
+                          <a
+                            href="#"
+                            className="t-link fk-breadcrumb__link text-capitalize"
+                          >
+                            order history
+                          </a>
                         </li>
                       </ul>
                     </div>
-                    <div className="col-md-6 col-lg-5 t-mb-15 mb-md-0">
-                      <ul className="t-list fk-sort align-items-center">
-                        <div className="input-group col">
-                          <div className="form-file">
-                            <input
-                              type="text"
-                              className="form-control border-0 form-control--light-1 rounded-0"
-                              placeholder={
-                                _t(t("Search by token, customer, branch")) +
-                                ".."
-                              }
-                              onChange={handleSearch}
-                            />
-                          </div>
-                          <button className="btn btn-primary" type="button">
-                            <i className="fa fa-search" aria-hidden="true"></i>
-                          </button>
-                        </div>
-                      </ul>
-                    </div>
-                    <div className="col-md-6 col-lg-7">
-                      <div className="row align-items-center gx-2">
-                        <div className="col"></div>
-                        <div className="col">
-                          <NavLink
-                            to="/dashboard/pos"
-                            className="t-link t-pt-8 t-pb-8 t-pl-12 t-pr-12 btn btn-secondary xsm-text text-uppercase text-center w-100"
-                          >
-                            POS
-                          </NavLink>
-                        </div>
-                        <div className="col">
-                          <NavLink
-                            to="/dashboard/pos/submitted"
-                            className="t-link t-pt-8 t-pb-8 t-pl-12 t-pr-12 btn btn-primary xsm-text text-uppercase text-center w-100"
-                          >
-                            Submitted
-                          </NavLink>
+
+                    <div className="col-md-4 col-lg-3">
+                      <div className="input-group">
+                        <button className="btn btn-primary" type="button">
+                          <i className="fa fa-search" aria-hidden="true"></i>
+                        </button>
+                        <div className="form-file">
+                          <input
+                            type="text"
+                            className="form-control border-0 form-control--light-1 rounded-0"
+                            placeholder="Please Search "
+                          />
                         </div>
                       </div>
+                    </div>
+                    {/* large screen  */}
+                    <div className="col-md-8 col-lg-9 t-mb-15 mb-md-0 d-none d-md-block">
+                      <ul className="t-list fk-sort align-items-center justify-content-end">
+                        {authUserInfo.details !== null &&
+                          authUserInfo.details.user_type !== "staff" && (
+                            <li
+                              className="fk-sort__list "
+                              style={{ minWidth: "150px" }}
+                            >
+                              <Select
+                                options={branchForSearch && branchForSearch}
+                                components={makeAnimated()}
+                                getOptionLabel={(option) => option.name}
+                                getOptionValue={(option) => option.name}
+                                className="xsm-text"
+                                onChange={"handleFilter"}
+                                maxMenuHeight="200px"
+                                placeholder={_t(t("Select branch")) + ".."}
+                              />
+                            </li>
+                          )}
+                        <li className="fk-sort__list ml-2">
+                          <DatePicker
+                            selected={startDate}
+                            onChange={(date) => setStartDate(date)}
+                            peekNextMonth
+                            showMonthDropdown
+                            showYearDropdown
+                            dropdownMode="select"
+                            className="form-control xsm-text py-2"
+                            placeholderText={_t(t("From date"))}
+                            shouldCloseOnSelect={false}
+                          />
+                        </li>
+                        <li className="fk-sort__list">
+                          <span className="fk-sort__icon">
+                            <span className="fa fa-long-arrow-right"></span>
+                          </span>
+                        </li>
+                        <li className="fk-sort__list">
+                          <DatePicker
+                            selected={endDate}
+                            onChange={(date) => setEndDate(date)}
+                            peekNextMonth
+                            showMonthDropdown
+                            showYearDropdown
+                            dropdownMode="select"
+                            className="form-control xsm-text py-2"
+                            placeholderText={_t(t("To date"))}
+                            shouldCloseOnSelect={false}
+                          />
+                        </li>
+                        <li class="fk-sort__list">
+                          <a
+                            href="#"
+                            class="btn btn-transparent btn-danger xsm-text text-uppercase py-2"
+                          >
+                            Filter
+                          </a>
+                        </li>
+                      </ul>
+                    </div>
+
+                    {/* mobile screen  */}
+                    <div className="col-md-8 col-lg-9 t-mb-15 mb-md-0 d-block d-md-none">
+                      <ul className="t-list fk-sort align-items-center justify-content-end">
+                        {authUserInfo.details !== null &&
+                          authUserInfo.details.user_type !== "staff" && (
+                            <li
+                              className="fk-sort__list w-100 mt-2"
+                              style={{ minWidth: "150px" }}
+                            >
+                              <Select
+                                options={branchForSearch && branchForSearch}
+                                components={makeAnimated()}
+                                getOptionLabel={(option) => option.name}
+                                getOptionValue={(option) => option.name}
+                                className="xsm-text w-100"
+                                onChange={"handleFilter"}
+                                maxMenuHeight="200px"
+                                placeholder={_t(t("Select branch")) + ".."}
+                              />
+                            </li>
+                          )}
+                        <li
+                          className={`fk-sort__list w-100 ${
+                            authUserInfo.details !== null &&
+                            authUserInfo.details.user_type !== "staff"
+                              ? ""
+                              : "mt-2"
+                          }`}
+                        >
+                          <DatePicker
+                            selected={startDate}
+                            onChange={(date) => setStartDate(date)}
+                            peekNextMonth
+                            showMonthDropdown
+                            showYearDropdown
+                            dropdownMode="select"
+                            className="form-control xsm-text py-2 w-100"
+                            shouldCloseOnSelect={false}
+                          />
+                        </li>
+                        <li className="fk-sort__list w-100">
+                          <DatePicker
+                            selected={startDate}
+                            onChange={(date) => setStartDate(date)}
+                            peekNextMonth
+                            showMonthDropdown
+                            showYearDropdown
+                            dropdownMode="select"
+                            className="form-control xsm-text py-2 w-100"
+                            shouldCloseOnSelect={false}
+                          />
+                        </li>
+                        <li class="fk-sort__list w-100">
+                          <a
+                            href="#"
+                            class="btn btn-transparent btn-danger xsm-text text-uppercase py-2"
+                          >
+                            Filter
+                          </a>
+                        </li>
+                      </ul>
                     </div>
                   </div>
                   <div className="fk-scroll--order-history" data-simplebar>
@@ -631,25 +838,32 @@ const Settled = () => {
                               >
                                 {_t(t("Status"))}
                               </th>
+
+                              <th
+                                scope="col"
+                                className="sm-text text-capitalize align-middle text-center border-1 border"
+                              >
+                                {_t(t("Action"))}
+                              </th>
                             </tr>
                           </thead>
                           <tbody className="align-middle">
                             {/* loop here, logic === !search && haveData && haveDataLegnth > 0*/}
-                            {!searchedOrder.searched
+                            {!searchedOrders.searched
                               ? [
-                                  settledOrders && [
-                                    settledOrders.data.length === 0 ? (
+                                  allOrders && [
+                                    allOrders.data.length === 0 ? (
                                       <tr className="align-middle">
                                         <td
                                           scope="row"
-                                          colSpan="8"
+                                          colSpan="7"
                                           className="xsm-text align-middle text-center"
                                         >
                                           {_t(t("No data available"))}
                                         </td>
                                       </tr>
                                     ) : (
-                                      settledOrders.data.map((item, index) => {
+                                      allOrders.data.map((item, index) => {
                                         return (
                                           <tr
                                             className="align-middle"
@@ -661,9 +875,8 @@ const Settled = () => {
                                             >
                                               {index +
                                                 1 +
-                                                (settledOrders.current_page -
-                                                  1) *
-                                                  settledOrders.per_page}
+                                                (allOrders.current_page - 1) *
+                                                  allOrders.per_page}
                                             </th>
 
                                             <td className="xsm-text text-capitalize align-middle text-center text-secondary">
@@ -700,8 +913,6 @@ const Settled = () => {
                                                           item: item,
                                                           settle: false,
                                                         });
-                                                        setReturnMoneyUsd(0);
-                                                        setPaidMoney(0);
                                                       }}
                                                       data-toggle="modal"
                                                       data-target="#orderDetails"
@@ -717,8 +928,6 @@ const Settled = () => {
                                                           item: item,
                                                           settle: false,
                                                         });
-                                                        setReturnMoneyUsd(0);
-                                                        setPaidMoney(0);
                                                       }}
                                                       data-toggle="modal"
                                                       data-target="#orderDetails"
@@ -736,8 +945,6 @@ const Settled = () => {
                                                       item: item,
                                                       settle: false,
                                                     });
-                                                    setReturnMoneyUsd(0);
-                                                    setPaidMoney(0);
                                                   }}
                                                   data-toggle="modal"
                                                   data-target="#orderDetails"
@@ -745,6 +952,33 @@ const Settled = () => {
                                                   Cancelled
                                                 </span>
                                               )}
+                                            </td>
+
+                                            <td className="xsm-text align-middle text-center">
+                                              <div className="dropdown text-capitalize">
+                                                <button
+                                                  className="btn t-bg-clear t-text-dark--light-40"
+                                                  type="button"
+                                                  data-toggle="dropdown"
+                                                >
+                                                  <i className="fa fa-ellipsis-h"></i>
+                                                </button>
+                                                <div className="dropdown-menu">
+                                                  <button
+                                                    className="dropdown-item sm-text text-capitalize"
+                                                    onClick={() => {
+                                                      handleCancelOrderConfirmation(
+                                                        item
+                                                      );
+                                                    }}
+                                                  >
+                                                    <span className="t-mr-8">
+                                                      <i className="fa fa-trash"></i>
+                                                    </span>
+                                                    {_t(t("Delete Order"))}
+                                                  </button>
+                                                </div>
+                                              </div>
                                             </td>
                                           </tr>
                                         );
@@ -754,19 +988,19 @@ const Settled = () => {
                                 ]
                               : [
                                   /* searched data, logic === haveData*/
-                                  searchedOrder && [
-                                    searchedOrder.list.length === 0 ? (
+                                  searchedOrders && [
+                                    searchedOrders.list.length === 0 ? (
                                       <tr className="align-middle">
                                         <td
                                           scope="row"
-                                          colSpan="8"
+                                          colSpan="7"
                                           className="xsm-text align-middle text-center"
                                         >
                                           {_t(t("No data available"))}
                                         </td>
                                       </tr>
                                     ) : (
-                                      searchedOrder.list.map((item, index) => {
+                                      searchedOrders.list.map((item, index) => {
                                         return (
                                           <tr
                                             className="align-middle"
@@ -778,9 +1012,8 @@ const Settled = () => {
                                             >
                                               {index +
                                                 1 +
-                                                (settledOrders.current_page -
-                                                  1) *
-                                                  settledOrders.per_page}
+                                                (allOrders.current_page - 1) *
+                                                  allOrders.per_page}
                                             </th>
 
                                             <td className="xsm-text text-capitalize align-middle text-center text-secondary">
@@ -817,8 +1050,6 @@ const Settled = () => {
                                                           item: item,
                                                           settle: false,
                                                         });
-                                                        setReturnMoneyUsd(0);
-                                                        setPaidMoney(0);
                                                       }}
                                                       data-toggle="modal"
                                                       data-target="#orderDetails"
@@ -834,8 +1065,6 @@ const Settled = () => {
                                                           item: item,
                                                           settle: false,
                                                         });
-                                                        setReturnMoneyUsd(0);
-                                                        setPaidMoney(0);
                                                       }}
                                                       data-toggle="modal"
                                                       data-target="#orderDetails"
@@ -853,8 +1082,6 @@ const Settled = () => {
                                                       item: item,
                                                       settle: false,
                                                     });
-                                                    setReturnMoneyUsd(0);
-                                                    setPaidMoney(0);
                                                   }}
                                                   data-toggle="modal"
                                                   data-target="#orderDetails"
@@ -862,6 +1089,32 @@ const Settled = () => {
                                                   Cancelled
                                                 </span>
                                               )}
+                                            </td>
+                                            <td className="xsm-text align-middle text-center">
+                                              <div className="dropdown text-capitalize">
+                                                <button
+                                                  className="btn t-bg-clear t-text-dark--light-40"
+                                                  type="button"
+                                                  data-toggle="dropdown"
+                                                >
+                                                  <i className="fa fa-ellipsis-h"></i>
+                                                </button>
+                                                <div className="dropdown-menu">
+                                                  <button
+                                                    className="dropdown-item sm-text text-capitalize"
+                                                    onClick={() => {
+                                                      handleCancelOrderConfirmation(
+                                                        item
+                                                      );
+                                                    }}
+                                                  >
+                                                    <span className="t-mr-8">
+                                                      <i className="fa fa-trash"></i>
+                                                    </span>
+                                                    {_t(t("Delete Order"))}
+                                                  </button>
+                                                </div>
+                                              </div>
                                             </td>
                                           </tr>
                                         );
@@ -877,26 +1130,23 @@ const Settled = () => {
                 </div>
               )}
               {/* pagination loading effect */}
-              {checkOrderDetails.uploading === true || loading === true
+              {loading === true
                 ? paginationLoading()
                 : [
                     // logic === !searched
-                    !searchedOrder.searched ? (
+                    !searchedOrders.searched ? (
                       <div key="fragment4">
                         <div className="t-bg-white mt-1 t-pt-5 t-pb-5">
                           <div className="row align-items-center t-pl-15 t-pr-15">
                             <div className="col-md-7 t-mb-15 mb-md-0">
                               {/* pagination function */}
-                              {pagination(
-                                settledOrders,
-                                setPaginatedSettledOrders
-                              )}
+                              {pagination(allOrders, setPaginatedAllOrders)}
                             </div>
                             <div className="col-md-5">
                               <ul className="t-list d-flex justify-content-md-end align-items-center">
                                 <li className="t-list__item">
                                   <span className="d-inline-block sm-text">
-                                    {showingData(settledOrders)}
+                                    {showingData(allOrders)}
                                   </span>
                                 </li>
                               </ul>
@@ -914,8 +1164,8 @@ const Settled = () => {
                                 <button
                                   className="btn btn-primary btn-sm"
                                   onClick={() =>
-                                    setSearchedOrder({
-                                      ...searchedOrder,
+                                    setSearchedOrders({
+                                      ...searchedOrders,
                                       searched: false,
                                     })
                                   }
@@ -930,8 +1180,8 @@ const Settled = () => {
                               <li className="t-list__item">
                                 <span className="d-inline-block sm-text">
                                   {searchedShowingData(
-                                    searchedOrder,
-                                    settledOrdersForSearch
+                                    searchedOrders,
+                                    allOrdersForSearch
                                   )}
                                 </span>
                               </li>
@@ -949,4 +1199,4 @@ const Settled = () => {
   );
 };
 
-export default Settled;
+export default OrderHistories;

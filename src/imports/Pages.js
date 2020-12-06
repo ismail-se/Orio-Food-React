@@ -9,7 +9,6 @@ import RestaurantLanding from "../resources/restaurant/public/RestaurantLanding"
 
 //private pages
 import RestaurantHome from "../resources/restaurant/auth/RestaurantHome";
-import OrderHistories from "../resources/restaurant/auth/OrderHistories";
 import Branch from "../resources/restaurant/auth/Branch";
 import Reports from "../resources/restaurant/auth/Reports";
 
@@ -23,6 +22,8 @@ import Submitted from "../resources/restaurant/auth/pos/Submitted";
 import Settled from "../resources/restaurant/auth/pos/Settled";
 //kithcen
 import Kitchen from "../resources/restaurant/auth/kitchen/Kitchen";
+//order histories
+import OrderHistories from "../resources/restaurant/auth/orderHistory/OrderHistories";
 
 //from restaurant-auth-manage
 //-food
