@@ -108,6 +108,22 @@ const Kitchen = () => {
         : orderItem
     );
     setKithcenNewOrders(newState);
+
+    if (searchedOrder.searched) {
+      let newStateSearched = searchedOrder.list.map((orderItemSearched) =>
+        orderItemSearched.id === id
+          ? {
+              ...orderItemSearched,
+              is_accepted: orderItemSearched.is_accepted === 0 ? 1 : 0,
+            }
+          : orderItemSearched
+      );
+      setSearchedOrder({
+        ...searchedOrder,
+        list: newStateSearched,
+      });
+    }
+
     const url = BASE_URL + "/settings/accept-new-order";
     let formData = {
       id,
@@ -124,6 +140,20 @@ const Kitchen = () => {
             : orderItem
         );
         setKithcenNewOrders(newState);
+        if (searchedOrder.searched) {
+          let newStateSearched = searchedOrder.list.map((orderItemSearched) =>
+            orderItemSearched.id === id
+              ? {
+                  ...orderItemSearched,
+                  is_accepted: orderItemSearched.is_accepted === 0 ? 1 : 0,
+                }
+              : orderItemSearched
+          );
+          setSearchedOrder({
+            ...searchedOrder,
+            list: newStateSearched,
+          });
+        }
         toast.error(`${_t(t("Please refresh and try again"))}`, {
           position: "bottom-center",
           autoClose: 10000,
@@ -165,6 +195,7 @@ const Kitchen = () => {
 
   //make the order group ready here
   const handleReady = (id) => {
+    setLoading(true);
     const url = BASE_URL + "/settings/mark-all-items-ready";
     let formData = {
       id,
@@ -178,8 +209,21 @@ const Kitchen = () => {
           return orderItem.id !== id;
         });
         setKithcenNewOrders(newState);
+        if (searchedOrder.searched) {
+          let newSearchState = searchedOrder.list.filter(
+            (orderItemSearched) => {
+              return orderItemSearched.id !== id;
+            }
+          );
+          setSearchedOrder({
+            ...searchedOrder,
+            list: newSearchState,
+          });
+        }
+        setLoading(false);
       })
       .catch(() => {
+        setLoading(false);
         toast.error(`${_t(t("Please refresh and try again"))}`, {
           position: "bottom-center",
           autoClose: 10000,
@@ -195,6 +239,8 @@ const Kitchen = () => {
   const handleEachItemReady = (orderGroupId, itemId) => {
     //to redo the action
     let oldState = kithcenNewOrders;
+
+    let oldSearchedState = searchedOrder.list;
 
     //new state
     let orderGroup = kithcenNewOrders.find((orderItem) => {
@@ -213,6 +259,29 @@ const Kitchen = () => {
     );
     setKithcenNewOrders(newState);
 
+    if (searchedOrder.searched) {
+      //new searched state
+      let orderGroup = searchedOrder.list.find((orderItem) => {
+        return orderItem.id === orderGroupId;
+      });
+
+      let newItemsSearched = orderGroup.orderedItems.map((eachItem) =>
+        eachItem.id === itemId
+          ? { ...eachItem, is_cooking: eachItem.is_cooking === 0 ? 1 : 0 }
+          : eachItem
+      );
+
+      let newStateSearched = searchedOrder.list.map((orderItem) =>
+        orderItem.id === orderGroupId
+          ? { ...orderItem, is_accepted: 1, orderedItems: newItemsSearched }
+          : orderItem
+      );
+      setSearchedOrder({
+        ...searchedOrder,
+        list: newStateSearched,
+      });
+    }
+
     const url = BASE_URL + "/settings/mark-order-item-ready";
     let formData = {
       orderGroupId: orderGroupId,
@@ -225,6 +294,10 @@ const Kitchen = () => {
       .then(() => {})
       .catch(() => {
         setKithcenNewOrders(oldState);
+        setSearchedOrder({
+          ...searchedOrder,
+          list: oldSearchedState,
+        });
         toast.error(`${_t(t("Please refresh and try again"))}`, {
           position: "bottom-center",
           autoClose: 10000,
@@ -610,15 +683,33 @@ const Kitchen = () => {
                                 <button
                                   type="button"
                                   className="btn btn-success xsm-text text-uppercase btn-lg mr-2"
+                                  onClick={() =>
+                                    handleReadyConfirmation(item.id)
+                                  }
                                 >
                                   Order ready
                                 </button>
-                                <button
-                                  type="button"
-                                  className="btn btn-secondary xsm-text text-uppercase btn-lg"
-                                >
-                                  Accept order
-                                </button>
+                                {item.is_accepted === 0 ? (
+                                  <button
+                                    type="button"
+                                    className="btn btn-secondary xsm-text text-uppercase btn-lg"
+                                    onClick={() =>
+                                      handleAcceptOrReject(item.id)
+                                    }
+                                  >
+                                    Accept order
+                                  </button>
+                                ) : (
+                                  <button
+                                    type="button"
+                                    className="btn btn-primary xsm-text text-uppercase btn-lg"
+                                    onClick={() =>
+                                      handleAcceptOrReject(item.id)
+                                    }
+                                  >
+                                    Make order pending
+                                  </button>
+                                )}
                               </div>
                               <div className="fk-order-token__body">
                                 <div className="fk-addons-table">
