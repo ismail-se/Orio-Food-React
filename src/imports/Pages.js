@@ -9,7 +9,6 @@ import RestaurantLanding from "../resources/restaurant/public/RestaurantLanding"
 
 //private pages
 import RestaurantHome from "../resources/restaurant/auth/RestaurantHome";
-import Reports from "../resources/restaurant/auth/Reports";
 
 //work periods
 import WorkPeriod from "../resources/restaurant/auth/workPeriod/WorkPeriod";
@@ -23,6 +22,8 @@ import Settled from "../resources/restaurant/auth/pos/Settled";
 import Kitchen from "../resources/restaurant/auth/kitchen/Kitchen";
 //order histories
 import OrderHistories from "../resources/restaurant/auth/orderHistory/OrderHistories";
+//Reports
+import Dashboard from "../resources/restaurant/auth/reports/Dashboard";
 
 //from restaurant-auth-manage
 //-food
@@ -72,7 +73,8 @@ export {
   OrderHistories,
   Customers,
   Kitchen,
-  Reports,
+  //reports
+  Dashboard,
   //manage->food
   GroupCrud,
   UnitCrud,

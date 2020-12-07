@@ -33,7 +33,9 @@ import {
   OrderHistories,
   Customers,
   Kitchen,
-  Reports,
+
+  //Reports
+  Dashboard,
 
   //manage->food
   GroupCrud,
@@ -172,7 +174,12 @@ function App() {
           </RestaurantRoute>
 
           <RestaurantRoute path="/dashboard/reports" exact>
-            <Reports />
+            {authUserInfo.permissions !== null &&
+            checkPermission(authUserInfo.permissions, "Report") ? (
+              <Dashboard />
+            ) : (
+              <NoPermission />
+            )}
           </RestaurantRoute>
 
           {/* Manage routes */}

@@ -214,10 +214,13 @@ const OrderHistories = () => {
 
       let searchedList = null;
       if (searchedOrders.branch !== null) {
-        searchedList = searchedOrders.list.filter((item) => {
+        searchedList = allOrdersForSearch.filter((item) => {
           let itemDate = new Date(item.created_at).getTime();
-
-          return itemDate >= fromMilliseconds && itemDate <= toMilliseconds;
+          return (
+            itemDate >= fromMilliseconds &&
+            itemDate <= toMilliseconds &&
+            item.branch_name === searchedOrders.branch.name
+          );
         });
       } else {
         searchedList = allOrdersForSearch.filter((item) => {
