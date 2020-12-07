@@ -310,7 +310,7 @@ const RestaurantProvider = ({ children }) => {
       })
       .then((res) => {
         setAllOrders(res.data[0]);
-        setAllOrdersForSearch(res.data[0]);
+        setAllOrdersForSearch(res.data[1]);
         setLoading(false);
       });
   };
@@ -325,7 +325,7 @@ const RestaurantProvider = ({ children }) => {
       })
       .then((res) => {
         setAllOrders(res.data[0]);
-        setAllOrdersForSearch(res.data[0]);
+        setAllOrdersForSearch(res.data[1]);
         setDataPaginating(false);
       })
       .catch(() => {});

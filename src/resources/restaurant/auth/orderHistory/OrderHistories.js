@@ -45,12 +45,9 @@ const OrderHistories = () => {
     branchForSearch,
 
     //order histories
-    getAllOrders,
     allOrders,
-    setAllOrders,
     setPaginatedAllOrders,
     allOrdersForSearch,
-    setAllOrdersForSearch,
 
     //common
     loading,
@@ -58,6 +55,7 @@ const OrderHistories = () => {
 
     //pagination
     dataPaginating,
+    setDataPaginating,
   } = useContext(RestaurantContext);
 
   const { t } = useTranslation();
@@ -75,6 +73,7 @@ const OrderHistories = () => {
   let [searchedOrders, setSearchedOrders] = useState({
     list: null,
     searched: false,
+    branch: null,
   });
 
   const [startDate, setStartDate] = useState(null);
@@ -92,7 +91,7 @@ const OrderHistories = () => {
           <div className="card card-body">
             <h1>{_t(t("Are you sure?"))}</h1>
             <p className="text-center">
-              {_t(t("You want to cancel this order?"))}
+              {_t(t("You want to delete this order?"))}
             </p>
             <div className="d-flex justify-content-center">
               <button
@@ -127,6 +126,10 @@ const OrderHistories = () => {
       })
       .then(() => {
         setLoading(false);
+        setSearchedOrders({
+          ...searchedOrders,
+          searched: false,
+        });
         toast.success(`${_t(t("Deleted successfully"))}`, {
           position: "bottom-center",
           closeButton: false,
@@ -149,6 +152,100 @@ const OrderHistories = () => {
           className: "text-center toast-notification",
         });
       });
+  };
+
+  //search submitted orders here
+  const handleSearch = (e) => {
+    let searchInput = e.target.value.toLowerCase();
+    if (searchInput.length === 0) {
+      setSearchedOrders({ ...searchedOrders, searched: false });
+    } else {
+      let searchedList = allOrdersForSearch.filter((item) => {
+        //token
+        let lowerCaseItemToken = JSON.stringify(item.token.id);
+
+        //customer
+        let lowerCaseItemCustomer = item.customer_name.toLowerCase();
+
+        //table
+        let lowerCaseItemTable = item.table_name.toLowerCase();
+
+        //branch
+        let lowerCaseItemBranch = item.branch_name.toLowerCase();
+        return (
+          lowerCaseItemToken.includes(searchInput) ||
+          lowerCaseItemCustomer.includes(searchInput) ||
+          lowerCaseItemTable.includes(searchInput) ||
+          (lowerCaseItemBranch && lowerCaseItemBranch.includes(searchInput))
+        );
+      });
+      setSearchedOrders({
+        ...searchedOrders,
+        list: searchedList,
+        searched: true,
+      });
+    }
+  };
+
+  //branch wise filter
+  const handleBranchFilter = (branch) => {
+    let searchInput = branch.name.toLowerCase();
+    let searchedList = allOrdersForSearch.filter((item) => {
+      //branch
+      let lowerCaseItemBranch = item.branch_name.toLowerCase();
+      return lowerCaseItemBranch && lowerCaseItemBranch.includes(searchInput);
+    });
+    setSearchedOrders({
+      ...searchedOrders,
+      list: searchedList,
+      searched: true,
+      branch,
+    });
+  };
+
+  //date wise filter
+  const handleDateFilter = () => {
+    if (startDate !== null && endDate !== null) {
+      var fromDate = startDate.toISOString();
+      var toDate = endDate.toISOString();
+
+      var fromMilliseconds = new Date(fromDate).getTime();
+      var toMilliseconds = new Date(toDate).getTime() + 60 * 60 * 24 * 1000;
+
+      let searchedList = null;
+      if (searchedOrders.branch !== null) {
+        searchedList = searchedOrders.list.filter((item) => {
+          let itemDate = new Date(item.created_at).getTime();
+
+          return itemDate >= fromMilliseconds && itemDate <= toMilliseconds;
+        });
+      } else {
+        searchedList = allOrdersForSearch.filter((item) => {
+          let itemDate = new Date(item.created_at).getTime();
+
+          return itemDate >= fromMilliseconds && itemDate <= toMilliseconds;
+        });
+      }
+      setDataPaginating(true);
+      setSearchedOrders({
+        ...searchedOrders,
+        list: searchedList,
+        searched: true,
+      });
+      setTimeout(() => {
+        setDataPaginating(false);
+      }, 500);
+    } else {
+      toast.error(`${_t(t("Please select the dates to filter"))}`, {
+        position: "bottom-center",
+        closeButton: false,
+        autoClose: 10000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        className: "text-center toast-notification",
+      });
+    }
   };
 
   return (
@@ -494,7 +591,7 @@ const OrderHistories = () => {
 
       {/* main body */}
       <main id="main" data-simplebar>
-        <div className="container">
+        <div className="container-fluid">
           <div className="row t-mt-10 gx-2">
             <div className="col-12 t-mb-30 mb-lg-0">
               {loading === true ? (
@@ -508,12 +605,11 @@ const OrderHistories = () => {
                     <div className="col-12 t-mb-15">
                       <ul className="t-list fk-breadcrumb">
                         <li className="fk-breadcrumb__list">
-                          <a
-                            href="#"
-                            className="t-link fk-breadcrumb__link text-capitalize"
-                          >
-                            order history
-                          </a>
+                          <span className="t-link fk-breadcrumb__link text-uppercase">
+                            {searchedOrders.searched === false
+                              ? _t(t("Order history"))
+                              : _t(t("Filtered order history"))}
+                          </span>
                         </li>
                       </ul>
                     </div>
@@ -527,7 +623,10 @@ const OrderHistories = () => {
                           <input
                             type="text"
                             className="form-control border-0 form-control--light-1 rounded-0"
-                            placeholder="Please Search "
+                            placeholder={
+                              _t(t("Search by token, customer, branch")) + ".."
+                            }
+                            onChange={handleSearch}
                           />
                         </div>
                       </div>
@@ -547,7 +646,7 @@ const OrderHistories = () => {
                                 getOptionLabel={(option) => option.name}
                                 getOptionValue={(option) => option.name}
                                 className="xsm-text"
-                                onChange={"handleFilter"}
+                                onChange={handleBranchFilter}
                                 maxMenuHeight="200px"
                                 placeholder={_t(t("Select branch")) + ".."}
                               />
@@ -585,12 +684,12 @@ const OrderHistories = () => {
                           />
                         </li>
                         <li class="fk-sort__list">
-                          <a
-                            href="#"
+                          <button
                             class="btn btn-transparent btn-danger xsm-text text-uppercase py-2"
+                            onClick={handleDateFilter}
                           >
                             Filter
-                          </a>
+                          </button>
                         </li>
                       </ul>
                     </div>
@@ -610,7 +709,7 @@ const OrderHistories = () => {
                                 getOptionLabel={(option) => option.name}
                                 getOptionValue={(option) => option.name}
                                 className="xsm-text w-100"
-                                onChange={"handleFilter"}
+                                onChange={handleBranchFilter}
                                 maxMenuHeight="200px"
                                 placeholder={_t(t("Select branch")) + ".."}
                               />
@@ -648,12 +747,12 @@ const OrderHistories = () => {
                           />
                         </li>
                         <li class="fk-sort__list w-100">
-                          <a
-                            href="#"
+                          <button
                             class="btn btn-transparent btn-danger xsm-text text-uppercase py-2"
+                            onClick={handleDateFilter}
                           >
                             Filter
-                          </a>
+                          </button>
                         </li>
                       </ul>
                     </div>
@@ -683,6 +782,14 @@ const OrderHistories = () => {
                               >
                                 {_t(t("Time"))}
                               </th>
+
+                              <th
+                                scope="col"
+                                className="sm-text text-capitalize align-middle text-center border-1 border"
+                              >
+                                {_t(t("Date"))}
+                              </th>
+
                               <th
                                 scope="col"
                                 className="sm-text text-capitalize align-middle text-center border-1 border"
@@ -728,7 +835,7 @@ const OrderHistories = () => {
                                       <tr className="align-middle">
                                         <td
                                           scope="row"
-                                          colSpan="7"
+                                          colSpan="9"
                                           className="xsm-text align-middle text-center"
                                         >
                                           {_t(t("No data available"))}
@@ -758,6 +865,12 @@ const OrderHistories = () => {
                                             <td className="xsm-text text-capitalize align-middle text-center">
                                               <Moment format="LT">
                                                 {item.token.time}
+                                              </Moment>
+                                            </td>
+
+                                            <td className="xsm-text text-capitalize align-middle text-center">
+                                              <Moment format="LL">
+                                                {item.created_at}
                                               </Moment>
                                             </td>
 
@@ -865,7 +978,7 @@ const OrderHistories = () => {
                                       <tr className="align-middle">
                                         <td
                                           scope="row"
-                                          colSpan="7"
+                                          colSpan="9"
                                           className="xsm-text align-middle text-center"
                                         >
                                           {_t(t("No data available"))}
@@ -895,6 +1008,12 @@ const OrderHistories = () => {
                                             <td className="xsm-text text-capitalize align-middle text-center">
                                               <Moment format="LT">
                                                 {item.token.time}
+                                              </Moment>
+                                            </td>
+
+                                            <td className="xsm-text text-capitalize align-middle text-center">
+                                              <Moment format="LL">
+                                                {item.created_at}
                                               </Moment>
                                             </td>
 
@@ -1039,6 +1158,7 @@ const OrderHistories = () => {
                                     setSearchedOrders({
                                       ...searchedOrders,
                                       searched: false,
+                                      branch: null,
                                     })
                                   }
                                 >

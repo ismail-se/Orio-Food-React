@@ -154,7 +154,8 @@ const Navbar = (props) => {
         <header id="header" className="sticky-top">
           <div
             className={`${
-              props.location.pathname.includes("/dashboard/kitchen")
+              props.location.pathname.includes("/dashboard/kitchen") ||
+              props.location.pathname.includes("/dashboard/orders")
                 ? "container-fluid"
                 : "container"
             }`}

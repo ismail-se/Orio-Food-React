@@ -72,7 +72,8 @@ const Footer = () => {
         <footer id="footer" className="sicky-bottom">
           <div
             className={`${
-              window.location.pathname.includes("/dashboard/kitchen")
+              window.location.pathname.includes("/dashboard/kitchen") ||
+              window.location.pathname.includes("/dashboard/orders")
                 ? "container-fluid"
                 : "container"
             }`}
