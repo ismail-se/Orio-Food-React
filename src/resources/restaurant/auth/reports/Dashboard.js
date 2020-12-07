@@ -15,6 +15,7 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Select from "react-select";
 import makeAnimated from "react-select/animated";
+import Chart from "react-apexcharts";
 
 //pages & includes
 import ReportSidebar from "./ReportSidebar";
@@ -50,6 +51,23 @@ const Reports = () => {
   });
 
   let [priceForVariations, setPriceForVariations] = useState(null);
+
+  const [chart, setChart] = useState({
+    options: {
+      chart: {
+        id: "basic-bar",
+      },
+      xaxis: {
+        categories: [1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998],
+      },
+    },
+    series: [
+      {
+        name: "series-1",
+        data: [30, 40, 45, 50, 49, 60, 70, 91],
+      },
+    ],
+  });
 
   //useEffect == componentDidMount()
   useEffect(() => {}, []);
@@ -316,7 +334,7 @@ const Reports = () => {
   return (
     <>
       <Helmet>
-        <title>{_t(t("Add New Item"))}</title>
+        <title>{_t(t("Reports"))}</title>
       </Helmet>
 
       {/* main body */}
@@ -347,274 +365,28 @@ const Reports = () => {
                     ) : (
                       <div key="smtp-form">
                         <div className="row gx-2 align-items-center t-pt-15 t-pb-15">
-                          <div className="col-md-6 col-lg-5 t-mb-15 mb-md-0">
+                          <div className="col-12 t-mb-15 mb-md-0">
                             <ul className="t-list fk-breadcrumb">
                               <li className="fk-breadcrumb__list">
                                 <span className="t-link fk-breadcrumb__link text-capitalize">
-                                  {_t(t("Add new item"))}
+                                  {_t(t("Reports"))}
                                 </span>
                               </li>
                             </ul>
                           </div>
-                          <div className="col-md-6 col-lg-7">
-                            <div className="row gx-3 align-items-center"></div>
-                          </div>
                         </div>
 
-                        {/* Form starts here */}
-                        <form
-                          className="row card p-2 mx-3 mb-5 sm-text"
-                          onSubmit={handleSubmit}
-                        >
-                          <div className="col-12">
-                            {foodGroupForSearch && (
-                              <div className="form-group mt-2">
-                                <div className="mb-2">
-                                  <label
-                                    htmlFor="itemGroup"
-                                    className="control-label"
-                                  >
-                                    {_t(t("Food group"))}
-                                    <span className="text-danger">*</span>
-                                  </label>
-                                </div>
-                                <Select
-                                  options={foodGroupForSearch}
-                                  components={makeAnimated()}
-                                  getOptionLabel={(option) => option.name}
-                                  getOptionValue={(option) => option.name}
-                                  classNamePrefix="select"
-                                  onChange={handleSetItemGroup}
-                                  maxMenuHeight="200px"
-                                  placeholder={
-                                    _t(t("Please select a food group")) + ".."
-                                  }
-                                />
-                              </div>
-                            )}
-
-                            <div className="form-group mt-3">
-                              <div className="mb-2">
-                                <label htmlFor="name" className="control-label">
-                                  {_t(t("Name"))}
-                                  <span className="text-danger">*</span>
-                                </label>
-                              </div>
-                              <div className="mb-2">
-                                <input
-                                  type="text"
-                                  className="form-control"
-                                  id="name"
-                                  name="name"
-                                  onChange={handleChange}
-                                  value={newItem.name}
-                                  placeholder="e.g. Spicy chicken burger"
-                                  required
-                                />
-                              </div>
-                            </div>
-
-                            <div className="form-check mt-4">
-                              <input
-                                type="checkbox"
-                                className="form-check-input"
-                                id="propertyCheck"
-                                checked={newItem.hasProperty}
-                                onChange={handlePropertyCheckboxChange}
-                              />
-                              <label
-                                className="form-check-label"
-                                htmlFor="propertyCheck"
-                              >
-                                {_t(t("Has properties?"))}
-                              </label>
-                            </div>
-                            {propertyGroupForSearch && [
-                              newItem.hasProperty && (
-                                <div className="form-group mt-2 ml-4">
-                                  <div className="mb-2">
-                                    <label className="control-label">
-                                      {_t(t("Add properties"))}
-                                    </label>
-                                  </div>
-                                  <Select
-                                    options={propertyGroupForSearch}
-                                    components={makeAnimated()}
-                                    getOptionLabel={(option) => option.name}
-                                    getOptionValue={(option) => option.name}
-                                    className="basic-multi-select"
-                                    classNamePrefix="select"
-                                    isMulti
-                                    maxMenuHeight="200px"
-                                    onChange={handleSetPropertes}
-                                    placeholder={
-                                      _t(t("Please select property groups")) +
-                                      ".."
-                                    }
-                                  />
-                                </div>
-                              ),
-                            ]}
-
-                            <div className="form-check mt-4">
-                              <input
-                                type="checkbox"
-                                className="form-check-input"
-                                id="variationCheck"
-                                checked={newItem.hasVariation}
-                                onChange={handleVariationCheckboxChange}
-                              />
-                              <label
-                                className="form-check-label"
-                                htmlFor="variationCheck"
-                              >
-                                {_t(t("Has variations?"))}
-                              </label>
-                            </div>
-
-                            {newItem.hasVariation && variationForSearch && (
-                              <div className="form-group mt-2 ml-4">
-                                <div className="mb-2">
-                                  <label className="control-label">
-                                    {_t(t("Add variations"))}
-                                  </label>
-                                </div>
-                                <Select
-                                  options={variationForSearch}
-                                  components={makeAnimated()}
-                                  getOptionLabel={(option) => option.name}
-                                  getOptionValue={(option) => option.name}
-                                  className="basic-multi-select"
-                                  classNamePrefix="select"
-                                  isMulti
-                                  maxMenuHeight="200px"
-                                  onChange={handleSetVariations}
-                                  placeholder={
-                                    _t(t("Please select variations")) + ".."
-                                  }
-                                />
-                              </div>
-                            )}
-                            {newItem.variations !== null && [
-                              newItem.variations.length > 0 && (
-                                <div className="card ml-4 mt-3 p-3 custom-bg-secondary">
-                                  <div className="card-header t-bg-epsilon text-white rounded-sm text-center">
-                                    {_t(
-                                      t("Please enter price for each variation")
-                                    )}
-                                  </div>
-                                  {newItem.variations.map((variationItem) => {
-                                    return (
-                                      <div
-                                        className="form-group mt-4"
-                                        key={variationItem.id}
-                                      >
-                                        <div className="mb-2">
-                                          <label
-                                            htmlFor={variationItem.slug}
-                                            className="control-label sm-text"
-                                          >
-                                            {_t(t("Total price of"))}{" "}
-                                            <span className="text-primary text-bold">
-                                              {variationItem.name}
-                                            </span>{" "}
-                                            {_t(t("variation"))}
-                                            <span className="text-primary">
-                                              *{" "}
-                                            </span>
-                                            <small className="text-secondary">
-                                              ({_t(t("Enter price in USD"))})
-                                            </small>
-                                          </label>
-                                        </div>
-                                        <div className="mb-2">
-                                          <input
-                                            type="number"
-                                            step="0.01"
-                                            min="0"
-                                            className="form-control"
-                                            id={variationItem.slug}
-                                            name={variationItem.slug}
-                                            onChange={handleVariationPrice}
-                                            placeholder="e.g. Type price of this item in 'US dollar'"
-                                            required
-                                          />
-                                        </div>
-                                      </div>
-                                    );
-                                  })}
-                                </div>
-                              ),
-                            ]}
-
-                            {!newItem.hasVariation && (
-                              <div className="form-group mt-4">
-                                <div className="mb-2">
-                                  <label
-                                    htmlFor="price"
-                                    className="control-label"
-                                  >
-                                    {_t(t("Price"))}
-                                    <span className="text-primary">* </span>
-                                    <small className="text-secondary">
-                                      ({_t(t("Enter price in USD"))})
-                                    </small>
-                                  </label>
-                                </div>
-                                <div className="mb-2">
-                                  <input
-                                    id="price"
-                                    type="number"
-                                    step="0.01"
-                                    min="0"
-                                    className="form-control"
-                                    name="price"
-                                    value={newItem.price}
-                                    onChange={handleChange}
-                                    placeholder="e.g. Type price of this item in 'US dollar'"
-                                    required
-                                  />
-                                </div>
-                              </div>
-                            )}
-
-                            <div className="form-group mt-4">
-                              <div className="mb-2">
-                                <label
-                                  htmlFor="image"
-                                  className="control-label"
-                                >
-                                  {_t(t("Image"))}
-                                  <span className="text-danger">*</span>{" "}
-                                  <small className="text-secondary">
-                                    ({_t(t("Square Image Preferable"))})
-                                  </small>
-                                </label>
-                              </div>
-                              <div className="mb-2">
-                                <input
-                                  type="file"
-                                  className="form-control sm-text"
-                                  id="image"
-                                  name="image"
-                                  onChange={handleItemImage}
-                                  required
-                                />
-                              </div>
-                            </div>
-
-                            <div className="form-group mt-5 pb-2">
-                              <div className="col-lg-12">
-                                <button
-                                  className="btn btn-primary px-5"
-                                  type="submit"
-                                >
-                                  {_t(t("Save"))}
-                                </button>
-                              </div>
-                            </div>
+                        <div className="row gx-2 justify-content-center t-pt-15 t-pb-15">
+                          <div className="col-12 t-mb-15 mb-md-0">
+                            <Chart
+                              options={chart.options}
+                              series={chart.series}
+                              type="bar"
+                              width="100%"
+                              height="300"
+                            />
                           </div>
-                        </form>
+                        </div>
                       </div>
                     )}
                   </div>

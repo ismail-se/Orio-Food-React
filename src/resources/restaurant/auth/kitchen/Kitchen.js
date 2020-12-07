@@ -342,6 +342,14 @@ const Kitchen = () => {
                   <ul className="t-list fk-breadcrumb">
                     <li className="fk-breadcrumb__list">
                       <span className="t-link fk-breadcrumb__link text-uppercase">
+                        <span className="mr-2">
+                          <img
+                            src="/assets/img/cooking.png"
+                            alt="cooking"
+                            className="img-fluid"
+                            style={{ height: "40px", width: "40px" }}
+                          />
+                        </span>
                         <span className="mr-1">kitchen</span> dashboard
                       </span>
                     </li>

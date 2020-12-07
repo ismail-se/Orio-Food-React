@@ -85,37 +85,67 @@ const ReportSidebar = () => {
                 rel="noopener noreferrer"
                 href="#"
               >
-                {_t(t("Reports"))}
+                {_t(t("Sale's Reports"))}
               </a>
               <ul className="t-list fk-pos-nav__sub t-bg-white list-group">
+                {/* dashboard */}
+                {managePageHrefLink("/dashboard/reports", _t(t("Dashboard")))}
+
+                {/* daily */}
+                {managePageHrefLink("/dashboard/reports/daily", _t(t("Daily")))}
+
+                {/* monthly */}
                 {managePageHrefLink(
-                  "/dashboard/manage/food/add-new",
-                  _t(t("Dashboard"))
+                  "/dashboard/reports/monthly",
+                  _t(t("Monthly"))
                 )}
 
+                {/* yearly */}
                 {managePageHrefLink(
-                  "/dashboard/manage/food/all-items",
-                  _t(t("All Items"))
+                  "/dashboard/reports/monthly",
+                  _t(t("Yearly"))
                 )}
 
+                {/* food item wise */}
                 {managePageHrefLink(
-                  "/dashboard/manage/food/groups",
-                  _t(t("Groups"))
+                  "/dashboard/reports/food-group",
+                  _t(t("Item Wise"))
                 )}
 
-                {/* {managePageHrefLink(
-                  "/dashboard/manage/food/units",
-                  _t(t("Units"))
-                )} */}
-
+                {/* food group wise */}
                 {managePageHrefLink(
-                  "/dashboard/manage/food/properties",
-                  _t(t("Properties"))
+                  "/dashboard/reports/food-group",
+                  _t(t("Group Wise"))
                 )}
 
+                {/* branch wise */}
                 {managePageHrefLink(
-                  "/dashboard/manage/food/variations",
-                  _t(t("Variations"))
+                  "/dashboard/reports/branch",
+                  _t(t("Branch Wise"))
+                )}
+
+                {/* pos user wise */}
+                {managePageHrefLink(
+                  "/dashboard/reports/pos-user",
+                  _t(t("Pos User Wise"))
+                )}
+
+                {/* food item wise */}
+                {managePageHrefLink(
+                  "/dashboard/reports/dept-tag",
+                  _t(t("Department Wise"))
+                )}
+
+                {/* Service charge wise */}
+                {managePageHrefLink(
+                  "/dashboard/reports/service-charge",
+                  _t(t("Ser. Charge Wise"))
+                )}
+
+                {/* discount charge wise */}
+                {managePageHrefLink(
+                  "/dashboard/reports/discount",
+                  _t(t("discount Wise"))
                 )}
               </ul>
             </li>
