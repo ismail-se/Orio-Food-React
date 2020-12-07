@@ -146,7 +146,12 @@ function App() {
           </RestaurantRoute>
 
           <RestaurantRoute path="/dashboard/orders" exact>
-            <OrderHistories />
+            {authUserInfo.permissions !== null &&
+            checkPermission(authUserInfo.permissions, "Order history") ? (
+              <OrderHistories />
+            ) : (
+              <NoPermission />
+            )}
           </RestaurantRoute>
 
           <RestaurantRoute path="/dashboard/customers" exact>

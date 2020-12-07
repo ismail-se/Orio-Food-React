@@ -1154,13 +1154,15 @@ const OrderHistories = () => {
                               <li className="t-list__item no-pagination-style">
                                 <button
                                   className="btn btn-primary btn-sm"
-                                  onClick={() =>
+                                  onClick={() => {
                                     setSearchedOrders({
                                       ...searchedOrders,
                                       searched: false,
                                       branch: null,
-                                    })
-                                  }
+                                    });
+                                    setStartDate(null);
+                                    setEndDate(null);
+                                  }}
                                 >
                                   {_t(t("Clear Search"))}
                                 </button>

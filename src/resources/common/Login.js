@@ -318,7 +318,7 @@ const Login = () => {
                                 onChange={handleCredentials}
                                 name="remember_me"
                                 type="checkbox"
-                                className="mx-checkbox__input mx-checkbox__input-solid mx-checkbox__input-solid--danger mx-checkbox__input-sm"
+                                className="mx-checkbox__input mx-checkbox__input-solid mx-checkbox__input-solid--danger mx-checkbox__input-sm mt-0-kitchen"
                               />
                               <span className="mx-checkbox__text text-capitalize t-text-heading t-ml-8">
                                 Remember Me
