@@ -9,7 +9,6 @@ import RestaurantLanding from "../resources/restaurant/public/RestaurantLanding"
 
 //private pages
 import RestaurantHome from "../resources/restaurant/auth/RestaurantHome";
-import Branch from "../resources/restaurant/auth/Branch";
 import Reports from "../resources/restaurant/auth/Reports";
 
 //work periods
@@ -73,7 +72,6 @@ export {
   OrderHistories,
   Customers,
   Kitchen,
-  Branch,
   Reports,
   //manage->food
   GroupCrud,

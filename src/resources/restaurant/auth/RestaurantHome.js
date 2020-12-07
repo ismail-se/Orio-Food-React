@@ -122,19 +122,6 @@ const RestaurantHome = () => {
                       )
                     : null}
                   {/* image, imgAltTxt, smallInfoIcon, infoTextColorName, infoText, title, redirectToUrl */}
-                  {/* {authUserInfo.permissions !== null &&
-                  authUserInfo.permissions.includes("Branch")
-                    ? restaurantMenuLink(
-                        "/assets/img/product-img-5.png",
-                        [_t(t("Branch"))],
-                        "fa fa-home",
-                        "t-text-eta",
-                        [_t(t("Branch"))],
-                        [_t(t("Branches"))],
-                        "/dashboard/branches"
-                      )
-                    : null} */}
-                  {/* image, imgAltTxt, smallInfoIcon, infoTextColorName, infoText, title, redirectToUrl */}
                   {authUserInfo.permissions !== null &&
                   authUserInfo.permissions.includes("Report")
                     ? restaurantMenuLink(

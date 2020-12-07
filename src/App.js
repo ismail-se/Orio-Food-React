@@ -33,7 +33,6 @@ import {
   OrderHistories,
   Customers,
   Kitchen,
-  Branch,
   Reports,
 
   //manage->food
@@ -171,10 +170,6 @@ function App() {
               <NoPermission />
             )}
           </RestaurantRoute>
-
-          {/* <RestaurantRoute path="/dashboard/branches" exact>
-            <Branch />
-          </RestaurantRoute> */}
 
           <RestaurantRoute path="/dashboard/reports" exact>
             <Reports />
