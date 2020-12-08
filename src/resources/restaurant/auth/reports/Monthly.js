@@ -557,162 +557,167 @@ const Monthly = () => {
                           </div>
                         </div>
 
-                        {reportData !== null && reportData !== undefined && (
-                          <div className="row gx-2 justify-content-center t-pb-15 t-pt-15">
-                            <div className="card col-12 t-mb-15 mb-md-0 px-2">
-                              <table className="table table-bordered table-hover min-table-height mt-3">
-                                <thead className="align-middle">
-                                  <tr>
-                                    <th
-                                      scope="col"
-                                      className="sm-text text-capitalize align-middle text-center border-1 border"
-                                    >
-                                      {_t(t("S/L"))}
-                                    </th>
+                        {reportData !== null &&
+                          reportData !== undefined &&
+                          reportData.length > 0 && (
+                            <div className="row gx-2 justify-content-center t-pb-15 t-pt-15">
+                              <div className="card col-12 t-mb-15 mb-md-0 px-2">
+                                <table className="table table-bordered table-hover min-table-height mt-3">
+                                  <thead className="align-middle">
+                                    <tr>
+                                      <th
+                                        scope="col"
+                                        className="sm-text text-capitalize align-middle text-center border-1 border"
+                                      >
+                                        {_t(t("S/L"))}
+                                      </th>
 
-                                    <th
-                                      scope="col"
-                                      className="sm-text text-capitalize align-middle text-center border-1 border"
-                                    >
-                                      {_t(t("Token"))}
-                                    </th>
-                                    <th
-                                      scope="col"
-                                      className="sm-text text-capitalize align-middle text-center border-1 border"
-                                    >
-                                      {_t(t("Time"))}
-                                    </th>
-                                    <th
-                                      scope="col"
-                                      className="sm-text text-capitalize align-middle text-center border-1 border"
-                                    >
-                                      {_t(t("Customer"))}
-                                    </th>
+                                      <th
+                                        scope="col"
+                                        className="sm-text text-capitalize align-middle text-center border-1 border"
+                                      >
+                                        {_t(t("Token"))}
+                                      </th>
+                                      <th
+                                        scope="col"
+                                        className="sm-text text-capitalize align-middle text-center border-1 border"
+                                      >
+                                        {_t(t("Time"))}
+                                      </th>
+                                      <th
+                                        scope="col"
+                                        className="sm-text text-capitalize align-middle text-center border-1 border"
+                                      >
+                                        {_t(t("Customer"))}
+                                      </th>
 
-                                    <th
-                                      scope="col"
-                                      className="sm-text text-capitalize align-middle text-center border-1 border"
-                                    >
-                                      {_t(t("Bill"))}
-                                    </th>
+                                      <th
+                                        scope="col"
+                                        className="sm-text text-capitalize align-middle text-center border-1 border"
+                                      >
+                                        {_t(t("Bill"))}
+                                      </th>
 
-                                    <th
-                                      scope="col"
-                                      className="sm-text text-capitalize align-middle text-center border-1 border"
-                                    >
-                                      {_t(t("Branch"))}
-                                    </th>
+                                      <th
+                                        scope="col"
+                                        className="sm-text text-capitalize align-middle text-center border-1 border"
+                                      >
+                                        {_t(t("Branch"))}
+                                      </th>
 
-                                    <th
-                                      scope="col"
-                                      className="sm-text text-capitalize align-middle text-center border-1 border"
-                                    >
-                                      {_t(t("Status"))}
-                                    </th>
-                                  </tr>
-                                </thead>
-                                <tbody className="align-middle">
-                                  {/* loop here*/}
-                                  {reportData.map((item, index) => {
-                                    return (
-                                      <tr className="align-middle" key={index}>
-                                        <th
-                                          scope="row"
-                                          className="xsm-text text-capitalize align-middle text-center"
+                                      <th
+                                        scope="col"
+                                        className="sm-text text-capitalize align-middle text-center border-1 border"
+                                      >
+                                        {_t(t("Status"))}
+                                      </th>
+                                    </tr>
+                                  </thead>
+                                  <tbody className="align-middle">
+                                    {/* loop here*/}
+                                    {reportData.map((item, index) => {
+                                      return (
+                                        <tr
+                                          className="align-middle"
+                                          key={index}
                                         >
-                                          {index + 1}
-                                        </th>
+                                          <th
+                                            scope="row"
+                                            className="xsm-text text-capitalize align-middle text-center"
+                                          >
+                                            {index + 1}
+                                          </th>
 
-                                        <td className="xsm-text text-capitalize align-middle text-center text-secondary">
-                                          #{item.token.id}
-                                        </td>
+                                          <td className="xsm-text text-capitalize align-middle text-center text-secondary">
+                                            #{item.token.id}
+                                          </td>
 
-                                        <td className="xsm-text text-capitalize align-middle text-center">
-                                          <Moment format="LT">
-                                            {item.token.time}
-                                          </Moment>
-                                        </td>
+                                          <td className="xsm-text text-capitalize align-middle text-center">
+                                            <Moment format="LT">
+                                              {item.token.time}
+                                            </Moment>
+                                          </td>
 
-                                        <td className="xsm-text align-middle text-center">
-                                          {item.customer_name}
-                                        </td>
+                                          <td className="xsm-text align-middle text-center">
+                                            {item.customer_name}
+                                          </td>
 
-                                        <td className="xsm-text align-middle text-center">
-                                          {currencySymbolLeft()}
-                                          {formatPrice(item.total_payable)}
-                                          {currencySymbolRight()}
-                                        </td>
+                                          <td className="xsm-text align-middle text-center">
+                                            {currencySymbolLeft()}
+                                            {formatPrice(item.total_payable)}
+                                            {currencySymbolRight()}
+                                          </td>
 
-                                        <td className="xsm-text align-middle text-center">
-                                          {item.branch_name || "-"}
-                                        </td>
+                                          <td className="xsm-text align-middle text-center">
+                                            {item.branch_name || "-"}
+                                          </td>
 
-                                        <td class="xsm-text text-capitalize align-middle text-center">
-                                          {item.is_cancelled === 0 ? (
-                                            [
-                                              item.is_ready === 0 ? (
-                                                <span
-                                                  class="btn btn-transparent btn-secondary xsm-text text-capitalize"
-                                                  onClick={() => {
-                                                    setCheckOrderDetails({
-                                                      ...checkOrderDetails,
-                                                      item: item,
-                                                      settle: false,
-                                                    });
-                                                    setReturnMoneyUsd(0);
-                                                    setPaidMoney(0);
-                                                  }}
-                                                  data-toggle="modal"
-                                                  data-target="#orderDetails"
-                                                >
-                                                  processing
-                                                </span>
-                                              ) : (
-                                                <span
-                                                  class="btn btn-transparent btn-success xsm-text text-capitalize px-4"
-                                                  onClick={() => {
-                                                    setCheckOrderDetails({
-                                                      ...checkOrderDetails,
-                                                      item: item,
-                                                      settle: false,
-                                                    });
-                                                    setReturnMoneyUsd(0);
-                                                    setPaidMoney(0);
-                                                  }}
-                                                  data-toggle="modal"
-                                                  data-target="#orderDetails"
-                                                >
-                                                  Ready
-                                                </span>
-                                              ),
-                                            ]
-                                          ) : (
-                                            <span
-                                              class="btn btn-transparent btn-primary xsm-text text-capitalize px-3"
-                                              onClick={() => {
-                                                setCheckOrderDetails({
-                                                  ...checkOrderDetails,
-                                                  item: item,
-                                                  settle: false,
-                                                });
-                                                setReturnMoneyUsd(0);
-                                                setPaidMoney(0);
-                                              }}
-                                              data-toggle="modal"
-                                              data-target="#orderDetails"
-                                            >
-                                              Cancelled
-                                            </span>
-                                          )}
-                                        </td>
-                                      </tr>
-                                    );
-                                  })}
-                                </tbody>
-                              </table>
+                                          <td class="xsm-text text-capitalize align-middle text-center">
+                                            {item.is_cancelled === 0 ? (
+                                              [
+                                                item.is_ready === 0 ? (
+                                                  <span
+                                                    class="btn btn-transparent btn-secondary xsm-text text-capitalize"
+                                                    onClick={() => {
+                                                      setCheckOrderDetails({
+                                                        ...checkOrderDetails,
+                                                        item: item,
+                                                        settle: false,
+                                                      });
+                                                      setReturnMoneyUsd(0);
+                                                      setPaidMoney(0);
+                                                    }}
+                                                    data-toggle="modal"
+                                                    data-target="#orderDetails"
+                                                  >
+                                                    processing
+                                                  </span>
+                                                ) : (
+                                                  <span
+                                                    class="btn btn-transparent btn-success xsm-text text-capitalize px-4"
+                                                    onClick={() => {
+                                                      setCheckOrderDetails({
+                                                        ...checkOrderDetails,
+                                                        item: item,
+                                                        settle: false,
+                                                      });
+                                                      setReturnMoneyUsd(0);
+                                                      setPaidMoney(0);
+                                                    }}
+                                                    data-toggle="modal"
+                                                    data-target="#orderDetails"
+                                                  >
+                                                    Ready
+                                                  </span>
+                                                ),
+                                              ]
+                                            ) : (
+                                              <span
+                                                class="btn btn-transparent btn-primary xsm-text text-capitalize px-3"
+                                                onClick={() => {
+                                                  setCheckOrderDetails({
+                                                    ...checkOrderDetails,
+                                                    item: item,
+                                                    settle: false,
+                                                  });
+                                                  setReturnMoneyUsd(0);
+                                                  setPaidMoney(0);
+                                                }}
+                                                data-toggle="modal"
+                                                data-target="#orderDetails"
+                                              >
+                                                Cancelled
+                                              </span>
+                                            )}
+                                          </td>
+                                        </tr>
+                                      );
+                                    })}
+                                  </tbody>
+                                </table>
+                              </div>
                             </div>
-                          </div>
-                        )}
+                          )}
                       </div>
                     )}
                   </div>
