@@ -24,6 +24,16 @@ import Kitchen from "../resources/restaurant/auth/kitchen/Kitchen";
 import OrderHistories from "../resources/restaurant/auth/orderHistory/OrderHistories";
 //Reports
 import Dashboard from "../resources/restaurant/auth/reports/Dashboard";
+import Daily from "../resources/restaurant/auth/reports/Daily";
+import Monthly from "../resources/restaurant/auth/reports/Monthly";
+import Yearly from "../resources/restaurant/auth/reports/Yearly";
+import ItemWise from "../resources/restaurant/auth/reports/ItemWise";
+import GroupWise from "../resources/restaurant/auth/reports/GroupWise";
+import BranchWise from "../resources/restaurant/auth/reports/BranchWise";
+import UserWise from "../resources/restaurant/auth/reports/UserWise";
+import DeptWise from "../resources/restaurant/auth/reports/DeptWise";
+import ServiceChargeWise from "../resources/restaurant/auth/reports/ServiceChargeWise";
+import DiscountWise from "../resources/restaurant/auth/reports/DiscountWise";
 
 //from restaurant-auth-manage
 //-food
@@ -75,6 +85,16 @@ export {
   Kitchen,
   //reports
   Dashboard,
+  Daily,
+  Monthly,
+  Yearly,
+  ItemWise,
+  GroupWise,
+  BranchWise,
+  UserWise,
+  DeptWise,
+  ServiceChargeWise,
+  DiscountWise,
   //manage->food
   GroupCrud,
   UnitCrud,

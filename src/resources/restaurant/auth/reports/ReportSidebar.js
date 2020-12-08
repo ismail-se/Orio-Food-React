@@ -92,59 +92,59 @@ const ReportSidebar = () => {
                 {managePageHrefLink("/dashboard/reports", _t(t("Dashboard")))}
 
                 {/* daily */}
-                {managePageHrefLink("/dashboard/reports/daily", _t(t("Daily")))}
+                {managePageHrefLink("/dashboard/daily-reports", _t(t("Daily")))}
 
                 {/* monthly */}
                 {managePageHrefLink(
-                  "/dashboard/reports/monthly",
+                  "/dashboard/monthly-reports",
                   _t(t("Monthly"))
                 )}
 
                 {/* yearly */}
-                {managePageHrefLink(
-                  "/dashboard/reports/monthly",
+                {/* {managePageHrefLink(
+                  "/dashboard/yearly-reports",
                   _t(t("Yearly"))
-                )}
+                )} */}
 
                 {/* food item wise */}
                 {managePageHrefLink(
-                  "/dashboard/reports/food-group",
+                  "/dashboard/food-items-reports",
                   _t(t("Item Wise"))
                 )}
 
                 {/* food group wise */}
                 {managePageHrefLink(
-                  "/dashboard/reports/food-group",
+                  "/dashboard/food-group-reports",
                   _t(t("Group Wise"))
                 )}
 
                 {/* branch wise */}
                 {managePageHrefLink(
-                  "/dashboard/reports/branch",
+                  "/dashboard/branch-reports",
                   _t(t("Branch Wise"))
                 )}
 
                 {/* pos user wise */}
                 {managePageHrefLink(
-                  "/dashboard/reports/pos-user",
+                  "/dashboard/pos-user-reports",
                   _t(t("Pos User Wise"))
                 )}
 
                 {/* food item wise */}
                 {managePageHrefLink(
-                  "/dashboard/reports/dept-tag",
+                  "/dashboard/dept-tag-reports",
                   _t(t("Department Wise"))
                 )}
 
                 {/* Service charge wise */}
                 {managePageHrefLink(
-                  "/dashboard/reports/service-charge",
+                  "/dashboard/service-charge-reports",
                   _t(t("Ser. Charge Wise"))
                 )}
 
                 {/* discount charge wise */}
                 {managePageHrefLink(
-                  "/dashboard/reports/discount",
+                  "/dashboard/discount-reports",
                   _t(t("discount Wise"))
                 )}
               </ul>

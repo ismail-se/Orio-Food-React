@@ -36,6 +36,16 @@ import {
 
   //Reports
   Dashboard,
+  Daily,
+  Monthly,
+  // Yearly,
+  ItemWise,
+  GroupWise,
+  BranchWise,
+  UserWise,
+  DeptWise,
+  ServiceChargeWise,
+  DiscountWise,
 
   //manage->food
   GroupCrud,
@@ -177,6 +187,96 @@ function App() {
             {authUserInfo.permissions !== null &&
             checkPermission(authUserInfo.permissions, "Report") ? (
               <Dashboard />
+            ) : (
+              <NoPermission />
+            )}
+          </RestaurantRoute>
+
+          <RestaurantRoute path="/dashboard/daily-reports" exact>
+            {authUserInfo.permissions !== null &&
+            checkPermission(authUserInfo.permissions, "Report") ? (
+              <Daily />
+            ) : (
+              <NoPermission />
+            )}
+          </RestaurantRoute>
+
+          <RestaurantRoute path="/dashboard/monthly-reports" exact>
+            {authUserInfo.permissions !== null &&
+            checkPermission(authUserInfo.permissions, "Report") ? (
+              <Monthly />
+            ) : (
+              <NoPermission />
+            )}
+          </RestaurantRoute>
+
+          {/* <RestaurantRoute path="/dashboard/yearly-reports" exact>
+            {authUserInfo.permissions !== null &&
+            checkPermission(authUserInfo.permissions, "Report") ? (
+              <Yearly />
+            ) : (
+              <NoPermission />
+            )}
+          </RestaurantRoute> */}
+
+          <RestaurantRoute path="/dashboard/food-items-reports" exact>
+            {authUserInfo.permissions !== null &&
+            checkPermission(authUserInfo.permissions, "Report") ? (
+              <ItemWise />
+            ) : (
+              <NoPermission />
+            )}
+          </RestaurantRoute>
+
+          <RestaurantRoute path="/dashboard/food-group-reports" exact>
+            {authUserInfo.permissions !== null &&
+            checkPermission(authUserInfo.permissions, "Report") ? (
+              <GroupWise />
+            ) : (
+              <NoPermission />
+            )}
+          </RestaurantRoute>
+
+          <RestaurantRoute path="/dashboard/branch-reports" exact>
+            {authUserInfo.permissions !== null &&
+            checkPermission(authUserInfo.permissions, "Report") ? (
+              <BranchWise />
+            ) : (
+              <NoPermission />
+            )}
+          </RestaurantRoute>
+
+          <RestaurantRoute path="/dashboard/pos-user-reports" exact>
+            {authUserInfo.permissions !== null &&
+            checkPermission(authUserInfo.permissions, "Report") ? (
+              <UserWise />
+            ) : (
+              <NoPermission />
+            )}
+          </RestaurantRoute>
+
+          <RestaurantRoute path="/dashboard/dept-tag-reports" exact>
+            {authUserInfo.permissions !== null &&
+            checkPermission(authUserInfo.permissions, "Report") ? (
+              <DeptWise />
+            ) : (
+              <NoPermission />
+            )}
+          </RestaurantRoute>
+
+          <RestaurantRoute path="/dashboard/service-charge-reports" exact>
+            {authUserInfo.permissions !== null &&
+            checkPermission(authUserInfo.permissions, "Report") ? (
+              <ServiceChargeWise />
+            ) : (
+              <NoPermission />
+            )}
+          </RestaurantRoute>
+
+          <RestaurantRoute path="/dashboard/discount-reports" exact>
+            {authUserInfo.permissions !== null &&
+            checkPermission(authUserInfo.permissions, "Report") ? (
+              <DiscountWise />
             ) : (
               <NoPermission />
             )}
