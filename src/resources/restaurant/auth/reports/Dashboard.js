@@ -54,9 +54,6 @@ const Reports = () => {
 
   const [chart, setChart] = useState({
     options: {
-      chart: {
-        id: "basic-bar",
-      },
       xaxis: {
         categories: [
           1991,
@@ -69,11 +66,6 @@ const Reports = () => {
           1998,
           1992,
           1993,
-          1994,
-          1995,
-          1996,
-          1997,
-          1998,
           1992,
           1993,
           1994,
@@ -83,67 +75,6 @@ const Reports = () => {
           1998,
           1992,
           1993,
-          1994,
-          1995,
-          1996,
-          1997,
-          1998,
-          1992,
-          1993,
-          1994,
-          1995,
-          1996,
-          1997,
-          1998,
-          1992,
-          1993,
-          1994,
-          1995,
-          1996,
-          1997,
-          1998,
-          1992,
-          1993,
-          1994,
-          1995,
-          1996,
-          1997,
-          1998,
-          1992,
-          1993,
-          1994,
-          1995,
-          1996,
-          1997,
-          1998,
-          1992,
-          1993,
-          1994,
-          1995,
-          1996,
-          1997,
-          1998,
-          1992,
-          1993,
-          1994,
-          1995,
-          1996,
-          1997,
-          1998,
-          1992,
-          1993,
-          1994,
-          1995,
-          1996,
-          1997,
-          1998,
-          1992,
-          1993,
-          1994,
-          1995,
-          1996,
-          1997,
-          1998,
         ],
         labels: { show: false },
       },
@@ -162,11 +93,6 @@ const Reports = () => {
           91,
           40,
           45,
-          50,
-          49,
-          60,
-          70,
-          91,
           40,
           45,
           50,
@@ -176,71 +102,118 @@ const Reports = () => {
           91,
           40,
           45,
-          50,
-          49,
-          60,
-          70,
-          91,
-          40,
-          45,
-          50,
-          49,
-          60,
-          70,
-          91,
-          40,
-          45,
-          50,
-          49,
-          60,
-          70,
-          91,
-          40,
-          45,
-          50,
-          49,
-          60,
-          70,
-          91,
-          40,
-          45,
-          50,
-          49,
-          60,
-          70,
-          91,
-          40,
-          45,
-          50,
-          49,
-          60,
-          70,
-          91,
-          40,
-          45,
-          50,
-          49,
-          60,
-          70,
-          91,
-          40,
-          45,
-          50,
-          49,
-          60,
-          70,
-          91,
-          40,
-          45,
-          50,
-          49,
-          60,
-          70,
-          91,
         ],
       },
     ],
   });
+
+  const options = {
+    series: [44, 55, 13, 43, 22],
+    options: {
+      chart: {
+        width: 380,
+        type: "pie",
+      },
+      labels: ["Team A", "Team B", "Team C", "Team D", "Team E"],
+      responsive: [
+        {
+          breakpoint: 480,
+          options: {
+            chart: {
+              width: 200,
+            },
+            legend: {
+              position: "bottom",
+            },
+          },
+        },
+      ],
+
+      title: {
+        text: _t(t("Today's revenue by food group")),
+      },
+    },
+  };
+
+  const donoutWithPattern = {
+    series: [44, 55, 41, 17, 13],
+    options: {
+      chart: {
+        width: 380,
+        type: "donut",
+        dropShadow: {
+          enabled: true,
+          color: "#111",
+          top: -1,
+          left: 3,
+          blur: 3,
+          opacity: 0.2,
+        },
+      },
+      stroke: {
+        width: 0,
+      },
+      plotOptions: {
+        pie: {
+          donut: {
+            labels: {
+              show: true,
+              total: {
+                showAlways: true,
+                show: true,
+              },
+            },
+          },
+        },
+      },
+      labels: ["Comedy", "Action", "SciFi", "Drama", "Horror"],
+      dataLabels: {
+        dropShadow: {
+          blur: 3,
+          opacity: 0.8,
+        },
+      },
+      fill: {
+        type: "pattern",
+        opacity: 1,
+        pattern: {
+          enabled: true,
+          style: [
+            "verticalLines",
+            "squares",
+            "horizontalLines",
+            "circles",
+            "slantedLines",
+          ],
+        },
+      },
+      states: {
+        hover: {
+          filter: "none",
+        },
+      },
+      theme: {
+        palette: "palette2",
+      },
+
+      title: {
+        text: _t(t("Today's total revenue of all branches")),
+      },
+      responsive: [
+        {
+          breakpoint: 480,
+          options: {
+            chart: {
+              width: 200,
+            },
+            legend: {
+              position: "bottom",
+            },
+          },
+        },
+      ],
+    },
+  };
 
   //useEffect == componentDidMount()
   useEffect(() => {}, []);
@@ -548,6 +521,61 @@ const Reports = () => {
                             </ul>
                           </div>
                         </div>
+                        <div className="row gx-2 justify-content-center t-pt-15 t-pb-15">
+                          <div className="col-12 col-md-5 t-mb-15 mb-md-0 pie">
+                            <Chart
+                              options={donoutWithPattern.options}
+                              series={donoutWithPattern.series}
+                              type="donut"
+                              width="380"
+                            />
+                          </div>
+                          <div className="col-12 col-md-5 t-mb-15 mb-md-0 pie">
+                            <Chart
+                              options={options.options}
+                              series={options.series}
+                              type="pie"
+                              width="380"
+                            />
+                          </div>
+                        </div>
+                        <hr />
+                        <div className="row gx-2 justify-content-start ml-3">
+                          <div className="col-4 t-mb-15 mb-md-0">
+                            <h4 className="py-1 font-weight-bold text-dark sm-text rounded-sm">
+                              {_t(t("Last month's revenue of each branch"))}
+                            </h4>
+                          </div>
+                        </div>
+
+                        <div className="row gx-2 justify-content-center t-pt-15 t-pb-15">
+                          <div className="col-12 t-mb-15 mb-md-0">
+                            <Chart
+                              options={chart.options}
+                              series={chart.series}
+                              type="bar"
+                              width="100%"
+                              height="300"
+                            />
+                          </div>
+                        </div>
+
+                        <div className="row gx-2 justify-content-center">
+                          <div className="col-4 t-mb-15 mb-md-0">
+                            <div className="py-1 sm-text text-center rounded-sm">
+                              AMOUNT / BRANCH
+                            </div>
+                          </div>
+                        </div>
+                        <hr />
+
+                        <div className="row gx-2 justify-content-start ml-3">
+                          <div className="col-4 t-mb-15 mb-md-0">
+                            <h4 className="py-1 font-weight-bold text-dark sm-text rounded-sm">
+                              {_t(t("Last month's item wise revenue"))}
+                            </h4>
+                          </div>
+                        </div>
 
                         <div className="row gx-2 justify-content-center t-pt-15 t-pb-15">
                           <div className="col-12 t-mb-15 mb-md-0">
@@ -558,6 +586,13 @@ const Reports = () => {
                               width="100%"
                               height="300"
                             />
+                          </div>
+                        </div>
+                        <div className="row gx-2 justify-content-center">
+                          <div className="col-4 t-mb-15 mb-md-0">
+                            <div className="pb-3 sm-text text-center rounded-sm">
+                              AMOUNT / ITEM
+                            </div>
                           </div>
                         </div>
                       </div>

@@ -111,30 +111,38 @@ const Monthly = () => {
 
   //get Monthly reports filter
   const getMonthlySelected = (date) => {
-    var fromDate = date.toISOString();
-    const url = BASE_URL + "/settings/get-monthly-report";
-    let formData = {
-      date: date,
-    };
-    return axios
-      .post(url, formData, {
-        headers: { Authorization: `Bearer ${getCookie()}` },
-      })
-      .then((res) => {
-        let formattedAmount = res.data[1].map((item) =>
-          parseFloat(formatPrice(item))
-        );
-        setAmountChart({
-          ...amountChart,
-          options: {
-            ...amountChart.options,
-            xaxis: { ...amountChart.options.xaxis, categories: res.data[0] },
-          },
-          series: [{ name: amountChart.series[0].name, data: formattedAmount }],
+    if (date !== null) {
+      setLoading(true);
+      var fromDate = date.toISOString();
+      const url = BASE_URL + "/settings/get-monthly-report";
+      let formData = {
+        date: date,
+      };
+      return axios
+        .post(url, formData, {
+          headers: { Authorization: `Bearer ${getCookie()}` },
+        })
+        .then((res) => {
+          let formattedAmount = res.data[1].map((item) =>
+            parseFloat(formatPrice(item))
+          );
+          setAmountChart({
+            ...amountChart,
+            options: {
+              ...amountChart.options,
+              xaxis: { ...amountChart.options.xaxis, categories: res.data[0] },
+            },
+            series: [
+              { name: amountChart.series[0].name, data: formattedAmount },
+            ],
+          });
+          setReportData(res.data[2]);
+          setLoading(false);
+        })
+        .catch((error) => {
+          setLoading(false);
         });
-        setReportData(res.data[2]);
-      })
-      .catch((error) => {});
+    }
   };
 
   return (
