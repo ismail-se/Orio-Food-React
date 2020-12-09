@@ -258,6 +258,30 @@ const GroupWise = () => {
                                             scope="col"
                                             className="sm-text text-capitalize align-middle text-center border-1 border"
                                           >
+                                            {_t(t("Name"))}
+                                          </th>
+                                          <th
+                                            scope="col"
+                                            className="sm-text text-capitalize align-middle text-center border-1 border"
+                                          >
+                                            {_t(t("Group"))}
+                                          </th>
+                                          <th
+                                            scope="col"
+                                            className="sm-text text-capitalize align-middle text-center border-1 border"
+                                          >
+                                            {_t(t("Variation"))}
+                                          </th>
+                                          <th
+                                            scope="col"
+                                            className="sm-text text-capitalize align-middle text-center border-1 border"
+                                          >
+                                            {_t(t("Qty"))}
+                                          </th>
+                                          <th
+                                            scope="col"
+                                            className="sm-text text-capitalize align-middle text-center border-1 border"
+                                          >
                                             {_t(t("Bill"))}
                                           </th>
                                         </tr>
@@ -278,7 +302,27 @@ const GroupWise = () => {
                                               </th>
 
                                               <td className="xsm-text align-middle text-center">
-                                                -
+                                                {item.food_item}
+                                              </td>
+
+                                              <td className="xsm-text align-middle text-center">
+                                                {item.food_group}
+                                              </td>
+
+                                              <td className="xsm-text align-middle text-center">
+                                                {item.variation !== null
+                                                  ? item.variation
+                                                  : "-"}
+                                              </td>
+
+                                              <td className="xsm-text align-middle text-center">
+                                                {item.quantity}
+                                              </td>
+
+                                              <td className="xsm-text align-middle text-center">
+                                                {currencySymbolLeft()}
+                                                {formatPrice(item.price)}
+                                                {currencySymbolRight()}
                                               </td>
                                             </tr>
                                           );
