@@ -43,9 +43,13 @@ const Login = () => {
     getSmtp,
     getPermissionGroups,
   } = useContext(SettingsContext);
-  let { getAuthUser, authUserInfo, getCustomer, getWaiter } = useContext(
-    UserContext
-  );
+  let {
+    getAuthUser,
+    authUserInfo,
+    getCustomer,
+    getWaiter,
+    getAdminStaff,
+  } = useContext(UserContext);
   let {
     getBranch,
     getTable,
@@ -147,6 +151,7 @@ const Login = () => {
             getSmtp();
           }
           if (res.data[3] !== null && res.data[3].includes("Customer")) {
+            getAdminStaff();
             getWorkPeriod();
             getCustomer();
             getTable();

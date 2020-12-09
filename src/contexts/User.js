@@ -48,6 +48,7 @@ const UserProvider = ({ children }) => {
       getAuthUser();
       getWaiter();
       getCustomer();
+      getAdminStaff();
     }
   }, []);
 

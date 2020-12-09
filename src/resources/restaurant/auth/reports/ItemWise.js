@@ -141,7 +141,7 @@ const ItemWise = () => {
   return (
     <>
       <Helmet>
-        <title>{_t(t("Group wise reports"))}</title>
+        <title>{_t(t("Food item wise reports"))}</title>
       </Helmet>
 
       {/* main body */}
@@ -176,7 +176,7 @@ const ItemWise = () => {
                             <ul className="t-list fk-breadcrumb">
                               <li className="fk-breadcrumb__list">
                                 <span className="t-link fk-breadcrumb__link text-capitalize">
-                                  {_t(t("Food Group Wise reports"))}
+                                  {_t(t("Food Item Wise reports"))}
                                 </span>
                               </li>
                             </ul>
@@ -244,7 +244,7 @@ const ItemWise = () => {
                               reportData !== undefined &&
                               reportData.length > 0 && (
                                 <div className="row gx-2 justify-content-center t-pb-15 t-pt-15">
-                                  <div className="card col-12 t-mb-15 mb-md-0 px-2">
+                                  <div className="col-12 t-mb-15 mb-md-0 table-responsive">
                                     <table className="table table-bordered table-hover min-table-height mt-3">
                                       <thead className="align-middle">
                                         <tr>

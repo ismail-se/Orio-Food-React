@@ -244,7 +244,7 @@ const GroupWise = () => {
                               reportData !== undefined &&
                               reportData.length > 0 && (
                                 <div className="row gx-2 justify-content-center t-pb-15 t-pt-15">
-                                  <div className="card col-12 t-mb-15 mb-md-0 px-2">
+                                  <div className="col-12 t-mb-15 mb-md-0 table-responsive">
                                     <table className="table table-bordered table-hover min-table-height mt-3">
                                       <thead className="align-middle">
                                         <tr>
@@ -283,6 +283,12 @@ const GroupWise = () => {
                                             className="sm-text text-capitalize align-middle text-center border-1 border"
                                           >
                                             {_t(t("Bill"))}
+                                          </th>
+                                          <th
+                                            scope="col"
+                                            className="sm-text text-capitalize align-middle text-center border-1 border"
+                                          >
+                                            {_t(t("Date"))}
                                           </th>
                                         </tr>
                                       </thead>
@@ -323,6 +329,11 @@ const GroupWise = () => {
                                                 {currencySymbolLeft()}
                                                 {formatPrice(item.price)}
                                                 {currencySymbolRight()}
+                                              </td>
+                                              <td className="xsm-text align-middle text-center">
+                                                <Moment format="LL">
+                                                  {item.created_at}
+                                                </Moment>
                                               </td>
                                             </tr>
                                           );
