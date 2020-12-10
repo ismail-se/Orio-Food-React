@@ -149,7 +149,7 @@ const BranchWise = () => {
   return (
     <>
       <Helmet>
-        <title>{_t(t("Branch wise reports"))}</title>
+        <title>{_t(t("Branch wise report"))}</title>
       </Helmet>
 
       {/* Settle modal */}
@@ -519,7 +519,7 @@ const BranchWise = () => {
                             <ul className="t-list fk-breadcrumb">
                               <li className="fk-breadcrumb__list">
                                 <span className="t-link fk-breadcrumb__link text-capitalize">
-                                  {_t(t("Branch Wise reports"))}
+                                  {_t(t("Branch Wise report"))}
                                 </span>
                               </li>
                             </ul>

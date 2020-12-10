@@ -141,7 +141,7 @@ const GroupWise = () => {
   return (
     <>
       <Helmet>
-        <title>{_t(t("Group wise reports"))}</title>
+        <title>{_t(t("Group wise report"))}</title>
       </Helmet>
 
       {/* main body */}
@@ -176,7 +176,7 @@ const GroupWise = () => {
                             <ul className="t-list fk-breadcrumb">
                               <li className="fk-breadcrumb__list">
                                 <span className="t-link fk-breadcrumb__link text-capitalize">
-                                  {_t(t("Food Group Wise reports"))}
+                                  {_t(t("Food Group Wise report"))}
                                 </span>
                               </li>
                             </ul>

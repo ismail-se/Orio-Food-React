@@ -147,7 +147,7 @@ const Monthly = () => {
   return (
     <>
       <Helmet>
-        <title>{_t(t("Monthly reports"))}</title>
+        <title>{_t(t("Monthly report"))}</title>
       </Helmet>
 
       {/* Settle modal */}
@@ -517,7 +517,7 @@ const Monthly = () => {
                             <ul className="t-list fk-breadcrumb">
                               <li className="fk-breadcrumb__list">
                                 <span className="t-link fk-breadcrumb__link text-capitalize">
-                                  {_t(t("Monthly reports"))}
+                                  {_t(t("Monthly report"))}
                                 </span>
                               </li>
                             </ul>

@@ -149,7 +149,7 @@ const UserWise = () => {
   return (
     <>
       <Helmet>
-        <title>{_t(t("POS user wise reports"))}</title>
+        <title>{_t(t("POS user wise report"))}</title>
       </Helmet>
 
       {/* Settle modal */}
@@ -519,7 +519,7 @@ const UserWise = () => {
                             <ul className="t-list fk-breadcrumb">
                               <li className="fk-breadcrumb__list">
                                 <span className="t-link fk-breadcrumb__link text-capitalize">
-                                  {_t(t("POS user Wise reports"))}
+                                  {_t(t("POS user Wise report"))}
                                 </span>
                               </li>
                             </ul>
