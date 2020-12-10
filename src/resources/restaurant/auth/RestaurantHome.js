@@ -125,7 +125,7 @@ const RestaurantHome = () => {
                   {authUserInfo.permissions !== null &&
                   authUserInfo.permissions.includes("Report")
                     ? restaurantMenuLink(
-                        "/assets/img/product-img-7.png",
+                        "/assets/img/product-img-7.jpg",
                         [_t(t("Reports"))],
                         "fa fa-clock-o",
                         "t-text-kappa",
@@ -155,7 +155,7 @@ const RestaurantHome = () => {
                     >
                       <div className="product-card__head">
                         <img
-                          src="/assets/img/product-img-6.png"
+                          src="/assets/img/product-img-6.jpg"
                           alt={_t(t("Logout"))}
                           className="img-fluid"
                         />
