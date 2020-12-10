@@ -6,7 +6,12 @@ import axios from "axios";
 import { BASE_URL } from "../../../../BaseUrl";
 
 //functions
-import { _t, getCookie, tableLoading } from "../../../../functions/Functions";
+import {
+  _t,
+  getCookie,
+  formatPrice,
+  tableLoading,
+} from "../../../../functions/Functions";
 import { useTranslation } from "react-i18next";
 
 //3rd party packages
@@ -22,7 +27,6 @@ import ReportSidebar from "./ReportSidebar";
 
 //context consumer
 import { SettingsContext } from "../../../../contexts/Settings";
-import { FoodContext } from "../../../../contexts/Food";
 
 const Reports = () => {
   const { t } = useTranslation();
@@ -30,113 +34,10 @@ const Reports = () => {
   //getting context values here
   let { loading, setLoading, dataPaginating } = useContext(SettingsContext);
 
-  let {
-    setFoodForSearch,
-    foodGroupForSearch,
-    propertyGroupForSearch,
-    variationForSearch,
-  } = useContext(FoodContext);
-
   // States hook here
-  //new item
-  let [newItem, setNewItem] = useState({
-    itemGroup: null,
-    name: "",
-    price: "",
-    image: null,
-    hasProperty: false,
-    properties: null,
-    hasVariation: false,
-    variations: null,
-  });
-
-  let [priceForVariations, setPriceForVariations] = useState(null);
-
-  const [chart, setChart] = useState({
-    options: {
-      xaxis: {
-        categories: [
-          1991,
-          1992,
-          1993,
-          1994,
-          1995,
-          1996,
-          1997,
-          1998,
-          1992,
-          1993,
-          1992,
-          1993,
-          1994,
-          1995,
-          1996,
-          1997,
-          1998,
-          1992,
-          1993,
-        ],
-        labels: { show: false },
-      },
-    },
-    series: [
-      {
-        name: "series-1",
-        data: [
-          30,
-          40,
-          45,
-          50,
-          49,
-          60,
-          70,
-          91,
-          40,
-          45,
-          40,
-          45,
-          50,
-          49,
-          60,
-          70,
-          91,
-          40,
-          45,
-        ],
-      },
-    ],
-  });
-
-  const options = {
-    series: [44, 55, 13, 43, 22],
-    options: {
-      chart: {
-        width: 380,
-        type: "pie",
-      },
-      labels: ["Team A", "Team B", "Team C", "Team D", "Team E"],
-      responsive: [
-        {
-          breakpoint: 480,
-          options: {
-            chart: {
-              width: 200,
-            },
-            legend: {
-              position: "bottom",
-            },
-          },
-        },
-      ],
-
-      title: {
-        text: _t(t("Today's revenue by food group")),
-      },
-    },
-  };
-
-  const donoutWithPattern = {
-    series: [44, 55, 41, 17, 13],
+  //donout chart
+  const [donoutWithPattern, setDonoutWithPattern] = useState({
+    series: [],
     options: {
       chart: {
         width: 380,
@@ -166,7 +67,7 @@ const Reports = () => {
           },
         },
       },
-      labels: ["Comedy", "Action", "SciFi", "Drama", "Horror"],
+      labels: [],
       dataLabels: {
         dropShadow: {
           blur: 3,
@@ -213,270 +114,236 @@ const Reports = () => {
         },
       ],
     },
-  };
+  });
+
+  //pie chart
+  const [options, setOptions] = useState({
+    series: [],
+    options: {
+      chart: {
+        width: 380,
+        type: "pie",
+      },
+      labels: [],
+      responsive: [
+        {
+          breakpoint: 480,
+          options: {
+            chart: {
+              width: 200,
+            },
+            legend: {
+              position: "bottom",
+            },
+          },
+        },
+      ],
+
+      title: {
+        text: _t(t("Today's revenue by food group")),
+      },
+    },
+  });
+
+  //monthly branch
+  const [chart, setChart] = useState({
+    options: {
+      xaxis: {
+        categories: [],
+        labels: { show: true },
+      },
+    },
+    series: [
+      {
+        name: _t(t("Amount")),
+        data: [],
+      },
+    ],
+  });
+
+  //monthly branch
+  const [chartitem, setChartItem] = useState({
+    options: {
+      xaxis: {
+        categories: [],
+        labels: { show: false },
+      },
+    },
+    series: [
+      {
+        name: _t(t("Amount")),
+        data: [],
+      },
+    ],
+  });
 
   //useEffect == componentDidMount()
-  useEffect(() => {}, []);
-
-  //on change input field
-  const handleChange = (e) => {
-    setNewItem({ ...newItem, [e.target.name]: e.target.value });
-  };
-
-  //set image hook
-  const handleItemImage = (e) => {
-    setNewItem({
-      ...newItem,
-      [e.target.name]: e.target.files[0],
-    });
-  };
-
-  //set properties hook
-  const handleSetPropertes = (properties) => {
-    setNewItem({ ...newItem, properties });
-  };
-
-  //set variations hook
-  const handleSetVariations = (variations) => {
-    setNewItem({ ...newItem, variations });
-  };
-
-  //set each variation price
-  const handleVariationPrice = (e) => {
-    setPriceForVariations({
-      ...priceForVariations,
-      [e.target.name]: e.target.value,
-    });
-  };
-
-  //handle Set item group hook
-  const handleSetItemGroup = (itemGroup) => {
-    setNewItem({ ...newItem, itemGroup });
-  };
-
-  //has Property
-  const handlePropertyCheckboxChange = (e) => {
-    if (newItem.hasProperty === true) {
-      setNewItem({
-        ...newItem,
-        properties: null,
-        hasProperty: !newItem.hasProperty,
-      });
-    } else {
-      setNewItem({ ...newItem, hasProperty: !newItem.hasProperty });
-    }
-  };
-
-  //has variations
-  const handleVariationCheckboxChange = (e) => {
-    if (newItem.hasVariation === true) {
-      setNewItem({
-        ...newItem,
-        variations: null,
-        hasVariation: !newItem.hasVariation,
-      });
-    } else {
-      setNewItem({ ...newItem, hasVariation: !newItem.hasVariation });
-    }
-  };
-
-  //post req of food item add
-  const foodItemAxios = () => {
+  useEffect(() => {
     setLoading(true);
-    let formData = new FormData();
-    formData.append("food_group_id", newItem.itemGroup.id);
-    formData.append("name", newItem.name);
-    formData.append("hasProperty", newItem.hasProperty === true ? 1 : 0);
-    if (newItem.hasProperty === true) {
-      formData.append("hasProperty", 1);
-      let tempArray = [];
-      newItem.properties.map((pItem) => {
-        tempArray.push(pItem.id);
-      });
-      formData.append("properties", tempArray);
-    }
+    getReport();
+    setTimeout(() => {
+      setLoading(false);
+    }, 500);
+  }, []);
 
-    formData.append("hasVariation", newItem.hasVariation === true ? 1 : 0);
-    if (newItem.hasVariation === false) {
-      formData.append("price", newItem.price);
-    } else {
-      //converting variations and prices to array
-      let slugArray = [];
-      newItem.variations.map((newVarItem) => {
-        slugArray.push(newVarItem.slug);
-      });
-      slugArray.map((slugItem) => {
-        formData.append("slugOfVariations[]", slugItem);
-      });
-
-      let tempData = Object.entries(priceForVariations);
-      tempData.map((item) => {
-        formData.append("variations[]", item);
-      });
-    }
-
-    formData.append("image", newItem.image);
-    const url = BASE_URL + "/settings/new-food-item";
+  //get reports
+  const getReport = () => {
+    const url = BASE_URL + "/settings/report-dashboard";
     return axios
-      .post(url, formData, {
+      .get(url, {
         headers: { Authorization: `Bearer ${getCookie()}` },
       })
       .then((res) => {
-        setFoodForSearch(res.data[1]);
-        setNewItem({
-          itemGroup: null,
-          name: "",
-          price: "",
-          image: null,
-          hasProperty: false,
-          properties: null,
-          hasVariation: false,
-          variations: null,
-        });
-        setLoading(false);
-        toast.success(`${_t(t("Food item has been added"))}`, {
-          position: "bottom-center",
-          autoClose: 10000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          className: "text-center toast-notification",
-        });
+        dailyBranch(res.data[0], res.data[1]);
+        monthlyBranch(res.data[2], res.data[3]);
+        dailyGroup(res.data[4], res.data[5]);
+        monthlyItems(res.data[6], res.data[7]);
       })
-      .catch((error) => {
-        setLoading(false);
-        if (error.response.data.errors.image) {
-          error.response.data.errors.image.forEach((item) => {
-            if (item === "Please select a valid image file") {
-              toast.error(`${_t(t("Please select a valid image file"))}`, {
-                position: "bottom-center",
-                autoClose: 10000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                className: "text-center toast-notification",
-              });
-            }
-            if (item === "Please select a file less than 5MB") {
-              toast.error(`${_t(t("Please select a file less than 5MB"))}`, {
-                position: "bottom-center",
-                autoClose: 10000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                className: "text-center toast-notification",
-              });
-            }
-          });
-        }
-      });
+      .catch((error) => {});
   };
 
-  //send to server
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    //check item group selected
-    if (newItem.itemGroup !== null) {
-      //check property is selected or not if property checkbox is checked
-      if (newItem.hasProperty === true && newItem.properties === null) {
-        toast.error(`${_t(t("Please select properties"))}`, {
-          position: "bottom-center",
-          autoClose: 10000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          className: "text-center toast-notification",
-        });
-      } else {
-        //if property checkbox is not selected
-        if (newItem.hasProperty === false) {
-          //check variation is selected or not if variation checkbox is checked
-          if (newItem.hasVariation === true && newItem.variations === null) {
-            toast.error(`${_t(t("Please select variations"))}`, {
-              position: "bottom-center",
-              autoClose: 10000,
-              hideProgressBar: false,
-              closeOnClick: true,
-              pauseOnHover: true,
-              className: "text-center toast-notification",
-            });
-          } else {
-            //if variation checkbox is not selected
-            if (newItem.hasVariation === false) {
-              foodItemAxios();
-            } else {
-              //if variation checkbox is selected, options selected, but deleted all selected options at once
-              if (newItem.variations.length > 0) {
-                foodItemAxios();
-              } else {
-                toast.error(`${_t(t("Please select variations"))}`, {
-                  position: "bottom-center",
-                  autoClose: 10000,
-                  hideProgressBar: false,
-                  closeOnClick: true,
-                  pauseOnHover: true,
-                  className: "text-center toast-notification",
-                });
-              }
-            }
-          }
-        } else {
-          //if property checkbox is selected, options selected, but deleted all selected options at once
-          if (newItem.properties.length > 0) {
-            if (newItem.hasVariation === true && newItem.variations === null) {
-              toast.error(`${_t(t("Please select variations"))}`, {
-                position: "bottom-center",
-                autoClose: 10000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                className: "text-center toast-notification",
-              });
-            } else {
-              //if variation checkbox is not selected
-              if (newItem.hasVariation === false) {
-                foodItemAxios();
-              } else {
-                //if variation checkbox is selected, options selected, but deleted all selected options at once
-                if (newItem.variations.length > 0) {
-                  foodItemAxios();
-                } else {
-                  toast.error(`${_t(t("Please select variations"))}`, {
-                    position: "bottom-center",
-                    autoClose: 10000,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    className: "text-center toast-notification",
-                  });
-                }
-              }
-            }
-          } else {
-            toast.error(`${_t(t("Please select properties"))}`, {
-              position: "bottom-center",
-              autoClose: 10000,
-              hideProgressBar: false,
-              closeOnClick: true,
-              pauseOnHover: true,
-              className: "text-center toast-notification",
-            });
-          }
-        }
-      }
-    } else {
-      //if item group not selected
-      toast.error(`${_t(t("Please select a Food Group for this item"))}`, {
-        position: "bottom-center",
-        autoClose: 10000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        className: "text-center toast-notification",
-      });
-    }
+  //set daily branch
+  const dailyBranch = (name, amount) => {
+    let formattedAmount = amount.map((item) => parseFloat(formatPrice(item)));
+    setDonoutWithPattern({
+      series: formattedAmount,
+      options: {
+        chart: {
+          width: 380,
+          type: "donut",
+          dropShadow: {
+            enabled: true,
+            color: "#111",
+            top: -1,
+            left: 3,
+            blur: 3,
+            opacity: 0.2,
+          },
+        },
+        stroke: {
+          width: 0,
+        },
+        plotOptions: {
+          pie: {
+            donut: {
+              labels: {
+                show: true,
+                total: {
+                  showAlways: true,
+                  show: true,
+                },
+              },
+            },
+          },
+        },
+        labels: name,
+        dataLabels: {
+          dropShadow: {
+            blur: 3,
+            opacity: 0.8,
+          },
+        },
+        fill: {
+          type: "pattern",
+          opacity: 1,
+          pattern: {
+            enabled: true,
+            style: [
+              "verticalLines",
+              "squares",
+              "horizontalLines",
+              "circles",
+              "slantedLines",
+            ],
+          },
+        },
+        states: {
+          hover: {
+            filter: "none",
+          },
+        },
+        theme: {
+          palette: "palette2",
+        },
+
+        title: {
+          text: _t(t("Today's total revenue of all branches")),
+        },
+        responsive: [
+          {
+            breakpoint: 480,
+            options: {
+              chart: {
+                width: 200,
+              },
+              legend: {
+                position: "bottom",
+              },
+            },
+          },
+        ],
+      },
+    });
   };
 
+  //set daily foodgroup
+  const dailyGroup = (name, amount) => {
+    let formattedAmount = amount.map((item) => parseFloat(formatPrice(item)));
+
+    setOptions({
+      series: formattedAmount,
+      options: {
+        chart: {
+          width: 380,
+          type: "pie",
+        },
+        labels: name,
+        responsive: [
+          {
+            breakpoint: 480,
+            options: {
+              chart: {
+                width: 200,
+              },
+              legend: {
+                position: "bottom",
+              },
+            },
+          },
+        ],
+
+        title: {
+          text: _t(t("Today's revenue by food group")),
+        },
+      },
+    });
+  };
+
+  //set monthly branch
+  const monthlyBranch = (name, amount) => {
+    let formattedAmount = amount.map((item) => parseFloat(formatPrice(item)));
+    setChart({
+      ...chart,
+      options: {
+        ...chart.options,
+        xaxis: { ...chart.options.xaxis, categories: name },
+      },
+      series: [{ name: chart.series[0].name, data: formattedAmount }],
+    });
+  };
+
+  //set monthly items
+  const monthlyItems = (name, amount) => {
+    let formattedAmount = amount.map((item) => parseFloat(formatPrice(item)));
+    setChartItem({
+      ...chartitem,
+      options: {
+        ...chartitem.options,
+        xaxis: { ...chartitem.options.xaxis, categories: name },
+      },
+      series: [{ name: chartitem.series[0].name, data: formattedAmount }],
+    });
+  };
   return (
     <>
       <Helmet>
@@ -580,8 +447,8 @@ const Reports = () => {
                         <div className="row gx-2 justify-content-center t-pt-15 t-pb-15">
                           <div className="col-12 t-mb-15 mb-md-0">
                             <Chart
-                              options={chart.options}
-                              series={chart.series}
+                              options={chartitem.options}
+                              series={chartitem.series}
                               type="line"
                               width="100%"
                               height="300"

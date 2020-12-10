@@ -92,7 +92,6 @@ const Monthly = () => {
         headers: { Authorization: `Bearer ${getCookie()}` },
       })
       .then((res) => {
-        console.log(res.data[2]);
         let formattedAmount = res.data[1].map((item) =>
           parseFloat(formatPrice(item))
         );
