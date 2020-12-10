@@ -139,11 +139,11 @@ const restaurantMenuLink = (
 ) => {
   return (
     <div className="col-md-6 col-lg-4 t-mb-15">
-      <NavLink to={redirectTo} className="t-link product-card t-bg-white">
-        <div className="product-card__head">
+      <NavLink to={redirectTo} className="t-link product-card t-bg-white w-100">
+        <div className="product-card__head w-100 text-center">
           <img src={img} alt={imgAlt} className="img-fluid" />
         </div>
-        <div className="product-card__body">
+        <div className="product-card__body w-100">
           <div className="product-card__add">
             <span className="product-card__add-icon">
               <span className="las la-plus"></span>

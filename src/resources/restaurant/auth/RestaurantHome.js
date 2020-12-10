@@ -59,7 +59,7 @@ const RestaurantHome = () => {
                   {authUserInfo.permissions !== null &&
                   authUserInfo.permissions.includes("Work period")
                     ? restaurantMenuLink(
-                        "/assets/img/product-img-1.png",
+                        "/assets/img/product-img-1.jpg",
                         [_t(t("Work Periods"))],
                         "fa fa-clock-o",
                         "t-text-alpha",
@@ -73,7 +73,7 @@ const RestaurantHome = () => {
                   {authUserInfo.permissions !== null &&
                   authUserInfo.permissions.includes("POS")
                     ? restaurantMenuLink(
-                        "/assets/img/product-img-2.png",
+                        "/assets/img/product-img-2.jpg",
                         [_t(t("Point of Sale"))],
                         "fa fa-cart-plus",
                         "t-text-gamma",
@@ -86,7 +86,7 @@ const RestaurantHome = () => {
                   {authUserInfo.permissions !== null &&
                   authUserInfo.permissions.includes("Order history")
                     ? restaurantMenuLink(
-                        "/assets/img/product-img-3.png",
+                        "/assets/img/product-img-3.jpg",
                         [_t(t("Order Histories"))],
                         "fa fa-pencil",
                         "t-text-delta",
@@ -99,7 +99,7 @@ const RestaurantHome = () => {
                   {authUserInfo.permissions !== null &&
                   authUserInfo.permissions.includes("Customer")
                     ? restaurantMenuLink(
-                        "/assets/img/product-img-4.png",
+                        "/assets/img/product-img-4.jpg",
                         [_t(t("Customers"))],
                         "fa fa-user-circle-o",
                         "t-text-primary",
@@ -112,7 +112,7 @@ const RestaurantHome = () => {
                   {authUserInfo.permissions !== null &&
                   authUserInfo.permissions.includes("Kitchen")
                     ? restaurantMenuLink(
-                        "/assets/img/product-img-9.gif",
+                        "/assets/img/product-img-9.jpg",
                         [_t(t("Kitchen"))],
                         "fa fa-coffee",
                         "t-text-epsilon",
