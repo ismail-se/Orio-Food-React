@@ -2271,16 +2271,6 @@ const Pos = () => {
                             </NavLink>
                           )}
                         </div>
-
-                        {/* <div className="col">
-                          <NavLink
-                            to="/dashboard/pos"
-                            target="_blank"
-                            className="t-link t-pt-8 t-pb-8 t-pl-12 t-pr-12 btn btn-secondary xsm-text text-uppercase text-center w-100"
-                          >
-                            New pos page
-                          </NavLink>
-                        </div> */}
                       </div>
                     </div>
                   </div>
