@@ -2,11 +2,11 @@
   width: 100%;
   height: 30%;
   background-color: #323232;
-  font-size: 14vmin;
+  font-size: 60px;
   color: white;
   display: flex;
   align-items: flex-end;
-  flex-direction: column-reverse;
+  overflow-x: auto;
 }
 
 .DisplaySpan {
