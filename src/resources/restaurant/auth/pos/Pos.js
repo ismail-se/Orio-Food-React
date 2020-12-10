@@ -26,13 +26,13 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Moment from "react-moment";
 import { useReactToPrint } from "react-to-print";
-// import Calculator from "awesome-react-calculator";
 
 //importing context consumer here
 import { UserContext } from "../../../../contexts/User";
 import { SettingsContext } from "../../../../contexts/Settings";
 import { RestaurantContext } from "../../../../contexts/Restaurant";
 import { FoodContext } from "../../../../contexts/Food";
+import Calculator from "./calc/Calculator";
 
 const Pos = () => {
   //getting context values here
@@ -85,6 +85,8 @@ const Pos = () => {
     properties: null,
   });
 
+  //calculator
+  const [calculatorMenu, setCalculatorMenu] = useState(false);
   //new order
   const [newOrder, setNewOrder] = useState(null);
   //active index of order list
@@ -2206,7 +2208,7 @@ const Pos = () => {
                           )}
                         <NavLink
                           to="/dashboard"
-                          class="t-heading-font btn btn-primary btn-sm text-uppercase sm-text"
+                          className="t-heading-font btn btn-primary btn-sm text-uppercase sm-text"
                         >
                           Goto Dashboard
                         </NavLink>
@@ -4111,45 +4113,19 @@ const Pos = () => {
                                     <div className="fk-calculator-container">
                                       <button
                                         type="button"
-                                        className="btn btn-info text-uppercase fk-calculator-toggle"
+                                        className="btn btn-info text-uppercase"
+                                        onClick={() =>
+                                          setCalculatorMenu(!calculatorMenu)
+                                        }
                                       >
                                         <i className="fa fa-calculator"></i>
                                       </button>
-                                      <div className="calculator">
-                                        <div className="input" id="input"></div>
-                                        <div className="buttons">
-                                          <div className="operators">
-                                            <div>+</div>
-                                            <div>-</div>
-                                            <div>&times;</div>
-                                            <div>&divide;</div>
-                                          </div>
-                                          <div className="leftPanel">
-                                            <div className="numbers">
-                                              <div>7</div>
-                                              <div>8</div>
-                                              <div>9</div>
-                                            </div>
-                                            <div className="numbers">
-                                              <div>4</div>
-                                              <div>5</div>
-                                              <div>6</div>
-                                            </div>
-                                            <div className="numbers">
-                                              <div>1</div>
-                                              <div>2</div>
-                                              <div>3</div>
-                                            </div>
-                                            <div className="numbers">
-                                              <div>0</div>
-                                              <div>.</div>
-                                              <div id="clear">C</div>
-                                            </div>
-                                          </div>
-                                          <div className="equal" id="result">
-                                            =
-                                          </div>
-                                        </div>
+                                      <div
+                                        className={`calculator ${
+                                          calculatorMenu && "active"
+                                        }`}
+                                      >
+                                        <Calculator />
                                       </div>
                                     </div>
                                   </div>

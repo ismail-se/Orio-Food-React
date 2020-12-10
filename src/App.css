@@ -111,16 +111,8 @@ html {
 }
 
 /* Calculator css override */
-.react-calc.button-panel {
-  padding: 15px 0px 0px 12px !important;
-}
-.result-panel {
-  overflow: auto !important;
-}
-.s1 .last {
-  color: #fff;
-  box-shadow: inset 1px 1px 0 0 #880c12 !important;
-  background-color: #de222a !important;
+.calculator {
+  width: 350px;
 }
 
 /* payment type multiple clear all button hide */
