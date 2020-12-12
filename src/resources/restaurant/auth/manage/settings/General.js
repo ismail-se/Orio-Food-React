@@ -54,6 +54,9 @@ const General = () => {
   //new item
   let [newSettings, setNewSettings] = useState({
     footerText: getSystemSettings(generalSettings, "type_footer"),
+    siteName: getSystemSettings(generalSettings, "siteName"),
+    address: getSystemSettings(generalSettings, "address"),
+    phnNo: getSystemSettings(generalSettings, "phnNo"),
     vat: getSystemSettings(generalSettings, "type_vat"),
     image: null,
     print_kitchen_bill:
@@ -115,6 +118,9 @@ const General = () => {
     formData.append("type_background", colorPick.color);
     formData.append("type_color", colorTextPick.color);
     formData.append("type_footer", newSettings.footerText);
+    formData.append("siteName", newSettings.siteName);
+    formData.append("address", newSettings.address);
+    formData.append("phnNo", newSettings.phnNo);
     formData.append("type_vat", newSettings.vat);
     formData.append("print_kitchen_bill", newSettings.print_kitchen_bill);
     formData.append("play_sound", newSettings.play_sound);
@@ -127,6 +133,9 @@ const General = () => {
         setGeneralSettings(res.data);
         setNewSettings({
           footerText: getSystemSettings(res.data, "type_footer"),
+          siteName: getSystemSettings(res.data, "siteName"),
+          address: getSystemSettings(res.data, "address"),
+          phnNo: getSystemSettings(res.data, "phnNo"),
           vat: getSystemSettings(res.data, "type_vat"),
           image: null,
           print_kitchen_bill:
@@ -263,6 +272,75 @@ const General = () => {
                           onSubmit={handleSubmit}
                         >
                           <div className="col-12">
+                            <div className="form-group mt-3">
+                              <div className="mb-2">
+                                <label
+                                  htmlFor="siteName"
+                                  className="control-label"
+                                >
+                                  {_t(t("Site's name"))}
+                                </label>
+                              </div>
+                              <div className="mb-2">
+                                <input
+                                  type="text"
+                                  className="form-control sm-text"
+                                  id="siteName"
+                                  name="siteName"
+                                  onChange={handleChange}
+                                  value={newSettings.siteName}
+                                  placeholder="e.g. Khadyo Restaurant"
+                                  required
+                                />
+                              </div>
+                            </div>
+
+                            <div className="form-group mt-4">
+                              <div className="mb-2">
+                                <label
+                                  htmlFor="address"
+                                  className="control-label"
+                                >
+                                  {_t(t("Address"))}
+                                </label>
+                              </div>
+                              <div className="mb-2">
+                                <input
+                                  type="text"
+                                  className="form-control sm-text"
+                                  id="address"
+                                  name="address"
+                                  onChange={handleChange}
+                                  value={newSettings.address}
+                                  placeholder="e.g. Type address"
+                                  required
+                                />
+                              </div>
+                            </div>
+
+                            <div className="form-group mt-4">
+                              <div className="mb-2">
+                                <label
+                                  htmlFor="phnNo"
+                                  className="control-label"
+                                >
+                                  {_t(t("Phone number"))}
+                                </label>
+                              </div>
+                              <div className="mb-2">
+                                <input
+                                  type="text"
+                                  className="form-control sm-text"
+                                  id="phnNo"
+                                  name="phnNo"
+                                  onChange={handleChange}
+                                  value={newSettings.phnNo}
+                                  placeholder="e.g. +8801xxx"
+                                  required
+                                />
+                              </div>
+                            </div>
+
                             <div className="form-group mt-3">
                               <div className="mb-2">
                                 <label className="control-label">

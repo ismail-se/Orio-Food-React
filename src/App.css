@@ -203,3 +203,9 @@ html {
 .mt-0-kitchen {
   margin-top: 0px !important;
 }
+
+/* POS Page Tab Screen Order List */
+li.addons-list__item.active {
+  background: red;
+  color: white;
+}

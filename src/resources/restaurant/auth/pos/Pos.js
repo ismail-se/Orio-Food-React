@@ -1464,14 +1464,394 @@ const Pos = () => {
       {/* Print bill */}
       <div className="d-none">
         <div ref={componentRef}>
-          {newOrder ? "New order not empty" : "New order Null"}
+          {newOrder && (
+            <div className="fk-print t-pt-30 t-pb-30">
+              <div className="container">
+                <div className="row">
+                  <div className="col-12">
+                    <span className="d-block fk-print-text fk-print-text--bold text-uppercase fk-print__title text-center mb-2">
+                      {getSystemSettings(generalSettings, "siteName")}
+                    </span>
+                    <p className="mb-0 xsm-text fk-print-text text-center text-capitalize">
+                      {getSystemSettings(generalSettings, "address")}
+                    </p>
+                    <p className="mb-0 xsm-text fk-print-text text-center text-capitalize">
+                      call: {getSystemSettings(generalSettings, "phnNo")}
+                    </p>
+                    <hr className="mb-0" />
+                    <span className="d-block fk-print-text fk-print-text--bold text-uppercase text-center lg-text">
+                      Token: {orderDetails && orderDetails.token.id}
+                    </span>
+                    <p className="mb-0 xsm-text fk-print-text text-capitalize">
+                      Vat reg: Applied
+                    </p>
+                    <p className="mb-0 xsm-text fk-print-text text-capitalize">
+                      date: <Moment format="LL">{new Date()}</Moment>
+                      {", "}
+                      {orderDetails && (
+                        <Moment format="LT">{orderDetails.token.time}</Moment>
+                      )}
+                    </p>
+                    <p className="mb-0 xsm-text fk-print-text text-capitalize">
+                      Total guests: {orderDetails && orderDetails.total_guest}
+                    </p>
+                    <p className="mb-0 xsm-text fk-print-text text-capitalize">
+                      waiter name:{" "}
+                      {orderDetails && orderDetails.waiter !== null
+                        ? orderDetails.waiter.name
+                        : ""}
+                    </p>
+                    <table className="table mb-0 table-borderless">
+                      <thead>
+                        <tr>
+                          <th
+                            scope="col"
+                            className="fk-print-text fk-print-text--bold sm-text text-capitalize"
+                          >
+                            item
+                          </th>
+                          <th
+                            scope="col"
+                            className="fk-print-text fk-print-text--bold sm-text text-capitalize text-center"
+                          >
+                            qty
+                          </th>
+                          <th
+                            scope="col"
+                            className="fk-print-text fk-print-text--bold sm-text text-capitalize text-right"
+                          >
+                            price
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {newOrder.map((printItem, printItemIndex) => {
+                          return (
+                            <tr>
+                              <th className="fk-print-text xsm-text text-capitalize">
+                                <span className="d-block">
+                                  {printItem.item.name}
+                                </span>
+                                {parseInt(printItem.item.has_variation) === 1 &&
+                                  printItem.variation && (
+                                    <span className="xxsm-text d-block">
+                                      Variation:{" "}
+                                      {printItem.variation.variation_name}
+                                    </span>
+                                  )}
+
+                                {/* properties */}
+                                {printItem.properties &&
+                                  printItem.properties.length > 0 &&
+                                  selectedPropertyGroup[printItemIndex] !==
+                                    undefined &&
+                                  selectedPropertyGroup[printItemIndex].map(
+                                    (thisIsGroup) => {
+                                      let theGroup =
+                                        propertyGroupForSearch &&
+                                        propertyGroupForSearch.find(
+                                          (theItem) => {
+                                            return theItem.id === thisIsGroup;
+                                          }
+                                        );
+                                      return (
+                                        <div className="d-block">
+                                          <span className="text-capitalize xxsm-text d-inline-block mr-1">
+                                            {theGroup && theGroup.name} :
+                                          </span>
+                                          {printItem.properties.map(
+                                            (propertyName, propertyIndex) => {
+                                              if (
+                                                propertyName.item
+                                                  .property_group_id ===
+                                                theGroup.id
+                                              ) {
+                                                return (
+                                                  <span className="text-capitalize xxsm-text d-inline-block mr-1">
+                                                    {propertyName.item.name}{" "}
+                                                    <span>
+                                                      {" "}
+                                                      {propertyName.quantity >
+                                                        1 &&
+                                                        "(" +
+                                                          propertyName.quantity +
+                                                          ")"}
+                                                    </span>
+                                                    {printItem.properties
+                                                      .length -
+                                                      1 !==
+                                                      propertyIndex && ","}
+                                                  </span>
+                                                );
+                                              } else {
+                                                return true;
+                                              }
+                                            }
+                                          )}
+                                        </div>
+                                      );
+                                    }
+                                  )}
+                              </th>
+                              <td className="fk-print-text xsm-text text-capitalize text-center">
+                                {printItem.quantity}
+                              </td>
+                              <td className="fk-print-text xsm-text text-capitalize text-right">
+                                {currencySymbolLeft()}
+                                {showPriceOfEachOrderItem(printItemIndex)}
+                                {currencySymbolRight()}
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                    <hr />
+                    <hr className="m-0" />
+                    <table className="table mb-0 table-borderless">
+                      <tbody>
+                        <tr>
+                          <th className="fk-print-text xsm-text text-capitalize">
+                            <span className="d-block">total</span>
+                          </th>
+                          <td className="fk-print-text xsm-text text-capitalize text-right">
+                            {currencySymbolLeft()}
+                            {formatPrice(theSubTotal)}
+                            {currencySymbolRight()}
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                    <table className="table mb-0 table-borderless">
+                      <tbody>
+                        <tr>
+                          <th className="fk-print-text xsm-text text-capitalize">
+                            <span className="d-block">
+                              VAT{" ("}
+                              {newSettings && newSettings.vat}%{")"}
+                            </span>
+                          </th>
+                          <td className="fk-print-text xsm-text text-capitalize text-right">
+                            {currencySymbolLeft()}
+                            {formatPrice(theVat)}
+                            {currencySymbolRight()}
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                    <table className="table mb-0 table-borderless">
+                      <tbody>
+                        <tr>
+                          <th className="fk-print-text xsm-text text-capitalize">
+                            <span className="d-block">Service Charge</span>
+                          </th>
+
+                          {orderDetails && (
+                            <td className="fk-print-text xsm-text text-capitalize text-right">
+                              {currencySymbolLeft()}
+                              {formatPrice(orderDetails.serviceCharge)}
+                              {currencySymbolRight()}
+                            </td>
+                          )}
+                        </tr>
+                      </tbody>
+                    </table>
+                    <table className="table mb-0 table-borderless">
+                      <tbody>
+                        <tr>
+                          <th className="fk-print-text xsm-text text-capitalize">
+                            <span className="d-block">discount</span>
+                          </th>
+                          {orderDetails && (
+                            <td className="fk-print-text xsm-text text-capitalize text-right">
+                              {currencySymbolLeft()}
+                              {formatPrice(orderDetails.discount)}
+                              {currencySymbolRight()}
+                            </td>
+                          )}
+                        </tr>
+                      </tbody>
+                    </table>
+                    <hr />
+                    <hr />
+                    <table className="table mb-0 table-borderless">
+                      <tbody>
+                        <tr>
+                          <th className="fk-print-text fk-print-text--bold sm-text text-capitalize">
+                            <span className="d-block">grand total</span>
+                          </th>
+                          <td className="fk-print-text fk-print-text--bold xsm-text text-capitalize text-right">
+                            {currencySymbolLeft()}
+                            {formatPrice(totalPayable)}
+                            {currencySymbolRight()}
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                    <hr />
+                    <hr />
+                    <p className="mb-0 xsm-text fk-print-text text-capitalize text-center">
+                      bill prepared by:{" "}
+                      {authUserInfo &&
+                        authUserInfo.details &&
+                        authUserInfo.details.name}
+                    </p>
+                    <p className="mb-0 xsm-text fk-print-text text-capitalize text-center">
+                      looking forward to serve you again
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
       {/* Print bill kitchen */}
       <div className="d-none">
         <div ref={component2Ref}>
-          {newOrder ? "New order not empty" : "New order Null"}
+          {newOrder && (
+            <div className="fk-print t-pt-30 t-pb-30">
+              <div className="container">
+                <div className="row">
+                  <div className="col-12">
+                    <span className="d-block fk-print-text fk-print-text--bold text-uppercase fk-print__title text-center mb-2">
+                      {getSystemSettings(generalSettings, "siteName")}
+                    </span>
+                    <p className="mb-0 xsm-text fk-print-text text-center text-capitalize">
+                      {getSystemSettings(generalSettings, "address")}
+                    </p>
+                    <p className="mb-0 xsm-text fk-print-text text-center text-capitalize">
+                      call: {getSystemSettings(generalSettings, "phnNo")}
+                    </p>
+                    <hr className="mb-0" />
+                    <span className="d-block fk-print-text fk-print-text--bold text-uppercase text-center lg-text">
+                      Token: {orderDetails && orderDetails.token.id}
+                    </span>
+                    <p className="mb-0 xsm-text fk-print-text text-capitalize">
+                      date: <Moment format="LL">{new Date()}</Moment>
+                      {", "}
+                      {orderDetails && (
+                        <Moment format="LT">{orderDetails.token.time}</Moment>
+                      )}
+                    </p>
+                    <p className="mb-0 xsm-text fk-print-text text-capitalize">
+                      Total guests: {orderDetails && orderDetails.total_guest}
+                    </p>
+                    <p className="mb-0 xsm-text fk-print-text text-capitalize">
+                      waiter name:{" "}
+                      {orderDetails && orderDetails.waiter !== null
+                        ? orderDetails.waiter.name
+                        : ""}
+                    </p>
+                    <table className="table mb-0 table-borderless">
+                      <thead>
+                        <tr>
+                          <th
+                            scope="col"
+                            className="fk-print-text fk-print-text--bold sm-text text-capitalize"
+                          >
+                            item
+                          </th>
+                          <th
+                            scope="col"
+                            className="fk-print-text fk-print-text--bold sm-text text-capitalize text-center"
+                          >
+                            qty
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {newOrder.map((printItem, printItemIndex) => {
+                          return (
+                            <tr>
+                              <th className="fk-print-text xsm-text text-capitalize">
+                                <span className="d-block">
+                                  {printItem.item.name}
+                                </span>
+                                {parseInt(printItem.item.has_variation) === 1 &&
+                                  printItem.variation && (
+                                    <span className="xxsm-text d-block">
+                                      Variation:{" "}
+                                      {printItem.variation.variation_name}
+                                    </span>
+                                  )}
+
+                                {/* properties */}
+                                {printItem.properties &&
+                                  printItem.properties.length > 0 &&
+                                  selectedPropertyGroup[printItemIndex] !==
+                                    undefined &&
+                                  selectedPropertyGroup[printItemIndex].map(
+                                    (thisIsGroup) => {
+                                      let theGroup =
+                                        propertyGroupForSearch &&
+                                        propertyGroupForSearch.find(
+                                          (theItem) => {
+                                            return theItem.id === thisIsGroup;
+                                          }
+                                        );
+                                      return (
+                                        <div className="d-block">
+                                          <span className="text-capitalize xxsm-text d-inline-block mr-1">
+                                            {theGroup && theGroup.name} :
+                                          </span>
+                                          {printItem.properties.map(
+                                            (propertyName, propertyIndex) => {
+                                              if (
+                                                propertyName.item
+                                                  .property_group_id ===
+                                                theGroup.id
+                                              ) {
+                                                return (
+                                                  <span className="text-capitalize xxsm-text d-inline-block mr-1">
+                                                    {propertyName.item.name}{" "}
+                                                    <span>
+                                                      {" "}
+                                                      {propertyName.quantity >
+                                                        1 &&
+                                                        "(" +
+                                                          propertyName.quantity +
+                                                          ")"}
+                                                    </span>
+                                                    {printItem.properties
+                                                      .length -
+                                                      1 !==
+                                                      propertyIndex && ","}
+                                                  </span>
+                                                );
+                                              } else {
+                                                return true;
+                                              }
+                                            }
+                                          )}
+                                        </div>
+                                      );
+                                    }
+                                  )}
+                              </th>
+                              <td className="fk-print-text xsm-text text-capitalize text-center">
+                                {printItem.quantity}
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+
+                    <hr />
+                    <hr />
+                    <p className="mb-0 xsm-text fk-print-text text-capitalize text-center">
+                      bill prepared by:{" "}
+                      {authUserInfo &&
+                        authUserInfo.details &&
+                        authUserInfo.details.name}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
@@ -3023,103 +3403,12 @@ const Pos = () => {
                       {/* Disply Only Small Screen   */}
                       <div className="h-100 w-100 d-xl-none" data-simplebar>
                         <div className="fk-receipt-content">
-                          <div className="fk-receipt-header align-items-center">
-                            <img
-                              src="/assets/img/logo-alt.png"
-                              alt="foodkhan"
-                              className="img-fluid"
-                            />
-                          </div>
                           <div className="fk-receipt-body t-mt-10">
                             <div className="row g-0">
                               <div className="col-12">
                                 <span className="sm-text font-weight-bold text-uppercase font-italic">
                                   Order token: R12548795
                                 </span>
-                              </div>
-                              <div className="col-12">
-                                <div className="row g-0">
-                                  <div className="col">
-                                    <span className="text-capitalize sm-text">
-                                      name
-                                    </span>
-                                  </div>
-                                  <div className="col text-right">
-                                    <span className="text-capitalize sm-text font-weight-bold">
-                                      peter parker
-                                    </span>
-                                  </div>
-                                </div>
-                              </div>
-                              <div className="col-12">
-                                <div className="row">
-                                  <div className="col">
-                                    <span className="text-capitalize sm-text">
-                                      waiter
-                                    </span>
-                                  </div>
-                                  <div className="col text-right">
-                                    <span className="text-capitalize sm-text font-weight-bold">
-                                      jhon doe
-                                    </span>
-                                  </div>
-                                </div>
-                              </div>
-                              <div className="col-12">
-                                <div className="row">
-                                  <div className="col">
-                                    <span className="text-capitalize sm-text">
-                                      department
-                                    </span>
-                                  </div>
-                                  <div className="col text-right">
-                                    <span className="text-capitalize sm-text font-weight-bold">
-                                      dine in
-                                    </span>
-                                  </div>
-                                </div>
-                              </div>
-                              <div className="col-12">
-                                <div className="row">
-                                  <div className="col">
-                                    <span className="text-capitalize sm-text">
-                                      guest no.
-                                    </span>
-                                  </div>
-                                  <div className="col text-right">
-                                    <span className="text-capitalize sm-text font-weight-bold">
-                                      05
-                                    </span>
-                                  </div>
-                                </div>
-                              </div>
-                              <div className="col-12">
-                                <div className="row">
-                                  <div className="col">
-                                    <span className="text-capitalize sm-text">
-                                      table no.
-                                    </span>
-                                  </div>
-                                  <div className="col text-right">
-                                    <span className="text-capitalize sm-text font-weight-bold">
-                                      10
-                                    </span>
-                                  </div>
-                                </div>
-                              </div>
-                              <div className="col-12">
-                                <div className="row">
-                                  <div className="col">
-                                    <span className="text-capitalize sm-text">
-                                      payment
-                                    </span>
-                                  </div>
-                                  <div className="col text-right">
-                                    <span className="text-capitalize sm-text font-weight-bold">
-                                      cash
-                                    </span>
-                                  </div>
-                                </div>
                               </div>
                             </div>
                             <div className="fk-sm-card__container t-mt-30">
@@ -3137,11 +3426,14 @@ const Pos = () => {
                             </div>
                             <hr />
                             <ul className="t-list addons-list">
-                              <li className="addons-list__item">
+                              <li className="addons-list__item active">
                                 <div className="d-flex align-items-center justify-content-between">
                                   <div className="col">
-                                    <span className="t-text-heading sm-text text-capitalize">
+                                    <span className=" sm-text text-capitalize">
                                       chicken burger
+                                    </span>
+                                    <span className=" xsm-text text-capitalize d-block">
+                                      large
                                     </span>
                                   </div>
                                   <div className="col">
@@ -3160,7 +3452,7 @@ const Pos = () => {
                                     </div>
                                   </div>
                                   <div className="col text-right">
-                                    <span className="t-text-heading text-uppercase sm-text flex-grow-1">
+                                    <span className=" text-uppercase sm-text flex-grow-1">
                                       +tk 100
                                     </span>
                                   </div>
@@ -3191,209 +3483,6 @@ const Pos = () => {
                                   <div className="col text-right">
                                     <span className="t-text-heading text-uppercase sm-text flex-grow-1">
                                       +tk 230
-                                    </span>
-                                  </div>
-                                </div>
-                              </li>
-                              <li className="addons-list__item">
-                                <div className="d-flex align-items-center justify-content-between">
-                                  <div className="col">
-                                    <span className="t-text-heading sm-text text-capitalize">
-                                      pizza
-                                    </span>
-                                  </div>
-                                  <div className="col">
-                                    <div className="fk-qty flex-grow-1 justify-content-end">
-                                      <span className="fk-qty__icon fk-qty__deduct">
-                                        <i className="las la-minus"></i>
-                                      </span>
-                                      <input
-                                        type="text"
-                                        value="0"
-                                        className="fk-qty__input"
-                                      />
-                                      <span className="fk-qty__icon fk-qty__add">
-                                        <i className="las la-plus"></i>
-                                      </span>
-                                    </div>
-                                  </div>
-                                  <div className="col text-right">
-                                    <span className="t-text-heading text-uppercase sm-text flex-grow-1">
-                                      +tk 100
-                                    </span>
-                                  </div>
-                                </div>
-                              </li>
-                              <li className="addons-list__item">
-                                <div className="d-flex align-items-center justify-content-between">
-                                  <div className="col">
-                                    <span className="t-text-heading sm-text text-capitalize">
-                                      pasta
-                                    </span>
-                                  </div>
-                                  <div className="col">
-                                    <div className="fk-qty flex-grow-1 justify-content-end">
-                                      <span className="fk-qty__icon fk-qty__deduct">
-                                        <i className="las la-minus"></i>
-                                      </span>
-                                      <input
-                                        type="text"
-                                        value="0"
-                                        className="fk-qty__input"
-                                      />
-                                      <span className="fk-qty__icon fk-qty__add">
-                                        <i className="las la-plus"></i>
-                                      </span>
-                                    </div>
-                                  </div>
-                                  <div className="col text-right">
-                                    <span className="t-text-heading text-uppercase sm-text flex-grow-1">
-                                      +tk 100
-                                    </span>
-                                  </div>
-                                </div>
-                              </li>
-                              <li className="addons-list__item">
-                                <div className="d-flex align-items-center justify-content-between">
-                                  <div className="col">
-                                    <span className="t-text-heading sm-text text-capitalize">
-                                      patty
-                                    </span>
-                                  </div>
-                                  <div className="col">
-                                    <div className="fk-qty flex-grow-1 justify-content-end">
-                                      <span className="fk-qty__icon fk-qty__deduct">
-                                        <i className="las la-minus"></i>
-                                      </span>
-                                      <input
-                                        type="text"
-                                        value="0"
-                                        className="fk-qty__input"
-                                      />
-                                      <span className="fk-qty__icon fk-qty__add">
-                                        <i className="las la-plus"></i>
-                                      </span>
-                                    </div>
-                                  </div>
-                                  <div className="col text-right">
-                                    <span className="t-text-heading text-uppercase sm-text flex-grow-1">
-                                      +tk 100
-                                    </span>
-                                  </div>
-                                </div>
-                              </li>
-                              <li className="addons-list__item">
-                                <div className="d-flex align-items-center justify-content-between">
-                                  <div className="col">
-                                    <span className="t-text-heading sm-text text-capitalize">
-                                      sandwich
-                                    </span>
-                                  </div>
-                                  <div className="col">
-                                    <div className="fk-qty flex-grow-1 justify-content-end">
-                                      <span className="fk-qty__icon fk-qty__deduct">
-                                        <i className="las la-minus"></i>
-                                      </span>
-                                      <input
-                                        type="text"
-                                        value="0"
-                                        className="fk-qty__input"
-                                      />
-                                      <span className="fk-qty__icon fk-qty__add">
-                                        <i className="las la-plus"></i>
-                                      </span>
-                                    </div>
-                                  </div>
-                                  <div className="col text-right">
-                                    <span className="t-text-heading text-uppercase sm-text flex-grow-1">
-                                      +tk 100
-                                    </span>
-                                  </div>
-                                </div>
-                              </li>
-                              <li className="addons-list__item">
-                                <div className="d-flex align-items-center justify-content-between">
-                                  <div className="col">
-                                    <span className="t-text-heading sm-text text-capitalize">
-                                      bun
-                                    </span>
-                                  </div>
-                                  <div className="col">
-                                    <div className="fk-qty flex-grow-1 justify-content-end">
-                                      <span className="fk-qty__icon fk-qty__deduct">
-                                        <i className="las la-minus"></i>
-                                      </span>
-                                      <input
-                                        type="text"
-                                        value="0"
-                                        className="fk-qty__input"
-                                      />
-                                      <span className="fk-qty__icon fk-qty__add">
-                                        <i className="las la-plus"></i>
-                                      </span>
-                                    </div>
-                                  </div>
-                                  <div className="col text-right">
-                                    <span className="t-text-heading text-uppercase sm-text flex-grow-1">
-                                      +tk 100
-                                    </span>
-                                  </div>
-                                </div>
-                              </li>
-                              <li className="addons-list__item">
-                                <div className="d-flex align-items-center justify-content-between">
-                                  <div className="col">
-                                    <span className="t-text-heading sm-text text-capitalize">
-                                      soup
-                                    </span>
-                                  </div>
-                                  <div className="col">
-                                    <div className="fk-qty flex-grow-1 justify-content-end">
-                                      <span className="fk-qty__icon fk-qty__deduct">
-                                        <i className="las la-minus"></i>
-                                      </span>
-                                      <input
-                                        type="text"
-                                        value="0"
-                                        className="fk-qty__input"
-                                      />
-                                      <span className="fk-qty__icon fk-qty__add">
-                                        <i className="las la-plus"></i>
-                                      </span>
-                                    </div>
-                                  </div>
-                                  <div className="col text-right">
-                                    <span className="t-text-heading text-uppercase sm-text flex-grow-1">
-                                      +tk 100
-                                    </span>
-                                  </div>
-                                </div>
-                              </li>
-                              <li className="addons-list__item">
-                                <div className="d-flex align-items-center justify-content-between">
-                                  <div className="col">
-                                    <span className="t-text-heading sm-text text-capitalize">
-                                      drinks
-                                    </span>
-                                  </div>
-                                  <div className="col">
-                                    <div className="fk-qty flex-grow-1 justify-content-end">
-                                      <span className="fk-qty__icon fk-qty__deduct">
-                                        <i className="las la-minus"></i>
-                                      </span>
-                                      <input
-                                        type="text"
-                                        value="0"
-                                        className="fk-qty__input"
-                                      />
-                                      <span className="fk-qty__icon fk-qty__add">
-                                        <i className="las la-plus"></i>
-                                      </span>
-                                    </div>
-                                  </div>
-                                  <div className="col text-right">
-                                    <span className="t-text-heading text-uppercase sm-text flex-grow-1">
-                                      +tk 100
                                     </span>
                                   </div>
                                 </div>
