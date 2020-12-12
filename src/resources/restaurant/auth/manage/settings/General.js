@@ -59,6 +59,7 @@ const General = () => {
     phnNo: getSystemSettings(generalSettings, "phnNo"),
     vat: getSystemSettings(generalSettings, "type_vat"),
     image: null,
+    favicon: null,
     print_kitchen_bill:
       getSystemSettings(generalSettings, "print_kitchen_bill") === "1" ? 1 : 0,
     play_sound:
@@ -75,6 +76,14 @@ const General = () => {
 
   //set image hook
   const handleItemImage = (e) => {
+    setNewSettings({
+      ...newSettings,
+      [e.target.name]: e.target.files[0],
+    });
+  };
+
+  //favicon
+  const handleItemFavicon = (e) => {
     setNewSettings({
       ...newSettings,
       [e.target.name]: e.target.files[0],
@@ -115,6 +124,7 @@ const General = () => {
     setLoading(true);
     let formData = new FormData();
     formData.append("image", newSettings.image);
+    formData.append("favicon", newSettings.favicon);
     formData.append("type_background", colorPick.color);
     formData.append("type_color", colorTextPick.color);
     formData.append("type_footer", newSettings.footerText);
@@ -138,6 +148,7 @@ const General = () => {
           phnNo: getSystemSettings(res.data, "phnNo"),
           vat: getSystemSettings(res.data, "type_vat"),
           image: null,
+          favicon: null,
           print_kitchen_bill:
             getSystemSettings(res.data, "print_kitchen_bill") === "1" ? 1 : 0,
           play_sound: getSystemSettings(res.data, "play_sound") === "1" ? 1 : 0,
@@ -450,6 +461,26 @@ const General = () => {
                                   id="image"
                                   name="image"
                                   onChange={handleItemImage}
+                                />
+                              </div>
+                            </div>
+
+                            <div className="form-group mt-4">
+                              <div className="mb-2">
+                                <label
+                                  htmlFor="favicon"
+                                  className="control-label"
+                                >
+                                  {_t(t("Favicon"))}
+                                </label>
+                              </div>
+                              <div className="mb-2">
+                                <input
+                                  type="file"
+                                  className="form-control sm-text"
+                                  id="favicon"
+                                  name="favicon"
+                                  onChange={handleItemFavicon}
                                 />
                               </div>
                             </div>

@@ -11,6 +11,7 @@ import {
   _t,
   restaurantMenuLink,
   deleteCookie,
+  getSystemSettings,
 } from "../../../functions/Functions";
 import { useTranslation } from "react-i18next";
 
@@ -26,6 +27,7 @@ const RestaurantHome = () => {
     //common
     loading,
     setLoading,
+    generalSettings,
   } = useContext(SettingsContext);
   const { authUserInfo } = useContext(UserContext);
 
@@ -46,7 +48,7 @@ const RestaurantHome = () => {
     <>
       <Helmet>
         <title>
-          {authUserInfo.details !== null && authUserInfo.details.name}
+          {generalSettings && getSystemSettings(generalSettings, "siteName")}
         </title>
       </Helmet>
       <main>

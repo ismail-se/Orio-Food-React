@@ -1,11 +1,16 @@
 import React, { useEffect, useContext } from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import { BASE_URL } from "./BaseUrl";
 
 //routes
 import RestaurantRoute from "./routes/RestaurantRoute";
 
 //functions
-import { consolee, checkPermission } from "./functions/Functions";
+import {
+  consolee,
+  checkPermission,
+  getSystemSettings,
+} from "./functions/Functions";
 
 //3rd party packages
 import { ToastContainer } from "react-toastify";
@@ -83,11 +88,16 @@ import { UserContext } from "./contexts/User";
 
 function App() {
   //getting context values here
-  const { loading, setLoading } = useContext(SettingsContext);
+  const { loading, setLoading, generalSettings } = useContext(SettingsContext);
   let { authUserInfo } = useContext(UserContext);
 
   //useEffect == componentDidMount()
   useEffect(() => {
+    if (generalSettings) {
+      const favicon = document.getElementById("favicon");
+      favicon.href =
+        BASE_URL + "/public" + getSystemSettings(generalSettings, "favicon");
+    }
     // consolee();
   }, [authUserInfo]);
   return (
