@@ -1708,7 +1708,7 @@ const Pos = () => {
       </div>
 
       {/* Print bill kitchen */}
-      <div className="d-none">
+      <div className="d-none" style={{ height: "100%" }}>
         <div ref={component2Ref}>
           {newOrder && (
             <div className="fk-print t-pt-30 t-pb-30">
@@ -3401,7 +3401,7 @@ const Pos = () => {
                   <div className="col-md-8 col-xl-9">
                     <div className="fk-right-nav p-2 p-xl-3 t-bg-white">
                       {/* Disply Only Small Screen   */}
-                      <div className="h-100 w-100 d-xl-none" data-simplebar>
+                      <div className="h-100 w-100 d-none" data-simplebar>
                         <div className="fk-receipt-content">
                           <div className="fk-receipt-body t-mt-10">
                             <div className="row g-0">
@@ -3608,7 +3608,7 @@ const Pos = () => {
                       {/* Disply Only Small Screen End  */}
 
                       {/* Display Only Large Screen   */}
-                      <div className="h-100 w-100 d-none d-xl-block">
+                      <div className="h-100 w-100 d-none d-md-block">
                         <div className="fk-price-table">
                           <div className="fk-price-table__head">
                             <div className="row gx-0 align-items-center">
@@ -3920,7 +3920,7 @@ const Pos = () => {
                                                     );
                                                   }}
                                                 >
-                                                  remove
+                                                  <i className="fa fa-times"></i>
                                                 </span>
                                               </span>
                                             </>
