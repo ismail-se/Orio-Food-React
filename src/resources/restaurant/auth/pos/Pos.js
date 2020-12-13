@@ -302,92 +302,6 @@ const Pos = () => {
     }
   };
 
-  // Mobile add order
-  const handleOrderItemMobile = (tempFoodItem) => {
-    let oldOrderItems = [];
-    let newOrderItem = null;
-    let tempSelectedVariations = [];
-    if (newOrder) {
-      newOrder.map((eachOldOrderItem) => {
-        //push all old items to new array to setNewOrder
-        oldOrderItems.push(eachOldOrderItem);
-
-        //set selected variations of each order item
-        let tempArray = [];
-        if (eachOldOrderItem.variation !== null) {
-          tempArray.push(eachOldOrderItem.variation.food_with_variation_id);
-        } else {
-          tempArray.push(null);
-        }
-        tempSelectedVariations.push(tempArray);
-      });
-      //add new order item
-      newOrderItem = {
-        item: tempFoodItem,
-        variation:
-          parseInt(tempFoodItem.has_variation) === 1
-            ? tempFoodItem.variations[0]
-            : null,
-        quantity: 1,
-      };
-      //set selected variations of new item
-      let tempArray = [];
-      if (parseInt(tempFoodItem.has_variation) === 1) {
-        tempArray.push(tempFoodItem.variations[0].food_with_variation_id);
-      } else {
-        tempArray.push(null);
-      }
-      tempSelectedVariations.push(tempArray);
-      //push new item to new array to setNewOrder
-      oldOrderItems.push(newOrderItem);
-    } else {
-      //if no item in newOrder List
-      setOrderDetails({
-        //set token here on first order item add,
-        ...orderDetails,
-        token: {
-          time: new Date().getTime(),
-          id: Math.floor(1000 + Math.random() * 9000),
-        },
-      });
-      newOrderItem = {
-        //add new order item
-        item: tempFoodItem,
-        variation:
-          parseInt(tempFoodItem.has_variation) === 1
-            ? tempFoodItem.variations[0]
-            : null,
-        quantity: 1,
-      };
-
-      //set selected variations of new item
-      let tempArray = [];
-      if (parseInt(tempFoodItem.has_variation) === 1) {
-        tempArray.push(tempFoodItem.variations[0].food_with_variation_id);
-      } else {
-        tempArray.push(null);
-      }
-      tempSelectedVariations.push(tempArray);
-
-      //push new item to new array to setNewOrder
-      oldOrderItems.push(newOrderItem);
-    }
-
-    //set new order list with new array of all order items
-    setNewOrder(oldOrderItems);
-
-    //set selected variations
-    setSelectedVariation(tempSelectedVariations);
-
-    //calculate subTotalPrice
-    totalPrice(oldOrderItems);
-    //sound
-    if (getSystemSettings(generalSettings, "play_sound") === "1") {
-      let beep = document.getElementById("myAudio");
-      beep.play();
-    }
-  };
-
   //set order item's variation on change of variation
   const handleOrderItemVariation = (tempFoodItemVariation) => {
     if (activeItemInOrder !== null) {
@@ -1794,7 +1708,7 @@ const Pos = () => {
       </div>
 
       {/* Print bill kitchen */}
-      <div className="d-none" style={{ height: "100%" }}>
+      <div className="d-none">
         <div ref={component2Ref}>
           {newOrder && (
             <div className="fk-print t-pt-30 t-pb-30">
@@ -1948,7 +1862,7 @@ const Pos = () => {
             <div className="modal-header align-items-start">
               <div className="fk-sm-card__content">
                 <h5 className="text-capitalize fk-sm-card__title">
-                  classic chicken
+                  {foodItem.selectedItem !== null && foodItem.selectedItem.name}
                 </h5>
               </div>
               <button
@@ -1959,127 +1873,213 @@ const Pos = () => {
               ></button>
             </div>
             <div className="modal-body">
+              {/* Variations */}
               <div className="fk-sm-card__container">
                 <div className="fk-sm-card__content">
                   <h6 className="text-capitalize fk-sm-card__title t-mb-5">
-                    add ons
+                    {_t(t("Variations"))}
                   </h6>
-                  <p className="mb-0 xsm-text t-text-heading fk-sm-card__description text-capitalize">
-                    select up to 12
-                  </p>
                 </div>
-                <span className="text-capitalize xxsm-text fk-badge fk-badge--dark">
-                  optional
-                </span>
+                {foodItem.variations && (
+                  <span className="text-capitalize xxsm-text fk-badge fk-badge--secondary">
+                    {_t(t("Required"))}
+                  </span>
+                )}
               </div>
               <hr />
               <ul className="t-list addons-list">
-                <li className="addons-list__item">
-                  <div className="d-flex align-items-center justify-content-between">
-                    <div className="col">
-                      <label className="mx-checkbox flex-grow-1">
-                        <input
-                          type="checkbox"
-                          className="mx-checkbox__input mx-checkbox__input-solid mx-checkbox__input-solid--danger mx-checkbox__input-sm mt-0-kitchen"
-                        />
-                        <span className="mx-checkbox__text text-capitalize t-text-heading t-ml-8">
-                          patty
-                        </span>
-                      </label>
-                    </div>
-                    <div className="col">
-                      <div className="fk-qty flex-grow-1 justify-content-end">
-                        <span className="fk-qty__icon fk-qty__deduct">
-                          <i className="las la-minus"></i>
-                        </span>
-                        <input
-                          type="text"
-                          value="0"
-                          onChange=""
-                          className="fk-qty__input"
-                        />
-                        <span className="fk-qty__icon fk-qty__add">
-                          <i className="las la-plus"></i>
-                        </span>
+                {foodItem.variations ? (
+                  <>
+                    {foodItem.variations.map((variationItem) => {
+                      return (
+                        <li className="addons-list__item">
+                          <div className="d-flex align-items-center justify-content-between">
+                            <div className="col">
+                              <label className="mx-checkbox flex-grow-1">
+                                <input
+                                  type="checkbox"
+                                  className="mx-checkbox__input mx-checkbox__input-solid mx-checkbox__input-solid--danger mx-checkbox__input-sm mt-0-kitchen"
+                                  name="variation"
+                                  onChange={() => {
+                                    handleOrderItemVariation(variationItem);
+                                  }}
+                                  checked={checkChecked(variationItem)}
+                                />
+                                <span className="mx-checkbox__text text-capitalize t-text-heading t-ml-8">
+                                  {variationItem.variation_name}
+                                </span>
+                              </label>
+                            </div>
+                            <div className="col text-right">
+                              <span className="t-text-heading text-uppercase sm-text flex-grow-1">
+                                {currencySymbolLeft()}
+                                {formatPrice(
+                                  variationItem.food_with_variation_price
+                                )}
+                                {currencySymbolRight()}
+                              </span>
+                            </div>
+                          </div>
+                        </li>
+                      );
+                    })}
+                  </>
+                ) : (
+                  <li className="addons-list__item">
+                    <div className="d-flex align-items-center justify-content-between">
+                      <div className="col text-center text-primary text-uppercase">
+                        {_t(t("No Variations"))}
                       </div>
                     </div>
-                    <div className="col text-right">
-                      <span className="t-text-heading text-uppercase sm-text flex-grow-1">
-                        +tk 100
-                      </span>
-                    </div>
-                  </div>
-                </li>
+                  </li>
+                )}
+                {/* Variations end*/}
               </ul>
-              <div className="fk-sm-card__container t-mt-30">
-                <div className="fk-sm-card__content">
-                  <h6 className="text-capitalize fk-sm-card__title t-mb-5">
-                    spice lavel
-                  </h6>
-                  <p className="mb-0 xsm-text t-text-heading fk-sm-card__description text-capitalize">
-                    select up to 12
-                  </p>
-                </div>
-                <span className="text-capitalize xxsm-text fk-badge fk-badge--secondary">
-                  required
-                </span>
+
+              <div className={foodItem.properties ? "" : "d-none"}>
+                {/* Property group and items */}
+                {foodItem.properties && (
+                  <>
+                    {foodItem.properties.map((propertyItem) => {
+                      //property group
+                      let selectedGroup =
+                        propertyGroupForSearch &&
+                        propertyGroupForSearch.find((singlePropertyGroup) => {
+                          return (
+                            singlePropertyGroup.id ===
+                            propertyItem[0].property_group_id
+                          );
+                        });
+                      return (
+                        <>
+                          <div className="fk-sm-card__container t-mt-30">
+                            <div className="fk-sm-card__content">
+                              <h6 className="text-capitalize fk-sm-card__title t-mb-5">
+                                {selectedGroup && selectedGroup.name}
+                              </h6>
+                            </div>
+                            <span className="text-capitalize xxsm-text fk-badge fk-badge--secondary">
+                              {_t(t("Optional"))}
+                            </span>
+                          </div>
+                          <hr />
+                          <ul className="t-list addons-list">
+                            {propertyItem.map((eachItem) => {
+                              return (
+                                <li className="addons-list__item">
+                                  <div className="d-flex align-items-center justify-content-between">
+                                    <div className="col">
+                                      <label className="mx-checkbox flex-grow-1">
+                                        <input
+                                          type="checkbox"
+                                          className="mx-checkbox__input mx-checkbox__input-solid mx-checkbox__input-solid--danger mx-checkbox__input-sm mt-0-kitchen"
+                                          onChange={() => {
+                                            newOrder &&
+                                              newOrder.map(
+                                                (newOrderItem, index) => {
+                                                  if (
+                                                    index === activeItemInOrder
+                                                  ) {
+                                                    if (
+                                                      newOrderItem.properties
+                                                    ) {
+                                                      let theItem = newOrderItem.properties.find(
+                                                        (eachPropertyItem) => {
+                                                          return (
+                                                            eachPropertyItem
+                                                              .item.id ===
+                                                            eachItem.id
+                                                          );
+                                                        }
+                                                      );
+
+                                                      if (
+                                                        theItem === undefined
+                                                      ) {
+                                                        handleAddProperties(
+                                                          eachItem
+                                                        );
+                                                      } else {
+                                                        handleRemoveProperties(
+                                                          eachItem
+                                                        );
+                                                      }
+                                                    } else {
+                                                      handleAddProperties(
+                                                        eachItem
+                                                      );
+                                                    }
+                                                  }
+                                                }
+                                              );
+                                          }}
+                                          checked={checkCheckedProperties(
+                                            eachItem
+                                          )}
+                                        />
+                                        <span className="mx-checkbox__text text-capitalize t-text-heading t-ml-8">
+                                          {eachItem.name}
+                                        </span>
+                                      </label>
+                                    </div>
+                                    <div className="col">
+                                      <div className="fk-qty flex-grow-1 justify-content-end">
+                                        {eachItem.allow_multi_quantity ===
+                                          1 && (
+                                          <span
+                                            className="fk-qty__icon fk-qty__deduct"
+                                            onClick={() => {
+                                              handlePropertyQty(eachItem, "-");
+                                            }}
+                                          >
+                                            <i className="las la-minus"></i>
+                                          </span>
+                                        )}
+                                        {eachItem.allow_multi_quantity === 1 ? (
+                                          <input
+                                            type="text"
+                                            value={checkCheckedPropertyQuantity(
+                                              eachItem
+                                            )}
+                                            className="fk-qty__input t-bg-clear"
+                                            readOnly
+                                          />
+                                        ) : (
+                                          "-"
+                                        )}
+                                        {eachItem.allow_multi_quantity ===
+                                          1 && (
+                                          <span
+                                            className="fk-qty__icon fk-qty__add"
+                                            onClick={() => {
+                                              handlePropertyQty(eachItem, "+");
+                                            }}
+                                          >
+                                            <i className="las la-plus"></i>
+                                          </span>
+                                        )}
+                                      </div>
+                                    </div>
+                                    <div className="col text-right">
+                                      <span className="t-text-heading text-uppercase sm-text flex-grow-1">
+                                        {currencySymbolLeft()}
+                                        {formatPrice(eachItem.extra_price)}
+                                        {currencySymbolRight()}
+                                      </span>
+                                    </div>
+                                  </div>
+                                </li>
+                              );
+                            })}
+                          </ul>
+                          <hr />
+                        </>
+                      );
+                    })}
+                  </>
+                )}
               </div>
-              <hr />
-              <ul className="t-list addons-list">
-                <li className="addons-list__item">
-                  <div className="d-flex align-items-center justify-content-between">
-                    <div className="col">
-                      <label className="mx-checkbox flex-grow-1">
-                        <input
-                          type="checkbox"
-                          className="mx-checkbox__input mx-checkbox__input-solid mx-checkbox__input-solid--danger mx-checkbox__input-sm mt-0-kitchen"
-                        />
-                        <span className="mx-checkbox__text text-capitalize t-text-heading t-ml-8">
-                          patty
-                        </span>
-                      </label>
-                    </div>
-                    <div className="col">
-                      <div className="fk-qty flex-grow-1 justify-content-end">
-                        <span className="fk-qty__icon fk-qty__deduct">
-                          <i className="las la-minus"></i>
-                        </span>
-                        <input
-                          type="text"
-                          value="0"
-                          className="fk-qty__input"
-                        />
-                        <span className="fk-qty__icon fk-qty__add">
-                          <i className="las la-plus"></i>
-                        </span>
-                      </div>
-                    </div>
-                    <div className="col text-right">
-                      <span className="t-text-heading text-uppercase sm-text flex-grow-1">
-                        +tk 100
-                      </span>
-                    </div>
-                  </div>
-                </li>
-              </ul>
-              <hr />
-            </div>
-            <div className="modal-footer">
-              <div className="fk-qty justify-content-end">
-                <span className="fk-qty__icon fk-qty__deduct">
-                  <i className="las la-minus"></i>
-                </span>
-                <input type="text" value="0" className="fk-qty__input" />
-                <span className="fk-qty__icon fk-qty__add">
-                  <i className="las la-plus"></i>
-                </span>
-              </div>
-              <button
-                type="button"
-                className="btn btn-primary xsm-text text-uppercase flex-grow-1"
-              >
-                add to cart
-              </button>
+              {/* Property group and items */}
             </div>
           </div>
         </div>
@@ -2091,11 +2091,7 @@ const Pos = () => {
         <div className="modal-dialog modal-fullscreen">
           <div className="modal-content">
             <div className="modal-header align-items-center">
-              <img
-                src="/assets/img/logo-alt.png"
-                alt="foodkhan"
-                className="img-fluid"
-              />
+              <h3>Order details</h3>
               <button
                 type="button"
                 className="btn-close"
@@ -2107,116 +2103,35 @@ const Pos = () => {
               <div className="row">
                 <div className="col-12">
                   <span className="sm-text font-weight-bold text-uppercase font-italic">
-                    Order token: R12548795
+                    Order token:{" "}
+                    {newOrder ? (
+                      <>
+                        #{orderDetails.token.id} -{" "}
+                        <Moment format="LT">{orderDetails.token.time}</Moment>
+                      </>
+                    ) : (
+                      ""
+                    )}
                   </span>
-                </div>
-                <div className="col-12">
-                  <div className="row">
-                    <div className="col">
-                      <span className="text-capitalize sm-text"> name </span>
-                    </div>
-                    <div className="col text-center">:</div>
-                    <div className="col">
-                      <span className="text-capitalize sm-text font-weight-bold">
-                        peter parker
-                      </span>
-                    </div>
-                  </div>
-                </div>
-                <div className="col-12">
-                  <div className="row">
-                    <div className="col">
-                      <span className="text-capitalize sm-text"> waiter </span>
-                    </div>
-                    <div className="col text-center">:</div>
-                    <div className="col">
-                      <span className="text-capitalize sm-text font-weight-bold">
-                        jhon doe
-                      </span>
-                    </div>
-                  </div>
-                </div>
-                <div className="col-12">
-                  <div className="row">
-                    <div className="col">
-                      <span className="text-capitalize sm-text">
-                        {" "}
-                        department{" "}
-                      </span>
-                    </div>
-                    <div className="col text-center">:</div>
-                    <div className="col">
-                      <span className="text-capitalize sm-text font-weight-bold">
-                        dine in
-                      </span>
-                    </div>
-                  </div>
-                </div>
-                <div className="col-12">
-                  <div className="row">
-                    <div className="col">
-                      <span className="text-capitalize sm-text">
-                        {" "}
-                        guest no.{" "}
-                      </span>
-                    </div>
-                    <div className="col text-center">:</div>
-                    <div className="col">
-                      <span className="text-capitalize sm-text font-weight-bold">
-                        05
-                      </span>
-                    </div>
-                  </div>
-                </div>
-                <div className="col-12">
-                  <div className="row">
-                    <div className="col">
-                      <span className="text-capitalize sm-text">
-                        {" "}
-                        table no.{" "}
-                      </span>
-                    </div>
-                    <div className="col text-center">:</div>
-                    <div className="col">
-                      <span className="text-capitalize sm-text font-weight-bold">
-                        10
-                      </span>
-                    </div>
-                  </div>
-                </div>
-                <div className="col-12">
-                  <div className="row">
-                    <div className="col">
-                      <span className="text-capitalize sm-text"> payment </span>
-                    </div>
-                    <div className="col text-center">:</div>
-                    <div className="col">
-                      <span className="text-capitalize sm-text font-weight-bold">
-                        cash
-                      </span>
-                    </div>
-                  </div>
                 </div>
               </div>
               <div className="fk-sm-card__container t-mt-30">
                 <div className="fk-sm-card__content">
                   <h6 className="text-capitalize fk-sm-card__title t-mb-5">
-                    food items
+                    order items
                   </h6>
-                  <p className="mb-0 xsm-text t-text-heading fk-sm-card__description text-capitalize">
-                    properties & bill
-                  </p>
                 </div>
-                <span className="text-capitalize xxsm-text fk-badge fk-badge--dark">
-                  total
-                </span>
               </div>
               <hr />
               <ul className="t-list addons-list">
                 <li className="addons-list__item">
                   <div className="d-flex align-items-center justify-content-between">
                     <div className="col">
-                      <span className="t-text-heading sm-text text-capitalize">
+                      <span
+                        className="t-text-heading sm-text text-capitalize"
+                        data-toggle="modal"
+                        data-target="#menuAddons"
+                      >
                         chicken burger
                       </span>
                     </div>
@@ -2691,7 +2606,7 @@ const Pos = () => {
                                         ? mobileItem.properties
                                         : null,
                                   });
-                                  handleOrderItemMobile(mobileItem);
+                                  handleOrderItem(mobileItem);
                                 }}
                               >
                                 <div className="fk-sm-card__container align-items-center">
@@ -2710,7 +2625,12 @@ const Pos = () => {
                                     )}
                                   </div>
                                   <div className="fk-sm-card__action">
-                                    <div className="fk-sm-card__img fk-sm-card__img--1"></div>
+                                    <div
+                                      className="fk-sm-card__img fk-sm-card__img--1"
+                                      style={{
+                                        backgroundImage: `url(${mobileItem.image})`,
+                                      }}
+                                    ></div>
                                     <div className="fk-sm-card__cart">
                                       <i className="las la-plus"></i>
                                     </div>
@@ -3622,7 +3542,17 @@ const Pos = () => {
                             <div className="row g-0">
                               <div className="col-12">
                                 <span className="sm-text font-weight-bold text-uppercase font-italic">
-                                  Order token: R12548795
+                                  Order token:{" "}
+                                  {newOrder ? (
+                                    <>
+                                      #{orderDetails.token.id} -{" "}
+                                      <Moment format="LT">
+                                        {orderDetails.token.time}
+                                      </Moment>
+                                    </>
+                                  ) : (
+                                    ""
+                                  )}
                                 </span>
                               </div>
                             </div>
