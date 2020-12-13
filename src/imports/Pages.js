@@ -10,6 +10,9 @@ import RestaurantLanding from "../resources/restaurant/public/RestaurantLanding"
 //private pages
 import RestaurantHome from "../resources/restaurant/auth/RestaurantHome";
 
+//update profile
+import UpdateProfile from "../resources/restaurant/auth/profile/UpdateProfile";
+
 //work periods
 import WorkPeriod from "../resources/restaurant/auth/workPeriod/WorkPeriod";
 //customers
@@ -74,6 +77,7 @@ export {
   NoPermission,
   //dashboard
   RestaurantHome,
+  UpdateProfile,
   WorkPeriod,
   //Pos
   Pos,

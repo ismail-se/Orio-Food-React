@@ -28,6 +28,7 @@ import {
 
   //dashboard
   RestaurantHome,
+  UpdateProfile,
   WorkPeriod,
 
   //pos
@@ -128,6 +129,10 @@ function App() {
           {/* restaurant dashboard pages */}
           <RestaurantRoute path="/dashboard" exact>
             <RestaurantHome />
+          </RestaurantRoute>
+
+          <RestaurantRoute path="/update-user-profile" exact>
+            <UpdateProfile />
           </RestaurantRoute>
 
           <RestaurantRoute path="/dashboard/work-periods" exact>

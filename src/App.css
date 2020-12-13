@@ -209,3 +209,6 @@ li.addons-list__item.active {
   background: red;
   color: white;
 }
+.profile-update-full {
+  height: calc(100vh - 174px) !important;
+}
