@@ -171,7 +171,7 @@ const Footer = () => {
       ) : (
         [
           window.location.pathname === "/dashboard/pos" && (
-            <footer id="footer" className="sicky-bottom">
+            <footer id="footer" className="sicky-bottom mb-5 mb-md-0">
               <div className="container-fluid">
                 <div className="row align-items-lg-center">
                   <div className="col-lg-2 t-mb-30 mb-lg-0">

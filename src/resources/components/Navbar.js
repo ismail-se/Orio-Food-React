@@ -31,7 +31,15 @@ const Navbar = (props) => {
     SettingsContext
   );
   let { authUserInfo } = useContext(UserContext);
-  let { setLoading } = useContext(FoodContext);
+  let {
+    setLoading,
+    //food
+    foodForSearch,
+    //food group
+    foodGroupForSearch,
+    //property group
+    propertyGroupForSearch,
+  } = useContext(FoodContext);
 
   // States hook  here
   const [defaultLang, setDefaultLang] = useState(null);
@@ -657,86 +665,24 @@ const Navbar = (props) => {
                     <div className="col-12">
                       <div className="fk-sm-nav" data-simplebar>
                         <ul className="t-list fk-sm-nav__bar">
-                          <li className="fk-sm-nav__list active">
-                            <a
-                              href="#card-1"
-                              className="t-link fk-sm-nav__link"
-                            >
-                              chicken burger
-                            </a>
-                          </li>
-                          <li className="fk-sm-nav__list">
-                            <a
-                              href="#card-2"
-                              className="t-link fk-sm-nav__link"
-                            >
-                              beef burger
-                            </a>
-                          </li>
-                          <li className="fk-sm-nav__list">
-                            <a
-                              href="#card-3"
-                              className="t-link fk-sm-nav__link"
-                            >
-                              Gourmet burger
-                            </a>
-                          </li>
-                          <li className="fk-sm-nav__list">
-                            <a
-                              href="#card-4"
-                              className="t-link fk-sm-nav__link"
-                            >
-                              pizza
-                            </a>
-                          </li>
-                          <li className="fk-sm-nav__list">
-                            <a
-                              href="#card-5"
-                              className="t-link fk-sm-nav__link"
-                            >
-                              pasta
-                            </a>
-                          </li>
-                          <li className="fk-sm-nav__list">
-                            <a
-                              href="#card-6"
-                              className="t-link fk-sm-nav__link"
-                            >
-                              soup
-                            </a>
-                          </li>
-                          <li className="fk-sm-nav__list">
-                            <a
-                              href="#card-7"
-                              className="t-link fk-sm-nav__link"
-                            >
-                              fired rice
-                            </a>
-                          </li>
-                          <li className="fk-sm-nav__list">
-                            <a
-                              href="#card-8"
-                              className="t-link fk-sm-nav__link"
-                            >
-                              snacks
-                            </a>
-                          </li>
-                          <li className="fk-sm-nav__list">
-                            <a
-                              href="#card-9"
-                              className="t-link fk-sm-nav__link"
-                            >
-                              drinks
-                            </a>
-                          </li>
-                          <li className="fk-sm-nav__list">
-                            <a
-                              href="#card-10"
-                              className="t-link fk-sm-nav__link"
-                            >
-                              Sandwich
-                            </a>
-                          </li>
+                          {foodGroupForSearch &&
+                            foodGroupForSearch.map((groupItem, index) => {
+                              return (
+                                <li
+                                  className={`fk-sm-nav__list ${
+                                    index === 0 && "active"
+                                  }`}
+                                >
+                                  <a
+                                    href={`#card-${index + 1}`}
+                                    className="t-link fk-sm-nav__link"
+                                    rel="noopener noreferer"
+                                  >
+                                    {groupItem.name}
+                                  </a>
+                                </li>
+                              );
+                            })}
                         </ul>
                       </div>
                     </div>

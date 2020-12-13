@@ -302,6 +302,92 @@ const Pos = () => {
     }
   };
 
+  // Mobile add order
+  const handleOrderItemMobile = (tempFoodItem) => {
+    let oldOrderItems = [];
+    let newOrderItem = null;
+    let tempSelectedVariations = [];
+    if (newOrder) {
+      newOrder.map((eachOldOrderItem) => {
+        //push all old items to new array to setNewOrder
+        oldOrderItems.push(eachOldOrderItem);
+
+        //set selected variations of each order item
+        let tempArray = [];
+        if (eachOldOrderItem.variation !== null) {
+          tempArray.push(eachOldOrderItem.variation.food_with_variation_id);
+        } else {
+          tempArray.push(null);
+        }
+        tempSelectedVariations.push(tempArray);
+      });
+      //add new order item
+      newOrderItem = {
+        item: tempFoodItem,
+        variation:
+          parseInt(tempFoodItem.has_variation) === 1
+            ? tempFoodItem.variations[0]
+            : null,
+        quantity: 1,
+      };
+      //set selected variations of new item
+      let tempArray = [];
+      if (parseInt(tempFoodItem.has_variation) === 1) {
+        tempArray.push(tempFoodItem.variations[0].food_with_variation_id);
+      } else {
+        tempArray.push(null);
+      }
+      tempSelectedVariations.push(tempArray);
+      //push new item to new array to setNewOrder
+      oldOrderItems.push(newOrderItem);
+    } else {
+      //if no item in newOrder List
+      setOrderDetails({
+        //set token here on first order item add,
+        ...orderDetails,
+        token: {
+          time: new Date().getTime(),
+          id: Math.floor(1000 + Math.random() * 9000),
+        },
+      });
+      newOrderItem = {
+        //add new order item
+        item: tempFoodItem,
+        variation:
+          parseInt(tempFoodItem.has_variation) === 1
+            ? tempFoodItem.variations[0]
+            : null,
+        quantity: 1,
+      };
+
+      //set selected variations of new item
+      let tempArray = [];
+      if (parseInt(tempFoodItem.has_variation) === 1) {
+        tempArray.push(tempFoodItem.variations[0].food_with_variation_id);
+      } else {
+        tempArray.push(null);
+      }
+      tempSelectedVariations.push(tempArray);
+
+      //push new item to new array to setNewOrder
+      oldOrderItems.push(newOrderItem);
+    }
+
+    //set new order list with new array of all order items
+    setNewOrder(oldOrderItems);
+
+    //set selected variations
+    setSelectedVariation(tempSelectedVariations);
+
+    //calculate subTotalPrice
+    totalPrice(oldOrderItems);
+    //sound
+    if (getSystemSettings(generalSettings, "play_sound") === "1") {
+      let beep = document.getElementById("myAudio");
+      beep.play();
+    }
+  };
+
   //set order item's variation on change of variation
   const handleOrderItemVariation = (tempFoodItemVariation) => {
     if (activeItemInOrder !== null) {
@@ -1864,12 +1950,6 @@ const Pos = () => {
                 <h5 className="text-capitalize fk-sm-card__title">
                   classic chicken
                 </h5>
-                <p className="mb-0 sm-text t-text-heading t-mb-10 fk-sm-card__description">
-                  Chicken patty, cheese, special sauce, onion, tomato, lettuce
-                </p>
-                <p className="t-mt-10 mb-0 sm-text text-uppercase t-text-dark--light-20">
-                  bdt 180.00
-                </p>
               </div>
               <button
                 type="button"
@@ -1900,7 +1980,7 @@ const Pos = () => {
                       <label className="mx-checkbox flex-grow-1">
                         <input
                           type="checkbox"
-                          className="mx-checkbox__input mx-checkbox__input-solid mx-checkbox__input-solid--danger mx-checkbox__input-sm"
+                          className="mx-checkbox__input mx-checkbox__input-solid mx-checkbox__input-solid--danger mx-checkbox__input-sm mt-0-kitchen"
                         />
                         <span className="mx-checkbox__text text-capitalize t-text-heading t-ml-8">
                           patty
@@ -1952,7 +2032,7 @@ const Pos = () => {
                       <label className="mx-checkbox flex-grow-1">
                         <input
                           type="checkbox"
-                          className="mx-checkbox__input mx-checkbox__input-solid mx-checkbox__input-solid--danger mx-checkbox__input-sm"
+                          className="mx-checkbox__input mx-checkbox__input-solid mx-checkbox__input-solid--danger mx-checkbox__input-sm mt-0-kitchen"
                         />
                         <span className="mx-checkbox__text text-capitalize t-text-heading t-ml-8">
                           patty
@@ -1983,27 +2063,6 @@ const Pos = () => {
                 </li>
               </ul>
               <hr />
-              <div className="fk-sm-card__container t-mb-15">
-                <div className="fk-sm-card__content">
-                  <h6 className="text-capitalize fk-sm-card__title t-mb-5">
-                    special instruction
-                  </h6>
-                  <p className="mb-0 xsm-text t-text-heading fk-sm-card__description text-capitalize">
-                    please let us know if you are alergic to anything or avoid
-                    anything
-                  </p>
-                </div>
-                <span className="text-capitalize xxsm-text fk-badge fk-badge--dark">
-                  optional
-                </span>
-              </div>
-
-              <textarea
-                className="form-control xsm-text"
-                cols="30"
-                rows="5"
-                placeholder="e.g No Mayo"
-              ></textarea>
             </div>
             <div className="modal-footer">
               <div className="fk-qty justify-content-end">
@@ -2280,40 +2339,26 @@ const Pos = () => {
                 </div>
               </div>
               <hr />
-              <div className="row">
-                <div className="col-6">
-                  <button
-                    type="button"
-                    className="btn btn-primary w-100 xsm-text text-uppercase"
-                  >
-                    settle
-                  </button>
-                </div>
-                <div className="col-6">
-                  <button
-                    type="button"
-                    className="btn btn-success w-100 xsm-text text-uppercase"
-                  >
-                    submit
-                  </button>
-                </div>
-              </div>
             </div>
-            <div className="modal-footer">
-              <div className="fk-qty justify-content-end">
-                <span className="fk-qty__icon fk-qty__deduct">
-                  <i className="las la-minus"></i>
-                </span>
-                <input type="text" value="0" className="fk-qty__input" />
-                <span className="fk-qty__icon fk-qty__add">
-                  <i className="las la-plus"></i>
-                </span>
-              </div>
+            <div className="row py-2 mx-1">
               <button
                 type="button"
-                className="btn btn-primary xsm-text text-uppercase flex-grow-1"
+                className="btn btn-secondary xsm-text text-uppercase col-3"
+                onClick={handleCancel}
               >
-                place order
+                Cancel
+              </button>
+              <button
+                type="button"
+                className="btn btn-primary xsm-text text-uppercase ml-auto mr-1 col-4"
+              >
+                settle
+              </button>
+              <button
+                type="button"
+                className="btn btn-success xsm-text text-uppercase col-4"
+              >
+                submit
               </button>
             </div>
           </div>
@@ -2340,64 +2385,217 @@ const Pos = () => {
             </div>
             <div className="modal-body">
               <ul className="t-list addons-list">
-                <li className="addons-list__item">
-                  <select className="fk-select">
-                    <option data-display="Select Customer">
-                      Select Customer
-                    </option>
-                    <option value="1">Shoanur Rahman (0123456789)</option>
-                  </select>
-                </li>
-                <li className="addons-list__item">
-                  <select className="fk-select">
-                    <option data-display="Select Table">Select Table</option>
-                    <option value="1">Table 1</option>
-                  </select>
-                </li>
-                <li className="addons-list__item">
-                  <select className="fk-select">
-                    <option data-display="Select Customer">
-                      Select Waiter
-                    </option>
-                    <option value="1">Shoanur Rahman</option>
-                  </select>
-                </li>
-                <li className="addons-list__item">
-                  <select className="fk-select">
-                    <option data-display="Select Customer">
-                      Department Tag
-                    </option>
-                    <option value="1">Dine In</option>
-                  </select>
-                </li>
-                <li className="addons-list__item">
-                  <select className="fk-select">
-                    <option data-display="Select Customer">Payment Type</option>
-                    <option value="1">Master Card</option>
-                  </select>
-                </li>
-                <li className="addons-list__item">
-                  {/* Example single danger button  */}
-                  <div className="btn-group w-100">
-                    <button
-                      type="button"
-                      className="btn sm-text text-uppercase w-100 btn-outline-danger dropdown-toggle"
-                      data-toggle="dropdown"
-                      aria-expanded="false"
-                    >
-                      total guest
-                    </button>
-                    <ul className="dropdown-menu w-100 border-0">
-                      <li>
-                        <input
-                          type="number"
-                          className="form-control sm-text"
-                          placeholder="Total guest.."
-                        />
-                      </li>
-                    </ul>
-                  </div>
-                </li>
+                {authUserInfo.details &&
+                  authUserInfo.details.user_type !== "staff" && (
+                    <li className="addons-list__item mt-1 mx-1">
+                      <Select
+                        options={branchForSearch && branchForSearch}
+                        components={makeAnimated()}
+                        getOptionLabel={(option) => option.name}
+                        getOptionValue={(option) => option.name}
+                        classNamePrefix="select"
+                        className="xsm-text"
+                        onChange={handleSetBranch}
+                        maxMenuHeight="200px"
+                        placeholder={_t(t("Branch")) + ".."}
+                      />
+                    </li>
+                  )}
+                {!loading && (
+                  <>
+                    {orderDetails.branch !== null && (
+                      <>
+                        <li
+                          className={`addons-list__item mx-1 ${
+                            authUserInfo.details &&
+                            authUserInfo.details.user_type === "staff" &&
+                            "mt-1"
+                          }`}
+                        >
+                          <Select
+                            options={
+                              orderDetailUsers.theCustomers !== null &&
+                              orderDetailUsers.theCustomers
+                            }
+                            components={makeAnimated()}
+                            getOptionLabel={(option) =>
+                              option.name + " (" + option.phn_no + ")"
+                            }
+                            getOptionValue={(option) => option.name}
+                            classNamePrefix="select"
+                            className="xsm-text"
+                            onChange={handleSetCustomer}
+                            maxMenuHeight="200px"
+                            placeholder={_t(t("Customer")) + ".."}
+                          />
+                        </li>
+                        <li className="addons-list__item mx-1 border border-2 rounded-lg">
+                          <div className="btn-group w-100">
+                            <button
+                              type="button"
+                              className="fk-right-nav__guest-btn btn w-100 t-bg-white dropdown-toggle new-customer-pos xsm-text pl-2"
+                              data-toggle="dropdown"
+                              aria-expanded="false"
+                            >
+                              + Customer?
+                            </button>
+                            <ul className="dropdown-menu w-100 border-0 pt-4 change-background">
+                              <li>
+                                <input
+                                  type="text"
+                                  name="name"
+                                  className="form-control font-10px rounded-lg"
+                                  placeholder="Name"
+                                  autoComplete="off"
+                                  value={orderDetails.newCustomerInfo.name}
+                                  onChange={handleNewCustomer}
+                                />
+                              </li>
+                              <li className="pb-2">
+                                <input
+                                  type="text"
+                                  name="number"
+                                  className="form-control font-10px mt-2 rounded-lg"
+                                  autoComplete="off"
+                                  placeholder="Number"
+                                  value={orderDetails.newCustomerInfo.number}
+                                  onChange={handleNewCustomer}
+                                />
+                              </li>
+                              <li className="pb-1 text-right">
+                                <button
+                                  className="btn t-bg-white text-dark xsm-text text-uppercase btn-sm py-0 px-2 mr-1"
+                                  onClick={() => {
+                                    setOrderDetails({
+                                      ...orderDetails,
+                                      newCustomer: false,
+                                      newCustomerInfo: {
+                                        name: "",
+                                        number: "",
+                                      },
+                                    });
+                                  }}
+                                >
+                                  Cancel
+                                </button>
+                              </li>
+                            </ul>
+                          </div>
+                        </li>
+
+                        <li className="addons-list__item mx-1">
+                          <Select
+                            options={deptTagForSearch && deptTagForSearch}
+                            components={makeAnimated()}
+                            getOptionLabel={(option) => option.name}
+                            getOptionValue={(option) => option.name}
+                            classNamePrefix="select"
+                            className="xsm-text"
+                            onChange={handleSetDeptTag}
+                            maxMenuHeight="200px"
+                            placeholder={_t(t("Dept tag")) + ".."}
+                          />
+                        </li>
+                        <li
+                          className={`addons-list__item mx-1 payment-type-parent ${
+                            orderDetails.payment_type !== null && "mb-1"
+                          }`}
+                        >
+                          <Select
+                            options={
+                              paymentTypeForSearch && paymentTypeForSearch
+                            }
+                            components={makeAnimated()}
+                            getOptionLabel={(option) => option.name}
+                            getOptionValue={(option) => option.name}
+                            classNamePrefix="select"
+                            className="xsm-text"
+                            onChange={handleSetpaymentType}
+                            maxMenuHeight="200px"
+                            isMulti
+                            backspaceRemovesValue={false}
+                            clearIndicator={null}
+                            placeholder={_t(t("Payments")) + ".."}
+                          />
+                        </li>
+                        {orderDetails.payment_type !== null && (
+                          <div className="border mt-0 mb-2 change-background mx-1 rounded-lg">
+                            <div className="xsm-text text-center text-white pt-1">
+                              Amount
+                            </div>
+                            {orderDetails.payment_type.map(
+                              (eachPaymentType, paymentTypeIndex) => {
+                                return (
+                                  <li className="addons-list__item mx-1 mb-1">
+                                    <input
+                                      type="number"
+                                      min="0"
+                                      step="0.01"
+                                      name={eachPaymentType.id}
+                                      autoComplete="off"
+                                      className="form-control xsm-text pl-2"
+                                      onChange={handlePaymentTypeAmount}
+                                      placeholder={eachPaymentType.name}
+                                      value={
+                                        orderDetails.payment_amount &&
+                                        orderDetails.payment_amount[
+                                          eachPaymentType.id
+                                        ]
+                                      }
+                                    />
+                                  </li>
+                                );
+                              }
+                            )}
+                          </div>
+                        )}
+
+                        <li className="addons-list__item mx-1">
+                          <Select
+                            options={
+                              orderDetailUsers.theTables !== null &&
+                              orderDetailUsers.theTables
+                            }
+                            components={makeAnimated()}
+                            getOptionLabel={(option) => option.name}
+                            getOptionValue={(option) => option.name}
+                            classNamePrefix="select"
+                            className="xsm-text"
+                            onChange={handleSetTable}
+                            maxMenuHeight="200px"
+                            placeholder={_t(t("Table")) + ".."}
+                          />
+                        </li>
+                        <li className="addons-list__item mx-1">
+                          <Select
+                            options={
+                              orderDetailUsers.theWaiters !== null &&
+                              orderDetailUsers.theWaiters
+                            }
+                            components={makeAnimated()}
+                            getOptionLabel={(option) => option.name}
+                            getOptionValue={(option) => option.name}
+                            classNamePrefix="select"
+                            className="xsm-text"
+                            onChange={handleSetWaiter}
+                            maxMenuHeight="200px"
+                            placeholder={_t(t("Waiter")) + ".."}
+                          />
+                        </li>
+
+                        <li className="addons-list__item mx-1">
+                          <input
+                            type="number"
+                            className="form-control xsm-text py-2 pl-2"
+                            min="1"
+                            onChange={handleTotalGuest}
+                            placeholder={_t(t("Total guest")) + ".."}
+                          />
+                        </li>
+                      </>
+                    )}
+                  </>
+                )}
               </ul>
             </div>
           </div>
@@ -2407,138 +2605,155 @@ const Pos = () => {
 
       <main id="main" data-simplebar>
         {/* Mobile Screen Only   */}
-        <div className="d-md-none">
-          <div className="fk-sm-card t-mt-10" id="card-1">
-            <h3 className="mt-0 t-mb-30 text-capitalize">chicken burger</h3>
-            <ul className="t-list fk-sm-card-list">
-              <li
-                className="fk-sm-card-list__item"
-                data-toggle="modal"
-                data-target="#menuAddons"
-              >
-                <div className="fk-sm-card__container">
-                  <div className="fk-sm-card__content">
-                    <h6 className="text-capitalize fk-sm-card__title">
-                      classic chicken
-                    </h6>
-                    <p className="mb-0 sm-text t-text-dark--light-40 t-mb-10 fk-sm-card__description">
-                      Chicken patty, cheese, special sauce, onion, tomato,
-                      lettuce
-                    </p>
-                    <p className="t-mt-10 mb-0 sm-text text-uppercase t-text-dark--light-20">
-                      bdt 180.00
-                    </p>
-                  </div>
-                  <div className="fk-sm-card__action">
-                    <div className="fk-sm-card__img fk-sm-card__img--1"></div>
-                    <div className="fk-sm-card__cart">
-                      <i className="las la-plus"></i>
-                    </div>
-                  </div>
+        <div className="d-md-none t-mb-15">
+          {/* Show start work period options here */}
+          {newSettings && newSettings.workPeriod === null && (
+            <div className="fk-left-overlay">
+              <div className="fk-left-overlay__content text-center m-auto">
+                <h5
+                  className={`text-primary text-uppercase ${
+                    authUserInfo.details &&
+                    authUserInfo.details.user_type !== "staff" &&
+                    "mb-0"
+                  }`}
+                >
+                  {authUserInfo.details &&
+                  authUserInfo.details.user_type !== "staff"
+                    ? _t(t("Select branch to active POS"))
+                    : _t(t("start workperiod"))}
+                </h5>
+                {authUserInfo.details &&
+                  authUserInfo.details.user_type !== "staff" && (
+                    <>
+                      <h6 className="mt-1 text-uppercase xsm-text mb-1">
+                        {_t(t("Start workperiod if it is not started"))}
+                      </h6>
+                      <small className="d-flex justify-content-center text-lowercase xsm-text mt-0 mb-2">
+                        (
+                        {_t(
+                          t("Use staff account not to see this multiple times")
+                        )}
+                        )
+                      </small>
+                    </>
+                  )}
+                <NavLink
+                  to="/dashboard"
+                  className="t-heading-font btn btn-primary btn-sm text-uppercase sm-text"
+                >
+                  Goto Dashboard
+                </NavLink>
+              </div>
+            </div>
+          )}
+          {/* Show start work period options here */}
+          {foodGroupForSearch &&
+            foodGroupForSearch.map((mobileGroup, mobileGroupIndex) => {
+              let tempItems =
+                foodForSearch &&
+                foodForSearch.filter((tempItem) => {
+                  return parseInt(tempItem.food_group_id) === mobileGroup.id;
+                });
+              return (
+                <div
+                  className="fk-sm-card t-mt-10"
+                  id={`card-${mobileGroupIndex + 1}`}
+                >
+                  <h3 className="mt-0 t-mb-30 text-capitalize">
+                    {mobileGroup.name}
+                  </h3>
+                  <ul className="t-list fk-sm-card-list">
+                    {tempItems.length > 0
+                      ? [
+                          tempItems.map((mobileItem, mobileItemIndex) => {
+                            return (
+                              <li
+                                className="fk-sm-card-list__item"
+                                data-toggle="modal"
+                                data-target="#menuAddons"
+                                key={mobileItemIndex}
+                                onClick={() => {
+                                  //set active item in order list
+                                  setActiveItemInOrder(mobileItemIndex);
+                                  // set variations, properties and selected items here
+                                  setFoodItem({
+                                    ...foodItem,
+                                    foodGroup: mobileGroup,
+                                    selectedItem: mobileItem,
+                                    variations:
+                                      mobileItem &&
+                                      parseInt(mobileItem.has_variation) === 1
+                                        ? mobileItem.variations
+                                        : null,
+                                    properties:
+                                      mobileItem &&
+                                      parseInt(mobileItem.has_property) === 1
+                                        ? mobileItem.properties
+                                        : null,
+                                  });
+                                  handleOrderItemMobile(mobileItem);
+                                }}
+                              >
+                                <div className="fk-sm-card__container align-items-center">
+                                  <div className="fk-sm-card__content">
+                                    <h6 className="text-capitalize fk-sm-card__title">
+                                      {mobileItem.name}
+                                    </h6>
+                                    {mobileItem.has_variation === "0" && (
+                                      <p className="t-mt-10 mb-0 sm-text text-uppercase t-text-dark--light-20">
+                                        {currencySymbolLeft()}
+                                        {formatPrice(
+                                          parseFloat(mobileItem.price)
+                                        )}
+                                        {currencySymbolRight()}
+                                      </p>
+                                    )}
+                                  </div>
+                                  <div className="fk-sm-card__action">
+                                    <div className="fk-sm-card__img fk-sm-card__img--1"></div>
+                                    <div className="fk-sm-card__cart">
+                                      <i className="las la-plus"></i>
+                                    </div>
+                                  </div>
+                                </div>
+                              </li>
+                            );
+                          }),
+                        ]
+                      : ""}
+                  </ul>
                 </div>
-              </li>
-            </ul>
-          </div>
-          <div className="fk-sm-card t-mt-10 t-mb-10" id="card-2">
-            <h3 className="mt-0 t-mb-30 text-capitalize">beef burger</h3>
-            <ul className="t-list fk-sm-card-list">
-              <li
-                className="fk-sm-card-list__item"
-                data-toggle="modal"
-                data-target="#menuAddons"
-              >
-                <div className="fk-sm-card__container">
-                  <div className="fk-sm-card__content">
-                    <h6 className="text-capitalize fk-sm-card__title">
-                      classic beef
-                    </h6>
-                    <p className="mb-0 sm-text t-text-dark--light-40 t-mb-10 fk-sm-card__description">
-                      beef patty, cheese, special sauce, onion, tomato, lettuce
-                    </p>
-                    <p className="t-mt-10 mb-0 sm-text text-uppercase t-text-dark--light-20">
-                      bdt 180.00
-                    </p>
-                  </div>
-                  <div className="fk-sm-card__action">
-                    <div className="fk-sm-card__img fk-sm-card__img--11"></div>
-                    <div className="fk-sm-card__cart">
-                      <i className="las la-plus"></i>
-                    </div>
-                  </div>
-                </div>
-              </li>
-            </ul>
-          </div>
+              );
+            })}
 
-          <div className="fk-sm-footnav">
-            <div
-              className="fk-sm-footnav__cart bg-primary"
-              data-toggle="modal"
-              data-target="#showCart"
-            >
-              <ul className="t-list fk-sm-nav__bar justify-content-between">
-                <li className="fk-sm-nav__list">
-                  <a href="#" className="t-link fk-sm-nav__link text-light">
-                    {" "}
-                    1{" "}
-                  </a>
-                </li>
-                <li className="fk-sm-nav__list">
-                  <a href="#" className="t-link fk-sm-nav__link text-light">
-                    view cart
-                  </a>
-                </li>
-                <li className="fk-sm-nav__list">
-                  <a href="#" className="t-link fk-sm-nav__link text-light">
-                    tk 280
-                  </a>
-                </li>
-              </ul>
-            </div>
-            <div className="fk-sm-footnav__order bg-primary">
-              <ul className="t-list fk-sm-nav__bar justify-content-center">
-                <li className="fk-sm-nav__list">
-                  <a
-                    href="#"
-                    className="t-link fk-sm-nav__link text-light"
-                    data-toggle="modal"
-                    data-target="#extraInfo"
-                  >
-                    additional information
-                  </a>
-                </li>
-              </ul>
-            </div>
+          <div className="fk-sm-footnav" style={{ zIndex: 10 }}>
             <div className="fk-sm-footnav__container">
-              <ul className="t-list fk-sm-footnav__list justify-content-between">
-                <li className="fk-sm-footnav__list-item">
-                  <a href="#" className="t-link fk-sm-footnav__link">
-                    <i className="las la-concierge-bell"></i>
-                  </a>
+              <ul className="t-list fk-sm-footnav__list justify-content-center">
+                <li
+                  className="fk-sm-footnav__list-item"
+                  data-toggle="modal"
+                  data-target="#extraInfo"
+                >
+                  <span className="t-link fk-sm-footnav__link">
+                    <i className="las la-edit"></i>
+                  </span>
+                </li>
+                <li
+                  className="fk-sm-footnav__list-item"
+                  data-toggle="modal"
+                  data-target="#showCart"
+                >
+                  <span className="t-link fk-sm-footnav__link">
+                    <i className="las la-shopping-cart"></i>
+                  </span>
                 </li>
                 <li className="fk-sm-footnav__list-item">
-                  <a href="#" className="t-link fk-sm-footnav__link">
-                    <i className="las la-file-invoice-dollar"></i>
-                  </a>
-                </li>
-                <li className="fk-sm-footnav__list-item">
-                  <a
-                    href="#"
-                    className="t-link fk-sm-footnav__link text-danger"
+                  <NavLink
+                    to="/dashboard/pos/submitted"
+                    className="t-link fk-sm-footnav__link"
                   >
-                    <i className="las la-plus-circle"></i>
-                  </a>
-                </li>
-
-                <li className="fk-sm-footnav__list-item">
-                  <a href="#" className="t-link fk-sm-footnav__link">
-                    <i className="las la-search"></i>
-                  </a>
-                </li>
-                <li className="fk-sm-footnav__list-item">
-                  <a href="#" className="t-link fk-sm-footnav__link">
-                    <i className="las la-print"></i>
-                  </a>
+                    <i className="las la-share-square"></i>
+                  </NavLink>
                 </li>
               </ul>
             </div>
