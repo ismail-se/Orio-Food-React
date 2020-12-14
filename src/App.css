@@ -222,6 +222,8 @@ li.addons-list__item.active {
   padding-top: 5px;
   padding-bottom: 5px;
 }
+
+/* profile update */
 .profile-update-full {
   height: calc(100vh - 174px) !important;
 }
