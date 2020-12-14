@@ -296,6 +296,7 @@ const VariationCrud = () => {
       })
       .then((res) => {
         if (res.data === "data exist") {
+          setLoading(false);
           toast.error(
             `${_t(t("Please remove this variation from food item first"))}`,
             {

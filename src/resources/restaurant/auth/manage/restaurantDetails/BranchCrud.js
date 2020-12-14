@@ -274,21 +274,36 @@ const BranchCrud = () => {
         headers: { Authorization: `Bearer ${getCookie()}` },
       })
       .then((res) => {
-        setBranchList(res.data[0]);
-        setBranchforSearch(res.data[1]);
-        setSearchedBranch({
-          ...searchedBranch,
-          list: res.data[1],
-        });
-        setLoading(false);
-        toast.success(`${_t(t("Branch has been deleted successfully"))}`, {
-          position: "bottom-center",
-          autoClose: 10000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          className: "text-center toast-notification",
-        });
+        if (res.data === "user") {
+          setLoading(false);
+          toast.error(
+            `${_t(t("Please disable all the user of this branch first"))}`,
+            {
+              position: "bottom-center",
+              autoClose: 10000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              className: "text-center toast-notification",
+            }
+          );
+        } else {
+          setBranchList(res.data[0]);
+          setBranchforSearch(res.data[1]);
+          setSearchedBranch({
+            ...searchedBranch,
+            list: res.data[1],
+          });
+          setLoading(false);
+          toast.success(`${_t(t("Branch has been deleted successfully"))}`, {
+            position: "bottom-center",
+            autoClose: 10000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            className: "text-center toast-notification",
+          });
+        }
       })
       .catch(() => {
         setLoading(false);
