@@ -161,6 +161,39 @@ const restaurantMenuLink = (
   );
 };
 
+//manage page mobile screen link
+const managePageHrefLinkMobile = (redirectTo, menuName) => {
+  if (window.location.pathname === redirectTo) {
+    return (
+      <li
+        className={`fk-sm-nav__list  ${
+          window.location.href.includes(redirectTo) && "active"
+        }`}
+      >
+        <NavLink
+          to={{ pathname: "/refresh", state: redirectTo }}
+          exact
+          className={`t-link fk-sm-nav__link`}
+        >
+          {menuName}
+        </NavLink>
+      </li>
+    );
+  } else {
+    return (
+      <li
+        className={`fk-sm-nav__list  ${
+          window.location.href.includes(redirectTo) && "active"
+        }`}
+      >
+        <NavLink to={redirectTo} exact className={`t-link fk-sm-nav__link`}>
+          {menuName}
+        </NavLink>
+      </li>
+    );
+  }
+};
+
 //manage page navlink
 const managePageHrefLink = (redirectTo, menuName) => {
   if (window.location.pathname === redirectTo) {
@@ -300,6 +333,7 @@ export {
 
   //navLink
   restaurantMenuLink,
+  managePageHrefLinkMobile,
   managePageHrefLink,
   //navLink
 

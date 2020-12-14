@@ -5,7 +5,11 @@ import { NavLink } from "react-router-dom";
 import $ from "jquery";
 
 //functions
-import { _t, managePageHrefLink } from "../../../../functions/Functions";
+import {
+  _t,
+  managePageHrefLink,
+  managePageHrefLinkMobile,
+} from "../../../../functions/Functions";
 import { useTranslation } from "react-i18next";
 
 const ManageSidebar = () => {
@@ -36,37 +40,94 @@ const ManageSidebar = () => {
           <div className="col-12">
             <div className="fk-sm-nav" data-simplebar>
               <ul className="t-list fk-sm-nav__bar flex-row">
-                <li className="fk-sm-nav__list active">
-                  {/* todo:: menu for mobile screen */}
-                  <a href="#" className="t-link fk-sm-nav__link">
-                    manage page
-                  </a>
-                </li>
-                <li className="fk-sm-nav__list">
-                  <a href="#" className="t-link fk-sm-nav__link">
-                    manage instruction
-                  </a>
-                </li>
-                <li className="fk-sm-nav__list">
-                  <a href="#" className="t-link fk-sm-nav__link">
-                    manage order
-                  </a>
-                </li>
-                <li className="fk-sm-nav__list">
-                  <a href="#" className="t-link fk-sm-nav__link">
-                    manage something
-                  </a>
-                </li>
-                <li className="fk-sm-nav__list">
-                  <a href="#" className="t-link fk-sm-nav__link">
-                    manage something 2
-                  </a>
-                </li>
-                <li className="fk-sm-nav__list">
-                  <a href="#" className="t-link fk-sm-nav__link">
-                    manage something 3
-                  </a>
-                </li>
+                {/* Foods */}
+                {managePageHrefLinkMobile(
+                  "/dashboard/manage/food/add-new",
+                  _t(t("Add new item"))
+                )}
+
+                {managePageHrefLinkMobile(
+                  "/dashboard/manage/food/all-items",
+                  _t(t("All Items"))
+                )}
+
+                {managePageHrefLinkMobile(
+                  "/dashboard/manage/food/groups",
+                  _t(t("Groups"))
+                )}
+
+                {managePageHrefLinkMobile(
+                  "/dashboard/manage/food/properties",
+                  _t(t("Properties"))
+                )}
+
+                {managePageHrefLinkMobile(
+                  "/dashboard/manage/food/variations",
+                  _t(t("Variations"))
+                )}
+
+                {/* User Management */}
+                {managePageHrefLinkMobile(
+                  "/dashboard/manage/user/admin-staff",
+                  _t(t("Admin / Staff"))
+                )}
+
+                {managePageHrefLinkMobile(
+                  "/dashboard/manage/user/customers",
+                  _t(t("Customers"))
+                )}
+
+                {managePageHrefLinkMobile(
+                  "/dashboard/manage/user/waiters",
+                  _t(t("Waiters"))
+                )}
+
+                {managePageHrefLinkMobile(
+                  "/dashboard/manage/roles-and-permissions",
+                  _t(t("Role Groups"))
+                )}
+
+                {/* Restaurant */}
+                {managePageHrefLinkMobile(
+                  "/dashboard/manage/restaurant/branches",
+                  _t(t("Branches"))
+                )}
+
+                {managePageHrefLinkMobile(
+                  "/dashboard/manage/restaurant/dept-tags",
+                  _t(t("Dept Tags"))
+                )}
+
+                {managePageHrefLinkMobile(
+                  "/dashboard/manage/restaurant/tables",
+                  _t(t("Tables"))
+                )}
+
+                {managePageHrefLinkMobile(
+                  "/dashboard/manage/restaurant/payment-type",
+                  _t(t("Payment Types"))
+                )}
+
+                {/* Settings */}
+                {managePageHrefLinkMobile(
+                  "/dashboard/manage/settings/currencies",
+                  _t(t("Currencies"))
+                )}
+
+                {managePageHrefLinkMobile(
+                  "/dashboard/manage/settings/languages",
+                  _t(t("Languages"))
+                )}
+
+                {managePageHrefLinkMobile(
+                  "/dashboard/manage/settings/smtp-settings",
+                  _t(t("Email / Smtp"))
+                )}
+
+                {managePageHrefLinkMobile(
+                  "/dashboard/manage/settings/general-settings",
+                  _t(t("General Settings"))
+                )}
               </ul>
             </div>
           </div>

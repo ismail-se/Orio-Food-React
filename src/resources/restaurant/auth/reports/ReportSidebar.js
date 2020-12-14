@@ -5,7 +5,11 @@ import { NavLink } from "react-router-dom";
 import $ from "jquery";
 
 //functions
-import { _t, managePageHrefLink } from "../../../../functions/Functions";
+import {
+  _t,
+  managePageHrefLink,
+  managePageHrefLinkMobile,
+} from "../../../../functions/Functions";
 import { useTranslation } from "react-i18next";
 
 const ReportSidebar = () => {
@@ -36,37 +40,71 @@ const ReportSidebar = () => {
           <div className="col-12">
             <div className="fk-sm-nav" data-simplebar>
               <ul className="t-list fk-sm-nav__bar flex-row">
-                <li className="fk-sm-nav__list active">
-                  {/* todo:: menu for mobile screen */}
-                  <a href="#" className="t-link fk-sm-nav__link">
-                    manage page
-                  </a>
-                </li>
-                <li className="fk-sm-nav__list">
-                  <a href="#" className="t-link fk-sm-nav__link">
-                    manage instruction
-                  </a>
-                </li>
-                <li className="fk-sm-nav__list">
-                  <a href="#" className="t-link fk-sm-nav__link">
-                    manage order
-                  </a>
-                </li>
-                <li className="fk-sm-nav__list">
-                  <a href="#" className="t-link fk-sm-nav__link">
-                    manage something
-                  </a>
-                </li>
-                <li className="fk-sm-nav__list">
-                  <a href="#" className="t-link fk-sm-nav__link">
-                    manage something 2
-                  </a>
-                </li>
-                <li className="fk-sm-nav__list">
-                  <a href="#" className="t-link fk-sm-nav__link">
-                    manage something 3
-                  </a>
-                </li>
+                {/* dashboard */}
+                {managePageHrefLinkMobile(
+                  "/dashboard/reports",
+                  _t(t("Dashboard"))
+                )}
+
+                {/* daily */}
+                {managePageHrefLinkMobile(
+                  "/dashboard/daily-reports",
+                  _t(t("Daily"))
+                )}
+
+                {/* monthly */}
+                {managePageHrefLinkMobile(
+                  "/dashboard/monthly-reports",
+                  _t(t("Monthly"))
+                )}
+
+                {/* yearly */}
+                {/* {managePageHrefLink(
+                  "/dashboard/yearly-reports",
+                  _t(t("Yearly"))
+                )} */}
+
+                {/* food item wise */}
+                {managePageHrefLinkMobile(
+                  "/dashboard/food-items-reports",
+                  _t(t("Item Wise"))
+                )}
+
+                {/* food group wise */}
+                {managePageHrefLinkMobile(
+                  "/dashboard/food-group-reports",
+                  _t(t("Group Wise"))
+                )}
+
+                {/* branch wise */}
+                {managePageHrefLinkMobile(
+                  "/dashboard/branch-reports",
+                  _t(t("Branch Wise"))
+                )}
+
+                {/* pos user wise */}
+                {managePageHrefLinkMobile(
+                  "/dashboard/pos-user-reports",
+                  _t(t("Pos User Wise"))
+                )}
+
+                {/* food item wise */}
+                {managePageHrefLinkMobile(
+                  "/dashboard/dept-tag-reports",
+                  _t(t("Department Wise"))
+                )}
+
+                {/* Service charge wise */}
+                {managePageHrefLinkMobile(
+                  "/dashboard/service-charge-reports",
+                  _t(t("Service Charge Wise"))
+                )}
+
+                {/* discount charge wise */}
+                {managePageHrefLinkMobile(
+                  "/dashboard/discount-reports",
+                  _t(t("discount Wise"))
+                )}
               </ul>
             </div>
           </div>
@@ -139,7 +177,7 @@ const ReportSidebar = () => {
                 {/* Service charge wise */}
                 {managePageHrefLink(
                   "/dashboard/service-charge-reports",
-                  _t(t("Ser. Charge Wise"))
+                  _t(t("Ser Charge Wise"))
                 )}
 
                 {/* discount charge wise */}

@@ -524,12 +524,12 @@ const Monthly = () => {
                           </div>
                         </div>
                         <div className="row gx-2 justify-content-between">
-                          <div className="col-4 t-mb-15 mb-md-0">
+                          <div className="col-12 col-md-4 t-mb-15 mb-md-0">
                             <div className="py-1 bg-primary sm-text text-white text-center rounded-sm">
                               AMOUNT / BRANCH
                             </div>
                           </div>
-                          <div className="col-4 t-mb-15 mb-md-0">
+                          <div className="col-12 col-md-4 t-mb-15 mb-md-0">
                             <div className="d-flex justify-content-between">
                               <div className="sm-text text-white text-right rounded-sm col-8">
                                 <DatePicker
@@ -541,7 +541,7 @@ const Monthly = () => {
                                   placeholderText={_t(t("Pick a month")) + ".."}
                                 />
                               </div>
-                              <div className="sm-text text-white text-right rounded-sm col-3">
+                              <div className="sm-text text-white text-md-right rounded-sm col-12 col-md-3 ml-2 ml-md-0">
                                 <button
                                   className="btn btn-primary btn-sm px-3"
                                   onClick={() => getMonthlySelected(startDate)}
