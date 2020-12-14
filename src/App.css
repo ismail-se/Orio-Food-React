@@ -154,6 +154,16 @@ html {
   max-width: 51.88px;
 }
 
+.make-this-relative-mobile {
+  position: relative;
+  top: -53px;
+  left: 25px;
+  /* margin-top: -31px; */
+  margin-left: 25%;
+  cursor: pointer;
+  max-width: 51.88px;
+}
+
 /*  pointer-cursor */
 .pointer-cursor {
   cursor: pointer;
@@ -206,8 +216,11 @@ html {
 
 /* POS Page Tab Screen Order List */
 li.addons-list__item.active {
-  background: red;
-  color: white;
+  background: #de222a;
+  color: white !important;
+  border-radius: 2px;
+  padding-top: 5px;
+  padding-bottom: 5px;
 }
 .profile-update-full {
   height: calc(100vh - 174px) !important;

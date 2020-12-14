@@ -295,6 +295,7 @@ const Pos = () => {
 
     //calculate subTotalPrice
     totalPrice(oldOrderItems);
+
     //sound
     if (getSystemSettings(generalSettings, "play_sound") === "1") {
       let beep = document.getElementById("myAudio");
@@ -1134,7 +1135,7 @@ const Pos = () => {
       });
       let localCurrency = JSON.parse(localStorage.getItem("currency"));
       paidAmount = paidAmount / localCurrency.rate;
-      let theReturnMoney = paidAmount - totalPayable;
+      let theReturnMoney = totalPayable - paidAmount;
       setReturnMoneyUsd(theReturnMoney);
     } else {
       setReturnMoneyUsd(0);
@@ -2091,7 +2092,7 @@ const Pos = () => {
         <div className="modal-dialog modal-fullscreen">
           <div className="modal-content">
             <div className="modal-header align-items-center">
-              <h3>Order details</h3>
+              <h3>{_t(t("Order details"))}</h3>
               <button
                 type="button"
                 className="btn-close"
@@ -2103,7 +2104,7 @@ const Pos = () => {
               <div className="row">
                 <div className="col-12">
                   <span className="sm-text font-weight-bold text-uppercase font-italic">
-                    Order token:{" "}
+                    {_t(t("Order token"))}:{" "}
                     {newOrder ? (
                       <>
                         #{orderDetails.token.id} -{" "}
@@ -2118,45 +2119,232 @@ const Pos = () => {
               <div className="fk-sm-card__container t-mt-30">
                 <div className="fk-sm-card__content">
                   <h6 className="text-capitalize fk-sm-card__title t-mb-5">
-                    order items
+                    {_t(t("order items"))}
                   </h6>
                 </div>
               </div>
               <hr />
               <ul className="t-list addons-list">
-                <li className="addons-list__item">
-                  <div className="d-flex align-items-center justify-content-between">
-                    <div className="col">
-                      <span
-                        className="t-text-heading sm-text text-capitalize"
-                        data-toggle="modal"
-                        data-target="#menuAddons"
-                      >
-                        chicken burger
-                      </span>
-                    </div>
-                    <div className="col">
-                      <div className="fk-qty flex-grow-1 justify-content-end">
-                        <span className="fk-qty__icon fk-qty__deduct">
-                          <i className="las la-minus"></i>
+                {/* loop through order list items */}
+                {newOrder && newOrder.length > 0 ? (
+                  newOrder.map((orderListItem, orderListItemIndex) => {
+                    return (
+                      <>
+                        <li
+                          className={`addons-list__item px-1 ${
+                            orderListItemIndex === activeItemInOrder && "active"
+                          }`}
+                        >
+                          <div
+                            className="d-flex align-items-center justify-content-between"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              //orderListItem's group wise all items
+                              let tempItems =
+                                foodForSearch &&
+                                foodForSearch.filter((tempItem) => {
+                                  return (
+                                    tempItem.food_group_id ===
+                                    orderListItem.item.food_group_id
+                                  );
+                                });
+
+                              //orderListItem's group
+                              let foodGroup =
+                                foodGroupForSearch &&
+                                foodGroupForSearch.find((groupItem) => {
+                                  return (
+                                    groupItem.id ===
+                                    parseInt(orderListItem.item.food_group_id)
+                                  );
+                                });
+
+                              // selected pos item
+                              let selectedItemTemp =
+                                tempItems &&
+                                tempItems.find((tempSelectedItem) => {
+                                  return (
+                                    tempSelectedItem.id ===
+                                    orderListItem.item.id
+                                  );
+                                });
+
+                              // Set variations, properties, selected item
+                              setFoodItem({
+                                ...foodItem,
+                                foodGroup: foodGroup,
+                                items: tempItems,
+                                selectedItem: selectedItemTemp,
+                                variations:
+                                  selectedItemTemp &&
+                                  parseInt(selectedItemTemp.has_variation) === 1
+                                    ? selectedItemTemp.variations
+                                    : null,
+                                properties:
+                                  selectedItemTemp &&
+                                  parseInt(selectedItemTemp.has_property) === 1
+                                    ? selectedItemTemp.properties
+                                    : null,
+                              });
+
+                              //set active order list index for background color of selected
+                              setActiveItemInOrder(orderListItemIndex);
+                            }}
+                          >
+                            <div className="col">
+                              <span
+                                className={`t-text-heading sm-text text-capitalize d-block ${
+                                  orderListItemIndex === activeItemInOrder &&
+                                  "text-white"
+                                }`}
+                              >
+                                {orderListItem.item.name}
+                              </span>
+                              {parseInt(orderListItem.item.has_variation) ===
+                                1 &&
+                                orderListItem.variation && (
+                                  <span
+                                    className={`xxsm-text text-capitalize d-block ${
+                                      orderListItemIndex ===
+                                        activeItemInOrder && "text-white"
+                                    }`}
+                                  >
+                                    {_t(t("Variation"))}:{" "}
+                                    {orderListItem.variation.variation_name}
+                                  </span>
+                                )}
+
+                              {/* properties */}
+                              {orderListItem.properties &&
+                                orderListItem.properties.length > 0 &&
+                                selectedPropertyGroup[orderListItemIndex] !==
+                                  undefined &&
+                                selectedPropertyGroup[orderListItemIndex].map(
+                                  (thisIsGroup) => {
+                                    let theGroup =
+                                      propertyGroupForSearch &&
+                                      propertyGroupForSearch.find((theItem) => {
+                                        return theItem.id === thisIsGroup;
+                                      });
+                                    return (
+                                      <div className="d-block">
+                                        <span className="text-capitalize xxsm-text d-inline-block mr-1">
+                                          {theGroup && theGroup.name} :
+                                        </span>
+                                        {orderListItem.properties.map(
+                                          (propertyName, propertyIndex) => {
+                                            if (
+                                              propertyName.item
+                                                .property_group_id ===
+                                              theGroup.id
+                                            ) {
+                                              return (
+                                                <span className="text-capitalize xxsm-text d-inline-block mr-1">
+                                                  {propertyName.item.name}{" "}
+                                                  <span>
+                                                    {" "}
+                                                    {propertyName.quantity >
+                                                      1 &&
+                                                      "(" +
+                                                        propertyName.quantity +
+                                                        ")"}
+                                                  </span>
+                                                  {orderListItem.properties
+                                                    .length -
+                                                    1 !==
+                                                    propertyIndex && ","}
+                                                </span>
+                                              );
+                                            } else {
+                                              return true;
+                                            }
+                                          }
+                                        )}
+                                      </div>
+                                    );
+                                  }
+                                )}
+                            </div>
+
+                            {/* Quantity */}
+                            <div className="col">
+                              <div className="fk-qty flex-grow-1 justify-content-end">
+                                <span
+                                  className="fk-qty__icon"
+                                  onClick={() => {
+                                    handleOrderItemQty("-");
+                                  }}
+                                >
+                                  <i className="las la-minus"></i>
+                                </span>
+                                <input
+                                  type="text"
+                                  value={orderListItem.quantity}
+                                  className={`fk-qty__input t-bg-clear ${
+                                    orderListItemIndex === activeItemInOrder &&
+                                    "text-white"
+                                  }`}
+                                  readOnly
+                                />
+                                <span
+                                  className="fk-qty__icon"
+                                  onClick={() => {
+                                    handleOrderItemQty("+");
+                                  }}
+                                >
+                                  <i className="las la-plus"></i>
+                                </span>
+                              </div>
+                            </div>
+
+                            <div className="col text-right">
+                              <span
+                                className={`t-text-heading text-uppercase sm-text flex-grow-1 ${
+                                  orderListItemIndex === activeItemInOrder &&
+                                  "text-white"
+                                }`}
+                              >
+                                {parseInt(orderListItem.item.has_variation) ===
+                                1 ? (
+                                  <>
+                                    {currencySymbolLeft()}
+
+                                    {showPriceOfEachOrderItem(
+                                      orderListItemIndex
+                                    )}
+                                    {currencySymbolRight()}
+                                  </>
+                                ) : (
+                                  <>
+                                    {currencySymbolLeft()}
+                                    {showPriceOfEachOrderItem(
+                                      orderListItemIndex
+                                    )}
+                                    {currencySymbolRight()}
+                                  </>
+                                )}
+                              </span>
+                            </div>
+                          </div>
+                        </li>
+                        <span className="text-capitalize  t-pt-5 t-pb-5 t-pl-5 t-pr-5 sm-text font-weight-bold make-this-relative-mobile">
+                          <span
+                            className="badge rounded-pill bg-secondary text-capitalize"
+                            onClick={() => {
+                              handleRemoveItemFromOrderList(orderListItemIndex);
+                            }}
+                          >
+                            <i className="fa fa-times"></i>
+                          </span>
                         </span>
-                        <input
-                          type="text"
-                          value="0"
-                          className="fk-qty__input"
-                        />
-                        <span className="fk-qty__icon fk-qty__add">
-                          <i className="las la-plus"></i>
-                        </span>
-                      </div>
-                    </div>
-                    <div className="col text-right">
-                      <span className="t-text-heading text-uppercase sm-text flex-grow-1">
-                        +tk 100
-                      </span>
-                    </div>
+                      </>
+                    );
+                  })
+                ) : (
+                  <div className="text-primary text-center font-weight-bold pt-2 xsm-text text-uppercase">
+                    {_t(t("Select food item to add to the list"))}
                   </div>
-                </li>
+                )}
               </ul>
               <hr />
               <div className="row">
@@ -2172,13 +2360,13 @@ const Pos = () => {
                     <div className="col text-right">
                       <span className="text-capitalize sm-text font-weight-bold">
                         {newOrder ? (
-                          <span className="text-capitalize xsm-text d-inline-block font-weight-bold t-pt-5 t-pb-5">
+                          <span className="text-capitalize sm-text d-inline-block font-weight-bold t-pt-5 t-pb-5">
                             {currencySymbolLeft()}
                             {formatPrice(theSubTotal)}
                             {currencySymbolRight()}
                           </span>
                         ) : (
-                          <span className="text-capitalize xsm-text d-inline-block font-weight-bold t-pt-5 t-pb-5">
+                          <span className="text-capitalize sm-text d-inline-block font-weight-bold t-pt-5 t-pb-5">
                             {currencySymbolLeft()}
                             {formatPrice(0)}
                             {currencySymbolRight()}
@@ -2205,7 +2393,7 @@ const Pos = () => {
                     </div>
                   </div>
                 </div>
-                <div className="col-12">
+                <div className="col-12 mb-2">
                   <div className="row">
                     <div className="col">
                       <span className="text-capitalize sm-text"> service </span>
@@ -2213,7 +2401,63 @@ const Pos = () => {
                     <div className="col text-center">:</div>
                     <div className="col text-right">
                       <span className="text-capitalize sm-text font-weight-bold">
-                        20.00
+                        <input
+                          type="number"
+                          step="0.01"
+                          min="0"
+                          className="text-capitalize xsm-text d-inline-block font-weight-bold form-control rounded-0 text-right"
+                          onChange={(e) => {
+                            if (e.target.value !== "") {
+                              setOrderDetails({
+                                ...orderDetails,
+                                serviceCharge: parseFloat(e.target.value),
+                              });
+                              let totalPayable = 0;
+                              let localCurrency = JSON.parse(
+                                localStorage.getItem("currency")
+                              );
+                              let usdServiceCharge =
+                                parseFloat(e.target.value) / localCurrency.rate;
+                              let usdDiscount =
+                                parseFloat(orderDetails.discount) /
+                                localCurrency.rate;
+
+                              totalPayable =
+                                theSubTotal +
+                                theVat +
+                                usdServiceCharge -
+                                usdDiscount;
+                              setTotalPaybale(totalPayable);
+                              setReturnMoneyUsd(totalPayable - paidMoney);
+                            } else {
+                              setOrderDetails({
+                                ...orderDetails,
+                                serviceCharge: 0,
+                              });
+                              let totalPayable = 0;
+                              let localCurrency = JSON.parse(
+                                localStorage.getItem("currency")
+                              );
+                              let usdServiceCharge =
+                                parseFloat(0) / localCurrency.rate;
+                              let usdDiscount =
+                                parseFloat(orderDetails.discount) /
+                                localCurrency.rate;
+
+                              totalPayable =
+                                theSubTotal +
+                                theVat +
+                                usdServiceCharge -
+                                usdDiscount;
+                              setTotalPaybale(totalPayable);
+                              setReturnMoneyUsd(totalPayable - paidMoney);
+                            }
+                          }}
+                          value={
+                            orderDetails.serviceCharge !== 0 &&
+                            orderDetails.serviceCharge
+                          }
+                        />
                       </span>
                     </div>
                   </div>
@@ -2229,7 +2473,63 @@ const Pos = () => {
                     <div className="col text-center">:</div>
                     <div className="col text-right">
                       <span className="text-capitalize sm-text font-weight-bold">
-                        100.00
+                        <input
+                          type="number"
+                          step="0.01"
+                          min="0"
+                          className="text-capitalize xsm-text d-inline-block font-weight-bold form-control rounded-0 text-right"
+                          onChange={(e) => {
+                            if (e.target.value !== "") {
+                              setOrderDetails({
+                                ...orderDetails,
+                                discount: parseFloat(e.target.value),
+                              });
+                              let totalPayable = 0;
+                              let localCurrency = JSON.parse(
+                                localStorage.getItem("currency")
+                              );
+                              let usdServiceCharge =
+                                parseFloat(orderDetails.serviceCharge) /
+                                localCurrency.rate;
+                              let usdDiscount =
+                                parseFloat(e.target.value) / localCurrency.rate;
+
+                              totalPayable =
+                                theSubTotal +
+                                theVat +
+                                usdServiceCharge -
+                                usdDiscount;
+
+                              setTotalPaybale(totalPayable);
+                              setReturnMoneyUsd(totalPayable - paidMoney);
+                            } else {
+                              setOrderDetails({
+                                ...orderDetails,
+                                discount: 0,
+                              });
+                              let totalPayable = 0;
+                              let localCurrency = JSON.parse(
+                                localStorage.getItem("currency")
+                              );
+                              let usdServiceCharge =
+                                parseFloat(orderDetails.serviceCharge) /
+                                localCurrency.rate;
+                              let usdDiscount =
+                                parseFloat(0) / localCurrency.rate;
+
+                              totalPayable =
+                                theSubTotal +
+                                theVat +
+                                usdServiceCharge -
+                                usdDiscount;
+                              setTotalPaybale(totalPayable);
+                              setReturnMoneyUsd(totalPayable - paidMoney);
+                            }
+                          }}
+                          value={
+                            orderDetails.discount !== 0 && orderDetails.discount
+                          }
+                        />
                       </span>
                     </div>
                   </div>
@@ -2247,13 +2547,37 @@ const Pos = () => {
                     <div className="col text-center">:</div>
                     <div className="col text-right">
                       <span className="text-capitalize sm-text font-weight-bold">
-                        2000.00
+                        {currencySymbolLeft()}
+                        {formatPrice(totalPayable)}
+                        {currencySymbolRight()}
                       </span>
                     </div>
                   </div>
                 </div>
               </div>
               <hr />
+              {totalPayable <= paidMoney && returnMoneyUsd !== 0 && (
+                <div className="row">
+                  <div className="col-12 mb-2">
+                    <div className="row">
+                      <div className="col">
+                        <span className="text-capitalize sm-text font-weight-bold text-primary">
+                          Return
+                        </span>
+                      </div>
+                      <div className="col text-center">:</div>
+                      <div className="col text-right">
+                        <span className="text-capitalize sm-text font-weight-bold text-primary">
+                          {currencySymbolLeft()}
+                          {formatPrice(Math.abs(returnMoneyUsd))}
+                          {currencySymbolRight()}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                  <hr />
+                </div>
+              )}
             </div>
             <div className="row py-2 mx-1">
               <button
@@ -2266,14 +2590,16 @@ const Pos = () => {
               <button
                 type="button"
                 className="btn btn-primary xsm-text text-uppercase ml-auto mr-1 col-4"
+                onClick={!loading && handleSettleOrder}
               >
-                settle
+                {!loading ? _t(t("settle")) : _t(t("Please wait"))}
               </button>
               <button
                 type="button"
                 className="btn btn-success xsm-text text-uppercase col-4"
+                onClick={!loading && handleSubmitOrder}
               >
-                submit
+                {!loading ? _t(t("submit")) : _t(t("Please wait"))}
               </button>
             </div>
           </div>
@@ -4170,6 +4496,9 @@ const Pos = () => {
                                                 usdServiceCharge -
                                                 usdDiscount;
                                               setTotalPaybale(totalPayable);
+                                              setReturnMoneyUsd(
+                                                totalPayable - paidMoney
+                                              );
                                             } else {
                                               setOrderDetails({
                                                 ...orderDetails,
@@ -4193,6 +4522,9 @@ const Pos = () => {
                                                 usdServiceCharge -
                                                 usdDiscount;
                                               setTotalPaybale(totalPayable);
+                                              setReturnMoneyUsd(
+                                                totalPayable - paidMoney
+                                              );
                                             }
                                           }}
                                           value={
@@ -4243,6 +4575,9 @@ const Pos = () => {
                                                 usdDiscount;
 
                                               setTotalPaybale(totalPayable);
+                                              setReturnMoneyUsd(
+                                                totalPayable - paidMoney
+                                              );
                                             } else {
                                               setOrderDetails({
                                                 ...orderDetails,
@@ -4266,6 +4601,9 @@ const Pos = () => {
                                                 usdServiceCharge -
                                                 usdDiscount;
                                               setTotalPaybale(totalPayable);
+                                              setReturnMoneyUsd(
+                                                totalPayable - paidMoney
+                                              );
                                             }
                                           }}
                                           value={
@@ -4309,14 +4647,17 @@ const Pos = () => {
                                     <div className="row gx-2 align-items-center">
                                       <div className="col-6 text-left">
                                         <span className="text-capitalize font-weight-bold d-block">
-                                          {currencySymbolLeft()}Return
+                                          Return
                                         </span>
                                       </div>
                                       <div className="col-6">
                                         {totalPayable <= paidMoney ? (
                                           <span className="text-capitalize font-weight-bold d-block">
                                             {currencySymbolLeft()}
-                                            {formatPrice(returnMoneyUsd)}
+                                            {formatPrice(
+                                              Math.abs(returnMoneyUsd)
+                                            )}
+
                                             {currencySymbolRight()}
                                           </span>
                                         ) : (
