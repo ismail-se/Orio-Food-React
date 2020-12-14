@@ -249,7 +249,7 @@ const UpdateProfile = () => {
                   >
                     <div className="mt-5 t-pt-30 t-pl-15  t-pr-15">
                       <div className="row justify-content-center">
-                        <div className="col-12 col-md-4 mr-0 mr-md-3 mb-3 mb-md-0">
+                        <div className="card col-12 col-md-4 mr-0 mr-md-3 mb-3 mb-md-0 p-5">
                           <div key="fragment-permission-2">
                             <form onSubmit={handleUpdateAdminStaffPassword}>
                               <div className="mt-3">
@@ -267,6 +267,7 @@ const UpdateProfile = () => {
                                   placeholder={_t(t("Password"))}
                                   value={newAdminStaff.password || ""}
                                   onChange={handleSetNewAdminStaff}
+                                  required
                                   autoComplete="off"
                                 />
                               </div>
@@ -287,7 +288,7 @@ const UpdateProfile = () => {
                                   value={
                                     newAdminStaff.password_confirmation || ""
                                   }
-                                  required={newAdminStaff.password !== ""}
+                                  required
                                   onChange={handleSetNewAdminStaff}
                                   autoComplete="off"
                                 />
@@ -304,7 +305,7 @@ const UpdateProfile = () => {
                             </form>
                           </div>
                         </div>
-                        <div className="col-12 col-md-4 mr-0 mr-md-3">
+                        <div className="col-12 col-md-4 mr-0 mr-md-3 card p-5">
                           <div key="fragment-permission-1">
                             <form onSubmit={handleUpdateAdminStaff}>
                               <div className="mt-3">

@@ -295,21 +295,35 @@ const VariationCrud = () => {
         headers: { Authorization: `Bearer ${getCookie()}` },
       })
       .then((res) => {
-        setVariationList(res.data[0]);
-        setVariationForSearch(res.data[1]);
-        setSearchedVariation({
-          ...searchedVariation,
-          list: res.data[1],
-        });
-        setLoading(false);
-        toast.success(`${_t(t("Variation has been deleted successfully"))}`, {
-          position: "bottom-center",
-          autoClose: 10000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          className: "text-center toast-notification",
-        });
+        if (res.data === "data exist") {
+          toast.error(
+            `${_t(t("Please remove this variation from food item first"))}`,
+            {
+              position: "bottom-center",
+              autoClose: 10000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              className: "text-center toast-notification",
+            }
+          );
+        } else {
+          setVariationList(res.data[0]);
+          setVariationForSearch(res.data[1]);
+          setSearchedVariation({
+            ...searchedVariation,
+            list: res.data[1],
+          });
+          setLoading(false);
+          toast.success(`${_t(t("Variation has been deleted successfully"))}`, {
+            position: "bottom-center",
+            autoClose: 10000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            className: "text-center toast-notification",
+          });
+        }
       })
       .catch(() => {
         setLoading(false);
