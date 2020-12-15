@@ -230,12 +230,24 @@ const AdminStaffCrud = () => {
                   }
                 });
               }
-
               if (error.response.data.errors.password) {
                 error.response.data.errors.password.forEach((item) => {
-                  if (item === "Password confirmation does not match") {
+                  if (item === "The password confirmation does not match.") {
                     toast.error(
                       `${_t(t("Password confirmation does not match"))}`,
+                      {
+                        position: "bottom-center",
+                        autoClose: 10000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        className: "text-center toast-notification",
+                      }
+                    );
+                  }
+                  if (item === "The password must be at least 6 characters.") {
+                    toast.error(
+                      `${_t(t("The password must be at least 6 characters"))}`,
                       {
                         position: "bottom-center",
                         autoClose: 10000,
@@ -386,9 +398,22 @@ const AdminStaffCrud = () => {
 
               if (error.response.data.errors.password) {
                 error.response.data.errors.password.forEach((item) => {
-                  if (item === "Password confirmation does not match") {
+                  if (item === "The password confirmation does not match.") {
                     toast.error(
                       `${_t(t("Password confirmation does not match"))}`,
+                      {
+                        position: "bottom-center",
+                        autoClose: 10000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        className: "text-center toast-notification",
+                      }
+                    );
+                  }
+                  if (item === "The password must be at least 6 characters.") {
+                    toast.error(
+                      `${_t(t("The password must be at least 6 characters"))}`,
                       {
                         position: "bottom-center",
                         autoClose: 10000,
@@ -590,6 +615,37 @@ const AdminStaffCrud = () => {
               });
             }
 
+            if (error.response.data.errors.password) {
+              error.response.data.errors.password.forEach((item) => {
+                if (item === "The password confirmation does not match.") {
+                  toast.error(
+                    `${_t(t("Password confirmation does not match"))}`,
+                    {
+                      position: "bottom-center",
+                      autoClose: 10000,
+                      hideProgressBar: false,
+                      closeOnClick: true,
+                      pauseOnHover: true,
+                      className: "text-center toast-notification",
+                    }
+                  );
+                }
+                if (item === "The password must be at least 6 characters.") {
+                  toast.error(
+                    `${_t(t("The password must be at least 6 characters"))}`,
+                    {
+                      position: "bottom-center",
+                      autoClose: 10000,
+                      hideProgressBar: false,
+                      closeOnClick: true,
+                      pauseOnHover: true,
+                      className: "text-center toast-notification",
+                    }
+                  );
+                }
+              });
+            }
+
             if (error.response.data.errors.image) {
               error.response.data.errors.image.forEach((item) => {
                 if (item === "Please select a valid image file") {
@@ -667,6 +723,36 @@ const AdminStaffCrud = () => {
             uploading: false,
           });
           if (error && error.response.data.errors) {
+            if (error.response.data.errors.password) {
+              error.response.data.errors.password.forEach((item) => {
+                if (item === "The password confirmation does not match.") {
+                  toast.error(
+                    `${_t(t("Password confirmation does not match"))}`,
+                    {
+                      position: "bottom-center",
+                      autoClose: 10000,
+                      hideProgressBar: false,
+                      closeOnClick: true,
+                      pauseOnHover: true,
+                      className: "text-center toast-notification",
+                    }
+                  );
+                }
+                if (item === "The password must be at least 6 characters.") {
+                  toast.error(
+                    `${_t(t("The password must be at least 6 characters"))}`,
+                    {
+                      position: "bottom-center",
+                      autoClose: 10000,
+                      hideProgressBar: false,
+                      closeOnClick: true,
+                      pauseOnHover: true,
+                      className: "text-center toast-notification",
+                    }
+                  );
+                }
+              });
+            }
             if (error.response.data.errors.phn_no) {
               error.response.data.errors.phn_no.forEach((item) => {
                 if (item === "An user exists with this phone number") {

@@ -45,6 +45,13 @@ const General = () => {
     displayColorPicker: false,
     color: getSystemSettings(generalSettings, "type_background"),
   });
+
+  //clock color picker
+  let [colorPickClock, setColorPickClock] = useState({
+    displayColorPickerClock: false,
+    color: getSystemSettings(generalSettings, "type_clock"),
+  });
+
   //color text
   let [colorTextPick, setColorTextPick] = useState({
     displayColorTextPicker: false,
@@ -104,6 +111,20 @@ const General = () => {
     setColorPick({ ...colorPick, color: color.hex });
   };
 
+  //clock color picker's function
+  const handleClickClock = () => {
+    setColorPickClock({
+      ...colorPickClock,
+      displayColorPickerClock: !colorPickClock.displayColorPickerClock,
+    });
+  };
+  const handleCloseClock = () => {
+    setColorPickClock({ ...colorPickClock, displayColorPickerClock: false });
+  };
+  const handleChangeColorClock = (color) => {
+    setColorPickClock({ ...colorPickClock, color: color.hex });
+  };
+
   //text color
   const handleClickText = () => {
     setColorTextPick({
@@ -126,6 +147,7 @@ const General = () => {
     formData.append("image", newSettings.image);
     formData.append("favicon", newSettings.favicon);
     formData.append("type_background", colorPick.color);
+    formData.append("type_clock", colorPickClock.color);
     formData.append("type_color", colorTextPick.color);
     formData.append("type_footer", newSettings.footerText);
     formData.append("siteName", newSettings.siteName);
@@ -203,6 +225,34 @@ const General = () => {
     },
   });
 
+  //clock color picker css
+  const stylesClock = reactCSS({
+    default: {
+      color: {
+        height: "24px",
+        borderRadius: "2px",
+        background: colorPickClock.color,
+      },
+      swatch: {
+        background: "#fff",
+        display: "inline-block",
+        cursor: "pointer",
+      },
+      popover: {
+        position: "absolute",
+        zIndex: "2",
+      },
+      cover: {
+        position: "fixed",
+        top: "0px",
+        right: "0px",
+        bottom: "0px",
+        left: "0px",
+      },
+    },
+  });
+
+  //text color picker css
   const stylesText = reactCSS({
     default: {
       color: {
@@ -355,7 +405,7 @@ const General = () => {
                             <div className="form-group mt-3">
                               <div className="mb-2">
                                 <label className="control-label">
-                                  {_t(t("Background of logo, clock"))}...
+                                  {_t(t("Background of logo"))}...
                                   <span className="text-danger">*</span>
                                   <span className="text-secondary ml-1">
                                     ({" "}
@@ -388,6 +438,48 @@ const General = () => {
                                     <SketchPicker
                                       color={colorPick.color}
                                       onChange={handleChangeColor}
+                                    />
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+
+                            <div className="form-group mt-3">
+                              <div className="mb-2">
+                                <label className="control-label">
+                                  {_t(t("Background of footer clock"))}...
+                                  <span className="text-danger">*</span>
+                                  <span className="text-secondary ml-1">
+                                    ({" "}
+                                    {_t(
+                                      t(
+                                        "Please pick a color, click on the color below"
+                                      )
+                                    )}
+                                    )
+                                  </span>
+                                </label>
+                              </div>
+                              <div className="row">
+                                <div
+                                  style={stylesClock.swatch}
+                                  onClick={handleClickClock}
+                                  className="rounded-md col-12 col-md-3"
+                                >
+                                  <div
+                                    style={stylesClock.color}
+                                    className="form-control"
+                                  />
+                                </div>
+                                {colorPickClock.displayColorPickerClock && (
+                                  <div style={stylesClock.popover}>
+                                    <div
+                                      style={stylesClock.cover}
+                                      onClick={handleCloseClock}
+                                    />
+                                    <SketchPicker
+                                      color={colorPickClock.color}
+                                      onChange={handleChangeColorClock}
                                     />
                                   </div>
                                 )}

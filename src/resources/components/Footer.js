@@ -44,8 +44,7 @@ const Footer = () => {
     },
     clock: {
       backgroundColor:
-        generalSettings &&
-        getSystemSettings(generalSettings, "type_background"),
+        generalSettings && getSystemSettings(generalSettings, "type_clock"),
     },
     clockText: {
       color:
@@ -53,8 +52,7 @@ const Footer = () => {
     },
     clockIcon: {
       color:
-        generalSettings &&
-        getSystemSettings(generalSettings, "type_background"),
+        generalSettings && getSystemSettings(generalSettings, "type_clock"),
       backgroundColor:
         generalSettings && getSystemSettings(generalSettings, "type_color"),
     },

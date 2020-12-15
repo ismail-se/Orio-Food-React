@@ -191,9 +191,9 @@ const Login = () => {
 
   const style = {
     logo: {
-      backgroundColor:
-        generalSettings &&
-        getSystemSettings(generalSettings, "type_background"),
+      backgroundColor: "none",
+      // generalSettings &&
+      // getSystemSettings(generalSettings, "type_background"),
       backgroundImage:
         generalSettings &&
         `url(${getSystemSettings(generalSettings, "type_logo")})`,
@@ -239,22 +239,22 @@ const Login = () => {
           <div className="container my-md-auto">
             <div className="row">
               <div className="col-md-6">
-                <div className="fk-brand--footer fk-brand--footer-sqr">
+                <div className="fk-brand fk-brand--sr-lg">
                   {window.location.pathname === "/" ? (
                     <NavLink
                       to={{ pathname: "/refresh", state: "/" }}
                       exact
-                      className="t-link w-100 t-h-50"
+                      className="t-link w-100"
                     >
                       <span
-                        className="fk-brand--footer-img fk-brand__img--fk"
+                        className="fk-brand__img fk-brand__img--fk"
                         style={style.logo}
                       ></span>
                     </NavLink>
                   ) : (
-                    <NavLink to="/" className="t-link w-100 t-h-50">
+                    <NavLink to="/" className="t-link w-100">
                       <span
-                        className="fk-brand--footer-img fk-brand__img--fk"
+                        className="fk-brand__img fk-brand__img--fk"
                         style={style.logo}
                       ></span>
                     </NavLink>
@@ -303,6 +303,7 @@ const Login = () => {
                               placeholder="Email"
                               value={credentials.email}
                               required
+                              autoComplete="off"
                               className="form-control border-0 rounded-1"
                             />
                           </div>
@@ -314,6 +315,7 @@ const Login = () => {
                               placeholder="Password"
                               value={credentials.password}
                               required
+                              autoComplete="off"
                               className="form-control border-0 rounded-1"
                             />
                           </div>

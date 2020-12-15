@@ -24,6 +24,7 @@ import {
   Refresh,
   Login,
   ForgetPw,
+  SetNewPw,
   NoPermission,
 
   //dashboard
@@ -119,7 +120,7 @@ function App() {
           </Route>
 
           <Route path="/set-new-password/:token" exact>
-            <ForgetPw />
+            <SetNewPw />
           </Route>
 
           <Route path="/" exact>

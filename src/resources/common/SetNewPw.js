@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from "react";
-import { NavLink, useHistory } from "react-router-dom";
+import { NavLink, useHistory, useParams } from "react-router-dom";
 
 //jQuery initialization
 import $ from "jquery";
@@ -30,17 +30,20 @@ import { RestaurantContext } from "../../contexts/Restaurant";
 
 const cookies = new Cookies();
 
-const ForgetPw = () => {
+const SetNewPw = () => {
   const { t } = useTranslation();
   const history = useHistory();
+  const { token } = useParams();
 
   //getting context values here
   let { loading, setLoading, generalSettings } = useContext(SettingsContext);
-  let { authUserInfo } = useContext(UserContext);
 
   //state hooks here
   const [credentials, setCredentials] = useState({
+    token: token,
     email: null,
+    password: "",
+    password_confirmation: "",
   });
 
   useEffect(() => {
@@ -83,22 +86,12 @@ const ForgetPw = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     setLoading(true);
-    const url = BASE_URL + "/auth/resetPassword";
+    const url = BASE_URL + "/auth/setNewPassword";
     return axios
       .post(url, credentials)
       .then((res) => {
-        if (res.data === "banned") {
-          toast.error(`${_t(t("Sorry, you are banned!"))}`, {
-            position: "bottom-center",
-            autoClose: 10000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            className: "text-center toast-notification",
-          });
-        }
         if (res.data === "noUser") {
-          toast.error(`${_t(t("Sorry, no user with this email!"))}`, {
+          toast.error(`${_t(t("Sorry, email does not match"))}`, {
             position: "bottom-center",
             autoClose: 10000,
             hideProgressBar: false,
@@ -108,34 +101,47 @@ const ForgetPw = () => {
           });
         }
         if (res.data === "ok") {
-          toast.success(
-            `${_t(
-              t(
-                "A link has been sent to your email, Please check your email to reset your password"
-              )
-            )}`,
-            {
-              position: "bottom-center",
-              autoClose: 10000,
-              hideProgressBar: false,
-              closeOnClick: true,
-              pauseOnHover: true,
-              className: "text-center toast-notification",
-            }
-          );
+          toast.success(`${_t(t("Please login to continue"))}`, {
+            position: "bottom-center",
+            autoClose: 10000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            className: "text-center toast-notification",
+          });
+          history.push("/login");
         }
         setLoading(false);
       })
       .catch((error) => {
         setLoading(false);
-        toast.error(`${_t(t("Please try again!"))}`, {
-          position: "bottom-center",
-          autoClose: 10000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          className: "text-center toast-notification",
-        });
+        if (error.response.data.errors.password) {
+          error.response.data.errors.password.forEach((item) => {
+            if (item === "The password confirmation does not match.") {
+              toast.error(`${_t(t("Password confirmation does not match"))}`, {
+                position: "bottom-center",
+                autoClose: 10000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                className: "text-center toast-notification",
+              });
+            }
+            if (item === "The password must be at least 6 characters.") {
+              toast.error(
+                `${_t(t("The password must be at least 6 characters"))}`,
+                {
+                  position: "bottom-center",
+                  autoClose: 10000,
+                  hideProgressBar: false,
+                  closeOnClick: true,
+                  pauseOnHover: true,
+                  className: "text-center toast-notification",
+                }
+              );
+            }
+          });
+        }
       });
   };
 
@@ -153,7 +159,7 @@ const ForgetPw = () => {
   return (
     <>
       <Helmet>
-        <title>Reset Password</title>
+        <title>Set New Password</title>
       </Helmet>
       <main>
         <div className="fk-global-access">
@@ -216,7 +222,7 @@ const ForgetPw = () => {
                   {loading ? (
                     <div key="login-form">
                       <h3 className="mt-0 text-capitalize font-weight-bold">
-                        Generating link
+                        Updating password
                       </h3>
                       <form onSubmit={handleSubmit}>
                         <div className="row">
@@ -239,7 +245,7 @@ const ForgetPw = () => {
                   ) : (
                     <div key="loading">
                       <h3 className="mt-0 text-capitalize font-weight-bold">
-                        reset password
+                        Set New Password
                       </h3>
                       <form onSubmit={handleSubmit}>
                         <div className="row">
@@ -255,6 +261,30 @@ const ForgetPw = () => {
                             />
                           </div>
 
+                          <div className="col-12 t-mb-15">
+                            <input
+                              onChange={handleCredentials}
+                              type="password"
+                              name="password"
+                              placeholder="Enter new password"
+                              value={credentials.password}
+                              required
+                              className="form-control border-0 rounded-1"
+                            />
+                          </div>
+
+                          <div className="col-12 t-mb-15">
+                            <input
+                              onChange={handleCredentials}
+                              type="password"
+                              name="password_confirmation"
+                              placeholder="Confirm password"
+                              value={credentials.password_confirmation}
+                              required
+                              className="form-control border-0 rounded-1"
+                            />
+                          </div>
+
                           <div className="col-12">
                             <div className="d-flex align-items-center">
                               <div className="t-mr-8">
@@ -262,16 +292,8 @@ const ForgetPw = () => {
                                   type="submit"
                                   className="btn btn-success sm-text text-uppercase"
                                 >
-                                  Reset Password
+                                  Update
                                 </button>
-                              </div>
-                              <div className="t-mr-8 ml-auto">
-                                <NavLink
-                                  to="/login"
-                                  className="btn btn-primary sm-text text-uppercase"
-                                >
-                                  Sign in
-                                </NavLink>
                               </div>
                             </div>
                           </div>
@@ -289,4 +311,4 @@ const ForgetPw = () => {
   );
 };
 
-export default ForgetPw;
+export default SetNewPw;

@@ -147,8 +147,7 @@ const Navbar = (props) => {
     },
     currency: {
       backgroundColor:
-        generalSettings &&
-        getSystemSettings(generalSettings, "type_background"),
+        generalSettings && getSystemSettings(generalSettings, "type_clock"),
       color:
         generalSettings && getSystemSettings(generalSettings, "type_color"),
     },
