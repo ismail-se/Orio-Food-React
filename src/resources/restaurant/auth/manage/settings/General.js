@@ -535,7 +535,7 @@ const General = () => {
                                   className="control-label"
                                 >
                                   {_t(t("Logo"))}
-                                  <small className="text-secondary">
+                                  <small className="text-secondary ml-1">
                                     (
                                     {_t(
                                       t(

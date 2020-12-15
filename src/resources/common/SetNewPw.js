@@ -91,14 +91,19 @@ const SetNewPw = () => {
       .post(url, credentials)
       .then((res) => {
         if (res.data === "noUser") {
-          toast.error(`${_t(t("Sorry, email does not match"))}`, {
-            position: "bottom-center",
-            autoClose: 10000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            className: "text-center toast-notification",
-          });
+          toast.error(
+            `${_t(
+              t("Sorry, email does not match or the link has been expired")
+            )}`,
+            {
+              position: "bottom-center",
+              autoClose: 10000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              className: "text-center toast-notification",
+            }
+          );
         }
         if (res.data === "ok") {
           toast.success(`${_t(t("Please login to continue"))}`, {

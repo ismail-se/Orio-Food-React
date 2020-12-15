@@ -909,21 +909,40 @@ const AdminStaffCrud = () => {
         headers: { Authorization: `Bearer ${getCookie()}` },
       })
       .then((res) => {
-        setAdminStaffList(res.data[0]);
-        setAdminStaffListforSearch(res.data[1]);
-        setSearchedAdminStaff({
-          ...searchedAdminStaff,
-          list: res.data[1],
-        });
-        setLoading(false);
-        toast.success(`${_t(t("User has been activated"))}`, {
-          position: "bottom-center",
-          autoClose: 10000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          className: "text-center toast-notification",
-        });
+        if (res.data === "noBranch") {
+          setLoading(false);
+          toast.error(
+            `${_t(
+              t(
+                "The branch of this user not found, can not change active status"
+              )
+            )}`,
+            {
+              position: "bottom-center",
+              autoClose: 10000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              className: "text-center toast-notification",
+            }
+          );
+        } else {
+          setAdminStaffList(res.data[0]);
+          setAdminStaffListforSearch(res.data[1]);
+          setSearchedAdminStaff({
+            ...searchedAdminStaff,
+            list: res.data[1],
+          });
+          setLoading(false);
+          toast.success(`${_t(t("User has been activated"))}`, {
+            position: "bottom-center",
+            autoClose: 10000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            className: "text-center toast-notification",
+          });
+        }
       })
       .catch(() => {
         setLoading(false);
