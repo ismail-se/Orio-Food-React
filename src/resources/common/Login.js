@@ -57,7 +57,10 @@ const Login = () => {
     getPaymentType,
     getWorkPeriod,
   } = useContext(RestaurantContext);
-  let { getFood, getFoodGroup, getPropertyGroup } = useContext(FoodContext);
+
+  let { getFood, getFoodGroup, getPropertyGroup, getVariation } = useContext(
+    FoodContext
+  );
 
   //state hooks here
   const [credentials, setCredentials] = useState({
@@ -161,6 +164,7 @@ const Login = () => {
             getFood();
             getFoodGroup();
             getPropertyGroup();
+            getVariation();
           }
 
           history.push("/dashboard");

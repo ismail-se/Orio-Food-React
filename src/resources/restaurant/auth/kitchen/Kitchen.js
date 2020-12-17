@@ -677,11 +677,13 @@ const Kitchen = () => {
                       })
                     ) : (
                       <div className="col-8 offset-2" data-category="1">
-                        <div
-                          className="fk-order-token t-bg-white p-5 text-center text-uppercase text-primary"
-                          style={{ minHeight: "320px" }}
-                        >
-                          No order in the kitchen
+                        <div className="fk-order-token t-bg-white p-5 text-center text-uppercase text-primary no-order">
+                          {/* No order in the kitchen */}
+                          <img
+                            src="/assets/img/no-order.jpg"
+                            alt="no order found"
+                            className="img-fluid h-100"
+                          />
                         </div>
                       </div>
                     ),
@@ -971,11 +973,13 @@ const Kitchen = () => {
                       })
                     ) : (
                       <div className="col-8 offset-2" data-category="1">
-                        <div
-                          className="fk-order-token t-bg-white p-5 text-center text-uppercase text-primary"
-                          style={{ minHeight: "320px" }}
-                        >
-                          No order found
+                        <div className="fk-order-token t-bg-white p-5 text-center text-uppercase text-primary no-order">
+                          {/* No order in the kitchen */}
+                          <img
+                            src="/assets/img/no-order.jpg"
+                            alt="no order found"
+                            className="img-fluid h-100"
+                          />
                         </div>
                       </div>
                     ),

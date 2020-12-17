@@ -227,3 +227,7 @@ li.addons-list__item.active {
 .profile-update-full {
   height: calc(100vh - 174px) !important;
 }
+
+.no-order {
+  height: calc(100vh - 230px);
+}
