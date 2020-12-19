@@ -298,7 +298,75 @@ const Login = () => {
                         {_t(t("sign in"))}
                       </h3>
                       <form onSubmit={handleSubmit}>
-                        <div className="row">
+                        <div className="row mx-2">
+                          <div className="card p-2 t-mb-15 d-none">
+                            <div className="col-12 mb-1">
+                              <div className="card p-2">
+                                <div className="row">
+                                  <div className="col-12 text-center sm-text">
+                                    Click below for demo login credentials
+                                    <div className="text-primary">
+                                      This password section is only for demo
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                            <div
+                              className="col-12 mb-1 pointer-cursor"
+                              onClick={() => {
+                                setCredentials({
+                                  ...credentials,
+                                  email: "admin@mail.com",
+                                  password: "khadyo@123",
+                                });
+                              }}
+                            >
+                              <div className="card p-2 ">
+                                <div className="row d-flex align-items-center">
+                                  <div className="col-12 col-md-5">
+                                    Admin: admin@mail.com
+                                  </div>
+                                  <div className="col-12 col-md-4">
+                                    password: khadyo@123
+                                  </div>
+                                  <div className="col-12 col-md-3 text-right">
+                                    <span className="btn btn-sm btn-primary">
+                                      copy
+                                    </span>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+
+                            <div
+                              className="col-12 pointer-cursor"
+                              onClick={() => {
+                                setCredentials({
+                                  ...credentials,
+                                  email: "staff@mail.com",
+                                  password: "khadyo@123",
+                                });
+                              }}
+                            >
+                              <div className="card p-2">
+                                <div className="row d-flex align-items-center">
+                                  <div className="col-12 col-md-5">
+                                    Staff: staff@mail.com
+                                  </div>
+                                  <div className="col-12 col-md-4">
+                                    password: khadyo@123
+                                  </div>
+                                  <div className="col-12 col-md-3 text-right">
+                                    <span className="btn btn-sm btn-primary">
+                                      copy
+                                    </span>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
                           <div className="col-12 t-mb-15">
                             <input
                               onChange={handleCredentials}

@@ -23,6 +23,7 @@ import {
   //common
   Refresh,
   Login,
+  NotFound,
   ForgetPw,
   SetNewPw,
   NoPermission,
@@ -100,7 +101,7 @@ function App() {
       favicon.href =
         BASE_URL + "/public" + getSystemSettings(generalSettings, "favicon");
     }
-    consolee();
+    // consolee();
   }, [authUserInfo]);
   return (
     <>
@@ -495,6 +496,10 @@ function App() {
               <NoPermission />
             )}
           </RestaurantRoute>
+
+          {/* Error Routing */}
+          <Route component={NotFound} />
+          {/* Error Routing */}
         </Switch>
         <Footer />
       </Router>

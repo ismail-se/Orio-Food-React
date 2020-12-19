@@ -3,6 +3,7 @@ import Refresh from "../resources/common/Refresh";
 import Login from "../resources/common/Login";
 import ForgetPw from "../resources/common/ForgetPw";
 import SetNewPw from "../resources/common/SetNewPw";
+import NotFound from "../resources/common/NotFound";
 import NoPermission from "../resources/common/NoPermission";
 
 //public page
@@ -76,6 +77,7 @@ export {
   Login,
   ForgetPw,
   SetNewPw,
+  NotFound,
   NoPermission,
   //dashboard
   RestaurantHome,
