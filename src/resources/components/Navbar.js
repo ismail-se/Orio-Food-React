@@ -330,7 +330,7 @@ const Navbar = (props) => {
                           className="sm-text text-capitalize btn btn-primary"
                           to="/login"
                         >
-                          Login
+                          {_t(t("Login"))}
                         </NavLink>
                       </li>
                     ) : (
@@ -369,7 +369,7 @@ const Navbar = (props) => {
                                     to="/dashboard"
                                     className="dropdown-item sm-text text-capitalize"
                                   >
-                                    Dashboard
+                                    {_t(t("Dashboard"))}
                                   </Link>
                                 </li>
                               ) : (
@@ -378,7 +378,7 @@ const Navbar = (props) => {
                                     to="/dashboard"
                                     className="dropdown-item sm-text text-capitalize"
                                   >
-                                    Dashboard
+                                    {_t(t("Dashboard"))}
                                   </Link>
                                 </li>
                               )}
@@ -386,9 +386,9 @@ const Navbar = (props) => {
                               <li key="homepage">
                                 <Link
                                   to="/update-user-profile"
-                                  className="dropdown-item sm-text text-capitalize"
+                                  className="dropdown-item sm-text"
                                 >
-                                  Update Profile
+                                  {_t(t("Change password"))}
                                 </Link>
                               </li>
                               <hr className="my-1" />
@@ -397,7 +397,7 @@ const Navbar = (props) => {
                                   className="dropdown-item sm-text text-capitalize"
                                   onClick={handleLogout}
                                 >
-                                  Logout
+                                  {_t(t("Logout"))}
                                 </button>
                               </li>
                             </ul>
@@ -580,7 +580,7 @@ const Navbar = (props) => {
                               className="sm-text text-capitalize btn btn-primary"
                               to="/login"
                             >
-                              Login
+                              {_t(t("Login"))}
                             </NavLink>
                           </li>
                         ) : (
@@ -619,7 +619,7 @@ const Navbar = (props) => {
                                         to="/dashboard"
                                         className="dropdown-item sm-text text-capitalize"
                                       >
-                                        Dashboard
+                                        {_t(t("Dashboard"))}
                                       </Link>
                                     </li>
                                   ) : (
@@ -628,16 +628,16 @@ const Navbar = (props) => {
                                         to="/dashboard"
                                         className="dropdown-item sm-text text-capitalize"
                                       >
-                                        Dashboard
+                                        {_t(t("Dashboard"))}
                                       </Link>
                                     </li>
                                   )}
                                   <li key="homepage">
                                     <Link
                                       to="/update-user-profile"
-                                      className="dropdown-item sm-text text-capitalize"
+                                      className="dropdown-item sm-text"
                                     >
-                                      Update Profile
+                                      {_t(t("Change password"))}
                                     </Link>
                                   </li>
                                   <hr className="my-1" />
@@ -647,7 +647,7 @@ const Navbar = (props) => {
                                       onClick={handleLogout}
                                       rel="noopener noreferrer"
                                     >
-                                      Logout
+                                      {_t(t("Logout"))}
                                     </button>
                                   </li>
                                 </ul>

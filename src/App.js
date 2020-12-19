@@ -100,7 +100,7 @@ function App() {
       favicon.href =
         BASE_URL + "/public" + getSystemSettings(generalSettings, "favicon");
     }
-    // consolee();
+    consolee();
   }, [authUserInfo]);
   return (
     <>

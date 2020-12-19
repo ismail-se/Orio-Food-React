@@ -148,7 +148,7 @@ const Daily = () => {
                       <div class="fk-order-token__body">
                         <div class="fk-addons-table">
                           <div class="fk-addons-table__head text-center">
-                            order token: #
+                            {_t(t("order token"))}: #
                             {checkOrderDetails.item &&
                               checkOrderDetails.item.token.id}
                           </div>
@@ -156,22 +156,22 @@ const Daily = () => {
                             <div class="row g-0">
                               <div class="col-2 text-center border-right">
                                 <span class="fk-addons-table__info-text text-capitalize">
-                                  S/L
+                                  {_t(t("S/L"))}
                                 </span>
                               </div>
                               <div class="col-3 text-center border-right">
                                 <span class="fk-addons-table__info-text text-capitalize">
-                                  food
+                                  {_t(t("food"))}
                                 </span>
                               </div>
                               <div class="col-4 text-left pl-2 border-right">
                                 <span class="fk-addons-table__info-text text-capitalize">
-                                  Additional Info
+                                  {_t(t("Additional Info"))}
                                 </span>
                               </div>
                               <div class="col-2 text-center border-right">
                                 <span class="fk-addons-table__info-text text-capitalize">
-                                  QTY
+                                  {_t(t("QTY"))}
                                 </span>
                               </div>
                               <div class="col-1 text-center">
@@ -202,7 +202,7 @@ const Daily = () => {
                                         {thisItem.variation !== null && (
                                           <span class="fk-addons-table__info-text text-capitalize d-block text-left t-pt-5">
                                             <span class="font-weight-bold mr-1">
-                                              variation:
+                                              {_t(t("variation"))}:
                                             </span>
                                             {thisItem.variation}
                                           </span>
@@ -211,7 +211,7 @@ const Daily = () => {
                                         {thisItem.properties !== null && (
                                           <span class="fk-addons-table__info-text text-capitalize d-block text-left t-pb-5">
                                             <span class="font-weight-bold mr-1">
-                                              properties:
+                                              {_t(t("properties"))}:
                                             </span>
                                             {JSON.parse(
                                               thisItem.properties
@@ -486,7 +486,7 @@ const Daily = () => {
                         <div className="row gx-2 justify-content-start">
                           <div className="col-4 t-mb-15 mb-md-0">
                             <div className="py-1 bg-primary sm-text text-white text-center rounded-sm">
-                              AMOUNT / BRANCH
+                              {_t(t("AMOUNT / BRANCH"))}
                             </div>
                           </div>
                         </div>
@@ -615,7 +615,7 @@ const Daily = () => {
                                                     data-toggle="modal"
                                                     data-target="#orderDetails"
                                                   >
-                                                    processing
+                                                    {_t(t("processing"))}
                                                   </span>
                                                 ) : (
                                                   <span
@@ -632,7 +632,7 @@ const Daily = () => {
                                                     data-toggle="modal"
                                                     data-target="#orderDetails"
                                                   >
-                                                    Ready
+                                                    {_t(t("Ready"))}
                                                   </span>
                                                 ),
                                               ]
@@ -651,7 +651,7 @@ const Daily = () => {
                                                 data-toggle="modal"
                                                 data-target="#orderDetails"
                                               >
-                                                Cancelled
+                                                {_t(t("Cancelled"))}
                                               </span>
                                             )}
                                           </td>

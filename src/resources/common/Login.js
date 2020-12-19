@@ -207,7 +207,7 @@ const Login = () => {
   return (
     <>
       <Helmet>
-        <title>Sign In</title>
+        <title>{_t(t("Sign In"))}</title>
       </Helmet>
       <main>
         <div className="fk-global-access">
@@ -272,7 +272,7 @@ const Login = () => {
                   {loading ? (
                     <div key="login-form">
                       <h3 className="mt-0 text-capitalize font-weight-bold">
-                        signing in
+                        {_t(t("signing in"))}
                       </h3>
                       <form onSubmit={handleSubmit}>
                         <div className="row">
@@ -284,7 +284,7 @@ const Login = () => {
                                   type="button"
                                   className="btn btn-primary sm-text text-uppercase"
                                 >
-                                  Please wait
+                                  {_t(t("Please wait"))}
                                 </button>
                               </div>
                             </div>
@@ -295,7 +295,7 @@ const Login = () => {
                   ) : (
                     <div key="loading">
                       <h3 className="mt-0 text-capitalize font-weight-bold">
-                        sign in
+                        {_t(t("sign in"))}
                       </h3>
                       <form onSubmit={handleSubmit}>
                         <div className="row">
@@ -332,7 +332,7 @@ const Login = () => {
                                 className="mx-checkbox__input mx-checkbox__input-solid mx-checkbox__input-solid--danger mx-checkbox__input-sm mt-0-kitchen"
                               />
                               <span className="mx-checkbox__text text-capitalize t-text-heading t-ml-8">
-                                Remember Me
+                                {_t(t("Remember Me"))}
                               </span>
                             </label>
                           </div>
@@ -341,7 +341,7 @@ const Login = () => {
                               to="/reset-password"
                               className="t-link sm-text"
                             >
-                              Forgot password?
+                              {_t(t("Forgot password"))}?
                             </NavLink>
                           </div>
                           <div className="col-12">
@@ -351,7 +351,7 @@ const Login = () => {
                                   type="submit"
                                   className="btn btn-success sm-text text-uppercase"
                                 >
-                                  sign in
+                                  {_t(t("sign in"))}
                                 </button>
                               </div>
                             </div>

@@ -164,7 +164,7 @@ const SetNewPw = () => {
   return (
     <>
       <Helmet>
-        <title>Set New Password</title>
+        <title>{_t(t("Set New Password"))}</title>
       </Helmet>
       <main>
         <div className="fk-global-access">
@@ -227,7 +227,7 @@ const SetNewPw = () => {
                   {loading ? (
                     <div key="login-form">
                       <h3 className="mt-0 text-capitalize font-weight-bold">
-                        Updating password
+                        {_t(t("Updating password"))}
                       </h3>
                       <form onSubmit={handleSubmit}>
                         <div className="row">
@@ -239,7 +239,7 @@ const SetNewPw = () => {
                                   type="button"
                                   className="btn btn-primary sm-text text-uppercase"
                                 >
-                                  Please wait
+                                  {_t(t("Please wait"))}
                                 </button>
                               </div>
                             </div>
@@ -250,7 +250,7 @@ const SetNewPw = () => {
                   ) : (
                     <div key="loading">
                       <h3 className="mt-0 text-capitalize font-weight-bold">
-                        Set New Password
+                        {_t(t("Set New Password"))}
                       </h3>
                       <form onSubmit={handleSubmit}>
                         <div className="row">
@@ -297,7 +297,7 @@ const SetNewPw = () => {
                                   type="submit"
                                   className="btn btn-success sm-text text-uppercase"
                                 >
-                                  Update
+                                  {_t(t("Update"))}
                                 </button>
                               </div>
                             </div>

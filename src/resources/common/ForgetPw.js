@@ -153,7 +153,7 @@ const ForgetPw = () => {
   return (
     <>
       <Helmet>
-        <title>Reset Password</title>
+        <title>{_t(t("Reset Password"))}</title>
       </Helmet>
       <main>
         <div className="fk-global-access">
@@ -216,7 +216,7 @@ const ForgetPw = () => {
                   {loading ? (
                     <div key="login-form">
                       <h3 className="mt-0 text-capitalize font-weight-bold">
-                        Generating link
+                        {_t(t("Generating link"))}
                       </h3>
                       <form onSubmit={handleSubmit}>
                         <div className="row">
@@ -228,7 +228,7 @@ const ForgetPw = () => {
                                   type="button"
                                   className="btn btn-primary sm-text text-uppercase"
                                 >
-                                  Please wait
+                                  {_t(t("Please wait"))}
                                 </button>
                               </div>
                             </div>
@@ -239,7 +239,7 @@ const ForgetPw = () => {
                   ) : (
                     <div key="loading">
                       <h3 className="mt-0 text-capitalize font-weight-bold">
-                        reset password
+                        {_t(t("reset password"))}
                       </h3>
                       <form onSubmit={handleSubmit}>
                         <div className="row">
@@ -262,7 +262,7 @@ const ForgetPw = () => {
                                   type="submit"
                                   className="btn btn-success sm-text text-uppercase"
                                 >
-                                  Reset Password
+                                  {_t(t("Reset Password"))}
                                 </button>
                               </div>
                               <div className="t-mr-8 ml-auto">
@@ -270,7 +270,7 @@ const ForgetPw = () => {
                                   to="/login"
                                   className="btn btn-primary sm-text text-uppercase"
                                 >
-                                  Sign in
+                                  {_t(t("Sign in"))}
                                 </NavLink>
                               </div>
                             </div>

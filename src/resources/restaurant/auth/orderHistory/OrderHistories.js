@@ -295,7 +295,7 @@ const OrderHistories = () => {
                       <div class="fk-order-token__body">
                         <div class="fk-addons-table">
                           <div class="fk-addons-table__head text-center">
-                            order token: #
+                            {_t(t("order token"))}: #
                             {checkOrderDetails.item &&
                               checkOrderDetails.item.token.id}
                           </div>
@@ -303,22 +303,22 @@ const OrderHistories = () => {
                             <div class="row g-0">
                               <div class="col-2 text-center border-right">
                                 <span class="fk-addons-table__info-text text-capitalize">
-                                  S/L
+                                  {_t(t("S/L"))}
                                 </span>
                               </div>
                               <div class="col-3 text-center border-right">
                                 <span class="fk-addons-table__info-text text-capitalize">
-                                  food
+                                  {_t(t("food"))}
                                 </span>
                               </div>
                               <div class="col-4 text-left pl-2 border-right">
                                 <span class="fk-addons-table__info-text text-capitalize">
-                                  Additional Info
+                                  {_t(t("Additional Info"))}
                                 </span>
                               </div>
                               <div class="col-2 text-center border-right">
                                 <span class="fk-addons-table__info-text text-capitalize">
-                                  QTY
+                                  {_t(t("QTY"))}
                                 </span>
                               </div>
                               <div class="col-1 text-center">
@@ -349,7 +349,7 @@ const OrderHistories = () => {
                                         {thisItem.variation !== null && (
                                           <span class="fk-addons-table__info-text text-capitalize d-block text-left t-pt-5">
                                             <span class="font-weight-bold mr-1">
-                                              variation:
+                                              {_t(t("variation"))}:
                                             </span>
                                             {thisItem.variation}
                                           </span>
@@ -358,7 +358,7 @@ const OrderHistories = () => {
                                         {thisItem.properties !== null && (
                                           <span class="fk-addons-table__info-text text-capitalize d-block text-left t-pb-5">
                                             <span class="font-weight-bold mr-1">
-                                              properties:
+                                              {_t(t("properties"))}:
                                             </span>
                                             {JSON.parse(
                                               thisItem.properties
@@ -691,7 +691,7 @@ const OrderHistories = () => {
                             class="btn btn-transparent btn-danger xsm-text text-uppercase py-2"
                             onClick={handleDateFilter}
                           >
-                            Filter
+                            {_t(t("Filter"))}
                           </button>
                         </li>
                       </ul>
@@ -754,7 +754,7 @@ const OrderHistories = () => {
                             class="btn btn-transparent btn-danger xsm-text text-uppercase py-2"
                             onClick={handleDateFilter}
                           >
-                            Filter
+                            {_t(t("Filter"))}
                           </button>
                         </li>
                       </ul>
@@ -905,7 +905,7 @@ const OrderHistories = () => {
                                                       data-toggle="modal"
                                                       data-target="#orderDetails"
                                                     >
-                                                      processing
+                                                      {_t(t("processing"))}
                                                     </span>
                                                   ) : (
                                                     <span
@@ -920,7 +920,7 @@ const OrderHistories = () => {
                                                       data-toggle="modal"
                                                       data-target="#orderDetails"
                                                     >
-                                                      Ready
+                                                      {_t(t("Ready"))}
                                                     </span>
                                                   ),
                                                 ]
@@ -937,7 +937,7 @@ const OrderHistories = () => {
                                                   data-toggle="modal"
                                                   data-target="#orderDetails"
                                                 >
-                                                  Cancelled
+                                                  {_t(t("Cancelled"))}
                                                 </span>
                                               )}
                                             </td>
@@ -1048,7 +1048,7 @@ const OrderHistories = () => {
                                                       data-toggle="modal"
                                                       data-target="#orderDetails"
                                                     >
-                                                      processing
+                                                      {_t(t("processing"))}
                                                     </span>
                                                   ) : (
                                                     <span
@@ -1063,7 +1063,7 @@ const OrderHistories = () => {
                                                       data-toggle="modal"
                                                       data-target="#orderDetails"
                                                     >
-                                                      Ready
+                                                      {_t(t("Ready"))}
                                                     </span>
                                                   ),
                                                 ]
@@ -1080,7 +1080,7 @@ const OrderHistories = () => {
                                                   data-toggle="modal"
                                                   data-target="#orderDetails"
                                                 >
-                                                  Cancelled
+                                                  {_t(t("Cancelled"))}
                                                 </span>
                                               )}
                                             </td>

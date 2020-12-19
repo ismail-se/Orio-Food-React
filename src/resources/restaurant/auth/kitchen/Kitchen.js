@@ -350,7 +350,8 @@ const Kitchen = () => {
                             style={{ height: "40px", width: "40px" }}
                           />
                         </span>
-                        <span className="mr-1">kitchen</span> dashboard
+                        <span className="mr-1">{_t(t("kitchen"))}</span>{" "}
+                        {_t(t("dashboard"))}
                       </span>
                     </li>
                   </ul>
@@ -367,7 +368,7 @@ const Kitchen = () => {
                     }}
                     className="btn btn-primary btn-block sm-text text-uppercase mb-2 mb-md-0 text-truncate"
                   >
-                    Refresh
+                    {_t(t("Refresh"))}
                   </button>
                 </div>
                 <div className="col-md-2">
@@ -421,7 +422,7 @@ const Kitchen = () => {
                                     handleReadyConfirmation(item.id)
                                   }
                                 >
-                                  Order ready
+                                  {_t(t("Order ready"))}
                                 </button>
                                 {item.is_accepted === 0 ? (
                                   <button
@@ -431,7 +432,7 @@ const Kitchen = () => {
                                       handleAcceptOrReject(item.id)
                                     }
                                   >
-                                    Accept order
+                                    {_t(t("Accept order"))}
                                   </button>
                                 ) : (
                                   <button
@@ -441,16 +442,18 @@ const Kitchen = () => {
                                       handleAcceptOrReject(item.id)
                                     }
                                   >
-                                    Make order pending
+                                    {_t(t("Make order pending"))}
                                   </button>
                                 )}
                               </div>
                               <div className="fk-order-token__body">
                                 <div className="fk-addons-table">
                                   <div className="fk-addons-table__head d-flex justify-content-between px-3">
-                                    <span>order token: #{item.token.id}</span>
                                     <span>
-                                      ordered at:{" "}
+                                      {_t(t("order token"))}: #{item.token.id}
+                                    </span>
+                                    <span>
+                                      {_t(t("ordered at"))}:{" "}
                                       <Moment format="LT">
                                         {item.token.time}
                                       </Moment>
@@ -460,22 +463,22 @@ const Kitchen = () => {
                                     <div className="row g-0">
                                       <div className="col-2 text-center border-right py-2">
                                         <span className="fk-addons-table__info-text text-capitalize">
-                                          S/L
+                                          {_t(t("S/L"))}
                                         </span>
                                       </div>
                                       <div className="col-3 text-center border-right py-2">
                                         <span className="fk-addons-table__info-text text-capitalize">
-                                          food
+                                          {_t(t("food"))}
                                         </span>
                                       </div>
                                       <div className="col-4 text-center border-right py-2">
                                         <span className="fk-addons-table__info-text text-capitalize">
-                                          Additional Info
+                                          {_t(t("Additional Info"))}
                                         </span>
                                       </div>
                                       <div className="col-2 text-center border-right py-2">
                                         <span className="fk-addons-table__info-text text-capitalize">
-                                          QT
+                                          {_t(t("QTY"))}
                                         </span>
                                       </div>
                                       <div className="col-1 text-center py-2">
@@ -512,7 +515,7 @@ const Kitchen = () => {
                                                       null && (
                                                       <span class="fk-addons-table__info-text text-capitalize d-block text-left t-pt-5">
                                                         <span class="font-weight-bold mr-1">
-                                                          variation:
+                                                          {_t(t("variation"))}:
                                                         </span>
                                                         {thisItem.variation}
                                                       </span>
@@ -522,7 +525,7 @@ const Kitchen = () => {
                                                       null && (
                                                       <span class="fk-addons-table__info-text text-capitalize d-block text-left t-pb-5">
                                                         <span class="font-weight-bold mr-1">
-                                                          properties:
+                                                          {_t(t("properties"))}:
                                                         </span>
                                                         {JSON.parse(
                                                           thisItem.properties
@@ -599,7 +602,7 @@ const Kitchen = () => {
                                                     null && (
                                                     <span class="fk-addons-table__info-text text-capitalize d-block text-left t-pt-5">
                                                       <span class="font-weight-bold mr-1">
-                                                        variation:
+                                                        {_t(t("variation"))}:
                                                       </span>
                                                       {thisItem.variation}
                                                     </span>
@@ -609,7 +612,7 @@ const Kitchen = () => {
                                                     null && (
                                                     <span class="fk-addons-table__info-text text-capitalize d-block text-left t-pb-5">
                                                       <span class="font-weight-bold mr-1">
-                                                        properties:
+                                                        {_t(t("properties"))}:
                                                       </span>
                                                       {JSON.parse(
                                                         thisItem.properties
@@ -717,7 +720,7 @@ const Kitchen = () => {
                                     handleReadyConfirmation(item.id)
                                   }
                                 >
-                                  Order ready
+                                  {_t(t("Order ready"))}
                                 </button>
                                 {item.is_accepted === 0 ? (
                                   <button
@@ -727,7 +730,7 @@ const Kitchen = () => {
                                       handleAcceptOrReject(item.id)
                                     }
                                   >
-                                    Accept order
+                                    {_t(t("Accept order"))}
                                   </button>
                                 ) : (
                                   <button
@@ -737,16 +740,18 @@ const Kitchen = () => {
                                       handleAcceptOrReject(item.id)
                                     }
                                   >
-                                    Make order pending
+                                    {_t(t("Make order pending"))}
                                   </button>
                                 )}
                               </div>
                               <div className="fk-order-token__body">
                                 <div className="fk-addons-table">
                                   <div className="fk-addons-table__head d-flex justify-content-between px-3">
-                                    <span>order token: #{item.token.id}</span>
                                     <span>
-                                      ordered at:{" "}
+                                      {_t(t("order token"))}: #{item.token.id}
+                                    </span>
+                                    <span>
+                                      {_t(t("ordered at"))}:{" "}
                                       <Moment format="LT">
                                         {item.token.time}
                                       </Moment>
@@ -756,22 +761,22 @@ const Kitchen = () => {
                                     <div className="row g-0">
                                       <div className="col-2 text-center border-right py-2">
                                         <span className="fk-addons-table__info-text text-capitalize">
-                                          S/L
+                                          {_t(t("S/L"))}
                                         </span>
                                       </div>
                                       <div className="col-3 text-center border-right py-2">
                                         <span className="fk-addons-table__info-text text-capitalize">
-                                          food
+                                          {_t(t("food"))}
                                         </span>
                                       </div>
                                       <div className="col-4 text-center border-right py-2">
                                         <span className="fk-addons-table__info-text text-capitalize">
-                                          Additional Info
+                                          {_t(t("Additional Info"))}
                                         </span>
                                       </div>
                                       <div className="col-2 text-center border-right py-2">
                                         <span className="fk-addons-table__info-text text-capitalize">
-                                          QT
+                                          {_t(t("QTY"))}
                                         </span>
                                       </div>
                                       <div className="col-1 text-center py-2">
@@ -808,7 +813,7 @@ const Kitchen = () => {
                                                       null && (
                                                       <span class="fk-addons-table__info-text text-capitalize d-block text-left t-pt-5">
                                                         <span class="font-weight-bold mr-1">
-                                                          variation:
+                                                          {_t(t("variation"))}:
                                                         </span>
                                                         {thisItem.variation}
                                                       </span>
@@ -818,7 +823,7 @@ const Kitchen = () => {
                                                       null && (
                                                       <span class="fk-addons-table__info-text text-capitalize d-block text-left t-pb-5">
                                                         <span class="font-weight-bold mr-1">
-                                                          properties:
+                                                          {_t(t("properties"))}:
                                                         </span>
                                                         {JSON.parse(
                                                           thisItem.properties
@@ -895,7 +900,7 @@ const Kitchen = () => {
                                                     null && (
                                                     <span class="fk-addons-table__info-text text-capitalize d-block text-left t-pt-5">
                                                       <span class="font-weight-bold mr-1">
-                                                        variation:
+                                                        {_t(t("variation"))}:
                                                       </span>
                                                       {thisItem.variation}
                                                     </span>
@@ -905,7 +910,7 @@ const Kitchen = () => {
                                                     null && (
                                                     <span class="fk-addons-table__info-text text-capitalize d-block text-left t-pb-5">
                                                       <span class="font-weight-bold mr-1">
-                                                        properties:
+                                                        {_t(t("properties"))}:
                                                       </span>
                                                       {JSON.parse(
                                                         thisItem.properties

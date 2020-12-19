@@ -430,7 +430,7 @@ const Reports = () => {
                         <div className="row gx-2 justify-content-center">
                           <div className="col-4 t-mb-15 mb-md-0">
                             <div className="py-1 sm-text text-center rounded-sm">
-                              AMOUNT / BRANCH
+                              {_t(t("AMOUNT / BRANCH"))}
                             </div>
                           </div>
                         </div>
@@ -458,7 +458,7 @@ const Reports = () => {
                         <div className="row gx-2 justify-content-center">
                           <div className="col-4 t-mb-15 mb-md-0">
                             <div className="pb-3 sm-text text-center rounded-sm">
-                              AMOUNT / ITEM
+                              {_t(t("AMOUNT / BRANCH"))}
                             </div>
                           </div>
                         </div>

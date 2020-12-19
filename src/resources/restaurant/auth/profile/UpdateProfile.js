@@ -219,7 +219,7 @@ const UpdateProfile = () => {
   return (
     <>
       <Helmet>
-        <title>{_t(t("Update Information"))}</title>
+        <title>{_t(t("Update Password"))}</title>
       </Helmet>
       <main id="main" data-simplebar>
         <div className="container">
@@ -237,7 +237,7 @@ const UpdateProfile = () => {
                       <ul className="t-list fk-breadcrumb">
                         <li className="fk-breadcrumb__list">
                           <span className="t-link fk-breadcrumb__link text-capitalize">
-                            {_t(t("Update information"))}
+                            {_t(t("Update Password"))}
                           </span>
                         </li>
                       </ul>
@@ -248,8 +248,8 @@ const UpdateProfile = () => {
                     data-simplebar
                   >
                     <div className="mt-5 t-pt-30 t-pl-15  t-pr-15">
-                      <div className="row justify-content-center">
-                        <div className="card col-12 col-md-4 mr-0 mr-md-3 mb-3 mb-md-0 p-5">
+                      <div className="">
+                        <div className="card col-8 offset-2 mb-3 mb-md-0 p-5">
                           <div key="fragment-permission-2">
                             <form onSubmit={handleUpdateAdminStaffPassword}>
                               <div className="mt-3">
@@ -300,57 +300,6 @@ const UpdateProfile = () => {
                                   className="btn btn-primary xsm-text text-uppercase px-5 py-2 mb-2 mb-md-0"
                                 >
                                   {_t(t("Update Password"))}
-                                </button>
-                              </div>
-                            </form>
-                          </div>
-                        </div>
-                        <div className="col-12 col-md-4 mr-0 mr-md-3 card p-5">
-                          <div key="fragment-permission-1">
-                            <form onSubmit={handleUpdateAdminStaff}>
-                              <div className="mt-3">
-                                <label htmlFor="phn_no" className="form-label">
-                                  {_t(t("Phone number"))}
-                                </label>
-                                <input
-                                  type="number"
-                                  className="form-control"
-                                  id="phn_no"
-                                  name="phn_no"
-                                  placeholder="e.g. 01xxx xxx xxx"
-                                  value={newAdminStaff.phn_no}
-                                  onChange={handleSetNewAdminStaff}
-                                  autoComplete="off"
-                                />
-                              </div>
-
-                              <div className="mt-3">
-                                <div className="d-flex align-items-center mb-1">
-                                  <label
-                                    htmlFor="image"
-                                    className="form-label mb-0 mr-3"
-                                  >
-                                    {_t(t("Image"))}{" "}
-                                    <small className="text-secondary">
-                                      ({_t(t("Square Image Preferable"))})
-                                    </small>
-                                  </label>
-                                </div>
-                                <input
-                                  type="file"
-                                  className="form-control"
-                                  id="image"
-                                  name="image"
-                                  onChange={handleAdminStaffImage}
-                                />
-                              </div>
-
-                              <div className="mt-4">
-                                <button
-                                  type="submit"
-                                  className="btn btn-success xsm-text text-uppercase px-5 py-2"
-                                >
-                                  {_t(t("Update Info"))}
                                 </button>
                               </div>
                             </form>

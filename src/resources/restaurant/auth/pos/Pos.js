@@ -1477,27 +1477,29 @@ const Pos = () => {
                       {getSystemSettings(generalSettings, "address")}
                     </p>
                     <p className="mb-0 xsm-text fk-print-text text-center text-capitalize">
-                      call: {getSystemSettings(generalSettings, "phnNo")}
+                      {_t(t("call"))}:{" "}
+                      {getSystemSettings(generalSettings, "phnNo")}
                     </p>
                     <hr className="mb-0" />
                     <span className="d-block fk-print-text fk-print-text--bold text-uppercase text-center lg-text">
-                      Token: {orderDetails && orderDetails.token.id}
+                      {_t(t("Token"))}: {orderDetails && orderDetails.token.id}
                     </span>
                     <p className="mb-0 xsm-text fk-print-text text-capitalize">
-                      Vat reg: Applied
+                      {_t(t("Vat reg"))}: {_t(t("Applied"))}
                     </p>
                     <p className="mb-0 xsm-text fk-print-text text-capitalize">
-                      date: <Moment format="LL">{new Date()}</Moment>
+                      {_t(t("date"))}: <Moment format="LL">{new Date()}</Moment>
                       {", "}
                       {orderDetails && (
                         <Moment format="LT">{orderDetails.token.time}</Moment>
                       )}
                     </p>
                     <p className="mb-0 xsm-text fk-print-text text-capitalize">
-                      Total guests: {orderDetails && orderDetails.total_guest}
+                      {_t(t("Total guests"))}:{" "}
+                      {orderDetails && orderDetails.total_guest}
                     </p>
                     <p className="mb-0 xsm-text fk-print-text text-capitalize">
-                      waiter name:{" "}
+                      {_t(t("waiter name"))}:{" "}
                       {orderDetails && orderDetails.waiter !== null
                         ? orderDetails.waiter.name
                         : ""}
@@ -1509,19 +1511,19 @@ const Pos = () => {
                             scope="col"
                             className="fk-print-text fk-print-text--bold sm-text text-capitalize"
                           >
-                            item
+                            {_t(t("item"))}
                           </th>
                           <th
                             scope="col"
                             className="fk-print-text fk-print-text--bold sm-text text-capitalize text-center"
                           >
-                            qty
+                            {_t(t("qty"))}
                           </th>
                           <th
                             scope="col"
                             className="fk-print-text fk-print-text--bold sm-text text-capitalize text-right"
                           >
-                            price
+                            {_t(t("price"))}
                           </th>
                         </tr>
                       </thead>
@@ -1536,7 +1538,7 @@ const Pos = () => {
                                 {parseInt(printItem.item.has_variation) === 1 &&
                                   printItem.variation && (
                                     <span className="xxsm-text d-block">
-                                      Variation:{" "}
+                                      {_t(t("Variation"))}:{" "}
                                       {printItem.variation.variation_name}
                                     </span>
                                   )}
@@ -1613,7 +1615,7 @@ const Pos = () => {
                       <tbody>
                         <tr>
                           <th className="fk-print-text xsm-text text-capitalize">
-                            <span className="d-block">total</span>
+                            <span className="d-block">{_t(t("total"))}</span>
                           </th>
                           <td className="fk-print-text xsm-text text-capitalize text-right">
                             {currencySymbolLeft()}
@@ -1628,7 +1630,8 @@ const Pos = () => {
                         <tr>
                           <th className="fk-print-text xsm-text text-capitalize">
                             <span className="d-block">
-                              VAT{" ("}
+                              {_t(t("VAT"))}
+                              {" ("}
                               {newSettings && newSettings.vat}%{")"}
                             </span>
                           </th>
@@ -1644,7 +1647,9 @@ const Pos = () => {
                       <tbody>
                         <tr>
                           <th className="fk-print-text xsm-text text-capitalize">
-                            <span className="d-block">Service Charge</span>
+                            <span className="d-block">
+                              {_t(t("Service Charge"))}
+                            </span>
                           </th>
 
                           {orderDetails && (
@@ -1661,7 +1666,7 @@ const Pos = () => {
                       <tbody>
                         <tr>
                           <th className="fk-print-text xsm-text text-capitalize">
-                            <span className="d-block">discount</span>
+                            <span className="d-block">{_t(t("discount"))}</span>
                           </th>
                           {orderDetails && (
                             <td className="fk-print-text xsm-text text-capitalize text-right">
@@ -1679,7 +1684,9 @@ const Pos = () => {
                       <tbody>
                         <tr>
                           <th className="fk-print-text fk-print-text--bold sm-text text-capitalize">
-                            <span className="d-block">grand total</span>
+                            <span className="d-block">
+                              {_t(t("grand total"))}
+                            </span>
                           </th>
                           <td className="fk-print-text fk-print-text--bold xsm-text text-capitalize text-right">
                             {currencySymbolLeft()}
@@ -1692,13 +1699,13 @@ const Pos = () => {
                     <hr />
                     <hr />
                     <p className="mb-0 xsm-text fk-print-text text-capitalize text-center">
-                      bill prepared by:{" "}
+                      {_t(t("bill prepared by"))}:{" "}
                       {authUserInfo &&
                         authUserInfo.details &&
                         authUserInfo.details.name}
                     </p>
                     <p className="mb-0 xsm-text fk-print-text text-capitalize text-center">
-                      looking forward to serve you again
+                      {_t(t("looking forward to serve you again"))}
                     </p>
                   </div>
                 </div>
@@ -1723,24 +1730,26 @@ const Pos = () => {
                       {getSystemSettings(generalSettings, "address")}
                     </p>
                     <p className="mb-0 xsm-text fk-print-text text-center text-capitalize">
-                      call: {getSystemSettings(generalSettings, "phnNo")}
+                      {_t(t("call"))}:{" "}
+                      {getSystemSettings(generalSettings, "phnNo")}
                     </p>
                     <hr className="mb-0" />
                     <span className="d-block fk-print-text fk-print-text--bold text-uppercase text-center lg-text">
-                      Token: {orderDetails && orderDetails.token.id}
+                      {_t(t("Token"))}: {orderDetails && orderDetails.token.id}
                     </span>
                     <p className="mb-0 xsm-text fk-print-text text-capitalize">
-                      date: <Moment format="LL">{new Date()}</Moment>
+                      {_t(t("date"))}: <Moment format="LL">{new Date()}</Moment>
                       {", "}
                       {orderDetails && (
                         <Moment format="LT">{orderDetails.token.time}</Moment>
                       )}
                     </p>
                     <p className="mb-0 xsm-text fk-print-text text-capitalize">
-                      Total guests: {orderDetails && orderDetails.total_guest}
+                      {_t(t("Total guests"))}:{" "}
+                      {orderDetails && orderDetails.total_guest}
                     </p>
                     <p className="mb-0 xsm-text fk-print-text text-capitalize">
-                      waiter name:{" "}
+                      {_t(t("item"))}waiter name:{" "}
                       {orderDetails && orderDetails.waiter !== null
                         ? orderDetails.waiter.name
                         : ""}
@@ -1752,13 +1761,13 @@ const Pos = () => {
                             scope="col"
                             className="fk-print-text fk-print-text--bold sm-text text-capitalize"
                           >
-                            item
+                            {_t(t("item"))}
                           </th>
                           <th
                             scope="col"
                             className="fk-print-text fk-print-text--bold sm-text text-capitalize text-center"
                           >
-                            qty
+                            {_t(t("qty"))}
                           </th>
                         </tr>
                       </thead>
@@ -1773,7 +1782,7 @@ const Pos = () => {
                                 {parseInt(printItem.item.has_variation) === 1 &&
                                   printItem.variation && (
                                     <span className="xxsm-text d-block">
-                                      Variation:{" "}
+                                      {_t(t("Variation"))}:{" "}
                                       {printItem.variation.variation_name}
                                     </span>
                                   )}
@@ -1843,7 +1852,7 @@ const Pos = () => {
                     <hr />
                     <hr />
                     <p className="mb-0 xsm-text fk-print-text text-capitalize text-center">
-                      bill prepared by:{" "}
+                      {_t(t("bill prepared by"))}:{" "}
                       {authUserInfo &&
                         authUserInfo.details &&
                         authUserInfo.details.name}
@@ -2353,7 +2362,7 @@ const Pos = () => {
                     <div className="col">
                       <span className="text-capitalize sm-text">
                         {" "}
-                        sub total{" "}
+                        {_t(t("sub total"))}{" "}
                       </span>
                     </div>
                     <div className="col text-center">:</div>
@@ -2380,7 +2389,7 @@ const Pos = () => {
                   <div className="row">
                     <div className="col">
                       <span className="text-capitalize sm-text">
-                        VAT ({newSettings && newSettings.vat}%)
+                        {_t(t("VAT"))} ({newSettings && newSettings.vat}%)
                       </span>
                     </div>
                     <div className="col text-center">:</div>
@@ -2396,7 +2405,10 @@ const Pos = () => {
                 <div className="col-12 mb-2">
                   <div className="row">
                     <div className="col">
-                      <span className="text-capitalize sm-text"> service </span>
+                      <span className="text-capitalize sm-text">
+                        {" "}
+                        {_t(t("service"))}{" "}
+                      </span>
                     </div>
                     <div className="col text-center">:</div>
                     <div className="col text-right">
@@ -2467,7 +2479,7 @@ const Pos = () => {
                     <div className="col">
                       <span className="text-capitalize sm-text">
                         {" "}
-                        discount{" "}
+                        {_t(t("discount"))}{" "}
                       </span>
                     </div>
                     <div className="col text-center">:</div>
@@ -2541,7 +2553,7 @@ const Pos = () => {
                   <div className="row">
                     <div className="col">
                       <span className="text-capitalize sm-text font-weight-bold">
-                        total bill
+                        {_t(t("total bill"))}
                       </span>
                     </div>
                     <div className="col text-center">:</div>
@@ -2562,7 +2574,7 @@ const Pos = () => {
                     <div className="row">
                       <div className="col">
                         <span className="text-capitalize sm-text font-weight-bold text-primary">
-                          Return
+                          {_t(t("Return"))}
                         </span>
                       </div>
                       <div className="col text-center">:</div>
@@ -2585,7 +2597,7 @@ const Pos = () => {
                 className="btn btn-secondary xsm-text text-uppercase col-3"
                 onClick={handleCancel}
               >
-                Cancel
+                {_t(t("Cancel"))}
               </button>
               <button
                 type="button"
@@ -2614,7 +2626,7 @@ const Pos = () => {
             <div className="modal-header align-items-center">
               <div className="fk-sm-card__content">
                 <h5 className="text-capitalize fk-sm-card__title">
-                  additional information
+                  {_t(t("additional information"))}
                 </h5>
               </div>
               <button
@@ -2678,7 +2690,7 @@ const Pos = () => {
                               data-toggle="dropdown"
                               aria-expanded="false"
                             >
-                              + Customer?
+                              + {_t(t("Customer"))}?
                             </button>
                             <ul className="dropdown-menu w-100 border-0 pt-4 change-background">
                               <li>
@@ -2717,7 +2729,7 @@ const Pos = () => {
                                     });
                                   }}
                                 >
-                                  Cancel
+                                  {_t(t("Cancel"))}
                                 </button>
                               </li>
                             </ul>
@@ -2762,7 +2774,7 @@ const Pos = () => {
                         {orderDetails.payment_type !== null && (
                           <div className="border mt-0 mb-2 change-background mx-1 rounded-lg">
                             <div className="xsm-text text-center text-white pt-1">
-                              Amount
+                              {_t(t("Amount"))}
                             </div>
                             {orderDetails.payment_type.map(
                               (eachPaymentType, paymentTypeIndex) => {
@@ -2830,7 +2842,7 @@ const Pos = () => {
                             className="form-control xsm-text py-2 pl-2"
                             min="1"
                             onChange={handleTotalGuest}
-                            placeholder={_t(t("Total guest")) + ".."}
+                            placeholder={_t(t("Total guests")) + ".."}
                           />
                         </li>
                       </>
@@ -2882,7 +2894,7 @@ const Pos = () => {
                   to="/dashboard"
                   className="t-heading-font btn btn-primary btn-sm text-uppercase sm-text"
                 >
-                  Goto Dashboard
+                  {_t(t("Goto Dashboard"))}
                 </NavLink>
               </div>
             </div>
@@ -3051,7 +3063,7 @@ const Pos = () => {
                           to="/dashboard"
                           className="t-heading-font btn btn-primary btn-sm text-uppercase sm-text"
                         >
-                          Goto Dashboard
+                          {_t(t("Goto Dashboard"))}
                         </NavLink>
                       </div>
                     </div>
@@ -3083,14 +3095,14 @@ const Pos = () => {
                               to="/refresh"
                               className="t-link t-pt-8 t-pb-8 t-pl-12 t-pr-12 btn btn-success xsm-text text-uppercase text-center w-100"
                             >
-                              Settled
+                              {_t(t("Settled"))}
                             </NavLink>
                           ) : (
                             <NavLink
                               to="/dashboard/pos/settled"
                               className="t-link t-pt-8 t-pb-8 t-pl-12 t-pr-12 btn btn-success xsm-text text-uppercase text-center w-100"
                             >
-                              Settled
+                              {_t(t("Settled"))}
                             </NavLink>
                           )}
                         </div>
@@ -3101,14 +3113,14 @@ const Pos = () => {
                               to="/refresh"
                               className="t-link t-pt-8 t-pb-8 t-pl-12 t-pr-12 btn btn-primary xsm-text text-uppercase text-center w-100"
                             >
-                              Submitted
+                              {_t(t("Submitted"))}
                             </NavLink>
                           ) : (
                             <NavLink
                               to="/dashboard/pos/submitted"
                               className="t-link t-pt-8 t-pb-8 t-pl-12 t-pr-12 btn btn-primary xsm-text text-uppercase text-center w-100"
                             >
-                              Submitted
+                              {_t(t("Submitted"))}
                             </NavLink>
                           )}
                         </div>
@@ -3210,7 +3222,7 @@ const Pos = () => {
                                       {/* Variations */}
                                       <div className="fk-addons-table">
                                         <div className="fk-addons-table__head text-center">
-                                          variations
+                                          {_t(t("variations"))}
                                         </div>
                                         {foodItem.variations ? (
                                           <>
@@ -3218,12 +3230,12 @@ const Pos = () => {
                                               <div className="row g-0">
                                                 <div className="col-8 pl-3 border-right">
                                                   <span className="fk-addons-table__info-text text-capitalize">
-                                                    name
+                                                    {_t(t("name"))}
                                                   </span>
                                                 </div>
                                                 <div className="col-4 text-center">
                                                   <span className="fk-addons-table__info-text text-capitalize">
-                                                    price
+                                                    {_t(t("price"))}
                                                   </span>
                                                 </div>
                                               </div>
@@ -3277,7 +3289,7 @@ const Pos = () => {
                                             <div className="row g-0">
                                               <div className="col-12 text-center border-right">
                                                 <span className="fk-addons-table__info-text text-capitalize text-primary">
-                                                  No variations
+                                                  {_t(t("No variations"))}
                                                 </span>
                                               </div>
                                             </div>
@@ -3318,17 +3330,19 @@ const Pos = () => {
                                                       <div className="row g-0">
                                                         <div className="col-5 pl-3 border-right">
                                                           <span className="fk-addons-table__info-text text-capitalize">
-                                                            name
+                                                            {_t(t("name"))}
                                                           </span>
                                                         </div>
                                                         <div className="col-3 text-center border-right">
                                                           <span className="fk-addons-table__info-text text-capitalize">
-                                                            QTY
+                                                            {_t(t("QTY"))}
                                                           </span>
                                                         </div>
                                                         <div className="col-4 text-center">
                                                           <span className="fk-addons-table__info-text text-capitalize">
-                                                            Unit price
+                                                            {_t(
+                                                              t("Unit price")
+                                                            )}
                                                           </span>
                                                         </div>
                                                       </div>
@@ -3612,7 +3626,7 @@ const Pos = () => {
                                             data-toggle="dropdown"
                                             aria-expanded="false"
                                           >
-                                            + Customer?
+                                            + {_t(t("Customer"))}?
                                           </button>
                                           <ul className="dropdown-menu w-100 border-0 pt-4 change-background">
                                             <li>
@@ -3657,7 +3671,7 @@ const Pos = () => {
                                                   });
                                                 }}
                                               >
-                                                Cancel
+                                                {_t(t("Cancel"))}
                                               </button>
                                             </li>
                                           </ul>
@@ -3714,7 +3728,7 @@ const Pos = () => {
                                       {orderDetails.payment_type !== null && (
                                         <div className="border mt-0 mb-2 change-background mx-1 rounded-lg">
                                           <div className="xsm-text text-center text-white pt-1">
-                                            Amount
+                                            {_t(t("Amount"))}
                                           </div>
                                           {orderDetails.payment_type.map(
                                             (
@@ -3843,7 +3857,7 @@ const Pos = () => {
                                 }}
                                 className="w-100 t-heading-font btn btn-outline-danger font-weight-bold text-uppercase sm-text"
                               >
-                                print bill
+                                {_t(t("print bill"))}
                               </button>
                             </div>
                             <div className="col-12">
@@ -3851,7 +3865,7 @@ const Pos = () => {
                                 className="w-100 t-heading-font btn btn-primary font-weight-bold text-uppercase sm-text"
                                 onClick={handleCancelConfirmation}
                               >
-                                cancel
+                                {_t(t("cancel"))}
                               </button>
                             </div>
                           </div>
@@ -3868,7 +3882,7 @@ const Pos = () => {
                             <div className="row g-0">
                               <div className="col-12">
                                 <span className="sm-text font-weight-bold text-uppercase font-italic">
-                                  Order token:{" "}
+                                  {_t(t("Order token"))}:{" "}
                                   {newOrder ? (
                                     <>
                                       #{orderDetails.token.id} -{" "}
@@ -4085,7 +4099,7 @@ const Pos = () => {
                             <div className="row gx-0 align-items-center">
                               <div className="col-12 text-right">
                                 <span className="d-block sm-text font-weight-bold text-uppercase">
-                                  Order token:{" "}
+                                  {_t(t("Order token"))}:{" "}
                                   {newOrder ? (
                                     <>
                                       #{orderDetails.token.id} -{" "}
@@ -4107,22 +4121,22 @@ const Pos = () => {
                                   <div className="row g-0 border">
                                     <div className="col-1 text-center border-right">
                                       <span className="text-capitalize sm-text d-inline-block font-weight-bold t-pt-5 t-pb-5">
-                                        S/L
+                                        {_t(t("S/L"))}
                                       </span>
                                     </div>
                                     <div className="col-6 text-center border-right">
                                       <span className="text-capitalize sm-text d-inline-block font-weight-bold t-pt-5 t-pb-5">
-                                        food item
+                                        {_t(t("food item"))}
                                       </span>
                                     </div>
                                     <div className="col-2 text-center border-right">
                                       <span className="text-capitalize sm-text d-inline-block font-weight-bold t-pt-5 t-pb-5">
-                                        QTY
+                                        {_t(t("QTY"))}
                                       </span>
                                     </div>
                                     <div className="col-3 text-center">
                                       <span className="text-capitalize sm-text d-inline-block font-weight-bold t-pt-5 t-pb-5">
-                                        price
+                                        {_t(t("price"))}
                                       </span>
                                     </div>
                                   </div>
@@ -4418,7 +4432,7 @@ const Pos = () => {
                                     <div className="row g-0">
                                       <div className="col-6">
                                         <span className="text-capitalize xsm-text d-inline-block font-weight-bold t-pt-5 t-pb-5">
-                                          sub total
+                                          {_t(t("sub total"))}
                                         </span>
                                       </div>
                                       <div className="col-6">
@@ -4442,7 +4456,8 @@ const Pos = () => {
                                     <div className="row g-0">
                                       <div className="col-6">
                                         <span className="text-uppercase xsm-text d-inline-block font-weight-bold t-pt-5 t-pb-5">
-                                          VAT ({newSettings && newSettings.vat}
+                                          {_t(t("VAT"))} (
+                                          {newSettings && newSettings.vat}
                                           %)
                                         </span>
                                       </div>
@@ -4461,7 +4476,7 @@ const Pos = () => {
                                     <div className="row g-0">
                                       <div className="col-6">
                                         <span className="text-capitalize xsm-text d-inline-block font-weight-bold t-pt-5 t-pb-5">
-                                          service charge
+                                          {_t(t("service charge"))}
                                         </span>
                                       </div>
                                       <div className="col-6">
@@ -4539,7 +4554,7 @@ const Pos = () => {
                                     <div className="row g-0">
                                       <div className="col-6">
                                         <span className="text-capitalize xsm-text d-inline-block font-weight-bold t-pt-5 t-pb-5">
-                                          discount
+                                          {_t(t("discount"))}
                                         </span>
                                       </div>
                                       <div className="col-6">
@@ -4620,7 +4635,7 @@ const Pos = () => {
                                 <div className="row">
                                   <div className="col-6">
                                     <span className="text-capitalize font-weight-bold text-light d-block t-pt-8 t-pb-10">
-                                      total bill
+                                      {_t(t("total bill"))}
                                     </span>
                                   </div>
                                   <div className="col-6 text-right">
@@ -4647,7 +4662,7 @@ const Pos = () => {
                                     <div className="row gx-2 align-items-center">
                                       <div className="col-6 text-left">
                                         <span className="text-capitalize font-weight-bold d-block">
-                                          Return
+                                          {_t(t("Return"))}
                                         </span>
                                       </div>
                                       <div className="col-6">

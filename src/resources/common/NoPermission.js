@@ -4,11 +4,15 @@ import React from "react";
 import Skeleton from "react-loading-skeleton";
 import { Helmet } from "react-helmet";
 
+//functions
+import { _t } from "../../functions/Functions";
+import { useTranslation } from "react-i18next";
 const NoPermission = () => {
+  const { t } = useTranslation();
   return (
     <>
       <Helmet>
-        <title>Cheecking access</title>
+        <title>{_t(t("Cheecking access"))}</title>
       </Helmet>
       <main id="main" data-simplebar>
         <div className="fk-scroll--index t-mt-15 t-mb-15" data-simplebar>
