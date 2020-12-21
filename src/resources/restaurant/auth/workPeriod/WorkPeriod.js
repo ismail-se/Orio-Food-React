@@ -334,14 +334,19 @@ const WorkPeriod = () => {
             ...newWorkPeriod,
             uploading: false,
           });
-          toast.error(`${_t(t("Please settle all the submitted orders"))}`, {
-            position: "bottom-center",
-            autoClose: 10000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            className: "text-center toast-notification",
-          });
+          toast.error(
+            `${_t(
+              t("All submitted orders need to be settled to end workperiod")
+            )}`,
+            {
+              position: "bottom-center",
+              autoClose: 10000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              className: "text-center toast-notification",
+            }
+          );
         }
       })
       .catch(() => {

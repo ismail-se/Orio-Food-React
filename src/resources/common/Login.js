@@ -298,13 +298,13 @@ const Login = () => {
                         {_t(t("sign in"))}
                       </h3>
                       <form onSubmit={handleSubmit}>
-                        <div className="row mx-2">
-                          <div className="card p-2 t-mb-15 d-none">
+                        <div className="row">
+                          <div className="p-2 t-mb-15 d-none">
                             <div className="col-12 mb-1">
                               <div className="card p-2">
                                 <div className="row">
                                   <div className="col-12 text-center sm-text">
-                                    Click below for demo login credentials
+                                    Demo login credentials
                                     <div className="text-primary">
                                       This password section is only for demo
                                     </div>
