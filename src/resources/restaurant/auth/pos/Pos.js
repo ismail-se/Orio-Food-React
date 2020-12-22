@@ -1459,7 +1459,7 @@ const Pos = () => {
 
       {/* beep sound */}
       <audio id="myAudio">
-        <source src="/assets/beep/beep.mp3" type="audio/mpeg" />
+        <source src="assets/beep/beep.mp3" type="audio/mpeg" />
       </audio>
 
       {/* Print bill */}

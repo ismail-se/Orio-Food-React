@@ -1484,7 +1484,7 @@ const AdminStaffCrud = () => {
                                                       backgroundImage: `url(${
                                                         item.image !== null
                                                           ? item.image
-                                                          : "/assets/img/admin.png"
+                                                          : "assets/img/admin.png"
                                                       })`,
                                                     }}
                                                   ></div>
@@ -1623,7 +1623,7 @@ const AdminStaffCrud = () => {
                                                       backgroundImage: `url(${
                                                         item.image !== null
                                                           ? item.image
-                                                          : "/assets/img/admin.png"
+                                                          : "assets/img/admin.png"
                                                       })`,
                                                     }}
                                                   ></div>

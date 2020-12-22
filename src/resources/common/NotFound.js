@@ -168,7 +168,7 @@ const NotFound = () => {
           <div class="container">
             <div class="row">
               <div class="col-12 text-center">
-                <img src="/assets/img/404.png" class="img-fluid" />
+                <img src="assets/img/404.png" class="img-fluid" />
               </div>
             </div>
           </div>

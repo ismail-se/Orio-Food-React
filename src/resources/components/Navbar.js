@@ -346,7 +346,7 @@ const Navbar = (props) => {
                                         "/public/" +
                                         authUserInfo.details.image,
                                     ]
-                                  : "/assets/img/user.jpg"
+                                  : "assets/img/user.jpg"
                               }
                               alt="foodkhan"
                               className="img-fluid avatar__img"
@@ -596,7 +596,7 @@ const Navbar = (props) => {
                                             "/public/" +
                                             authUserInfo.details.image,
                                         ]
-                                      : "/assets/img/user.jpg"
+                                      : "assets/img/user.jpg"
                                   }
                                   alt="foodkhan"
                                   className="img-fluid avatar__img"

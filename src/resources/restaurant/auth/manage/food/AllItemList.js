@@ -1437,7 +1437,7 @@ const AllItemList = () => {
                                                     backgroundImage: `url(${
                                                       item.image !== null
                                                         ? item.image
-                                                        : "/assets/img/def_food.png"
+                                                        : "assets/img/def_food.png"
                                                     })`,
                                                   }}
                                                 ></div>
@@ -1671,7 +1671,7 @@ const AllItemList = () => {
                                                       backgroundImage: `url(${
                                                         item.image !== null
                                                           ? item.image
-                                                          : "/assets/img/def_food.png"
+                                                          : "assets/img/def_food.png"
                                                       })`,
                                                     }}
                                                   ></div>

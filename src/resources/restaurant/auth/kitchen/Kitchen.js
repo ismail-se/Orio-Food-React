@@ -344,7 +344,7 @@ const Kitchen = () => {
                       <span className="t-link fk-breadcrumb__link text-uppercase">
                         <span className="mr-2">
                           <img
-                            src="/assets/img/cooking.png"
+                            src="assets/img/cooking.png"
                             alt="cooking"
                             className="img-fluid"
                             style={{ height: "40px", width: "40px" }}
@@ -683,7 +683,7 @@ const Kitchen = () => {
                         <div className="fk-order-token t-bg-white p-5 text-center text-uppercase text-primary no-order">
                           {/* No order in the kitchen */}
                           <img
-                            src="/assets/img/no-order.jpg"
+                            src="assets/img/no-order.jpg"
                             alt="no order found"
                             className="img-fluid h-100"
                           />
@@ -981,7 +981,7 @@ const Kitchen = () => {
                         <div className="fk-order-token t-bg-white p-5 text-center text-uppercase text-primary no-order">
                           {/* No order in the kitchen */}
                           <img
-                            src="/assets/img/no-order.jpg"
+                            src="assets/img/no-order.jpg"
                             alt="no order found"
                             className="img-fluid h-100"
                           />
