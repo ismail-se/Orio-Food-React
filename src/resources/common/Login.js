@@ -67,11 +67,28 @@ const Login = () => {
     email: null,
     password: null,
     remember_me: false,
+    install_no: false,
   });
 
   useEffect(() => {
-    handleJquery();
-    checkAuth();
+    setLoading(false);
+    const url = BASE_URL + "/check-install";
+    return axios
+      .get(url)
+      .then((res) => {
+        if (res.data === "YES") {
+          handleJquery();
+          checkAuth();
+        } else {
+          setCredentials({
+            ...credentials,
+            install_no: true,
+          });
+          handleJquery();
+          checkAuth();
+        }
+      })
+      .catch((error) => {});
   }, []);
 
   //jQuery
@@ -266,171 +283,205 @@ const Login = () => {
                 </div>
               </div>
             </div>
-            <div className="row">
-              <div className="col-md-8 col-lg-6 col-xl-4 t-mt-50">
-                <div className="fk-global-form">
-                  {loading ? (
+            {credentials.install_no ? (
+              <div className="row">
+                <div className="col-md-8 col-lg-6 col-xl-4 t-mt-50">
+                  <div className="fk-global-form">
                     <div key="login-form">
                       <h3 className="mt-0 text-capitalize font-weight-bold">
-                        {_t(t("signing in"))}
+                        {_t(t("Not Installed"))}
                       </h3>
                       <form onSubmit={handleSubmit}>
-                        <div className="row">
-                          {modalLoading(3)}
+                        <div>
+                          Your application is not ready to use, Install to
+                          continue.
+                        </div>
+                        <div className="row mt-3">
                           <div className="col-12">
                             <div className="d-flex align-items-center">
                               <div className="t-mr-8">
-                                <button
-                                  type="button"
+                                <NavLink
+                                  to="/laravel"
                                   className="btn btn-primary sm-text text-uppercase"
                                 >
-                                  {_t(t("Please wait"))}
-                                </button>
+                                  {_t(t("Install"))}
+                                </NavLink>
                               </div>
                             </div>
                           </div>
                         </div>
                       </form>
                     </div>
-                  ) : (
-                    <div key="loading">
-                      <h3 className="mt-0 text-capitalize font-weight-bold">
-                        {_t(t("sign in"))}
-                      </h3>
-                      <form onSubmit={handleSubmit}>
-                        <div className="row">
-                          <div className="p-2 t-mb-15 d-none">
-                            <div className="col-12 mb-1">
-                              <div className="card p-2">
-                                <div className="row">
-                                  <div className="col-12 text-center sm-text">
-                                    Demo login credentials
-                                    <div className="text-primary">
-                                      This password section is only for demo
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="row">
+                <div className="col-md-8 col-lg-6 col-xl-4 t-mt-50">
+                  <div className="fk-global-form">
+                    {loading ? (
+                      <div key="login-form">
+                        <h3 className="mt-0 text-capitalize font-weight-bold">
+                          {_t(t("signing in"))}
+                        </h3>
+                        <form onSubmit={handleSubmit}>
+                          <div className="row">
+                            {modalLoading(3)}
+                            <div className="col-12">
+                              <div className="d-flex align-items-center">
+                                <div className="t-mr-8">
+                                  <button
+                                    type="button"
+                                    className="btn btn-primary sm-text text-uppercase"
+                                  >
+                                    {_t(t("Please wait"))}
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </form>
+                      </div>
+                    ) : (
+                      <div key="loading">
+                        <h3 className="mt-0 text-capitalize font-weight-bold">
+                          {_t(t("sign in"))}
+                        </h3>
+                        <form onSubmit={handleSubmit}>
+                          <div className="row">
+                            <div className="p-2 t-mb-15 d-none">
+                              <div className="col-12 mb-1">
+                                <div className="card p-2">
+                                  <div className="row">
+                                    <div className="col-12 text-center sm-text">
+                                      Demo login credentials
+                                      <div className="text-primary">
+                                        This password section is only for demo
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                              <div
+                                className="col-12 mb-1 pointer-cursor"
+                                onClick={() => {
+                                  setCredentials({
+                                    ...credentials,
+                                    email: "admin@mail.com",
+                                    password: "khadyo@123",
+                                  });
+                                }}
+                              >
+                                <div className="card p-2 ">
+                                  <div className="row d-flex align-items-center">
+                                    <div className="col-12 col-md-5">
+                                      Admin: admin@mail.com
+                                    </div>
+                                    <div className="col-12 col-md-4">
+                                      password: khadyo@123
+                                    </div>
+                                    <div className="col-12 col-md-3 text-right">
+                                      <span className="btn btn-sm btn-primary">
+                                        copy
+                                      </span>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+
+                              <div
+                                className="col-12 pointer-cursor"
+                                onClick={() => {
+                                  setCredentials({
+                                    ...credentials,
+                                    email: "staff@mail.com",
+                                    password: "khadyo@123",
+                                  });
+                                }}
+                              >
+                                <div className="card p-2">
+                                  <div className="row d-flex align-items-center">
+                                    <div className="col-12 col-md-5">
+                                      Staff: staff@mail.com
+                                    </div>
+                                    <div className="col-12 col-md-4">
+                                      password: khadyo@123
+                                    </div>
+                                    <div className="col-12 col-md-3 text-right">
+                                      <span className="btn btn-sm btn-primary">
+                                        copy
+                                      </span>
                                     </div>
                                   </div>
                                 </div>
                               </div>
                             </div>
-                            <div
-                              className="col-12 mb-1 pointer-cursor"
-                              onClick={() => {
-                                setCredentials({
-                                  ...credentials,
-                                  email: "admin@mail.com",
-                                  password: "khadyo@123",
-                                });
-                              }}
-                            >
-                              <div className="card p-2 ">
-                                <div className="row d-flex align-items-center">
-                                  <div className="col-12 col-md-5">
-                                    Admin: admin@mail.com
-                                  </div>
-                                  <div className="col-12 col-md-4">
-                                    password: khadyo@123
-                                  </div>
-                                  <div className="col-12 col-md-3 text-right">
-                                    <span className="btn btn-sm btn-primary">
-                                      copy
-                                    </span>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
 
-                            <div
-                              className="col-12 pointer-cursor"
-                              onClick={() => {
-                                setCredentials({
-                                  ...credentials,
-                                  email: "staff@mail.com",
-                                  password: "khadyo@123",
-                                });
-                              }}
-                            >
-                              <div className="card p-2">
-                                <div className="row d-flex align-items-center">
-                                  <div className="col-12 col-md-5">
-                                    Staff: staff@mail.com
-                                  </div>
-                                  <div className="col-12 col-md-4">
-                                    password: khadyo@123
-                                  </div>
-                                  <div className="col-12 col-md-3 text-right">
-                                    <span className="btn btn-sm btn-primary">
-                                      copy
-                                    </span>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-
-                          <div className="col-12 t-mb-15">
-                            <input
-                              onChange={handleCredentials}
-                              type="email"
-                              name="email"
-                              placeholder="Email"
-                              value={credentials.email}
-                              required
-                              autoComplete="off"
-                              className="form-control border-0 rounded-1"
-                            />
-                          </div>
-                          <div className="col-12 t-mb-15">
-                            <input
-                              onChange={handleCredentials}
-                              name="password"
-                              type="password"
-                              placeholder="Password"
-                              value={credentials.password}
-                              required
-                              autoComplete="off"
-                              className="form-control border-0 rounded-1"
-                            />
-                          </div>
-                          <div className="col-6 t-mb-15">
-                            <label className="mx-checkbox">
+                            <div className="col-12 t-mb-15">
                               <input
                                 onChange={handleCredentials}
-                                name="remember_me"
-                                type="checkbox"
-                                className="mx-checkbox__input mx-checkbox__input-solid mx-checkbox__input-solid--danger mx-checkbox__input-sm mt-0-kitchen"
+                                type="email"
+                                name="email"
+                                placeholder="Email"
+                                value={credentials.email}
+                                required
+                                autoComplete="off"
+                                className="form-control border-0 rounded-1"
                               />
-                              <span className="mx-checkbox__text text-capitalize t-text-heading t-ml-8">
-                                {_t(t("Remember Me"))}
-                              </span>
-                            </label>
-                          </div>
-                          <div className="col-6 t-mb-15 text-right">
-                            <NavLink
-                              to="/reset-password"
-                              className="t-link sm-text"
-                            >
-                              {_t(t("Forgot password"))}?
-                            </NavLink>
-                          </div>
-                          <div className="col-12">
-                            <div className="d-flex align-items-center">
-                              <div className="t-mr-8">
-                                <button
-                                  type="submit"
-                                  className="btn btn-success sm-text text-uppercase"
-                                >
-                                  {_t(t("sign in"))}
-                                </button>
+                            </div>
+                            <div className="col-12 t-mb-15">
+                              <input
+                                onChange={handleCredentials}
+                                name="password"
+                                type="password"
+                                placeholder="Password"
+                                value={credentials.password}
+                                required
+                                autoComplete="off"
+                                className="form-control border-0 rounded-1"
+                              />
+                            </div>
+                            <div className="col-6 t-mb-15">
+                              <label className="mx-checkbox">
+                                <input
+                                  onChange={handleCredentials}
+                                  name="remember_me"
+                                  type="checkbox"
+                                  className="mx-checkbox__input mx-checkbox__input-solid mx-checkbox__input-solid--danger mx-checkbox__input-sm mt-0-kitchen"
+                                />
+                                <span className="mx-checkbox__text text-capitalize t-text-heading t-ml-8">
+                                  {_t(t("Remember Me"))}
+                                </span>
+                              </label>
+                            </div>
+                            <div className="col-6 t-mb-15 text-right">
+                              <NavLink
+                                to="/reset-password"
+                                className="t-link sm-text"
+                              >
+                                {_t(t("Forgot password"))}?
+                              </NavLink>
+                            </div>
+                            <div className="col-12">
+                              <div className="d-flex align-items-center">
+                                <div className="t-mr-8">
+                                  <button
+                                    type="submit"
+                                    className="btn btn-success sm-text text-uppercase"
+                                  >
+                                    {_t(t("sign in"))}
+                                  </button>
+                                </div>
                               </div>
                             </div>
                           </div>
-                        </div>
-                      </form>
-                    </div>
-                  )}
+                        </form>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
           </div>
         </div>
       </main>
