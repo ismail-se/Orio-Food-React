@@ -106,7 +106,9 @@ function App() {
   return (
     <>
       <ToastContainer />
-      <Router>
+      <Router basename="/khadyo">
+        {/* "homepage": "http://localhost/khadyo" */}
+        {/* <Router> */}
         <Navbar />
         <Switch>
           {/* common */}

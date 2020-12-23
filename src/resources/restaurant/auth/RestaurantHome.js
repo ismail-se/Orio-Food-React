@@ -1,5 +1,5 @@
 import React, { useEffect, useContext, useState } from "react";
-import { withRouter, useHistory } from "react-router-dom";
+import { NavLink, withRouter, useHistory } from "react-router-dom";
 import { Helmet } from "react-helmet";
 
 //importing context consumer here
@@ -61,7 +61,7 @@ const RestaurantHome = () => {
                   {authUserInfo.permissions !== null &&
                   authUserInfo.permissions.includes("Work period")
                     ? restaurantMenuLink(
-                        "assets/img/product-img-1.jpg",
+                        "khadyo/assets/img/product-img-1.jpg",
                         [_t(t("Work Periods"))],
                         "fa fa-clock-o",
                         "t-text-alpha",
@@ -75,7 +75,7 @@ const RestaurantHome = () => {
                   {authUserInfo.permissions !== null &&
                   authUserInfo.permissions.includes("POS")
                     ? restaurantMenuLink(
-                        "assets/img/product-img-2.jpg",
+                        "khadyo/assets/img/product-img-2.jpg",
                         [_t(t("Point of Sale"))],
                         "fa fa-cart-plus",
                         "t-text-gamma",
@@ -88,7 +88,7 @@ const RestaurantHome = () => {
                   {authUserInfo.permissions !== null &&
                   authUserInfo.permissions.includes("Order history")
                     ? restaurantMenuLink(
-                        "assets/img/product-img-3.jpg",
+                        "khadyo/assets/img/product-img-3.jpg",
                         [_t(t("Order Histories"))],
                         "fa fa-pencil",
                         "t-text-delta",
@@ -101,7 +101,7 @@ const RestaurantHome = () => {
                   {authUserInfo.permissions !== null &&
                   authUserInfo.permissions.includes("Customer")
                     ? restaurantMenuLink(
-                        "assets/img/product-img-4.jpg",
+                        "khadyo/assets/img/product-img-4.jpg",
                         [_t(t("Customers"))],
                         "fa fa-user-circle-o",
                         "t-text-primary",
@@ -114,7 +114,7 @@ const RestaurantHome = () => {
                   {authUserInfo.permissions !== null &&
                   authUserInfo.permissions.includes("Kitchen")
                     ? restaurantMenuLink(
-                        "assets/img/product-img-9.jpg",
+                        "khadyo/assets/img/product-img-9.jpg",
                         [_t(t("Kitchen"))],
                         "fa fa-coffee",
                         "t-text-epsilon",
@@ -127,7 +127,7 @@ const RestaurantHome = () => {
                   {authUserInfo.permissions !== null &&
                   authUserInfo.permissions.includes("Report")
                     ? restaurantMenuLink(
-                        "assets/img/product-img-7.jpg",
+                        "khadyo/assets/img/product-img-7.jpg",
                         [_t(t("Reports"))],
                         "fa fa-clock-o",
                         "t-text-kappa",
@@ -140,7 +140,7 @@ const RestaurantHome = () => {
                   {authUserInfo.permissions !== null &&
                   authUserInfo.permissions.includes("Manage")
                     ? restaurantMenuLink(
-                        "assets/img/product-img-8.png",
+                        "khadyo/assets/img/product-img-8.png",
                         [_t(t("Manage"))],
                         "fa fa-clock-o",
                         "t-text-zeta",
@@ -157,7 +157,7 @@ const RestaurantHome = () => {
                     >
                       <div className="product-card__head">
                         <img
-                          src="assets/img/product-img-6.jpg"
+                          src="khadyo/assets/img/product-img-6.jpg"
                           alt={_t(t("Logout"))}
                           className="img-fluid"
                         />

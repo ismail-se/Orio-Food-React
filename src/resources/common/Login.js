@@ -71,6 +71,7 @@ const Login = () => {
   });
 
   useEffect(() => {
+    console.log(window.location.pathname);
     (async () => {
       setLoading(false);
       const url = BASE_URL + "/check-install";
