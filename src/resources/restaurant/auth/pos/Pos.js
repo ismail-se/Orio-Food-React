@@ -3531,7 +3531,7 @@ const Pos = () => {
                                               <div className="fk-dish-card__img w-100">
                                                 <img
                                                   src={tempFoodItem.image}
-                                                  alt="foodkhan"
+                                                  alt=""
                                                   className="img-fluid m-auto w-100"
                                                 />
                                               </div>

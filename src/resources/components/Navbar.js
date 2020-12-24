@@ -156,10 +156,40 @@ const Navbar = (props) => {
     <>
       {props.location.pathname !== "/login" &&
       props.location.pathname !== "/login/" &&
+      props.location.pathname !== "/installation" &&
+      props.location.pathname !== "/installation/" &&
+      props.location.pathname !== "/installation/permission-chcek" &&
+      props.location.pathname !== "/installation/permission-chcek/" &&
+      props.location.pathname !== "/installation/database-setup" &&
+      props.location.pathname !== "/installation/database-setup/" &&
+      props.location.pathname !== "/installation/import-database" &&
+      props.location.pathname !== "/installation/import-database/" &&
+      props.location.pathname !== "/installation/add-admin-user" &&
+      props.location.pathname !== "/installation/add-admin-user/" &&
+      props.location.pathname !== "/installation/congratulation" &&
+      props.location.pathname !== "/installation/congratulation/" &&
       props.location.pathname !== "/dashboard/pos" &&
       props.location.pathname !== "/dashboard/pos/" &&
       props.location.pathname !== "/reset-password" &&
       props.location.pathname !== "/reset-password/" &&
+      props.location.pathname !== "/khadyo/login" &&
+      props.location.pathname !== "/khadyo/login/" &&
+      props.location.pathname !== "/khadyo/installation" &&
+      props.location.pathname !== "/khadyo/installation/" &&
+      props.location.pathname !== "/khadyo/installation/permission-chcek" &&
+      props.location.pathname !== "/khadyo/installation/permission-chcek/" &&
+      props.location.pathname !== "/khadyo/installation/database-setup" &&
+      props.location.pathname !== "/khadyo/installation/database-setup/" &&
+      props.location.pathname !== "/khadyo/installation/import-database" &&
+      props.location.pathname !== "/khadyo/installation/import-database/" &&
+      props.location.pathname !== "/khadyo/installation/add-admin-user" &&
+      props.location.pathname !== "/khadyo/installation/add-admin-user/" &&
+      props.location.pathname !== "/khadyo/installation/congratulation" &&
+      props.location.pathname !== "/khadyo/installation/congratulation/" &&
+      props.location.pathname !== "/khadyo/khadyo/dashboard/pos" &&
+      props.location.pathname !== "/khadyo/khadyo/dashboard/pos/" &&
+      props.location.pathname !== "/khadyo/khadyo/reset-password" &&
+      props.location.pathname !== "/khadyo/khadyo/reset-password/" &&
       !props.location.pathname.includes("/set-new-password") ? (
         <header id="header" className="sticky-top">
           <div
@@ -346,9 +376,9 @@ const Navbar = (props) => {
                                         "/public/" +
                                         authUserInfo.details.image,
                                     ]
-                                  : "assets/img/user.jpg"
+                                  : "/khadyo/assets/img/user.jpg"
                               }
-                              alt="foodkhan"
+                              alt=""
                               className="img-fluid avatar__img"
                             />
                           </div>
@@ -413,7 +443,7 @@ const Navbar = (props) => {
         </header>
       ) : (
         [
-          props.location.pathname === "/dashboard/pos" && (
+          props.location.pathname.includes("/dashboard/pos") && (
             <header id="header" className="sticky-top">
               <div className="container-fluid">
                 <div className="row align-items-center">
@@ -596,9 +626,9 @@ const Navbar = (props) => {
                                             "/public/" +
                                             authUserInfo.details.image,
                                         ]
-                                      : "assets/img/user.jpg"
+                                      : "/khadyo/assets/img/user.jpg"
                                   }
-                                  alt="foodkhan"
+                                  alt=""
                                   className="img-fluid avatar__img"
                                 />
                               </div>

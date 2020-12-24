@@ -193,6 +193,10 @@ const SettingsProvider = ({ children }) => {
         //general settings
         generalSettings,
         setGeneralSettings,
+        getLanguages,
+        getCurrency,
+        getSettings,
+
         //currencies
         currencyList,
         setCurrencyList,

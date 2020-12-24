@@ -1,5 +1,8 @@
-import React, { useEffect, useContext } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+
+//axios and base url
+import axios from "axios";
 import { BASE_URL } from "./BaseUrl";
 
 //routes
@@ -17,6 +20,13 @@ import { ToastContainer } from "react-toastify";
 
 //pages & includes
 import {
+  //installation
+  Welcome,
+  InstallPermission,
+  DbSetup,
+  ImportDb,
+  InstallationUser,
+  InstallationCongratulation,
   //landing
   RestaurantLanding,
 
@@ -94,8 +104,28 @@ function App() {
   const { loading, setLoading, generalSettings } = useContext(SettingsContext);
   let { authUserInfo } = useContext(UserContext);
 
+  //state hooks here
+  const [credentials, setCredentials] = useState({
+    install_no: false,
+  });
+
   //useEffect == componentDidMount()
   useEffect(() => {
+    (async () => {
+      setLoading(false);
+      const url = BASE_URL + "/check-install";
+      return axios
+        .get(url)
+        .then((res) => {
+          if (res.data === "NO") {
+            setCredentials({
+              ...credentials,
+              install_no: true,
+            });
+          }
+        })
+        .catch((error) => {});
+    })();
     if (generalSettings) {
       const favicon = document.getElementById("favicon");
       favicon.href =
@@ -106,11 +136,48 @@ function App() {
   return (
     <>
       <ToastContainer />
-      <Router basename="/khadyo">
-        {/* "homepage": "http://localhost/khadyo" */}
-        {/* <Router> */}
+      {/* <Router basename="/khadyo"> */}
+      {/* "homepage": "http://localhost/khadyo" */}
+      <Router>
         <Navbar />
         <Switch>
+          {/* installation */}
+          {credentials.install_no && (
+            <Route path="/installation" exact>
+              <Welcome />
+            </Route>
+          )}
+
+          {credentials.install_no && (
+            <Route path="/installation/permission-chcek" exact>
+              <InstallPermission />
+            </Route>
+          )}
+
+          {credentials.install_no && (
+            <Route path="/installation/database-setup" exact>
+              <DbSetup />
+            </Route>
+          )}
+
+          {credentials.install_no && (
+            <Route path="/installation/import-database" exact>
+              <ImportDb />
+            </Route>
+          )}
+
+          {credentials.install_no && (
+            <Route path="/installation/add-admin-user" exact>
+              <InstallationUser />
+            </Route>
+          )}
+
+          {credentials.install_no && (
+            <Route path="/installation/congratulation" exact>
+              <InstallationCongratulation />
+            </Route>
+          )}
+
           {/* common */}
           <Route path="/refresh" exact>
             <Refresh />

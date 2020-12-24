@@ -42,6 +42,9 @@ const Login = () => {
     generalSettings,
     getSmtp,
     getPermissionGroups,
+    getLanguages,
+    getCurrency,
+    getSettings,
   } = useContext(SettingsContext);
   let {
     getAuthUser,
@@ -71,7 +74,7 @@ const Login = () => {
   });
 
   useEffect(() => {
-    console.log(window.location.pathname);
+    getSettings();
     (async () => {
       setLoading(false);
       const url = BASE_URL + "/check-install";
@@ -168,6 +171,8 @@ const Login = () => {
           getAuthUser();
           getPermissionGroups();
           getBranch();
+          getLanguages();
+          getCurrency();
 
           //permission based -data[3] permissions of this user
           if (res.data[3] !== null && res.data[3].includes("Manage")) {
@@ -234,58 +239,80 @@ const Login = () => {
           <div className="d-none d-lg-block">
             <div className="fk-global-img text-center">
               <img
-                src="assets/img/sign-in.png"
+                src="/khadyo/assets/img/sign-in.png"
                 alt="khadyo"
                 className="img-fluid mx-auto fk-global-img__is"
               />
               <img
-                src="assets/img/obj-1.png"
+                src="/khadyo/assets/img/obj-1.png"
                 alt="khadyo"
                 className="img-fluid fk-global-img__obj fk-global-img__obj-1"
               />
               <img
-                src="assets/img/obj-8.png"
+                src="/khadyo/assets/img/obj-8.png"
                 alt="khadyo"
                 className="img-fluid fk-global-img__obj fk-global-img__obj-2"
               />
               <img
-                src="assets/img/obj-7.png"
+                src="/khadyo/assets/img/obj-7.png"
                 alt="khadyo"
                 className="img-fluid fk-global-img__obj fk-global-img__obj-6"
               />
               <img
-                src="assets/img/obj-9.png"
+                src="/khadyo/assets/img/obj-9.png"
                 alt="khadyo"
                 className="img-fluid fk-global-img__obj fk-global-img__obj-8"
               />
             </div>
           </div>
           <div className="container my-md-auto">
-            <div className="row">
-              <div className="col-md-6">
-                <div className="fk-brand fk-brand--sr-lg">
-                  {window.location.pathname === "/" ? (
-                    <NavLink
-                      to={{ pathname: "/refresh", state: "/" }}
-                      exact
-                      className="t-link w-100"
-                    >
-                      <span
-                        className="fk-brand__img fk-brand__img--fk"
-                        style={style.logo}
-                      ></span>
-                    </NavLink>
-                  ) : (
-                    <NavLink to="/" className="t-link w-100">
-                      <span
-                        className="fk-brand__img fk-brand__img--fk"
-                        style={style.logo}
-                      ></span>
-                    </NavLink>
-                  )}
+            {credentials.install_no ? (
+              <div className="row">
+                <div className="col-md-6">
+                  <div className="fk-brand fk-brand--sr-lg">
+                    {window.location.pathname === "/" ? (
+                      <NavLink
+                        to={{ pathname: "/refresh", state: "/" }}
+                        exact
+                        className="t-link w-100"
+                      >
+                        <span className="fk-brand__img fk-brand__img--fk login-page-background"></span>
+                      </NavLink>
+                    ) : (
+                      <NavLink to="/" className="t-link w-100">
+                        <span className="fk-brand__img fk-brand__img--fk login-page-background"></span>
+                      </NavLink>
+                    )}
+                  </div>
                 </div>
               </div>
-            </div>
+            ) : (
+              <div className="row">
+                <div className="col-md-6">
+                  <div className="fk-brand fk-brand--sr-lg">
+                    {window.location.pathname === "/" ? (
+                      <NavLink
+                        to={{ pathname: "/refresh", state: "/" }}
+                        exact
+                        className="t-link w-100"
+                      >
+                        <span
+                          className="fk-brand__img fk-brand__img--fk"
+                          style={style.logo}
+                        ></span>
+                      </NavLink>
+                    ) : (
+                      <NavLink to="/" className="t-link w-100">
+                        <span
+                          className="fk-brand__img fk-brand__img--fk"
+                          style={style.logo}
+                        ></span>
+                      </NavLink>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
             {credentials.install_no ? (
               <div className="row">
                 <div className="col-md-8 col-lg-6 col-xl-4 t-mt-50">
@@ -305,11 +332,21 @@ const Login = () => {
                             <div className="d-flex align-items-center">
                               <div className="t-mr-8">
                                 <NavLink
-                                  to="/laravel"
+                                  to="/installation"
                                   className="btn btn-primary sm-text text-uppercase"
                                 >
                                   {_t(t("Install"))}
                                 </NavLink>
+                              </div>
+                              <div className="t-mr-8">
+                                <a
+                                  href="http://docs.khadyo.com"
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="btn btn-info sm-text text-uppercase"
+                                >
+                                  {_t(t("Online Documentation"))}
+                                </a>
                               </div>
                             </div>
                           </div>

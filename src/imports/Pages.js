@@ -1,3 +1,11 @@
+//installation
+import Welcome from "../resources/install/Welcome";
+import InstallPermission from "../resources/install/InstallPermission";
+import DbSetup from "../resources/install/DbSetup";
+import ImportDb from "../resources/install/ImportDb";
+import InstallationUser from "../resources/install/InstallationUser";
+import InstallationCongratulation from "../resources/install/InstallationCongratulation";
+
 //common pages
 import Refresh from "../resources/common/Refresh";
 import Login from "../resources/common/Login";
@@ -70,6 +78,13 @@ import DeptTagCrud from "../resources/restaurant/auth/manage/restaurantDetails/D
 import PaymentTypeCrud from "../resources/restaurant/auth/manage/restaurantDetails/PaymentTypeCrud";
 
 export {
+  //installation
+  Welcome,
+  InstallPermission,
+  DbSetup,
+  ImportDb,
+  InstallationUser,
+  InstallationCongratulation,
   //landing
   RestaurantLanding,
   //common

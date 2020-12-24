@@ -23,7 +23,7 @@ ReactDOM.render(
       </SettingsProvider>
     </UserProvider>
   </React.StrictMode>,
-  document.getElementById("foodkhan")
+  document.getElementById("khadyo")
 );
 
 // If you want your app to work offline and load faster, you can change

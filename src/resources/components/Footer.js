@@ -62,10 +62,40 @@ const Footer = () => {
     <>
       {window.location.pathname !== "/login" &&
       window.location.pathname !== "/login/" &&
+      window.location.pathname !== "/installation" &&
+      window.location.pathname !== "/installation/" &&
+      window.location.pathname !== "/installation/permission-chcek" &&
+      window.location.pathname !== "/installation/permission-chcek/" &&
+      window.location.pathname !== "/installation/database-setup" &&
+      window.location.pathname !== "/installation/database-setup/" &&
+      window.location.pathname !== "/installation/import-database" &&
+      window.location.pathname !== "/installation/import-database/" &&
+      window.location.pathname !== "/installation/add-admin-user" &&
+      window.location.pathname !== "/installation/add-admin-user/" &&
+      window.location.pathname !== "/installation/congratulation" &&
+      window.location.pathname !== "/installation/congratulation/" &&
       window.location.pathname !== "/dashboard/pos" &&
       window.location.pathname !== "/dashboard/pos/" &&
       window.location.pathname !== "/reset-password" &&
       window.location.pathname !== "/reset-password/" &&
+      window.location.pathname !== "/khadyo/login" &&
+      window.location.pathname !== "/khadyo/login/" &&
+      window.location.pathname !== "/khadyo/dashboard/pos" &&
+      window.location.pathname !== "/khadyo/dashboard/pos/" &&
+      window.location.pathname !== "/khadyo/reset-password" &&
+      window.location.pathname !== "/khadyo/reset-password/" &&
+      window.location.pathname !== "/khadyo/installation" &&
+      window.location.pathname !== "/khadyo/installation/" &&
+      window.location.pathname !== "/khadyo/installation/permission-chcek" &&
+      window.location.pathname !== "/khadyo/installation/permission-chcek/" &&
+      window.location.pathname !== "/khadyo/installation/database-setup" &&
+      window.location.pathname !== "/khadyo/installation/database-setup/" &&
+      window.location.pathname !== "/khadyo/installation/import-database" &&
+      window.location.pathname !== "/khadyo/installation/import-database/" &&
+      window.location.pathname !== "/khadyo/installation/add-admin-user" &&
+      window.location.pathname !== "/khadyo/installation/add-admin-user/" &&
+      window.location.pathname !== "/khadyo/installation/congratulation" &&
+      window.location.pathname !== "/khadyo/installation/congratulation/" &&
       !window.location.pathname.includes("/set-new-password") ? (
         <footer id="footer" className="sicky-bottom">
           <div
@@ -168,7 +198,7 @@ const Footer = () => {
         </footer>
       ) : (
         [
-          window.location.pathname === "/dashboard/pos" && (
+          window.location.pathname.includes("/dashboard/pos") && (
             <footer id="footer" className="sicky-bottom mb-5 mb-md-0">
               <div className="container-fluid">
                 <div className="row align-items-lg-center">

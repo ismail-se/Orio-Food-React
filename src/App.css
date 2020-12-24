@@ -231,3 +231,15 @@ li.addons-list__item.active {
 .no-order {
   height: calc(100vh - 230px);
 }
+
+.main-height-100 {
+  height: calc(100vh - 20px) !important;
+}
+
+.installation-full-page {
+  height: calc(100vh - 30px) !important;
+}
+
+.login-page-background {
+  background-image: url("/khadyo/assets/img/logo.png") !important;
+}
