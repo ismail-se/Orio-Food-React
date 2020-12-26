@@ -136,9 +136,9 @@ function App() {
   return (
     <>
       <ToastContainer />
-      <Router basename="/khadyo">
-        {/* "homepage": "http://localhost/khadyo" */}
-        {/* <Router> */}
+      {/* <Router basename="/khadyo"> */}
+      {/* "homepage": "http://localhost/khadyo" */}
+      <Router>
         <Navbar />
         <Switch>
           {/* installation */}
