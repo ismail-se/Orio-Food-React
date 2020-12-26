@@ -70,6 +70,7 @@ const Login = () => {
     email: null,
     password: null,
     remember_me: false,
+    install_check_reload: false,
     install_no: false,
   });
 
@@ -77,6 +78,10 @@ const Login = () => {
     getSettings();
     (async () => {
       setLoading(false);
+      setCredentials({
+        ...credentials,
+        install_check_reload: true,
+      });
       const url = BASE_URL + "/check-install";
       return axios
         .get(url)
@@ -84,10 +89,15 @@ const Login = () => {
           if (res.data === "YES") {
             handleJquery();
             checkAuth();
+            setCredentials({
+              ...credentials,
+              install_check_reload: false,
+            });
           } else {
             setCredentials({
               ...credentials,
               install_no: true,
+              install_check_reload: false,
             });
             handleJquery();
             checkAuth();
@@ -363,7 +373,7 @@ const Login = () => {
                     {loading ? (
                       <div key="login-form">
                         <h3 className="mt-0 text-capitalize font-weight-bold">
-                          {_t(t("signing in"))}
+                          {_t(t("waiting for response"))}
                         </h3>
                         <form onSubmit={handleSubmit}>
                           <div className="row">
@@ -385,138 +395,145 @@ const Login = () => {
                       </div>
                     ) : (
                       <div key="loading">
-                        <h3 className="mt-0 text-capitalize font-weight-bold">
-                          {_t(t("sign in"))}
-                        </h3>
-                        <form onSubmit={handleSubmit}>
-                          <div className="row">
-                            <div className="p-2 t-mb-15 d-none">
-                              <div className="col-12 mb-1">
-                                <div className="card p-2">
-                                  <div className="row">
-                                    <div className="col-12 text-center sm-text">
-                                      Demo login credentials
-                                      <div className="text-primary">
-                                        This password section is only for demo
+                        {!credentials.install_check_reload ? (
+                          <>
+                            <h3 className="mt-0 text-capitalize font-weight-bold">
+                              {_t(t("sign in"))}
+                            </h3>
+                            <form onSubmit={handleSubmit}>
+                              <div className="row">
+                                <div className="p-2 t-mb-15 d-none">
+                                  <div className="col-12 mb-1">
+                                    <div className="card p-2">
+                                      <div className="row">
+                                        <div className="col-12 text-center sm-text">
+                                          Demo login credentials
+                                          <div className="text-primary">
+                                            This password section is only for
+                                            demo
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div
+                                    className="col-12 mb-1 pointer-cursor"
+                                    onClick={() => {
+                                      setCredentials({
+                                        ...credentials,
+                                        email: "admin@mail.com",
+                                        password: "khadyo@123",
+                                      });
+                                    }}
+                                  >
+                                    <div className="card p-2 ">
+                                      <div className="row d-flex align-items-center">
+                                        <div className="col-12 col-md-5">
+                                          Admin: admin@mail.com
+                                        </div>
+                                        <div className="col-12 col-md-4">
+                                          password: khadyo@123
+                                        </div>
+                                        <div className="col-12 col-md-3 text-right">
+                                          <span className="btn btn-sm btn-primary">
+                                            copy
+                                          </span>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+
+                                  <div
+                                    className="col-12 pointer-cursor"
+                                    onClick={() => {
+                                      setCredentials({
+                                        ...credentials,
+                                        email: "staff@mail.com",
+                                        password: "khadyo@123",
+                                      });
+                                    }}
+                                  >
+                                    <div className="card p-2">
+                                      <div className="row d-flex align-items-center">
+                                        <div className="col-12 col-md-5">
+                                          Staff: staff@mail.com
+                                        </div>
+                                        <div className="col-12 col-md-4">
+                                          password: khadyo@123
+                                        </div>
+                                        <div className="col-12 col-md-3 text-right">
+                                          <span className="btn btn-sm btn-primary">
+                                            copy
+                                          </span>
+                                        </div>
                                       </div>
                                     </div>
                                   </div>
                                 </div>
-                              </div>
-                              <div
-                                className="col-12 mb-1 pointer-cursor"
-                                onClick={() => {
-                                  setCredentials({
-                                    ...credentials,
-                                    email: "admin@mail.com",
-                                    password: "khadyo@123",
-                                  });
-                                }}
-                              >
-                                <div className="card p-2 ">
-                                  <div className="row d-flex align-items-center">
-                                    <div className="col-12 col-md-5">
-                                      Admin: admin@mail.com
-                                    </div>
-                                    <div className="col-12 col-md-4">
-                                      password: khadyo@123
-                                    </div>
-                                    <div className="col-12 col-md-3 text-right">
-                                      <span className="btn btn-sm btn-primary">
-                                        copy
-                                      </span>
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
 
-                              <div
-                                className="col-12 pointer-cursor"
-                                onClick={() => {
-                                  setCredentials({
-                                    ...credentials,
-                                    email: "staff@mail.com",
-                                    password: "khadyo@123",
-                                  });
-                                }}
-                              >
-                                <div className="card p-2">
-                                  <div className="row d-flex align-items-center">
-                                    <div className="col-12 col-md-5">
-                                      Staff: staff@mail.com
-                                    </div>
-                                    <div className="col-12 col-md-4">
-                                      password: khadyo@123
-                                    </div>
-                                    <div className="col-12 col-md-3 text-right">
-                                      <span className="btn btn-sm btn-primary">
-                                        copy
-                                      </span>
-                                    </div>
-                                  </div>
+                                <div className="col-12 t-mb-15">
+                                  <input
+                                    onChange={handleCredentials}
+                                    type="email"
+                                    name="email"
+                                    placeholder="Email"
+                                    value={credentials.email}
+                                    required
+                                    autoComplete="off"
+                                    className="form-control border-0 rounded-1"
+                                  />
                                 </div>
-                              </div>
-                            </div>
-
-                            <div className="col-12 t-mb-15">
-                              <input
-                                onChange={handleCredentials}
-                                type="email"
-                                name="email"
-                                placeholder="Email"
-                                value={credentials.email}
-                                required
-                                autoComplete="off"
-                                className="form-control border-0 rounded-1"
-                              />
-                            </div>
-                            <div className="col-12 t-mb-15">
-                              <input
-                                onChange={handleCredentials}
-                                name="password"
-                                type="password"
-                                placeholder="Password"
-                                value={credentials.password}
-                                required
-                                autoComplete="off"
-                                className="form-control border-0 rounded-1"
-                              />
-                            </div>
-                            <div className="col-6 t-mb-15">
-                              <label className="mx-checkbox">
-                                <input
-                                  onChange={handleCredentials}
-                                  name="remember_me"
-                                  type="checkbox"
-                                  className="mx-checkbox__input mx-checkbox__input-solid mx-checkbox__input-solid--danger mx-checkbox__input-sm mt-0-kitchen"
-                                />
-                                <span className="mx-checkbox__text text-capitalize t-text-heading t-ml-8">
-                                  {_t(t("Remember Me"))}
-                                </span>
-                              </label>
-                            </div>
-                            <div className="col-6 t-mb-15 text-right">
-                              <NavLink
-                                to="/reset-password"
-                                className="t-link sm-text"
-                              >
-                                {_t(t("Forgot password"))}?
-                              </NavLink>
-                            </div>
-                            <div className="col-12">
-                              <div className="d-flex align-items-center">
-                                <div className="t-mr-8">
-                                  <button
-                                    type="submit"
-                                    className="btn btn-success sm-text text-uppercase"
+                                <div className="col-12 t-mb-15">
+                                  <input
+                                    onChange={handleCredentials}
+                                    name="password"
+                                    type="password"
+                                    placeholder="Password"
+                                    value={credentials.password}
+                                    required
+                                    autoComplete="off"
+                                    className="form-control border-0 rounded-1"
+                                  />
+                                </div>
+                                <div className="col-6 t-mb-15">
+                                  <label className="mx-checkbox">
+                                    <input
+                                      onChange={handleCredentials}
+                                      name="remember_me"
+                                      type="checkbox"
+                                      className="mx-checkbox__input mx-checkbox__input-solid mx-checkbox__input-solid--danger mx-checkbox__input-sm mt-0-kitchen"
+                                    />
+                                    <span className="mx-checkbox__text text-capitalize t-text-heading t-ml-8">
+                                      {_t(t("Remember Me"))}
+                                    </span>
+                                  </label>
+                                </div>
+                                <div className="col-6 t-mb-15 text-right">
+                                  <NavLink
+                                    to="/reset-password"
+                                    className="t-link sm-text"
                                   >
-                                    {_t(t("sign in"))}
-                                  </button>
+                                    {_t(t("Forgot password"))}?
+                                  </NavLink>
+                                </div>
+                                <div className="col-12">
+                                  <div className="d-flex align-items-center">
+                                    <div className="t-mr-8">
+                                      <button
+                                        type="submit"
+                                        className="btn btn-success sm-text text-uppercase"
+                                      >
+                                        {_t(t("sign in"))}
+                                      </button>
+                                    </div>
+                                  </div>
                                 </div>
                               </div>
-                            </div>
-                          </div>
-                        </form>
+                            </form>
+                          </>
+                        ) : (
+                          modalLoading(5)
+                        )}
                       </div>
                     )}
                   </div>
