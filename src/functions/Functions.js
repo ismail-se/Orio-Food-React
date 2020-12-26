@@ -98,6 +98,7 @@ const deleteCookie = () => {
       headers: { Authorization: `Bearer ${getCookie()}` },
     })
     .then(() => {
+      window.location.reload();
       if (cookies.get("_user") !== undefined) {
         cookies.remove("_user", { path: "/" });
       }
@@ -112,6 +113,7 @@ const deleteCookie = () => {
       }
     })
     .catch(() => {
+      window.location.reload();
       if (cookies.get("_user") !== undefined) {
         cookies.remove("_user", { path: "/" });
       }

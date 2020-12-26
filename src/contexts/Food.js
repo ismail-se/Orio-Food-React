@@ -98,6 +98,7 @@ const FoodProvider = ({ children }) => {
       .then((res) => {
         setFoodGroupList(res.data[0]);
         setFoodGroupforSearch(res.data[1]);
+        setLoading(false);
       });
   };
 

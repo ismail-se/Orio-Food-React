@@ -42,7 +42,6 @@ const RestaurantHome = () => {
   //logout
   const handleLogout = () => {
     deleteCookie();
-    history.push({ pathname: "/login", state: "loggedOut" });
   };
   return (
     <>

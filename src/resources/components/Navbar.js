@@ -132,7 +132,6 @@ const Navbar = (props) => {
   //logout
   const handleLogout = () => {
     deleteCookie();
-    history.push({ pathname: "/login", state: "loggedOut" });
   };
 
   //dynamic style
