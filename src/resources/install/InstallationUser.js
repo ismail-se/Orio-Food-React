@@ -58,6 +58,7 @@ const InstallationUser = () => {
           if (res.data === "ok") {
             history.push("/installation/congratulation");
           } else {
+            setLoading(false);
             toast.error(`${_t(t("Something went wrong, please try again"))}`, {
               position: "bottom-center",
               autoClose: 10000,
@@ -69,6 +70,7 @@ const InstallationUser = () => {
           }
         })
         .catch(() => {
+          setLoading(false);
           toast.error(`${_t(t("Something went wrong, please try again"))}`, {
             position: "bottom-center",
             autoClose: 10000,
@@ -77,7 +79,6 @@ const InstallationUser = () => {
             pauseOnHover: true,
             className: "text-center toast-notification",
           });
-          setLoading(false);
         });
     } else {
       toast.error(`${_t(t("Password confirmation does not match"))}`, {

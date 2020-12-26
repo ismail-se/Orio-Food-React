@@ -69,6 +69,7 @@ const DbSetup = () => {
           setLoading(false);
           history.push("/installation/import-database");
         } else {
+          setLoading(false);
           toast.error(`${_t(t("Something went wrong, please try again"))}`, {
             position: "bottom-center",
             autoClose: 10000,

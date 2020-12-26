@@ -62,6 +62,7 @@ const ImportDb = () => {
         if (res.data === "ok") {
           history.push("/installation/add-admin-user");
         } else {
+          setLoading(false);
           toast.error(`${_t(t("Something went wrong, please try again"))}`, {
             position: "bottom-center",
             autoClose: 10000,
@@ -97,7 +98,15 @@ const ImportDb = () => {
         if (res.data === "ok") {
           history.push("/installation/add-admin-user");
         } else {
-          //
+          setLoading(false);
+          toast.error(`${_t(t("Something went wrong, please try again"))}`, {
+            position: "bottom-center",
+            autoClose: 10000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            className: "text-center toast-notification",
+          });
         }
       })
       .catch((err) => {
