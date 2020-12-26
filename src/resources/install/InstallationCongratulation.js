@@ -77,12 +77,19 @@ const InstallationCongratulation = () => {
                             Do not forget to give us a positive rating
                           </p>
                           <div className="text-center">
+                            {/* live server
                             <NavLink
                               to="/"
                               className="btn btn-primary px-4 mt-2 mb-3 text-uppercase"
                             >
                               Start using
-                            </NavLink>
+                            </NavLink> */}
+                            <a
+                              href="/khadyo"
+                              className="btn btn-primary px-4 mt-2 mb-3 text-uppercase"
+                            >
+                              Start using
+                            </a>
                           </div>
                         </div>
 

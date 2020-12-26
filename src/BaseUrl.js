@@ -3,7 +3,7 @@ export let BASE_URL =
   window.location.protocol +
   "//" +
   window.location.hostname +
-  "/foodkhan/laravel";
+  "/khadyo/laravel";
 
 //for khadyo.com
 // export let BASE_URL =
