@@ -54,16 +54,25 @@ const SettingsProvider = ({ children }) => {
 
   //useEffect- to get data on render
   useEffect(() => {
-    //call- unauthenticated
-    getLanguages();
-    getCurrency();
-    getSettings();
+    const url = BASE_URL + "/check-install";
+    return axios
+      .get(url)
+      .then((res) => {
+        console.log(res.data);
+        if (res.data === "YES") {
+          //call- unauthenticated
+          getLanguages();
+          getCurrency();
+          getSettings();
 
-    //call if authenticated
-    if (getCookie() !== undefined) {
-      getSmtp();
-      getPermissionGroups();
-    }
+          //call if authenticated
+          if (getCookie() !== undefined) {
+            getSmtp();
+            getPermissionGroups();
+          }
+        }
+      })
+      .catch((error) => {});
   }, []);
 
   //get all languages

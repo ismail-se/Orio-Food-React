@@ -75,7 +75,6 @@ const Login = () => {
   });
 
   useEffect(() => {
-    getSettings();
     (async () => {
       setLoading(false);
       setCredentials({
@@ -87,6 +86,7 @@ const Login = () => {
         .get(url)
         .then((res) => {
           if (res.data === "YES") {
+            getSettings();
             handleJquery();
             checkAuth();
             setCredentials({

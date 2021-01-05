@@ -2,6 +2,10 @@ html {
   --primary: #de222a;
 }
 
+/* body {
+  overflow: hidden;
+} */
+
 /* for less table data */
 .min-table-height {
   min-height: 130px;
@@ -242,4 +246,9 @@ li.addons-list__item.active {
 
 .login-page-background {
   background-image: url("/khadyo/assets/img/logo.png") !important;
+}
+
+/* safari pos issue */
+.fk-dish-card__img {
+  align-items: center;
 }

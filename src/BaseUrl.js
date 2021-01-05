@@ -1,10 +1,20 @@
-//for localhost
+// for localhost development
+export let BASE_URL =
+  window.location.protocol +
+  "//" +
+  window.location.hostname +
+  "/foodkhan/laravel";
+
+//for localhost production
 // export let BASE_URL =
 //   window.location.protocol +
 //   "//" +
 //   window.location.hostname +
-//   "/khadyo/laravel";
-
+//   `${
+//     window.location.port !== ""
+//       ? `:${window.location.port}/khadyo/laravel`
+//       : "/khadyo/laravel"
+//   }`;
 //for khadyo.com
-export let BASE_URL =
-  window.location.protocol + "//" + window.location.hostname + "/laravel";
+// export let BASE_URL =
+//   window.location.protocol + "//" + window.location.hostname + "/laravel";

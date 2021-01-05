@@ -29,7 +29,7 @@ const InstallationCongratulation = () => {
   return (
     <>
       <Helmet>
-        <title>{_t(t("Add New Item"))}</title>
+        <title>{_t(t("Congratulations"))}</title>
       </Helmet>
 
       {/* main body */}
@@ -77,8 +77,8 @@ const InstallationCongratulation = () => {
                             Do not forget to give us a positive rating
                           </p>
                           <div className="text-center">
-                            {/* live server
-                            <NavLink
+                            {/* live server */}
+                            {/* <NavLink
                               to="/"
                               className="btn btn-primary px-4 mt-2 mb-3 text-uppercase"
                             >

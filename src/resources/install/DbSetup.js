@@ -26,6 +26,7 @@ const DbSetup = () => {
   //new item
   let [dbData, setDbData] = useState({
     DB_HOST: null,
+    DB_PORT: null,
     DB_DATABASE: null,
     DB_USERNAME: null,
     DB_PASSWORD: null,
@@ -70,14 +71,19 @@ const DbSetup = () => {
           history.push("/installation/import-database");
         } else {
           setLoading(false);
-          toast.error(`${_t(t("Something went wrong, please try again"))}`, {
-            position: "bottom-center",
-            autoClose: 10000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            className: "text-center toast-notification",
-          });
+          toast.error(
+            `${_t(
+              t("Something went wrong, could not establish database connection")
+            )}`,
+            {
+              position: "bottom-center",
+              autoClose: 10000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              className: "text-center toast-notification",
+            }
+          );
         }
       })
       .catch(() => {
@@ -143,6 +149,18 @@ const DbSetup = () => {
                               className="form-control"
                               placeholder="Database Host"
                               name="DB_HOST"
+                              value={dbData.DB_HOST}
+                              onChange={handleChange}
+                              required
+                            />
+                          </div>
+
+                          <div className="form-group mb-3">
+                            <label>Database Port</label>
+                            <input
+                              className="form-control"
+                              placeholder="Database Port"
+                              name="DB_PORT"
                               value={dbData.DB_HOST}
                               onChange={handleChange}
                               required
