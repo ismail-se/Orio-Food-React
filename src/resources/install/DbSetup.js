@@ -156,12 +156,25 @@ const DbSetup = () => {
                           </div>
 
                           <div className="form-group mb-3">
-                            <label>Database Port</label>
+                            <label>
+                              Database Port{" "}
+                              <small className="text-secondary">
+                                (3306 *default, 3308, 8888, 8889, 7888 etc..)
+                                <a
+                                  href="https://www.networkinghowtos.com/howto/common-database-server-port-numbers/"
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="t-link"
+                                >
+                                  <i className="fa fa-info-circle ml-2 lg-text"></i>
+                                </a>
+                              </small>
+                            </label>
                             <input
                               className="form-control"
                               placeholder="Database Port"
                               name="DB_PORT"
-                              value={dbData.DB_HOST}
+                              value={dbData.DB_PORT}
                               onChange={handleChange}
                               required
                             />
