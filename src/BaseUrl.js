@@ -1,9 +1,11 @@
 // for localhost development
+// export let BASE_URL =
+//   window.location.protocol +
+//   "//" +
+//   window.location.hostname +
+//   "/foodkhan/laravel";
 export let BASE_URL =
-  window.location.protocol +
-  "//" +
-  window.location.hostname +
-  "/foodkhan/laravel";
+  window.location.protocol + "//" + window.location.hostname + "/public";
 
 //for localhost production
 // export let BASE_URL =

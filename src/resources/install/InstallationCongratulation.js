@@ -84,9 +84,17 @@ const InstallationCongratulation = () => {
                             >
                               Start using
                             </NavLink> */}
-                            <a
+                            {/* <a
                               href="/khadyo"
                               className="btn btn-primary px-4 mt-2 mb-3 text-uppercase"
+                              rel="noopener noreferrer"
+                            >
+                              Start using
+                            </a> */}
+                            <a
+                              href="/"
+                              className="btn btn-primary px-4 mt-2 mb-3 text-uppercase"
+                              rel="noopener noreferrer"
                             >
                               Start using
                             </a>

@@ -1749,7 +1749,7 @@ const Pos = () => {
                       {orderDetails && orderDetails.total_guest}
                     </p>
                     <p className="mb-0 xsm-text fk-print-text text-capitalize">
-                      {_t(t("item"))}waiter name:{" "}
+                      {_t(t("waiter name"))}:{" "}
                       {orderDetails && orderDetails.waiter !== null
                         ? orderDetails.waiter.name
                         : ""}

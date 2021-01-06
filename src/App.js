@@ -128,17 +128,16 @@ function App() {
     })();
     if (generalSettings) {
       const favicon = document.getElementById("favicon");
-      favicon.href =
-        BASE_URL + "/public" + getSystemSettings(generalSettings, "favicon");
+      favicon.href = BASE_URL + getSystemSettings(generalSettings, "favicon");
     }
     // consolee();
   }, [authUserInfo]);
   return (
     <>
       <ToastContainer />
-      <Router basename="/khadyo">
-        {/* "homepage": "http://localhost/khadyo" */}
-        {/* <Router> */}
+      {/* <Router basename="/khadyo"> */}
+      {/* "homepage": "http://localhost/khadyo" */}
+      <Router>
         <Navbar />
         <Switch>
           {/* installation */}

@@ -370,11 +370,7 @@ const Navbar = (props) => {
                               src={
                                 authUserInfo.details !== null &&
                                 authUserInfo.details.image !== null
-                                  ? [
-                                      BASE_URL +
-                                        "/public/" +
-                                        authUserInfo.details.image,
-                                    ]
+                                  ? [BASE_URL + authUserInfo.details.image]
                                   : "/khadyo/assets/img/user.jpg"
                               }
                               alt=""
@@ -620,11 +616,7 @@ const Navbar = (props) => {
                                   src={
                                     authUserInfo.details !== null &&
                                     authUserInfo.details.image !== null
-                                      ? [
-                                          BASE_URL +
-                                            "/public/" +
-                                            authUserInfo.details.image,
-                                        ]
+                                      ? [BASE_URL + authUserInfo.details.image]
                                       : "/khadyo/assets/img/user.jpg"
                                   }
                                   alt=""
