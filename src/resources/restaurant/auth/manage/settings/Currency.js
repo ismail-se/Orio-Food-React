@@ -134,7 +134,6 @@ const Currency = () => {
           ...newCurrency,
           uploading: false,
         });
-        console.log(error);
         if (error && error.response.data.errors) {
           if (error.response.data.errors.code) {
             error.response.data.errors.code.forEach((item) => {

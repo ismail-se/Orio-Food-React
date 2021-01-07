@@ -84,7 +84,6 @@ const OrderHistories = () => {
 
   //cancel order confirmation modal
   const handleDeleteOrderConfirmation = (orderGroup) => {
-    console.log(orderGroup);
     confirmAlert({
       customUI: ({ onClose }) => {
         return (

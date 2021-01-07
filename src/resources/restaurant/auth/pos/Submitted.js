@@ -272,7 +272,6 @@ const Submitted = () => {
 
   //cancel order confirmation modal
   const handleCancelOrderConfirmation = (orderGroup) => {
-    console.log(orderGroup);
     confirmAlert({
       customUI: ({ onClose }) => {
         return (

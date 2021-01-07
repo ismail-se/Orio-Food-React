@@ -58,7 +58,6 @@ const SettingsProvider = ({ children }) => {
     return axios
       .get(url)
       .then((res) => {
-        console.log(res.data);
         if (res.data === "YES") {
           //call- unauthenticated
           getLanguages();
