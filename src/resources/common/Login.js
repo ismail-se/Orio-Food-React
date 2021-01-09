@@ -75,37 +75,41 @@ const Login = () => {
   });
 
   useEffect(() => {
-    (async () => {
-      setLoading(false);
-      setCredentials({
-        ...credentials,
-        install_check_reload: true,
-      });
-      const url = BASE_URL + "/check-install";
-      return axios
-        .get(url)
-        .then((res) => {
-          if (res.data === "YES") {
-            getSettings();
-            handleJquery();
-            checkAuth();
-            setCredentials({
-              ...credentials,
-              install_check_reload: false,
-            });
-          } else {
-            setCredentials({
-              ...credentials,
-              install_no: true,
-              install_check_reload: false,
-            });
-            handleJquery();
-            checkAuth();
-          }
-        })
-        .catch((error) => {});
-    })();
+    setLoading(false);
+    setCredentials({
+      ...credentials,
+      install_check_reload: true,
+    });
+    const fetchData = async () => {
+      let result = await checkInstall();
+      result = await checkInstall();
+      if (result === "YES") {
+        getSettings();
+        handleJquery();
+        checkAuth();
+        setCredentials({
+          ...credentials,
+          install_check_reload: false,
+        });
+      } else {
+        setCredentials({
+          ...credentials,
+          install_no: true,
+          install_check_reload: false,
+        });
+        handleJquery();
+        checkAuth();
+      }
+    };
+    fetchData();
   }, []);
+
+  // install check
+  const checkInstall = async () => {
+    const url = BASE_URL + "/check-install";
+    let result = await axios.get(url);
+    return result.data;
+  };
 
   //jQuery
   const handleJquery = () => {

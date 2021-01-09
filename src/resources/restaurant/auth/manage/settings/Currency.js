@@ -482,7 +482,7 @@ const Currency = () => {
                       <input
                         type="number"
                         step="0.01"
-                        min="1"
+                        min="0"
                         className="form-control"
                         id="rate"
                         name="rate"
