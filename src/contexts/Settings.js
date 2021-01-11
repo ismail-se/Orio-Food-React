@@ -56,7 +56,6 @@ const SettingsProvider = ({ children }) => {
   useEffect(() => {
     const fetchData = async () => {
       let result = await checkInstall();
-      result = await checkInstall();
       if (result === "YES") {
         //call- unauthenticated
         getLanguages();
@@ -70,6 +69,7 @@ const SettingsProvider = ({ children }) => {
         }
       }
     };
+    fetchData();
     fetchData();
   }, []);
 

@@ -85,7 +85,6 @@ const Login = () => {
     setLoading(false);
     const fetchData = async () => {
       let result = await checkInstall();
-      result = await checkInstall();
       if (result === "YES") {
         getSettings();
         handleJquery();
