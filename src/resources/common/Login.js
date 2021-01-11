@@ -70,16 +70,19 @@ const Login = () => {
     email: null,
     password: null,
     remember_me: false,
-    install_check_reload: false,
+    install_check_reload: true,
     install_no: false,
   });
 
+  // install check
+  const checkInstall = async () => {
+    const url = BASE_URL + "/check-install";
+    let result = await axios.get(url);
+    return result.data;
+  };
+
   useEffect(() => {
     setLoading(false);
-    setCredentials({
-      ...credentials,
-      install_check_reload: true,
-    });
     const fetchData = async () => {
       let result = await checkInstall();
       result = await checkInstall();
@@ -89,6 +92,7 @@ const Login = () => {
         checkAuth();
         setCredentials({
           ...credentials,
+          install_no: false,
           install_check_reload: false,
         });
       } else {
@@ -103,13 +107,6 @@ const Login = () => {
     };
     fetchData();
   }, []);
-
-  // install check
-  const checkInstall = async () => {
-    const url = BASE_URL + "/check-install";
-    let result = await axios.get(url);
-    return result.data;
-  };
 
   //jQuery
   const handleJquery = () => {
