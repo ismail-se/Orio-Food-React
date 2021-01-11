@@ -56,6 +56,7 @@ const PropertyItemCrud = () => {
     propertyItemForSearch,
     setPropertyItemForSearch,
     propertyItemGroup,
+    getFood,
 
     //pagination
     dataPaginating,
@@ -136,6 +137,7 @@ const PropertyItemCrud = () => {
           ...searchedPropertyItem,
           list: res.data[0],
         });
+        getFood();
         setLoading(false);
         toast.success(`${_t(t("Property item has been added"))}`, {
           position: "bottom-center",
@@ -214,6 +216,7 @@ const PropertyItemCrud = () => {
           ...searchedPropertyItem,
           list: res.data[0],
         });
+        getFood();
         setLoading(false);
         toast.success(`${_t(t("Property item has been updated"))}`, {
           position: "bottom-center",
@@ -306,6 +309,7 @@ const PropertyItemCrud = () => {
           ...searchedPropertyItem,
           list: res.data[0],
         });
+        getFood();
         setLoading(false);
         toast.success(
           `${_t(t("Property item has been deleted successfully"))}`,
