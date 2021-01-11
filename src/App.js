@@ -126,6 +126,7 @@ function App() {
         })
         .catch((error) => {});
     })();
+
     if (generalSettings) {
       const favicon = document.getElementById("favicon");
       favicon.href = BASE_URL + getSystemSettings(generalSettings, "favicon");

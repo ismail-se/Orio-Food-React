@@ -5,7 +5,7 @@ import axios from "axios";
 import { BASE_URL } from "../BaseUrl";
 
 //functions
-import { getCookie } from "../functions/Functions";
+import { getCookie, getSystemSettings } from "../functions/Functions";
 
 //3rd party packages
 
@@ -69,7 +69,6 @@ const SettingsProvider = ({ children }) => {
         }
       }
     };
-    fetchData();
     fetchData();
   }, []);
 
@@ -193,6 +192,8 @@ const SettingsProvider = ({ children }) => {
     const url = BASE_URL + "/settings/general-settings";
     return axios.get(url).then((res) => {
       setGeneralSettings(res.data);
+      const favicon = document.getElementById("favicon");
+      favicon.href = BASE_URL + getSystemSettings(res.data, "favicon");
       setLoading(false);
     });
   };
