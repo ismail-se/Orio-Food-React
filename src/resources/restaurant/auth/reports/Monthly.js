@@ -316,168 +316,198 @@ const Monthly = () => {
                 ) : (
                   ""
                 )}
-                <div className="bg-warning text-dark p-2 rounded-lg">
-                  <div>
-                    {_t(t("Received by"))}
-                    {": "}
-                    <span className="text-capitalize">
-                      {checkOrderDetails.item &&
-                        checkOrderDetails.item.user_name}
-                    </span>
-                  </div>
-                  <div className="text-capitalize">
-                    {_t(t("Customer"))}
-                    {": "}
-                    {checkOrderDetails.item &&
-                      checkOrderDetails.item.customer_name}
-                  </div>
-                  <div className="text-capitalize">
-                    {_t(t("Branch"))}
-                    {": "}
-                    {checkOrderDetails.item &&
-                      checkOrderDetails.item.branch_name}
-                  </div>
-                  <div className="text-capitalize">
-                    {_t(t("Department"))}
-                    {": "}
-                    {checkOrderDetails.item &&
-                      checkOrderDetails.item.dept_tag_name}
-                  </div>
-                  <div className="text-capitalize">
-                    {_t(t("Table"))}
-                    {": "}
-                    {checkOrderDetails.item &&
-                      checkOrderDetails.item.table_name}
-                  </div>
-                  <div className="text-capitalize">
-                    {_t(t("Waiter"))}
-                    {": "}
-                    {checkOrderDetails.item &&
-                      checkOrderDetails.item.waiter_name}
-                  </div>
-                  <div>
-                    {_t(t("Subtotal"))}
-                    {": "}
-                    <span className="text-capitalize">
-                      {checkOrderDetails.item && (
-                        <>
-                          {currencySymbolLeft()}
-                          {formatPrice(checkOrderDetails.item.order_bill)}
-                          {currencySymbolRight()}
-                        </>
-                      )}
-                    </span>
-                  </div>
+                <table className="table table-striped table-sm text-center mt-3">
+                  <thead className="bg-info text-white text-uppercase">
+                    <tr>
+                      <th scope="col" colSpan="2">
+                        {_t(t("Order details"))}
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td className="text-capitalized">
+                        {_t(t("Received by"))}
+                      </td>
+                      <td>
+                        {checkOrderDetails.item &&
+                          checkOrderDetails.item.user_name}
+                      </td>
+                    </tr>
 
-                  <div>
-                    {_t(t("Vat"))}
-                    {": "}
-                    <span className="text-capitalize">
-                      {checkOrderDetails.item && (
-                        <>
-                          {currencySymbolLeft()}
-                          {formatPrice(checkOrderDetails.item.vat)}
-                          {currencySymbolRight()}
-                        </>
-                      )}
-                    </span>
-                  </div>
-                  <div>
-                    {_t(t("Service charge"))}
-                    {": "}
-                    <span className="text-capitalize">
-                      {checkOrderDetails.item && (
-                        <>
-                          {currencySymbolLeft()}
-                          {formatPrice(checkOrderDetails.item.service_charge)}
-                          {currencySymbolRight()}
-                        </>
-                      )}
-                    </span>
-                  </div>
-                  <div>
-                    {_t(t("Discount"))}
-                    {": "}
-                    <span className="text-capitalize">
-                      {checkOrderDetails.item && (
-                        <>
-                          {currencySymbolLeft()}
-                          {formatPrice(checkOrderDetails.item.discount)}
-                          {currencySymbolRight()}
-                        </>
-                      )}
-                    </span>
-                  </div>
-                  <div>
-                    {_t(t("Total bill"))}
-                    {": "}
-                    <span className="text-capitalize">
-                      {checkOrderDetails.item && (
-                        <>
-                          {currencySymbolLeft()}
-                          {formatPrice(checkOrderDetails.item.total_payable)}
-                          {currencySymbolRight()}
-                        </>
-                      )}
-                    </span>
-                  </div>
-                  <div>
-                    {_t(t("Paid amount"))}
-                    {": "}
-                    <span className="text-capitalize">
-                      {checkOrderDetails.item && (
-                        <>
-                          {currencySymbolLeft()}
-                          {formatPrice(checkOrderDetails.item.paid_amount)}
-                          {currencySymbolRight()}
-                        </>
-                      )}
-                    </span>
-                  </div>
-                  {checkOrderDetails.item &&
-                  parseFloat(
-                    checkOrderDetails.item.total_payable -
-                      checkOrderDetails.item.paid_amount
-                  ) >= 0 ? (
-                    <div>
-                      {_t(t("Due amount"))}
-                      {": "}
-                      <span className="text-capitalize">
+                    <tr>
+                      <td className="text-capitalized">{_t(t("Customer"))}</td>
+                      <td>
+                        {checkOrderDetails.item &&
+                          checkOrderDetails.item.customer_name}
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td className="text-capitalized">{_t(t("Branch"))}</td>
+                      <td>
+                        {checkOrderDetails.item &&
+                          checkOrderDetails.item.branch_name}
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td className="text-capitalized">
+                        {_t(t("Department"))}
+                      </td>
+                      <td>
+                        {checkOrderDetails.item &&
+                          checkOrderDetails.item.dept_tag_name}
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td className="text-capitalized">{_t(t("Table"))}</td>
+                      <td>
+                        {checkOrderDetails.item &&
+                          checkOrderDetails.item.table_name}
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td className="text-capitalized">{_t(t("Waiter"))}</td>
+                      <td>
+                        {checkOrderDetails.item &&
+                          checkOrderDetails.item.waiter_name}
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td className="text-capitalized">{_t(t("Subtotal"))}</td>
+                      <td>
                         {checkOrderDetails.item && (
                           <>
                             {currencySymbolLeft()}
-                            {formatPrice(
-                              parseFloat(
-                                checkOrderDetails.item.total_payable -
-                                  checkOrderDetails.item.paid_amount
-                              )
-                            )}
+                            {formatPrice(checkOrderDetails.item.order_bill)}
                             {currencySymbolRight()}
                           </>
                         )}
-                      </span>
-                    </div>
-                  ) : (
-                    <div>
-                      {_t(t("Return amount"))}
-                      {": "}
-                      <span className="text-capitalize">
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td className="text-capitalized">{_t(t("Vat"))}</td>
+                      <td>
                         {checkOrderDetails.item && (
                           <>
                             {currencySymbolLeft()}
-                            {formatPrice(
-                              parseFloat(
-                                checkOrderDetails.item.paid_amount -
-                                  checkOrderDetails.item.total_payable
-                              )
-                            )}
+                            {formatPrice(checkOrderDetails.item.vat)}
                             {currencySymbolRight()}
                           </>
                         )}
-                      </span>
-                    </div>
-                  )}
-                </div>
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td className="text-capitalized">
+                        {_t(t("Service charge"))}
+                      </td>
+                      <td>
+                        {checkOrderDetails.item && (
+                          <>
+                            {currencySymbolLeft()}
+                            {formatPrice(checkOrderDetails.item.service_charge)}
+                            {currencySymbolRight()}
+                          </>
+                        )}
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td className="text-capitalized">{_t(t("Discount"))}</td>
+                      <td>
+                        {checkOrderDetails.item && (
+                          <>
+                            {currencySymbolLeft()}
+                            {formatPrice(checkOrderDetails.item.discount)}
+                            {currencySymbolRight()}
+                          </>
+                        )}
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td className="text-capitalized">
+                        {_t(t("Total bill"))}
+                      </td>
+                      <td>
+                        {checkOrderDetails.item && (
+                          <>
+                            {currencySymbolLeft()}
+                            {formatPrice(checkOrderDetails.item.total_payable)}
+                            {currencySymbolRight()}
+                          </>
+                        )}
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td className="text-capitalized">
+                        {_t(t("Paid amount"))}
+                      </td>
+                      <td>
+                        {checkOrderDetails.item && (
+                          <>
+                            {currencySymbolLeft()}
+                            {formatPrice(checkOrderDetails.item.paid_amount)}
+                            {currencySymbolRight()}
+                          </>
+                        )}
+                      </td>
+                    </tr>
+
+                    {checkOrderDetails.item &&
+                    parseFloat(
+                      checkOrderDetails.item.total_payable -
+                        checkOrderDetails.item.paid_amount
+                    ) >= 0 ? (
+                      <tr>
+                        <td className="text-capitalized">
+                          {_t(t("Due amount"))}
+                        </td>
+                        <td>
+                          {checkOrderDetails.item && (
+                            <>
+                              {currencySymbolLeft()}
+                              {formatPrice(
+                                parseFloat(
+                                  checkOrderDetails.item.total_payable -
+                                    checkOrderDetails.item.paid_amount
+                                )
+                              )}
+                              {currencySymbolRight()}
+                            </>
+                          )}
+                        </td>
+                      </tr>
+                    ) : (
+                      <tr>
+                        <td className="text-capitalized">
+                          {_t(t("Return amount"))}
+                        </td>
+                        <td>
+                          {checkOrderDetails.item && (
+                            <>
+                              {currencySymbolLeft()}
+                              {formatPrice(
+                                parseFloat(
+                                  checkOrderDetails.item.paid_amount -
+                                    checkOrderDetails.item.total_payable
+                                )
+                              )}
+                              {currencySymbolRight()}
+                            </>
+                          )}
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
               </div>
             )}
           </div>
