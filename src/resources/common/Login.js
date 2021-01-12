@@ -188,18 +188,23 @@ const Login = () => {
           if (res.data[3] !== null && res.data[3].includes("Manage")) {
             getSmtp();
           }
-          if (res.data[3] !== null && res.data[3].includes("Customer")) {
-            getAdminStaff();
-            getWorkPeriod();
-            getCustomer();
-            getTable();
-            getWaiter();
-            getDeptTag();
-            getPaymentType();
-            getFood();
-            getFoodGroup();
-            getPropertyGroup();
-            getVariation();
+          if (res.data[3] !== null) {
+            if (
+              res.data[3].includes("Customer") ||
+              res.data[3].includes("POS")
+            ) {
+              getAdminStaff();
+              getWorkPeriod();
+              getCustomer();
+              getTable();
+              getWaiter();
+              getDeptTag();
+              getPaymentType();
+              getFood();
+              getFoodGroup();
+              getPropertyGroup();
+              getVariation();
+            }
           }
 
           history.push("/dashboard");
