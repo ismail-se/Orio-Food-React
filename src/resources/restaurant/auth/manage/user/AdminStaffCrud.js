@@ -1075,7 +1075,8 @@ const AdminStaffCrud = () => {
 
                     <div className="mt-3">
                       <label htmlFor="phn_no" className="form-label">
-                        {_t(t("Phone number"))}
+                        {_t(t("Phone number"))}{" "}
+                        <small className="text-primary">*</small>
                       </label>
                       <input
                         type="text"
@@ -1085,6 +1086,7 @@ const AdminStaffCrud = () => {
                         placeholder="e.g. 01xxx xxx xxx"
                         value={newAdminStaff.phn_no || ""}
                         onChange={handleSetNewAdminStaff}
+                        required
                       />
                     </div>
 
