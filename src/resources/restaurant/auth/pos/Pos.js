@@ -211,7 +211,7 @@ const Pos = () => {
       theTables: tableForSearch ? tableForSearch : null,
       theWaiters: waiterForSearch ? waiterForSearch : null,
     });
-  }, [authUserInfo, waiterForSearch]);
+  }, [authUserInfo, waiterForSearch, generalSettings]);
 
   //add new item to order list
   const handleOrderItem = (tempFoodItem) => {

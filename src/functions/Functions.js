@@ -84,9 +84,11 @@ const currencySymbolRight = () => {
 
 //general settings
 const getSystemSettings = (settingsArray, checkType) => {
-  let tempItem = settingsArray.find((item) => {
-    return item.name === checkType;
-  });
+  let tempItem =
+    settingsArray !== null &&
+    settingsArray.find((item) => {
+      return item.name === checkType;
+    });
   return tempItem.value;
 };
 
