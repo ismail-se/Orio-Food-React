@@ -575,7 +575,7 @@ const AllItemList = () => {
                           <label htmlFor="image" className="control-label mr-3">
                             {_t(t("Image"))}
                             <small className="text-secondary">
-                              ({_t(t("Square Image Preferable"))})
+                              ({_t(t("300 x 300 Preferable"))})
                             </small>
                           </label>
                           <div

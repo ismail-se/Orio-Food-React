@@ -591,7 +591,7 @@ const FoodItemCrud = () => {
                                   {_t(t("Image"))}
                                   <span className="text-danger">*</span>{" "}
                                   <small className="text-secondary">
-                                    ({_t(t("Square Image Preferable"))})
+                                    ({_t(t("300 x 300 Preferable"))})
                                   </small>
                                 </label>
                               </div>

@@ -532,7 +532,7 @@ const Waiter = () => {
                         <label htmlFor="image" className="form-label mb-0 mr-3">
                           {_t(t("Image"))}{" "}
                           <small className="text-secondary">
-                            ({_t(t("Square Image Preferable"))})
+                            ({_t(t("300 x 300 Preferable"))})
                           </small>
                         </label>
                         {newWaiter.edit && (

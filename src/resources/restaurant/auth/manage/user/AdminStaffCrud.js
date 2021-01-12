@@ -489,9 +489,11 @@ const AdminStaffCrud = () => {
     if (adminStaff[0].user_type === "staff") {
       let selectedOptionForBranch = null;
       if (adminStaff[0].branch_id) {
-        selectedOptionForBranch = branchForSearch.filter((branchItem) => {
-          return branchItem.id === adminStaff[0].branch_id;
-        });
+        selectedOptionForBranch =
+          branchForSearch !== null &&
+          branchForSearch.filter((branchItem) => {
+            return branchItem.id === adminStaff[0].branch_id;
+          });
       }
       setAdminStaff({
         ...newAdminStaff,
@@ -1210,7 +1212,7 @@ const AdminStaffCrud = () => {
                         <label htmlFor="image" className="form-label mb-0 mr-3">
                           {_t(t("Image"))}{" "}
                           <small className="text-secondary">
-                            ({_t(t("Square Image Preferable"))})
+                            ({_t(t("300 x 300 Preferable"))})
                           </small>
                         </label>
                         {newAdminStaff.edit && (
@@ -1295,6 +1297,70 @@ const AdminStaffCrud = () => {
         </div>
       </div>
       {/* Add modal Ends*/}
+
+      {/* view modal */}
+      <div className="modal fade" id="viewUser" aria-hidden="true">
+        <div className="modal-dialog modal-lg">
+          <div className="modal-content">
+            <div className="modal-header align-items-center">
+              <div className="fk-sm-card__content">
+                <h5 className="text-capitalize fk-sm-card__title">
+                  {newAdminStaff.name}
+                </h5>
+              </div>
+              <button
+                type="button"
+                className="btn-close"
+                data-dismiss="modal"
+                aria-label="Close"
+              ></button>
+            </div>
+            <div className="modal-body">
+              {/* show form or show saving loading */}
+              <table className="table table-striped table-sm text-center mt-3">
+                <tbody>
+                  <tr>
+                    <td className="text-capitalized">{_t(t("User type"))}</td>
+                    <td>{newAdminStaff.user_type}</td>
+                  </tr>
+                  <tr>
+                    <td className="text-capitalized">{_t(t("Name"))}</td>
+                    <td>{newAdminStaff.name}</td>
+                  </tr>
+                  <tr>
+                    <td className="text-capitalized">{_t(t("Email"))}</td>
+                    <td>{newAdminStaff.email}</td>
+                  </tr>
+                  <tr>
+                    <td className="text-capitalized">
+                      {_t(t("Phone number"))}
+                    </td>
+                    <td>{newAdminStaff.phn_no}</td>
+                  </tr>
+                  {newAdminStaff.user_type !== "superAdmin" &&
+                    newAdminStaff.selectedPermissionGroup !== null && (
+                      <tr>
+                        <td className="text-capitalized">
+                          {_t(t("Permission group"))}
+                        </td>
+                        <td>{newAdminStaff.selectedPermissionGroup.name}</td>
+                      </tr>
+                    )}
+
+                  {newAdminStaff.user_type === "staff" &&
+                    newAdminStaff.selectedBranch !== null && (
+                      <tr>
+                        <td className="text-capitalized">{_t(t("Branch"))}</td>
+                        <td>{newAdminStaff.selectedBranch.name}</td>
+                      </tr>
+                    )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+      {/* view modal Ends*/}
 
       {/* main body */}
       <main id="main" data-simplebar>
@@ -1519,6 +1585,26 @@ const AdminStaffCrud = () => {
                                                       <i className="fa fa-ellipsis-h"></i>
                                                     </button>
                                                     <div className="dropdown-menu">
+                                                      <button
+                                                        className="dropdown-item sm-text text-capitalize"
+                                                        onClick={() => {
+                                                          setAdminStaff({
+                                                            ...newAdminStaff,
+                                                            branch: null,
+                                                          });
+                                                          handleSetEdit(
+                                                            item.slug
+                                                          );
+                                                        }}
+                                                        data-toggle="modal"
+                                                        data-target="#viewUser"
+                                                      >
+                                                        <span className="t-mr-8">
+                                                          <i className="fa fa-eye"></i>
+                                                        </span>
+                                                        {_t(t("View"))}
+                                                      </button>
+
                                                       <button
                                                         className="dropdown-item sm-text text-capitalize"
                                                         onClick={() => {

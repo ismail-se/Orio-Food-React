@@ -161,7 +161,7 @@ const Footer = () => {
               </div>
               <div className="col-lg-6 col-xl-7 t-mb-30 mb-lg-0">
                 <p className="mb-0 text-center sm-text">
-                  &copy;
+                  &copy;{" "}
                   {generalSettings &&
                     getSystemSettings(generalSettings, "type_footer")}
                 </p>
@@ -259,7 +259,7 @@ const Footer = () => {
                   </div>
                   <div className="col-lg-6 col-xl-7 t-mb-30 mb-lg-0">
                     <p className="mb-0 text-center sm-text">
-                      &copy;
+                      &copy;{" "}
                       {generalSettings &&
                         getSystemSettings(generalSettings, "type_footer")}
                     </p>

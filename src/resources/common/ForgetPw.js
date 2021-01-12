@@ -124,6 +124,23 @@ const ForgetPw = () => {
             }
           );
         }
+        if (res.data === "smtp") {
+          toast.error(
+            `${_t(
+              t(
+                "Email configuration needs to be setup by admin to reset password"
+              )
+            )}`,
+            {
+              position: "bottom-center",
+              autoClose: 10000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              className: "text-center toast-notification",
+            }
+          );
+        }
         setLoading(false);
       })
       .catch((error) => {
