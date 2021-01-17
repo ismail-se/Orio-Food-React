@@ -24,4 +24,8 @@ export let BASE_URL =
   window.location.protocol +
   "//" +
   window.location.hostname +
-  `${window.location.port !== "" ? `:${window.location.port}` : ""}`;
+  `${
+    window.location.port !== ""
+      ? `:${window.location.port}`
+      : `${!window.location.href.includes(".test") ? "/public" : ""}`
+  }`;
