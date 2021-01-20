@@ -783,7 +783,7 @@ const Waiter = () => {
                                                     backgroundImage: `url(${
                                                       item.image !== null
                                                         ? item.image
-                                                        : "/khadyo/assets/img/waiter.jpg"
+                                                        : "/assets/img/waiter.jpg"
                                                     })`,
                                                   }}
                                                 ></div>
@@ -895,7 +895,7 @@ const Waiter = () => {
                                                       backgroundImage: `url(${
                                                         item.image !== null
                                                           ? item.image
-                                                          : "/khadyo/assets/img/waiter.jpg"
+                                                          : "/assets/img/waiter.jpg"
                                                       })`,
                                                     }}
                                                   ></div>

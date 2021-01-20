@@ -245,7 +245,7 @@ li.addons-list__item.active {
 }
 
 .login-page-background {
-  background-image: url("/khadyo/assets/img/logo.png") !important;
+  background-image: url("/assets/img/logo.png") !important;
 }
 
 /* safari pos issue */

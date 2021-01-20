@@ -120,7 +120,7 @@ const DeptWise = () => {
                         <div className="row gx-2 justify-content-center t-pt-15 t-pb-15">
                           <div className="col-12 t-mb-15 mb-md-0 text-center mt-5">
                             <img
-                              src="/khadyo/assets/img/coming_soon.png"
+                              src="/assets/img/coming_soon.png"
                               alt="Coming Soon"
                               className="img-fluid"
                               style={{ maxHeight: "350px", maxWidth: "600px" }}

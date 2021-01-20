@@ -1,8 +1,0 @@
-#main {
-    @include md-screen {
-        height: calc(100vh - 50px);
-    }
-    @include xl-screen {
-        height: calc(100vh - 100px);
-    }
-}

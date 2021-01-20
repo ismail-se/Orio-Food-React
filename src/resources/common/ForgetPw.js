@@ -177,27 +177,27 @@ const ForgetPw = () => {
           <div className="d-none d-lg-block">
             <div className="fk-global-img text-center">
               <img
-                src="/khadyo/assets/img/verifiy-img.png"
+                src="/assets/img/verifiy-img.png"
                 alt="khadyo"
                 className="img-fluid mx-auto fk-global-img__is"
               />
               <img
-                src="/khadyo/assets/img/obj-1.png"
+                src="/assets/img/obj-1.png"
                 alt="khadyo"
                 className="img-fluid fk-global-img__obj fk-global-img__obj-1"
               />
               <img
-                src="/khadyo/assets/img/obj-8.png"
+                src="/assets/img/obj-8.png"
                 alt="khadyo"
                 className="img-fluid fk-global-img__obj fk-global-img__obj-2"
               />
               <img
-                src="/khadyo/assets/img/obj-7.png"
+                src="/assets/img/obj-7.png"
                 alt="khadyo"
                 className="img-fluid fk-global-img__obj fk-global-img__obj-6"
               />
               <img
-                src="/khadyo/assets/img/obj-9.png"
+                src="/assets/img/obj-9.png"
                 alt="khadyo"
                 className="img-fluid fk-global-img__obj fk-global-img__obj-8"
               />

@@ -371,7 +371,7 @@ const Navbar = (props) => {
                                 authUserInfo.details !== null &&
                                 authUserInfo.details.image !== null
                                   ? [BASE_URL + authUserInfo.details.image]
-                                  : "/khadyo/assets/img/user.jpg"
+                                  : "/assets/img/user.jpg"
                               }
                               alt=""
                               className="img-fluid avatar__img"
@@ -617,7 +617,7 @@ const Navbar = (props) => {
                                     authUserInfo.details !== null &&
                                     authUserInfo.details.image !== null
                                       ? [BASE_URL + authUserInfo.details.image]
-                                      : "/khadyo/assets/img/user.jpg"
+                                      : "/assets/img/user.jpg"
                                   }
                                   alt=""
                                   className="img-fluid avatar__img"

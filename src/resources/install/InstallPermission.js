@@ -104,7 +104,7 @@ const InstallPermission = () => {
                             <li className="list-group-item text-semibold">
                               Php version 7.3+
                               {theData.php_version !== null &&
-                              theData.php_version >= 7.3 ? (
+                              theData.php_version > 7.3 ? (
                                 <i className="fa fa-check text-success pull-right"></i>
                               ) : (
                                 <i className="fa fa-close text-danger pull-right"></i>
@@ -134,7 +134,7 @@ const InstallPermission = () => {
                         <p className="my-2 mx-5">
                           <div className="text-center text-uppercase col-4 offset-4 mt-4 mb-3">
                             {theData.php_version !== null &&
-                            theData.php_version >= 7.3 &&
+                            theData.php_version > 7.3 &&
                             theData.curl_status !== null &&
                             (theData.curl_status === true &&
                               theData.env_status) !== null &&
