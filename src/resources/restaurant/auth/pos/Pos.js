@@ -170,7 +170,7 @@ const Pos = () => {
       let theBranch =
         branchForSearch &&
         branchForSearch.find((branch) => {
-          return authUserInfo.details.branch_id === branch.id;
+          return parseInt(authUserInfo.details.branch_id) === branch.id;
         });
       setOrderDetails({
         ...orderDetails,
@@ -595,20 +595,24 @@ const Pos = () => {
 
                 //handle selected property group
                 tempArrayPropertyGroup.push(
-                  eachPropertyItem.item.property_group_id
+                  parseInt(eachPropertyItem.item.property_group_id)
                 );
               });
               tempPropertyArray.push(propertyItem);
               //for selected properties
               tempArray.push(propertyItem.item.id);
               //handle selected property group
-              tempArrayPropertyGroup.push(propertyItem.item.property_group_id);
+              tempArrayPropertyGroup.push(
+                parseInt(propertyItem.item.property_group_id)
+              );
             } else {
               tempPropertyArray.push(propertyItem);
               //for selected properties
               tempArray.push(propertyItem.item.id);
               //handle selected property group
-              tempArrayPropertyGroup.push(propertyItem.item.property_group_id);
+              tempArrayPropertyGroup.push(
+                parseInt(propertyItem.item.property_group_id)
+              );
             }
 
             //changing properties of selected food item
@@ -629,7 +633,7 @@ const Pos = () => {
 
                 //set updated property groups for selected groups
                 tempArrayPropertyGroup.push(
-                  eachPropertyItem.item.property_group_id
+                  parseInt(eachPropertyItem.item.property_group_id)
                 );
               });
             }
@@ -710,7 +714,9 @@ const Pos = () => {
               if (index === groupItemIndex) {
                 let tempGroupArray = []; // for selected group of each order item (index of array wise new array)
                 groupItem.map((filterThisItem) => {
-                  if (filterThisItem !== propertyItem.property_group_id) {
+                  if (
+                    filterThisItem !== parseInt(propertyItem.property_group_id)
+                  ) {
                     //push if removable property item's group !== groupItem
                     tempGroupArray.push(filterThisItem);
                   }
@@ -718,7 +724,9 @@ const Pos = () => {
 
                 //push all groups of modified new properties array of this item
                 tempPropertyArray.map((pushThis) => {
-                  tempGroupArray.push(pushThis.item.property_group_id);
+                  tempGroupArray.push(
+                    parseInt(pushThis.item.property_group_id)
+                  );
                 });
 
                 //remove duplicate groups
@@ -958,17 +966,17 @@ const Pos = () => {
     let tempCustomers =
       customerForSearch !== null &&
       customerForSearch.filter((eachCustomer) => {
-        return eachCustomer.branch_id === branch.id;
+        return parseInt(eachCustomer.branch_id) === branch.id;
       });
     let tempTables =
       tableForSearch !== null &&
       tableForSearch.filter((eachTable) => {
-        return eachTable.branch_id === branch.id;
+        return parseInt(eachTable.branch_id) === branch.id;
       });
     let tempWaiters =
       waiterForSearch !== null &&
       waiterForSearch.filter((eachWaiter) => {
-        return eachWaiter.branch_id === branch.id;
+        return parseInt(eachWaiter.branch_id) === branch.id;
       });
     setOrderDetailusers({
       theCustomers: tempCustomers,
@@ -1581,9 +1589,10 @@ const Pos = () => {
                                           {printItem.properties.map(
                                             (propertyName, propertyIndex) => {
                                               if (
-                                                propertyName.item
-                                                  .property_group_id ===
-                                                theGroup.id
+                                                parseInt(
+                                                  propertyName.item
+                                                    .property_group_id
+                                                ) === theGroup.id
                                               ) {
                                                 return (
                                                   <span className="text-capitalize xxsm-text d-inline-block mr-1">
@@ -1825,9 +1834,10 @@ const Pos = () => {
                                           {printItem.properties.map(
                                             (propertyName, propertyIndex) => {
                                               if (
-                                                propertyName.item
-                                                  .property_group_id ===
-                                                theGroup.id
+                                                parseInt(
+                                                  propertyName.item
+                                                    .property_group_id
+                                                ) === theGroup.id
                                               ) {
                                                 return (
                                                   <span className="text-capitalize xxsm-text d-inline-block mr-1">
@@ -1977,7 +1987,7 @@ const Pos = () => {
                               (singlePropertyGroup) => {
                                 return (
                                   singlePropertyGroup.id ===
-                                  propertyItem[0].property_group_id
+                                  parseInt(propertyItem[0].property_group_id)
                                 );
                               }
                             );
@@ -2285,9 +2295,10 @@ const Pos = () => {
                                         {orderListItem.properties.map(
                                           (propertyName, propertyIndex) => {
                                             if (
-                                              propertyName.item
-                                                .property_group_id ===
-                                              theGroup.id
+                                              parseInt(
+                                                propertyName.item
+                                                  .property_group_id
+                                              ) === theGroup.id
                                             ) {
                                               return (
                                                 <span className="text-capitalize xxsm-text d-inline-block mr-1">
@@ -3363,8 +3374,10 @@ const Pos = () => {
                                                         ) => {
                                                           return (
                                                             singlePropertyGroup.id ===
-                                                            propertyItem[0]
-                                                              .property_group_id
+                                                            parseInt(
+                                                              propertyItem[0]
+                                                                .property_group_id
+                                                            )
                                                           );
                                                         }
                                                       );
@@ -4358,9 +4371,11 @@ const Pos = () => {
                                                                   propertyName
                                                                 ) => {
                                                                   if (
-                                                                    propertyName
-                                                                      .item
-                                                                      .property_group_id ===
+                                                                    parseInt(
+                                                                      propertyName
+                                                                        .item
+                                                                        .property_group_id
+                                                                    ) ===
                                                                     theGroup.id
                                                                   ) {
                                                                     return (

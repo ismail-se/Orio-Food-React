@@ -302,7 +302,7 @@ const Submitted = () => {
 
   //cancel order here
   const handleCancelOrder = (orderGroup) => {
-    if (orderGroup.is_accepted === 0) {
+    if (parseInt(orderGroup.is_accepted) === 0) {
       let url = BASE_URL + "/settings/cancel-submitted-order";
       let formData = {
         id: orderGroup.id,
@@ -388,11 +388,11 @@ const Submitted = () => {
             ) : (
               <div className="modal-body">
                 {checkOrderDetails.item &&
-                checkOrderDetails.item.is_settled === 0 ? (
+                parseInt(checkOrderDetails.item.is_settled) === 0 ? (
                   // if this item is not settled then show settle-cancel button
                   <>
                     {checkOrderDetails.item &&
-                      checkOrderDetails.item.is_cancelled !== 1 && (
+                      parseInt(checkOrderDetails.item.is_cancelled) !== 1 && (
                         <div className="text-right">
                           {checkOrderDetails.settle &&
                             paidMoney >
@@ -449,7 +449,7 @@ const Submitted = () => {
                 )}
                 {checkOrderDetails.item &&
                   //show this if order is cancelled
-                  checkOrderDetails.item.is_cancelled === 1 && (
+                  parseInt(checkOrderDetails.item.is_cancelled) === 1 && (
                     <div className="text-center bg-secondary text-white py-2">
                       {_t(t("This order has been cancelled"))}
                     </div>
@@ -554,9 +554,11 @@ const Submitted = () => {
                                       <div className="col-1 text-center d-flex">
                                         <label className="mx-checkbox mx-checkbox--empty m-auto">
                                           <span className="mx-checkbox__text text-capitalize t-text-heading fk-addons-table__body-text">
-                                            {thisItem.is_cooking === 1 ? (
+                                            {parseInt(thisItem.is_cooking) ===
+                                            1 ? (
                                               [
-                                                thisItem.is_ready === 1 ? (
+                                                parseInt(thisItem.is_ready) ===
+                                                1 ? (
                                                   <i
                                                     className="fa fa-check text-success"
                                                     title={_t(t("Ready"))}
@@ -1029,9 +1031,11 @@ const Submitted = () => {
                                               </td>
 
                                               <td className="xsm-text text-capitalize align-middle text-center">
-                                                {item.is_cancelled === 0 ? (
+                                                {parseInt(item.is_cancelled) ===
+                                                0 ? (
                                                   [
-                                                    item.is_ready === 0 ? (
+                                                    parseInt(item.is_ready) ===
+                                                    0 ? (
                                                       <span
                                                         className="btn btn-transparent btn-secondary xsm-text text-capitalize"
                                                         onClick={() => {
@@ -1088,7 +1092,8 @@ const Submitted = () => {
                                               </td>
 
                                               <td className="xsm-text align-middle text-center">
-                                                {item.is_cancelled === 0 ? (
+                                                {parseInt(item.is_cancelled) ===
+                                                0 ? (
                                                   <div className="dropdown text-capitalize">
                                                     <button
                                                       className="btn t-bg-clear t-text-dark--light-40"
@@ -1121,9 +1126,12 @@ const Submitted = () => {
                                                         {_t(t("Settle order"))}
                                                       </button>
 
-                                                      {item.is_ready !== 1 && [
-                                                        item.is_accepted ===
-                                                        0 ? (
+                                                      {parseInt(
+                                                        item.is_ready
+                                                      ) !== 1 && [
+                                                        parseInt(
+                                                          item.is_accepted
+                                                        ) === 0 ? (
                                                           <button
                                                             className="dropdown-item sm-text text-capitalize"
                                                             onClick={() => {
@@ -1239,9 +1247,11 @@ const Submitted = () => {
                                             </td>
 
                                             <td className="xsm-text text-capitalize align-middle text-center">
-                                              {item.is_cancelled === 0 ? (
+                                              {parseInt(item.is_cancelled) ===
+                                              0 ? (
                                                 [
-                                                  item.is_ready === 0 ? (
+                                                  parseInt(item.is_ready) ===
+                                                  0 ? (
                                                     <span
                                                       className="btn btn-transparent btn-secondary xsm-text text-capitalize"
                                                       onClick={() => {
@@ -1298,7 +1308,8 @@ const Submitted = () => {
                                             </td>
 
                                             <td className="xsm-text align-middle text-center">
-                                              {item.is_cancelled === 0 ? (
+                                              {parseInt(item.is_cancelled) ===
+                                              0 ? (
                                                 <div className="dropdown text-capitalize">
                                                   <button
                                                     className="btn t-bg-clear t-text-dark--light-40"
@@ -1331,8 +1342,11 @@ const Submitted = () => {
                                                       {_t(t("Settle order"))}
                                                     </button>
 
-                                                    {item.is_ready !== 1 && [
-                                                      item.is_accepted === 0 ? (
+                                                    {parseInt(item.is_ready) !==
+                                                      1 && [
+                                                      parseInt(
+                                                        item.is_accepted
+                                                      ) === 0 ? (
                                                         <button
                                                           className="dropdown-item sm-text text-capitalize"
                                                           onClick={() => {

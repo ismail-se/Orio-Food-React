@@ -108,7 +108,10 @@ const Kitchen = () => {
     //front end accept-reject view update
     let newState = kithcenNewOrders.map((orderItem) =>
       orderItem.id === id
-        ? { ...orderItem, is_accepted: orderItem.is_accepted === 0 ? 1 : 0 }
+        ? {
+            ...orderItem,
+            is_accepted: parseInt(orderItem.is_accepted) === 0 ? 1 : 0,
+          }
         : orderItem
     );
     setKithcenNewOrders(newState);
@@ -119,7 +122,8 @@ const Kitchen = () => {
         orderItemSearched.id === id
           ? {
               ...orderItemSearched,
-              is_accepted: orderItemSearched.is_accepted === 0 ? 1 : 0,
+              is_accepted:
+                parseInt(orderItemSearched.is_accepted) === 0 ? 1 : 0,
             }
           : orderItemSearched
       );
@@ -143,7 +147,10 @@ const Kitchen = () => {
         //undo if any error happened
         newState = newState.map((orderItem) =>
           orderItem.id === id
-            ? { ...orderItem, is_accepted: orderItem.is_accepted === 0 ? 1 : 0 }
+            ? {
+                ...orderItem,
+                is_accepted: parseInt(orderItem.is_accepted) === 0 ? 1 : 0,
+              }
             : orderItem
         );
         setKithcenNewOrders(newState);
@@ -153,7 +160,8 @@ const Kitchen = () => {
             orderItemSearched.id === id
               ? {
                   ...orderItemSearched,
-                  is_accepted: orderItemSearched.is_accepted === 0 ? 1 : 0,
+                  is_accepted:
+                    parseInt(orderItemSearched.is_accepted) === 0 ? 1 : 0,
                 }
               : orderItemSearched
           );
@@ -260,7 +268,10 @@ const Kitchen = () => {
     //updating the item's cooking status
     let newItems = orderGroup.orderedItems.map((eachItem) =>
       eachItem.id === itemId
-        ? { ...eachItem, is_cooking: eachItem.is_cooking === 0 ? 1 : 0 }
+        ? {
+            ...eachItem,
+            is_cooking: parseInt(eachItem.is_cooking) === 0 ? 1 : 0,
+          }
         : eachItem
     );
 
@@ -281,7 +292,10 @@ const Kitchen = () => {
 
       let newItemsSearched = orderGroup.orderedItems.map((eachItem) =>
         eachItem.id === itemId
-          ? { ...eachItem, is_cooking: eachItem.is_cooking === 0 ? 1 : 0 }
+          ? {
+              ...eachItem,
+              is_cooking: parseInt(eachItem.is_cooking) === 0 ? 1 : 0,
+            }
           : eachItem
       );
 
@@ -424,7 +438,7 @@ const Kitchen = () => {
                                 >
                                   {_t(t("Order ready"))}
                                 </button>
-                                {item.is_accepted === 0 ? (
+                                {parseInt(item.is_accepted) === 0 ? (
                                   <button
                                     type="button"
                                     className="btn btn-secondary xsm-text text-uppercase btn-lg"
@@ -565,8 +579,9 @@ const Kitchen = () => {
                                                         type="checkbox"
                                                         className="mx-checkbox__input mx-checkbox__input-solid mx-checkbox__input-solid--danger mx-checkbox__input-sm mt-0-kitchen"
                                                         checked={
-                                                          thisItem.is_cooking ===
-                                                          1
+                                                          parseInt(
+                                                            thisItem.is_cooking
+                                                          ) === 1
                                                         }
                                                         onChange={() => {
                                                           handleEachItemReady(
@@ -652,8 +667,9 @@ const Kitchen = () => {
                                                       type="checkbox"
                                                       className="mx-checkbox__input mx-checkbox__input-solid mx-checkbox__input-solid--danger mx-checkbox__input-sm mt-0-kitchen"
                                                       checked={
-                                                        thisItem.is_cooking ===
-                                                        1
+                                                        parseInt(
+                                                          thisItem.is_cooking
+                                                        ) === 1
                                                       }
                                                       onChange={() => {
                                                         handleEachItemReady(
@@ -722,7 +738,7 @@ const Kitchen = () => {
                                 >
                                   {_t(t("Order ready"))}
                                 </button>
-                                {item.is_accepted === 0 ? (
+                                {parseInt(item.is_accepted) === 0 ? (
                                   <button
                                     type="button"
                                     className="btn btn-secondary xsm-text text-uppercase btn-lg"
@@ -863,8 +879,9 @@ const Kitchen = () => {
                                                         type="checkbox"
                                                         className="mx-checkbox__input mx-checkbox__input-solid mx-checkbox__input-solid--danger mx-checkbox__input-sm mt-0-kitchen"
                                                         checked={
-                                                          thisItem.is_cooking ===
-                                                          1
+                                                          parseInt(
+                                                            thisItem.is_cooking
+                                                          ) === 1
                                                         }
                                                         onChange={() => {
                                                           handleEachItemReady(
@@ -950,8 +967,9 @@ const Kitchen = () => {
                                                       type="checkbox"
                                                       className="mx-checkbox__input mx-checkbox__input-solid mx-checkbox__input-solid--danger mx-checkbox__input-sm mt-0-kitchen"
                                                       checked={
-                                                        thisItem.is_cooking ===
-                                                        1
+                                                        parseInt(
+                                                          thisItem.is_cooking
+                                                        ) === 1
                                                       }
                                                       onChange={() => {
                                                         handleEachItemReady(

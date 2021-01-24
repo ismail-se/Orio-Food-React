@@ -147,7 +147,7 @@ const Login = () => {
     return axios
       .post(url, credentials)
       .then((res) => {
-        if (res.data[2] === 0) {
+        if (res.data[2] === 0 || res.data[2] === "0") {
           let access_token = {
             _user: res.data[0].access_token.slice(0, 8),
             sbb: res.data[0].access_token.slice(8, 10),

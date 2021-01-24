@@ -1529,7 +1529,7 @@ const AdminStaffCrud = () => {
                                             return (
                                               <tr
                                                 className={`align-middle ${
-                                                  item.is_banned &&
+                                                  parseInt(item.is_banned) &&
                                                   "text-primary"
                                                 }`}
                                                 key={index}
@@ -1629,7 +1629,9 @@ const AdminStaffCrud = () => {
 
                                                       {item.user_type !==
                                                         "superAdmin" && [
-                                                        !item.is_banned ? (
+                                                        !parseInt(
+                                                          item.is_banned
+                                                        ) ? (
                                                           <button
                                                             className="dropdown-item sm-text text-capitalize"
                                                             onClick={() => {
@@ -1688,7 +1690,7 @@ const AdminStaffCrud = () => {
                                             return (
                                               <tr
                                                 className={`align-middle ${
-                                                  item.is_banned &&
+                                                  parseInt(item.is_banned) &&
                                                   "text-primary"
                                                 }`}
                                                 key={index}
@@ -1768,7 +1770,9 @@ const AdminStaffCrud = () => {
 
                                                       {item.user_type !==
                                                         "superAdmin" && [
-                                                        !item.is_banned ? (
+                                                        !parseInt(
+                                                          item.is_banned
+                                                        ) ? (
                                                           <button
                                                             className="dropdown-item sm-text text-capitalize"
                                                             onClick={() => {

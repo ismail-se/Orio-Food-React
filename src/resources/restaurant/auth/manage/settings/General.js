@@ -615,12 +615,16 @@ const General = () => {
                                   setNewSettings({
                                     ...newSettings,
                                     print_kitchen_bill:
-                                      newSettings.print_kitchen_bill === 0
+                                      parseInt(
+                                        newSettings.print_kitchen_bill
+                                      ) === 0
                                         ? 1
                                         : 0,
                                   });
                                 }}
-                                checked={newSettings.print_kitchen_bill === 1}
+                                checked={
+                                  parseInt(newSettings.print_kitchen_bill) === 1
+                                }
                               />
                               <label
                                 className="form-check-label  pointer-cursor"
@@ -640,10 +644,12 @@ const General = () => {
                                   setNewSettings({
                                     ...newSettings,
                                     play_sound:
-                                      newSettings.play_sound === 0 ? 1 : 0,
+                                      parseInt(newSettings.play_sound) === 0
+                                        ? 1
+                                        : 0,
                                   });
                                 }}
-                                checked={newSettings.play_sound === 1}
+                                checked={parseInt(newSettings.play_sound) === 1}
                               />
                               <label
                                 className="form-check-label pointer-cursor"

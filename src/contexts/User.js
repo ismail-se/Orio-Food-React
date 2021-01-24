@@ -61,7 +61,7 @@ const UserProvider = ({ children }) => {
         headers: { Authorization: `Bearer ${getCookie()}` },
       })
       .then((res) => {
-        if (res.data[0].is_banned === 0) {
+        if (res.data[0].is_banned === 0 || res.data[0].is_banned === "0") {
           setAuthUserInfo({
             ...authUserInfo,
             details: res.data[0],

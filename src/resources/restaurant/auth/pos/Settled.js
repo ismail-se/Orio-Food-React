@@ -145,11 +145,11 @@ const Settled = () => {
             ) : (
               <div className="modal-body">
                 {checkOrderDetails.item &&
-                checkOrderDetails.item.is_settled === 0 ? (
+                parseInt(checkOrderDetails.item.is_settled) === 0 ? (
                   // if this item is not settled then show settle-cancel button
                   <>
                     {checkOrderDetails.item &&
-                      checkOrderDetails.item.is_cancelled !== 1 && (
+                      parseInt(checkOrderDetails.item.is_cancelled) !== 1 && (
                         <div className="text-right">
                           {checkOrderDetails.settle &&
                             paidMoney >
@@ -204,7 +204,7 @@ const Settled = () => {
                 )}
                 {checkOrderDetails.item &&
                   //show this if order is cancelled
-                  checkOrderDetails.item.is_cancelled === 1 && (
+                  parseInt(checkOrderDetails.item.is_cancelled) === 1 && (
                     <div className="text-center bg-secondary text-white py-2">
                       {_t(t("This order has been cancelled"))}
                     </div>
@@ -309,9 +309,11 @@ const Settled = () => {
                                       <div class="col-1 text-center d-flex">
                                         <label class="mx-checkbox mx-checkbox--empty m-auto">
                                           <span class="mx-checkbox__text text-capitalize t-text-heading fk-addons-table__body-text">
-                                            {thisItem.is_cooking === 1 ? (
+                                            {parseInt(thisItem.is_cooking) ===
+                                            1 ? (
                                               [
-                                                thisItem.is_ready === 1 ? (
+                                                parseInt(thisItem.is_ready) ===
+                                                1 ? (
                                                   <i
                                                     className="fa fa-check text-success"
                                                     title={_t(t("Ready"))}
@@ -719,9 +721,11 @@ const Settled = () => {
                                             </td>
 
                                             <td class="xsm-text text-capitalize align-middle text-center">
-                                              {item.is_cancelled === 0 ? (
+                                              {parseInt(item.is_cancelled) ===
+                                              0 ? (
                                                 [
-                                                  item.is_ready === 0 ? (
+                                                  parseInt(item.is_ready) ===
+                                                  0 ? (
                                                     <span
                                                       class="btn btn-transparent btn-secondary xsm-text text-capitalize"
                                                       onClick={() => {
@@ -836,9 +840,11 @@ const Settled = () => {
                                             </td>
 
                                             <td class="xsm-text text-capitalize align-middle text-center">
-                                              {item.is_cancelled === 0 ? (
+                                              {parseInt(item.is_cancelled) ===
+                                              0 ? (
                                                 [
-                                                  item.is_ready === 0 ? (
+                                                  parseInt(item.is_ready) ===
+                                                  0 ? (
                                                     <span
                                                       class="btn btn-transparent btn-secondary xsm-text text-capitalize"
                                                       onClick={() => {
