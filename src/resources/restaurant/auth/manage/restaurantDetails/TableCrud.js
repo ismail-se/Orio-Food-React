@@ -168,7 +168,7 @@ const TableCrud = () => {
     let selectedOptionForBranch = null;
     if (table[0].branch_id) {
       selectedOptionForBranch = branchForSearch.filter((branchItem) => {
-        return branchItem.id === table[0].branch_id;
+        return branchItem.id === parseInt(table[0].branch_id);
       });
     }
     setNewTable({

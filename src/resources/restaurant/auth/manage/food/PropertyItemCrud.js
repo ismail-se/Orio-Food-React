@@ -175,7 +175,7 @@ const PropertyItemCrud = () => {
       name: variation[0].name,
       extraPrice: variation[0].extra_price,
       allow_multi_quantity:
-        variation[0].allow_multi_quantity === 1 ? true : false,
+        parseInt(variation[0].allow_multi_quantity) === 1 ? true : false,
       editSlug: variation[0].slug,
       edit: true,
     });

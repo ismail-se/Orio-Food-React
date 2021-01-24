@@ -185,7 +185,7 @@ const CustomerCrud = () => {
     let selectedOptionForBranch = null;
     if (customer[0].branch_id) {
       selectedOptionForBranch = branchForSearch.filter((branchItem) => {
-        return branchItem.id === customer[0].branch_id;
+        return branchItem.id === parseInt(customer[0].branch_id);
       });
     }
     setNewCustomer({

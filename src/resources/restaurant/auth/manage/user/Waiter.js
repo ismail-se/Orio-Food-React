@@ -218,7 +218,7 @@ const Waiter = () => {
     let selectedOptionForBranch = null;
     if (waiter[0].branch_id) {
       selectedOptionForBranch = branchForSearch.filter((branchItem) => {
-        return branchItem.id === waiter[0].branch_id;
+        return branchItem.id === parseInt(waiter[0].branch_id);
       });
     }
     setNewWaiter({
