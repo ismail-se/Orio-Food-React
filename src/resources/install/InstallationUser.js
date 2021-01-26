@@ -30,11 +30,27 @@ const InstallationUser = () => {
     phn_no: null,
     password: null,
     password_confirmation: null,
+    purchase_key: null,
+    ip_address: null,
+    domain_name: null,
   });
 
   //useEffect == componentDidMount()
   useEffect(() => {
-    setLoading(false);
+    const url = BASE_URL + "/setup/check_ip_domain";
+    return axios
+      .get(url)
+      .then((res) => {
+        setDetails({
+          ...details,
+          ip_address: res.data[0],
+          domain_name: res.data[1],
+        });
+        setLoading(false);
+      })
+      .catch((err) => {
+        setLoading(false);
+      });
   }, []);
 
   //set data
@@ -50,35 +66,53 @@ const InstallationUser = () => {
     e.preventDefault();
     if (details.password === details.password_confirmation) {
       setLoading(true);
-      const url = BASE_URL + "/setup/admin/store";
+      const verifyUrl =
+        "http://localhost/verifyPurchase/public/api/khadyo-verify-purchase-code";
+
       return axios
-        .post(url, details)
+        .post(verifyUrl, details)
         .then((res) => {
+          console.log(res.data);
           setLoading(false);
-          if (res.data === "ok") {
-            history.push("/installation/congratulation");
-          } else {
-            setLoading(false);
-            toast.error(`${_t(t("Something went wrong, please try again"))}`, {
-              position: "bottom-center",
-              autoClose: 10000,
-              hideProgressBar: false,
-              closeOnClick: true,
-              pauseOnHover: true,
-              className: "text-center toast-notification",
-            });
-          }
+          // const url = BASE_URL + "/setup/admin/store";
+          // return axios
+          //   .post(url, details)
+          //   .then((res) => {
+          //     setLoading(false);
+          //     if (res.data === "ok") {
+          //       history.push("/installation/congratulation");
+          //     } else {
+          //       setLoading(false);
+          //       toast.error(
+          //         `${_t(t("Something went wrong, please try again"))}`,
+          //         {
+          //           position: "bottom-center",
+          //           autoClose: 10000,
+          //           hideProgressBar: false,
+          //           closeOnClick: true,
+          //           pauseOnHover: true,
+          //           className: "text-center toast-notification",
+          //         }
+          //       );
+          //     }
+          //   })
+          //   .catch(() => {
+          //     setLoading(false);
+          //     toast.error(
+          //       `${_t(t("Something went wrong, please try again"))}`,
+          //       {
+          //         position: "bottom-center",
+          //         autoClose: 10000,
+          //         hideProgressBar: false,
+          //         closeOnClick: true,
+          //         pauseOnHover: true,
+          //         className: "text-center toast-notification",
+          //       }
+          //     );
+          //   });
         })
-        .catch(() => {
+        .catch((err) => {
           setLoading(false);
-          toast.error(`${_t(t("Something went wrong, please try again"))}`, {
-            position: "bottom-center",
-            autoClose: 10000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            className: "text-center toast-notification",
-          });
         });
     } else {
       toast.error(`${_t(t("Password confirmation does not match"))}`, {
@@ -130,8 +164,11 @@ const InstallationUser = () => {
                         {/* Form starts here */}
                         <div className="text-center mb-5">
                           <h3 className="text-success font-weight-bold text-uppercase">
-                            Add an admin to use the system
+                            Hey, You are nearly there
                           </h3>
+                          <h5 className="font-weight-bold">
+                            Add an admin to use the system
+                          </h5>
                         </div>
                         <form onSubmit={handleSubmit}>
                           <div className="form-group row mb-3">
@@ -236,6 +273,35 @@ const InstallationUser = () => {
                                 className="form-control"
                                 name="password_confirmation"
                                 value={details.password_confirmation}
+                                onChange={handleChange}
+                                required
+                              />
+                            </div>
+                          </div>
+
+                          <div className="form-group row mb-3">
+                            <label
+                              for="purchase_key"
+                              className="col-md-4 col-form-label text-md-right"
+                            >
+                              Your Purchase Key{" "}
+                              <a
+                                href="https://help.market.envato.com/hc/en-us/articles/202822600-Where-Is-My-Purchase-Code-"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="ml-2 text-info"
+                              >
+                                <i className="fa fa-info"></i>
+                              </a>
+                            </label>
+                            <div className="col-md-6">
+                              <textarea
+                                placeholder="Enter your purchase key here"
+                                id="purchase_key"
+                                type="text"
+                                className="form-control pt-4"
+                                name="purchase_key"
+                                value={details.purchase_key}
                                 onChange={handleChange}
                                 required
                               />
