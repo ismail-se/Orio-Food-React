@@ -37,20 +37,17 @@ const InstallationUser = () => {
 
   //useEffect == componentDidMount()
   useEffect(() => {
-    const url = BASE_URL + "/setup/check_ip_domain";
-    return axios
-      .get(url)
-      .then((res) => {
-        setDetails({
-          ...details,
-          ip_address: res.data[0],
-          domain_name: res.data[1],
-        });
-        setLoading(false);
-      })
-      .catch((err) => {
-        setLoading(false);
+    async function fetchMyAPI() {
+      const url = BASE_URL + "/setup/check_ip_domain";
+      let response = await axios.get(url);
+      setDetails({
+        ...details,
+        ip_address: response.data[0],
+        domain_name: response.data[1],
       });
+      setLoading(false);
+    }
+    fetchMyAPI();
   }, []);
 
   //set data
@@ -66,53 +63,114 @@ const InstallationUser = () => {
     e.preventDefault();
     if (details.password === details.password_confirmation) {
       setLoading(true);
+      let formData = {
+        purchase_key: details.purchase_key,
+        ip_address: details.ip_address,
+        domain_name: details.domain_name,
+      };
       const verifyUrl =
-        "http://localhost/verifyPurchase/public/api/khadyo-verify-purchase-code";
-
+        "http://verify.softtech-it.com/api/khadyo-verify-purchase-code";
       return axios
-        .post(verifyUrl, details)
-        .then((res) => {
-          console.log(res.data);
-          setLoading(false);
-          // const url = BASE_URL + "/setup/admin/store";
-          // return axios
-          //   .post(url, details)
-          //   .then((res) => {
-          //     setLoading(false);
-          //     if (res.data === "ok") {
-          //       history.push("/installation/congratulation");
-          //     } else {
-          //       setLoading(false);
-          //       toast.error(
-          //         `${_t(t("Something went wrong, please try again"))}`,
-          //         {
-          //           position: "bottom-center",
-          //           autoClose: 10000,
-          //           hideProgressBar: false,
-          //           closeOnClick: true,
-          //           pauseOnHover: true,
-          //           className: "text-center toast-notification",
-          //         }
-          //       );
-          //     }
-          //   })
-          //   .catch(() => {
-          //     setLoading(false);
-          //     toast.error(
-          //       `${_t(t("Something went wrong, please try again"))}`,
-          //       {
-          //         position: "bottom-center",
-          //         autoClose: 10000,
-          //         hideProgressBar: false,
-          //         closeOnClick: true,
-          //         pauseOnHover: true,
-          //         className: "text-center toast-notification",
-          //       }
-          //     );
-          //   });
+        .post(verifyUrl, formData)
+        .then((response) => {
+          console.log(response.data);
+          if (response.data === "continue") {
+            const url = BASE_URL + "/setup/admin/store";
+            return axios
+              .post(url, details)
+              .then((res) => {
+                setLoading(false);
+                if (res.data === "ok") {
+                  history.push("/installation/congratulation");
+                } else {
+                  setLoading(false);
+                  toast.error(
+                    `${_t(t("Something went wrong, please try again"))}`,
+                    {
+                      position: "bottom-center",
+                      autoClose: 10000,
+                      hideProgressBar: false,
+                      closeOnClick: true,
+                      pauseOnHover: true,
+                      className: "text-center toast-notification",
+                    }
+                  );
+                }
+              })
+              .catch(() => {
+                setLoading(false);
+                toast.error(
+                  `${_t(t("Something went wrong, please try again"))}`,
+                  {
+                    position: "bottom-center",
+                    autoClose: 10000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    className: "text-center toast-notification",
+                  }
+                );
+              });
+          } else {
+            setLoading(false);
+            if (response.data === "notKhadyo") {
+              toast.error(
+                `${_t(
+                  t(
+                    "You inserted a wrong purchase code, Please purchase our item from CODECANYON for a valid code"
+                  )
+                )}`,
+                {
+                  position: "bottom-center",
+                  autoClose: 10000,
+                  hideProgressBar: false,
+                  closeOnClick: true,
+                  pauseOnHover: true,
+                  className: "text-center toast-notification",
+                }
+              );
+            }
+
+            if (response.data === "invalidKey") {
+              toast.error(`${_t(t("This purchase key is not valid"))}`, {
+                position: "bottom-center",
+                autoClose: 10000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                className: "text-center toast-notification",
+              });
+            }
+
+            if (
+              response.data !== "invalidKey" &&
+              response.data !== "notKhadyo" &&
+              response.data !== "continue"
+            ) {
+              toast.error(
+                `This purchase key has already been used in ${response.data} ,contact the support team to transfer domain.`,
+                {
+                  position: "bottom-center",
+                  autoClose: 10000,
+                  hideProgressBar: false,
+                  closeOnClick: true,
+                  pauseOnHover: true,
+                  className: "text-center toast-notification",
+                }
+              );
+            }
+          }
         })
         .catch((err) => {
           setLoading(false);
+          toast.error(`${_t(t("Something went wrong, please try again"))}`, {
+            position: "bottom-center",
+            autoClose: 10000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            className: "text-center toast-notification",
+          });
         });
     } else {
       toast.error(`${_t(t("Password confirmation does not match"))}`, {
@@ -279,12 +337,46 @@ const InstallationUser = () => {
                             </div>
                           </div>
 
-                          <div className="form-group row mb-3">
+                          <div className="form-group row mb-3 mt-4">
+                            <label className="col-md-4 col-form-label text-md-right"></label>
+                            <div className="col-md-6">
+                              <ul className="list-group ml-0 pl-0">
+                                <li className="list-group-item text-semibold text-primary border-0 pl-0">
+                                  <i className="fa fa-info mr-2"></i>
+                                  Important information
+                                </li>
+
+                                <li className="list-group-item text-semibold border-0 pl-0 sm-text">
+                                  You can use this{" "}
+                                  <span className="text-secondary">
+                                    purchase code
+                                  </span>{" "}
+                                  only in one domain. Once used, you can only
+                                  transfer the website in it's subdomains. The
+                                  main domain can not be changed unless you
+                                  verify your purchase code from the support
+                                  team of this software. And this support will
+                                  not be free.
+                                </li>
+                                <li className="list-group-item text-semibold border-0 pl-0 sm-text">
+                                  You can install in localhost, it will not
+                                  affect your live server installation with the
+                                  same purchase code.
+                                </li>
+                                <li className="list-group-item text-semibold text-secondary border-0 pl-0 sm-text">
+                                  <i className="fa fa-info mr-2"></i>You need
+                                  internet connection to save these informations
+                                </li>
+                              </ul>
+                            </div>
+                          </div>
+
+                          <div className="form-group row mb-3 align-items-center">
                             <label
                               for="purchase_key"
                               className="col-md-4 col-form-label text-md-right"
                             >
-                              Your Purchase Key{" "}
+                              Your Purchase Code{" "}
                               <a
                                 href="https://help.market.envato.com/hc/en-us/articles/202822600-Where-Is-My-Purchase-Code-"
                                 target="_blank"
@@ -296,7 +388,7 @@ const InstallationUser = () => {
                             </label>
                             <div className="col-md-6">
                               <textarea
-                                placeholder="Enter your purchase key here"
+                                placeholder="Enter your purchase code here"
                                 id="purchase_key"
                                 type="text"
                                 className="form-control pt-4"

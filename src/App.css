@@ -252,3 +252,13 @@ li.addons-list__item.active {
 .fk-dish-card__img {
   align-items: center;
 }
+
+.congratulation-page {
+  height: calc(100vh - 30px) !important;
+  display: flex;
+  width: 100%;
+}
+
+.congratulation-page-margin {
+  margin: auto;
+}

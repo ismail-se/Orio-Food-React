@@ -25,8 +25,8 @@ const DbSetup = () => {
   // States hook here
   //new item
   let [dbData, setDbData] = useState({
-    DB_HOST: null,
-    DB_PORT: null,
+    DB_HOST: "localhost",
+    DB_PORT: "3306",
     DB_DATABASE: null,
     DB_USERNAME: null,
     DB_PASSWORD: null,

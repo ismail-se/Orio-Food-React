@@ -216,7 +216,6 @@ const Pos = () => {
     workPeriodForSearch,
     customerForSearch,
     tableForSearch,
-    branchForSearch,
     waiterForSearch,
     generalSettings,
     foodGroupForSearch,
