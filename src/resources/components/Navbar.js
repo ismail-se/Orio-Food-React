@@ -171,24 +171,24 @@ const Navbar = (props) => {
       props.location.pathname !== "/dashboard/pos/" &&
       props.location.pathname !== "/reset-password" &&
       props.location.pathname !== "/reset-password/" &&
-      props.location.pathname !== "/khadyo/login" &&
-      props.location.pathname !== "/khadyo/login/" &&
-      props.location.pathname !== "/khadyo/installation" &&
-      props.location.pathname !== "/khadyo/installation/" &&
-      props.location.pathname !== "/khadyo/installation/permission-chcek" &&
-      props.location.pathname !== "/khadyo/installation/permission-chcek/" &&
-      props.location.pathname !== "/khadyo/installation/database-setup" &&
-      props.location.pathname !== "/khadyo/installation/database-setup/" &&
-      props.location.pathname !== "/khadyo/installation/import-database" &&
-      props.location.pathname !== "/khadyo/installation/import-database/" &&
-      props.location.pathname !== "/khadyo/installation/add-admin-user" &&
-      props.location.pathname !== "/khadyo/installation/add-admin-user/" &&
-      props.location.pathname !== "/khadyo/installation/congratulation" &&
-      props.location.pathname !== "/khadyo/installation/congratulation/" &&
-      props.location.pathname !== "/khadyo/khadyo/dashboard/pos" &&
-      props.location.pathname !== "/khadyo/khadyo/dashboard/pos/" &&
-      props.location.pathname !== "/khadyo/khadyo/reset-password" &&
-      props.location.pathname !== "/khadyo/khadyo/reset-password/" &&
+      props.location.pathname !== "/khalaf/login" &&
+      props.location.pathname !== "/khalaf/login/" &&
+      props.location.pathname !== "/khalaf/installation" &&
+      props.location.pathname !== "/khalaf/installation/" &&
+      props.location.pathname !== "/khalaf/installation/permission-chcek" &&
+      props.location.pathname !== "/khalaf/installation/permission-chcek/" &&
+      props.location.pathname !== "/khalaf/installation/database-setup" &&
+      props.location.pathname !== "/khalaf/installation/database-setup/" &&
+      props.location.pathname !== "/khalaf/installation/import-database" &&
+      props.location.pathname !== "/khalaf/installation/import-database/" &&
+      props.location.pathname !== "/khalaf/installation/add-admin-user" &&
+      props.location.pathname !== "/khalaf/installation/add-admin-user/" &&
+      props.location.pathname !== "/khalaf/installation/congratulation" &&
+      props.location.pathname !== "/khalaf/installation/congratulation/" &&
+      props.location.pathname !== "/khalaf/dashboard/pos" &&
+      props.location.pathname !== "/khalaf/dashboard/pos/" &&
+      props.location.pathname !== "/khalaf/reset-password" &&
+      props.location.pathname !== "/khalaf/reset-password/" &&
       !props.location.pathname.includes("/set-new-password") ? (
         <header id="header" className="sticky-top">
           <div

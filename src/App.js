@@ -136,7 +136,7 @@ function App() {
   return (
     <>
       <ToastContainer />
-      {/* <Router basename="/khadyo"> */}
+      {/* <Router basename="/khalaf"> */}
       {/* "homepage": "http://localhost/khadyo" */}
       <Router>
         <Navbar />

@@ -73,7 +73,6 @@ const InstallationUser = () => {
       return axios
         .post(verifyUrl, formData)
         .then((response) => {
-          console.log(response.data);
           if (response.data === "continue") {
             const url = BASE_URL + "/setup/admin/store";
             return axios

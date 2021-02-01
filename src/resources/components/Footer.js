@@ -78,24 +78,24 @@ const Footer = () => {
       window.location.pathname !== "/dashboard/pos/" &&
       window.location.pathname !== "/reset-password" &&
       window.location.pathname !== "/reset-password/" &&
-      window.location.pathname !== "/khadyo/login" &&
-      window.location.pathname !== "/khadyo/login/" &&
-      window.location.pathname !== "/khadyo/dashboard/pos" &&
-      window.location.pathname !== "/khadyo/dashboard/pos/" &&
-      window.location.pathname !== "/khadyo/reset-password" &&
-      window.location.pathname !== "/khadyo/reset-password/" &&
-      window.location.pathname !== "/khadyo/installation" &&
-      window.location.pathname !== "/khadyo/installation/" &&
-      window.location.pathname !== "/khadyo/installation/permission-chcek" &&
-      window.location.pathname !== "/khadyo/installation/permission-chcek/" &&
-      window.location.pathname !== "/khadyo/installation/database-setup" &&
-      window.location.pathname !== "/khadyo/installation/database-setup/" &&
-      window.location.pathname !== "/khadyo/installation/import-database" &&
-      window.location.pathname !== "/khadyo/installation/import-database/" &&
-      window.location.pathname !== "/khadyo/installation/add-admin-user" &&
-      window.location.pathname !== "/khadyo/installation/add-admin-user/" &&
-      window.location.pathname !== "/khadyo/installation/congratulation" &&
-      window.location.pathname !== "/khadyo/installation/congratulation/" &&
+      window.location.pathname !== "/khalaf/login" &&
+      window.location.pathname !== "/khalaf/login/" &&
+      window.location.pathname !== "/khalaf/dashboard/pos" &&
+      window.location.pathname !== "/khalaf/dashboard/pos/" &&
+      window.location.pathname !== "/khalaf/reset-password" &&
+      window.location.pathname !== "/khalaf/reset-password/" &&
+      window.location.pathname !== "/khalaf/installation" &&
+      window.location.pathname !== "/khalaf/installation/" &&
+      window.location.pathname !== "/khalaf/installation/permission-chcek" &&
+      window.location.pathname !== "/khalaf/installation/permission-chcek/" &&
+      window.location.pathname !== "/khalaf/installation/database-setup" &&
+      window.location.pathname !== "/khalaf/installation/database-setup/" &&
+      window.location.pathname !== "/khalaf/installation/import-database" &&
+      window.location.pathname !== "/khalaf/installation/import-database/" &&
+      window.location.pathname !== "/khalaf/installation/add-admin-user" &&
+      window.location.pathname !== "/khalaf/installation/add-admin-user/" &&
+      window.location.pathname !== "/khalaf/installation/congratulation" &&
+      window.location.pathname !== "/khalaf/installation/congratulation/" &&
       !window.location.pathname.includes("/set-new-password") ? (
         <footer id="footer" className="sicky-bottom">
           <div
