@@ -707,7 +707,7 @@ const AdminStaffCrud = () => {
           setAdminStaffList(res.data[0]);
           setAdminStaffListforSearch(res.data[1]);
           setLoading(false);
-          toast.success(`${_t(t("User has been added"))}`, {
+          toast.success(`${_t(t("User has been updated"))}`, {
             position: "bottom-center",
             autoClose: 10000,
             hideProgressBar: false,

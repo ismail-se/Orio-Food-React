@@ -211,16 +211,7 @@ const Pos = () => {
       theTables: tableForSearch ? tableForSearch : null,
       theWaiters: waiterForSearch ? waiterForSearch : null,
     });
-  }, [
-    authUserInfo,
-    workPeriodForSearch,
-    customerForSearch,
-    tableForSearch,
-    waiterForSearch,
-    generalSettings,
-    foodGroupForSearch,
-    foodForSearch,
-  ]);
+  }, [authUserInfo, workPeriodForSearch, generalSettings]);
 
   //add new item to order list
   const handleOrderItem = (tempFoodItem) => {
@@ -2069,8 +2060,9 @@ const Pos = () => {
                                       </div>
                                       <div className="col">
                                         <div className="fk-qty flex-grow-1 justify-content-end">
-                                          {eachItem.allow_multi_quantity ===
-                                            1 && (
+                                          {parseInt(
+                                            eachItem.allow_multi_quantity
+                                          ) === 1 && (
                                             <span
                                               className="fk-qty__icon fk-qty__deduct"
                                               onClick={() => {
@@ -2083,8 +2075,9 @@ const Pos = () => {
                                               <i className="las la-minus"></i>
                                             </span>
                                           )}
-                                          {eachItem.allow_multi_quantity ===
-                                          1 ? (
+                                          {parseInt(
+                                            eachItem.allow_multi_quantity
+                                          ) === 1 ? (
                                             <input
                                               type="text"
                                               value={checkCheckedPropertyQuantity(
@@ -2096,8 +2089,9 @@ const Pos = () => {
                                           ) : (
                                             "-"
                                           )}
-                                          {eachItem.allow_multi_quantity ===
-                                            1 && (
+                                          {parseInt(
+                                            eachItem.allow_multi_quantity
+                                          ) === 1 && (
                                             <span
                                               className="fk-qty__icon fk-qty__add"
                                               onClick={() => {
@@ -3480,7 +3474,9 @@ const Pos = () => {
                                                                   </div>
                                                                   <div className="col-3 text-center border-right">
                                                                     <div className="fk-qty justify-content-center t-pt-10 t-pb-10">
-                                                                      {eachItem.allow_multi_quantity ===
+                                                                      {parseInt(
+                                                                        eachItem.allow_multi_quantity
+                                                                      ) ===
                                                                         1 && (
                                                                         <span
                                                                           className="fk-qty__icon fk-qty__deduct"
@@ -3494,7 +3490,9 @@ const Pos = () => {
                                                                           <i className="las la-minus"></i>
                                                                         </span>
                                                                       )}
-                                                                      {eachItem.allow_multi_quantity ===
+                                                                      {parseInt(
+                                                                        eachItem.allow_multi_quantity
+                                                                      ) ===
                                                                       1 ? (
                                                                         <input
                                                                           type="text"
@@ -3507,7 +3505,9 @@ const Pos = () => {
                                                                       ) : (
                                                                         "-"
                                                                       )}
-                                                                      {eachItem.allow_multi_quantity ===
+                                                                      {parseInt(
+                                                                        eachItem.allow_multi_quantity
+                                                                      ) ===
                                                                         1 && (
                                                                         <span
                                                                           className="fk-qty__icon fk-qty__add"

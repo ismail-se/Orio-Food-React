@@ -76,7 +76,40 @@ const General = () => {
   });
 
   //useEffect == componentDidMount()
-  useEffect(() => {}, []);
+  useEffect(() => {
+    setColorPick({
+      displayColorPicker: false,
+      color: getSystemSettings(generalSettings, "type_background"),
+    });
+
+    setColorPickClock({
+      displayColorPickerClock: false,
+      color: getSystemSettings(generalSettings, "type_clock"),
+    });
+
+    setColorTextPick({
+      displayColorTextPicker: false,
+      color: getSystemSettings(generalSettings, "type_color"),
+    });
+
+    setNewSettings({
+      footerText: getSystemSettings(generalSettings, "type_footer"),
+      siteName: getSystemSettings(generalSettings, "siteName"),
+      address: getSystemSettings(generalSettings, "address"),
+      phnNo: getSystemSettings(generalSettings, "phnNo"),
+      vat: getSystemSettings(generalSettings, "type_vat"),
+      image: null,
+      favicon: null,
+      timezone: null,
+      selectedTimeZone: getSystemSettings(generalSettings, "timezone"),
+      print_kitchen_bill:
+        getSystemSettings(generalSettings, "print_kitchen_bill") === "1"
+          ? 1
+          : 0,
+      play_sound:
+        getSystemSettings(generalSettings, "play_sound") === "1" ? 1 : 0,
+    });
+  }, [generalSettings]);
 
   //on change input field
   const handleChange = (e) => {
