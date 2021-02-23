@@ -69,7 +69,8 @@ const InstallationUser = () => {
         domain_name: details.domain_name,
       };
       const verifyUrl =
-        "http://verify.softtech-it.com/api/khadyo-verify-purchase-code";
+        window.location.protocol +
+        "//verify.softtech-it.com/api/khadyo-verify-purchase-code";
       return axios
         .post(verifyUrl, formData)
         .then((response) => {
