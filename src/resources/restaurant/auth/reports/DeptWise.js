@@ -33,14 +33,14 @@ import ReportSidebar from "./ReportSidebar";
 
 //context consumer
 import { SettingsContext } from "../../../../contexts/Settings";
-import { UserContext } from "../../../../contexts/User";
+import { RestaurantContext } from "../../../../contexts/Restaurant";
 
 const DeptWise = () => {
   const { t } = useTranslation();
   const history = useHistory();
   //getting context values here
   let { loading, setLoading, dataPaginating } = useContext(SettingsContext);
-  let { adminStaffForSearch } = useContext(UserContext);
+  let { deptTagForSearch } = useContext(RestaurantContext);
 
   // States hook here
   const [amountChart, setAmountChart] = useState({
@@ -80,30 +80,30 @@ const DeptWise = () => {
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [generatedReport, setGeneratedReport] = useState(false);
-  const [theUser, setTheUser] = useState(null);
+  const [theDepartment, setTheDepartment] = useState(null);
   //useEffect == componentDidMount()
   useEffect(() => {
     setLoading(true);
     setTimeout(() => {
       setLoading(false);
     }, 500);
-  }, [adminStaffForSearch]);
+  }, [deptTagForSearch]);
 
-  const handleUser = (user) => {
-    setTheUser(user);
+  const handleUser = (dept) => {
+    setTheDepartment(dept);
   };
 
   //get DeptWise reports filter
   const getDeptWiseSelected = () => {
-    if (theUser !== null && startDate !== null && endDate !== null) {
+    if (theDepartment !== null && startDate !== null && endDate !== null) {
       setLoading(true);
       var fromDate = startDate.toISOString();
       var toDate = endDate.toISOString();
-      const url = BASE_URL + "/settings/get-user-report";
+      const url = BASE_URL + "/settings/get-department-report";
       let formData = {
         fromDate,
         toDate,
-        user: theUser,
+        dept: theDepartment,
       };
       return axios
         .post(url, formData, {
@@ -585,10 +585,10 @@ const DeptWise = () => {
                             />
                           </div>
                           <Select
-                            options={adminStaffForSearch && adminStaffForSearch}
+                            options={deptTagForSearch && deptTagForSearch}
                             getOptionLabel={(option) => option.name}
                             getOptionValue={(option) => option.name}
-                            value={theUser}
+                            value={theDepartment}
                             classNamePrefix="select"
                             className="xsm-text col-md-4 d-none d-md-block "
                             onChange={handleUser}
@@ -597,15 +597,15 @@ const DeptWise = () => {
                           />
 
                           <Select
-                            options={adminStaffForSearch && adminStaffForSearch}
+                            options={deptTagForSearch && deptTagForSearch}
                             getOptionLabel={(option) => option.name}
                             getOptionValue={(option) => option.name}
-                            value={theUser}
+                            value={theDepartment}
                             classNamePrefix="select"
                             className="xsm-text col-5 mb-2 mb-md-0 d-block d-md-none"
                             onChange={handleUser}
                             maxMenuHeight="200px"
-                            placeholder={_t(t("Select an user")) + ".."}
+                            placeholder={_t(t("Select a department")) + ".."}
                           />
 
                           <div className="col-4 t-mb-15 mb-md-0 d-none d-md-block text-right">

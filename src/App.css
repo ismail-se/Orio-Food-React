@@ -190,7 +190,7 @@ html {
 }
 .fk-left-overlay {
   border-radius: 4px;
-  position: absolute;
+  position: fixed;
   top: 0;
   bottom: 0;
   right: 0;
@@ -198,6 +198,11 @@ html {
   display: flex;
   background: #f64e5fa9;
   z-index: 3;
+}
+@media screen and (min-width: 768px) {
+  .fk-left-overlay {
+    position: absolute;
+  }
 }
 .fk-left-overlay__content {
   min-width: 400px;
