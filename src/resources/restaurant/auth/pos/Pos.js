@@ -1494,7 +1494,8 @@ const Pos = () => {
                       {getSystemSettings(generalSettings, "siteName")}
                     </span>
                     <p className="mb-0 xsm-text fk-print-text text-center text-capitalize">
-                      {getSystemSettings(generalSettings, "address")}
+                      {/* {getSystemSettings(generalSettings, "address")} */}
+                      {orderDetails && orderDetails.branch.address}
                     </p>
                     <p className="mb-0 xsm-text fk-print-text text-center text-capitalize">
                       {_t(t("call"))}:{" "}
@@ -1748,7 +1749,8 @@ const Pos = () => {
                       {getSystemSettings(generalSettings, "siteName")}
                     </span>
                     <p className="mb-0 xsm-text fk-print-text text-center text-capitalize">
-                      {getSystemSettings(generalSettings, "address")}
+                      {/* {getSystemSettings(generalSettings, "address")} */}
+                      {orderDetails && orderDetails.branch.address}
                     </p>
                     <p className="mb-0 xsm-text fk-print-text text-center text-capitalize">
                       {_t(t("call"))}:{" "}
