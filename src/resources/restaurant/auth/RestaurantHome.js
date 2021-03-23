@@ -47,7 +47,7 @@ const RestaurantHome = () => {
     <>
       <Helmet>
         <title>
-          {generalSettings && getSystemSettings(generalSettings, "siteName")}
+          Orio Food
         </title>
       </Helmet>
       <main>
@@ -62,7 +62,7 @@ const RestaurantHome = () => {
                     ? restaurantMenuLink(
                         "/assets/img/product-img-1.jpg",
                         [_t(t("Work Periods"))],
-                        "fa fa-clock-o",
+                        "/assets/icons/time.svg",
                         "t-text-alpha",
                         [_t(t("Time"))],
                         [_t(t("Work Periods"))],
@@ -76,8 +76,8 @@ const RestaurantHome = () => {
                     ? restaurantMenuLink(
                         "/assets/img/product-img-2.jpg",
                         [_t(t("Point of Sale"))],
-                        "fa fa-cart-plus",
-                        "t-text-gamma",
+                        "/assets/icons/pos.svg",
+                        "t-text-alpha",
                         [_t(t("Pos"))],
                         [_t(t("Point of Sale"))],
                         "/dashboard/pos"
@@ -89,8 +89,8 @@ const RestaurantHome = () => {
                     ? restaurantMenuLink(
                         "/assets/img/product-img-3.jpg",
                         [_t(t("Order Histories"))],
-                        "fa fa-pencil",
-                        "t-text-delta",
+                        "/assets/icons/orders.svg",
+                        "t-text-alpha",
                         [_t(t("Orders"))],
                         [_t(t("Order Histories"))],
                         "/dashboard/orders"
@@ -102,8 +102,8 @@ const RestaurantHome = () => {
                     ? restaurantMenuLink(
                         "/assets/img/product-img-4.jpg",
                         [_t(t("Customers"))],
-                        "fa fa-user-circle-o",
-                        "t-text-primary",
+                        "/assets/icons/customers.svg",
+                        "t-text-alpha",
                         [_t(t("Customers"))],
                         [_t(t("Customers"))],
                         "/dashboard/customers"
@@ -113,10 +113,10 @@ const RestaurantHome = () => {
                   {authUserInfo.permissions !== null &&
                   authUserInfo.permissions.includes("Kitchen")
                     ? restaurantMenuLink(
-                        "/assets/img/product-img-9.jpg",
+                        "/assets/img/product-img-5.jpg",
                         [_t(t("Kitchen"))],
-                        "fa fa-coffee",
-                        "t-text-epsilon",
+                        "/assets/icons/kitchen.svg",
+                        "t-text-alpha",
                         [_t(t("Kitchen"))],
                         [_t(t("Kitchen"))],
                         "/dashboard/kitchen"
@@ -126,10 +126,10 @@ const RestaurantHome = () => {
                   {authUserInfo.permissions !== null &&
                   authUserInfo.permissions.includes("Report")
                     ? restaurantMenuLink(
-                        "/assets/img/product-img-7.jpg",
+                        "/assets/img/product-img-6.jpg",
                         [_t(t("Reports"))],
-                        "fa fa-clock-o",
-                        "t-text-kappa",
+                        "/assets/icons/reports.svg",
+                        "t-text-alpha",
                         [_t(t("Reports"))],
                         [_t(t("Reports"))],
                         "/dashboard/reports"
@@ -139,10 +139,10 @@ const RestaurantHome = () => {
                   {authUserInfo.permissions !== null &&
                   authUserInfo.permissions.includes("Manage")
                     ? restaurantMenuLink(
-                        "/assets/img/product-img-8.png",
+                        "/assets/img/product-img-7.jpg",
                         [_t(t("Manage"))],
-                        "fa fa-clock-o",
-                        "t-text-zeta",
+                        "/assets/icons/manage.svg",
+                        "t-text-alpha",
                         [_t(t("Manage"))],
                         [_t(t("Manage"))],
                         "/dashboard/manage/food/add-new"
@@ -156,7 +156,7 @@ const RestaurantHome = () => {
                     >
                       <div className="product-card__head">
                         <img
-                          src="/assets/img/product-img-6.jpg"
+                          src="/assets/img/product-img-8.jpg"
                           alt={_t(t("Logout"))}
                           className="img-fluid"
                         />
@@ -170,7 +170,7 @@ const RestaurantHome = () => {
                         <span
                           className={`product-card__sub-title t-text-alpha text-uppercase`}
                         >
-                          <span className="fa fa-clock-o"></span>{" "}
+                          <img src="/assets/icons/logout.svg" alt=""/>{" "}
                           {_t(t("Logout"))}
                         </span>
                         <span className="product-card__title text-capitalize">

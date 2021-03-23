@@ -175,32 +175,8 @@ const ForgetPw = () => {
       <main>
         <div className="fk-global-access">
           <div className="d-none d-lg-block">
-            <div className="fk-global-img text-center">
-              <img
-                src="/assets/img/verifiy-img.png"
-                alt="khadyo"
-                className="img-fluid mx-auto fk-global-img__is"
-              />
-              <img
-                src="/assets/img/obj-1.png"
-                alt="khadyo"
-                className="img-fluid fk-global-img__obj fk-global-img__obj-1"
-              />
-              <img
-                src="/assets/img/obj-8.png"
-                alt="khadyo"
-                className="img-fluid fk-global-img__obj fk-global-img__obj-2"
-              />
-              <img
-                src="/assets/img/obj-7.png"
-                alt="khadyo"
-                className="img-fluid fk-global-img__obj fk-global-img__obj-6"
-              />
-              <img
-                src="/assets/img/obj-9.png"
-                alt="khadyo"
-                className="img-fluid fk-global-img__obj fk-global-img__obj-8"
-              />
+            <div className="fk-global-img">
+              <img src="/assets/img/o.png" alt=""/>
             </div>
           </div>
           <div className="container my-md-auto">

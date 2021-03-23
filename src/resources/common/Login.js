@@ -252,35 +252,11 @@ const Login = () => {
       <main>
         <div className="fk-global-access">
           <div className="d-none d-lg-block">
-            <div className="fk-global-img text-center">
-              <img
-                src="/assets/img/sign-in.png"
-                alt="khadyo"
-                className="img-fluid mx-auto fk-global-img__is"
-              />
-              <img
-                src="/assets/img/obj-1.png"
-                alt="khadyo"
-                className="img-fluid fk-global-img__obj fk-global-img__obj-1"
-              />
-              <img
-                src="/assets/img/obj-8.png"
-                alt="khadyo"
-                className="img-fluid fk-global-img__obj fk-global-img__obj-2"
-              />
-              <img
-                src="/assets/img/obj-7.png"
-                alt="khadyo"
-                className="img-fluid fk-global-img__obj fk-global-img__obj-6"
-              />
-              <img
-                src="/assets/img/obj-9.png"
-                alt="khadyo"
-                className="img-fluid fk-global-img__obj fk-global-img__obj-8"
-              />
+            <div className="fk-global-img">
+              <img src="/assets/img/o.png" alt=""/>
             </div>
           </div>
-          <div className="container my-md-auto">
+          <div className="container my-md-auto my-new-md">
             {credentials.install_no ? (
               <div className="row">
                 <div className="col-md-6">
@@ -302,7 +278,7 @@ const Login = () => {
                 </div>
               </div>
             ) : (
-              <div className="row">
+              <div className="row row2">
                 <div className="col-md-6">
                   <div className="fk-brand fk-brand--sr-lg">
                     {window.location.pathname === "/" ? (
@@ -402,7 +378,7 @@ const Login = () => {
                       <div key="loading">
                         {!credentials.install_check_reload ? (
                           <>
-                            <h3 className="mt-0 text-capitalize font-weight-bold">
+                            <h3 className="mt-0 text-capitalize font-weight-bold" style={{color: "#363778"}}>
                               {_t(t("sign in"))}
                             </h3>
                             <form onSubmit={handleSubmit}>
@@ -476,7 +452,7 @@ const Login = () => {
                                   </div>
                                 </div>
 
-                                <div className="col-12 t-mb-15">
+                                <div className="col-12 t-mb-15 login-form">
                                   <input
                                     onChange={handleCredentials}
                                     type="email"
@@ -488,7 +464,7 @@ const Login = () => {
                                     className="form-control border-0 rounded-1"
                                   />
                                 </div>
-                                <div className="col-12 t-mb-15">
+                                <div className="col-12 t-mb-15 login-form">
                                   <input
                                     onChange={handleCredentials}
                                     name="password"
@@ -508,12 +484,12 @@ const Login = () => {
                                       type="checkbox"
                                       className="mx-checkbox__input mx-checkbox__input-solid mx-checkbox__input-solid--danger mx-checkbox__input-sm mt-0-kitchen"
                                     />
-                                    <span className="mx-checkbox__text text-capitalize t-text-heading t-ml-8">
+                                    <span style={{fontWeight: "800"}} className="mx-checkbox__text text-capitalize t-text-heading t-ml-8">
                                       {_t(t("Remember Me"))}
                                     </span>
                                   </label>
                                 </div>
-                                <div className="col-6 t-mb-15 text-right">
+                                <div style={{fontWeight: "800"}} className="col-6 t-mb-15 text-right">
                                   <NavLink
                                     to="/reset-password"
                                     className="t-link sm-text"
@@ -523,10 +499,10 @@ const Login = () => {
                                 </div>
                                 <div className="col-12">
                                   <div className="d-flex align-items-center">
-                                    <div className="t-mr-8">
+                                    <div className="t-mr-8" style={{width: "100%"}}>
                                       <button
                                         type="submit"
-                                        className="btn btn-success sm-text text-uppercase"
+                                        className="btn btn-success sm-text text-uppercase form-submit"
                                       >
                                         {_t(t("sign in"))}
                                       </button>

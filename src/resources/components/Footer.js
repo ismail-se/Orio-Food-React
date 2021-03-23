@@ -162,8 +162,7 @@ const Footer = () => {
               <div className="col-lg-6 col-xl-7 t-mb-30 mb-lg-0">
                 <p className="mb-0 text-center sm-text">
                   &copy;{" "}
-                  {generalSettings &&
-                    getSystemSettings(generalSettings, "type_footer")}
+                  Oriofood || All right reserved
                 </p>
               </div>
               <div className="col-lg-4 col-xl-3">
@@ -260,8 +259,7 @@ const Footer = () => {
                   <div className="col-lg-6 col-xl-7 t-mb-30 mb-lg-0">
                     <p className="mb-0 text-center sm-text">
                       &copy;{" "}
-                      {generalSettings &&
-                        getSystemSettings(generalSettings, "type_footer")}
+                      Oriofood || All right reserved
                     </p>
                   </div>
                   <div className="col-lg-4 col-xl-3">

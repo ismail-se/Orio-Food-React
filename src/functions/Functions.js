@@ -1,6 +1,8 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
 
+import "./dashboard.css"
+
 //axios and base url
 import axios from "axios";
 import { BASE_URL } from "../../src/BaseUrl";
@@ -145,7 +147,7 @@ const restaurantMenuLink = (
     <div className="col-md-6 col-lg-4 t-mb-15">
       <NavLink to={redirectTo} className="t-link product-card t-bg-white w-100">
         <div className="product-card__head w-100 text-center">
-          <img src={img} alt={imgAlt} className="img-fluid" />
+          <img src={img} alt={imgAlt} className="img-fluid pro-img" />
         </div>
         <div className="product-card__body w-100">
           <div className="product-card__add">
@@ -156,7 +158,7 @@ const restaurantMenuLink = (
           <span
             className={`product-card__sub-title ${infoTextColor} text-uppercase`}
           >
-            <span className={icon}></span> {info}
+            <img src={icon} alt=""/> {info}
           </span>
           <span className="product-card__title text-capitalize">{title}</span>
         </div>

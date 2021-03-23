@@ -20,12 +20,18 @@
 //   window.location.protocol + "//" + window.location.hostname + "/laravel";
 
 // for production
+// export let BASE_URL =
+//   window.location.protocol +
+//   "//" +
+//   window.location.hostname +
+//   `${
+//     window.location.port !== ""
+//       ? `:${window.location.port}`
+//       : `${!window.location.href.includes(".test") ? "/public" : ""}`
+//   }`;
+
+
+// for http://foodoms2.orio.digital/
 export let BASE_URL =
-  window.location.protocol +
-  "//" +
-  window.location.hostname +
-  `${
-    window.location.port !== ""
-      ? `:${window.location.port}`
-      : `${!window.location.href.includes(".test") ? "/public" : ""}`
-  }`;
+  window.location.protocol + "//" +
+  "foodoms2.orio.digital/public" ;
