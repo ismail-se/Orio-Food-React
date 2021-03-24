@@ -1,0 +1,269 @@
+html {
+  --primary: #de222a;
+}
+
+/* body {
+  overflow: hidden;
+} */
+
+/* for less table data */
+.min-table-height {
+  min-height: 130px;
+}
+
+/* for clock font size */
+.font-10px {
+  font-size: 10px;
+}
+
+/* for toast notification */
+.toast-notification {
+  text-align: center;
+}
+
+/* active page in pagination */
+.pagination-active {
+  background-color: var(--primary);
+  color: #fff;
+}
+/* no pagination style */
+.no-pagination-style {
+  height: 33px;
+}
+
+/* table data loading */
+.loading {
+  top: 50%;
+  left: 50%;
+  width: 50px;
+  height: 50px;
+  margin-left: -25px;
+  position: absolute;
+  border-radius: 50%;
+  border: 2px solid var(--primary);
+  border-top: 2px solid transparent;
+  animation: loading-animation 1s infinite linear;
+  -webkit-animation: laoding-animation 1s infinite linear;
+  -moz-animation: laoding-animation 1s infinite linear;
+  z-index: 1000;
+}
+@keyframes laoding-animation {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* background of language */
+.fk-language__flag {
+  background-size: cover;
+}
+
+/* hide pagination */
+@media screen and (min-width: 1200px) {
+  .table-bottom-info-hide {
+    height: calc(100vh - 120px);
+  }
+}
+
+/* image in table td */
+.table-img-large {
+  width: 60px;
+  height: 60px;
+  background-size: cover;
+  border-radius: 60px;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-image: url("/assets/img/waiter.jpg");
+}
+
+/* manage page border-right show */
+.simplebar-content {
+  margin-right: -16px !important;
+}
+
+/* translation-input */
+.translation-input {
+  max-width: 150px;
+}
+
+/*  custom-bg-secondary */
+.custom-bg-secondary {
+  background-color: #ebeef6;
+}
+
+/* variation-min-price-input-width */
+.variation-min-price-input-width {
+  min-width: 250px;
+}
+
+/* text-decoration: line-through; */
+.text-deleted {
+  text-decoration: line-through;
+}
+
+/*Logo background on load*/
+.fk-brand__img--fk {
+  background-image: none;
+}
+
+/*  text-green for workperiod */
+.text-green {
+  color: #28a745;
+}
+
+/* Calculator css override */
+.calculator {
+  width: 350px;
+}
+
+/* payment type multiple clear all button hide */
+.payment-type-parent .select__indicator.select__clear-indicator {
+  display: none !important;
+}
+.payment-type-parent .select__multi-value__remove {
+  display: none !important;
+}
+.payment-type-parent .select__multi-value {
+  min-width: 60px !important;
+  text-align: center !important;
+}
+.payment-type-parent .select__multi-value__label {
+  padding-right: 6px !important;
+  padding-left: 6px !important;
+}
+
+/* Pos page group name shaddow remove */
+.btn-outline-danger:focus {
+  -webkit-box-shadow: none !important;
+  box-shadow: none !important;
+}
+
+/* reverse the ordre list items */
+.reverse-this {
+  display: flex;
+  flex-direction: column-reverse;
+}
+
+/* for remove button from order list in POS */
+.make-this-relative {
+  position: relative;
+  top: 26px;
+  left: 0;
+  margin-top: -31px;
+  margin-left: 48%;
+  cursor: pointer;
+  max-width: 51.88px;
+}
+
+.make-this-relative-mobile {
+  position: relative;
+  top: -53px;
+  left: 25px;
+  /* margin-top: -31px; */
+  margin-left: 25%;
+  cursor: pointer;
+  max-width: 51.88px;
+}
+
+/*  pointer-cursor */
+.pointer-cursor {
+  cursor: pointer;
+}
+
+/*  change-background */
+.change-background {
+  background-color: #f64e60 !important;
+}
+
+/* new-customer-pos */
+.new-customer-pos {
+  font-weight: 450 !important;
+  font-size: 12px !important;
+}
+
+/* pos page work period css */
+.fk-left-over {
+  position: relative;
+}
+.fk-left-overlay {
+  border-radius: 4px;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  display: flex;
+  background: #f64e5fa9;
+  z-index: 3;
+}
+@media screen and (min-width: 768px) {
+  .fk-left-overlay {
+    position: absolute;
+  }
+}
+.fk-left-overlay__content {
+  min-width: 400px;
+  background-color: #ffffffef;
+  padding: 20px;
+  border-radius: 4px;
+}
+
+/* checkbox align item center cancel */
+.mx-checkbox {
+  -webkit-box-align: flex-start !important;
+  align-items: flex-start !important;
+}
+.mx-checkbox__input-sm {
+  margin-top: 12px !important;
+}
+.mt-0-kitchen {
+  margin-top: 0px !important;
+}
+
+/* POS Page Tab Screen Order List */
+li.addons-list__item.active {
+  background: #de222a;
+  color: white !important;
+  border-radius: 2px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+
+/* profile update */
+.profile-update-full {
+  height: calc(100vh - 174px) !important;
+}
+
+.no-order {
+  height: calc(100vh - 230px);
+}
+
+.main-height-100 {
+  height: calc(100vh - 20px) !important;
+}
+
+.installation-full-page {
+  height: calc(100vh - 30px) !important;
+}
+
+.login-page-background {
+  background-image: url("/assets/img/logo.png") !important;
+}
+
+/* safari pos issue */
+.fk-dish-card__img {
+  align-items: center;
+}
+
+.congratulation-page {
+  height: calc(100vh - 30px) !important;
+  display: flex;
+  width: 100%;
+}
+
+.congratulation-page-margin {
+  margin: auto;
+}
